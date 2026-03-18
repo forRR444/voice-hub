@@ -77,7 +77,7 @@ function TestimonialCard({
   theme: Theme;
 }) {
   const isDark = theme.mode === "dark";
-  const brand = theme.brandColor || "#6366f1";
+  const brand = theme.brandColor || "#635BFF";
 
   return (
     <div
@@ -209,7 +209,7 @@ export default async function WidgetPreviewPage({
   const items: Testimonial[] = (testimonials as Testimonial[]) ?? [];
 
   const isDark = theme.mode === "dark";
-  const brand = theme.brandColor || "#6366f1";
+  const brand = theme.brandColor || "#635BFF";
 
   return (
     <div

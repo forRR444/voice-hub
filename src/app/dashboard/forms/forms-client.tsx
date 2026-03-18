@@ -32,7 +32,7 @@ export default function FormsClient({
   const [editForm, setEditForm] = useState({
     title: "",
     description: "",
-    brand_color: "#6366f1",
+    brand_color: "#635BFF",
     thank_you_message: "",
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export default function FormsClient({
         title: "お客様の声フォーム",
         description: "ぜひご感想をお聞かせください",
         questions: DEFAULT_FORM_QUESTIONS,
-        brand_color: "#6366f1",
+        brand_color: "#635BFF",
         thank_you_message: "ご回答いただきありがとうございます！",
       })
       .select()

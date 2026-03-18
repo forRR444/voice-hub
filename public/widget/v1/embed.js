@@ -73,7 +73,7 @@
   }
 
   function buildCard(t, theme) {
-    var brand = theme.brandColor || "#6366f1";
+    var brand = theme.brandColor || "#635BFF";
     var html = '<div class="vh-card">';
 
     if (theme.showRating !== false) {
@@ -116,7 +116,7 @@
     var testimonials = data.testimonials;
     var showBadge = data.showBadge;
     var theme = widget.theme || {};
-    var brand = theme.brandColor || "#6366f1";
+    var brand = theme.brandColor || "#635BFF";
     var mode = theme.mode === "dark" ? "vh-dark" : "vh-light";
 
     var shadow = container.shadowRoot || container.attachShadow({ mode: "open" });

@@ -117,7 +117,7 @@ export function FormClient({ form }: { form: FormRow }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const brandColor = form.brand_color || "#6366f1";
+  const brandColor = form.brand_color || "#635BFF";
   const currentQuestion = questions[step];
   const totalSteps = questions.length;
   const progress = ((step + 1) / totalSteps) * 100;

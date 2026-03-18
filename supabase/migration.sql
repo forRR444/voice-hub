@@ -23,7 +23,7 @@ CREATE TABLE forms (
   title TEXT NOT NULL DEFAULT 'お客様の声をお聞かせください',
   description TEXT,
   questions JSONB NOT NULL DEFAULT '[]'::jsonb,
-  brand_color TEXT DEFAULT '#6366f1',
+  brand_color TEXT DEFAULT '#635BFF',
   logo_url TEXT,
   thank_you_message TEXT DEFAULT 'ご回答ありがとうございました！',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -59,7 +59,7 @@ CREATE TABLE widgets (
     CHECK (type IN ('carousel', 'grid', 'list', 'single')),
   theme JSONB NOT NULL DEFAULT '{
     "mode": "light",
-    "brandColor": "#6366f1",
+    "brandColor": "#635BFF",
     "showRating": true,
     "showAvatar": true,
     "showDate": false,

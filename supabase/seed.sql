@@ -29,7 +29,7 @@ INSERT INTO forms (id, workspace_id, slug, title, description, brand_color, than
    'tanaka-coaching',
    'コーチングを受けた感想をお聞かせください',
    '田中真理子のライフコーチングをご利用いただきありがとうございます。今後のサービス向上のため、ぜひご感想をお聞かせください。',
-   '#6366f1',
+   '#635BFF',
    'ご回答ありがとうございました！いただいたお声は、サービス改善に活用させていただきます。',
    '[
      {"id": "rating", "label": "総合評価", "type": "star_rating", "required": true},
@@ -196,11 +196,11 @@ INSERT INTO widgets (id, workspace_id, name, type, theme, filter_min_rating, onl
    'a0000000-0000-0000-0000-000000000001',
    'LP用カルーセル',
    'carousel',
-   '{"mode": "light", "brandColor": "#6366f1", "showRating": true, "showAvatar": true, "showDate": false, "maxItems": 5, "autoplay": true}'::jsonb,
+   '{"mode": "light", "brandColor": "#635BFF", "showRating": true, "showAvatar": true, "showDate": false, "maxItems": 5, "autoplay": true}'::jsonb,
    4, false),
   ('d0000000-0000-0000-0000-000000000002',
    'a0000000-0000-0000-0000-000000000001',
    'お客様の声一覧ページ',
    'grid',
-   '{"mode": "light", "brandColor": "#6366f1", "showRating": true, "showAvatar": true, "showDate": true, "maxItems": 10, "autoplay": false}'::jsonb,
+   '{"mode": "light", "brandColor": "#635BFF", "showRating": true, "showAvatar": true, "showDate": true, "maxItems": 10, "autoplay": false}'::jsonb,
    1, false);

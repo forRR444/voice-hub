@@ -232,7 +232,7 @@ describe("widgetCreateSchema", () => {
     if (result.success) {
       expect(result.data.theme).toEqual({
         mode: "light",
-        brandColor: "#6366f1",
+        brandColor: "#635BFF",
         showRating: true,
         showAvatar: true,
         showDate: false,

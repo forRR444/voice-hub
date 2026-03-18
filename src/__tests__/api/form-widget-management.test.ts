@@ -20,7 +20,7 @@ vi.mock("@/lib/supabase/client", () => ({
 
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
-  brandColor: "#6366f1",
+  brandColor: "#635BFF",
   showRating: true,
   showAvatar: true,
   showDate: false,
@@ -63,14 +63,14 @@ describe("フォーム作成", () => {
       title: "お客様の声フォーム",
       description: "ぜひご感想をお聞かせください",
       questions: DEFAULT_FORM_QUESTIONS,
-      brand_color: "#6366f1",
+      brand_color: "#635BFF",
       thank_you_message: "ご回答いただきありがとうございます！",
     };
 
     expect(insertPayload.workspace_id).toBe(workspaceId);
     expect(insertPayload.slug).toHaveLength(8);
     expect(insertPayload.questions).toBe(DEFAULT_FORM_QUESTIONS);
-    expect(insertPayload.brand_color).toBe("#6366f1");
+    expect(insertPayload.brand_color).toBe("#635BFF");
   });
 
   it("フォームURLが正しく構成される", () => {
@@ -90,7 +90,7 @@ describe("フォーム編集", () => {
   it.each([
     ["title", { title: "New Title" }],
     ["brand_color", { title: "Test", description: null, brand_color: "#ff0000", thank_you_message: "Thanks" }],
-    ["thank_you_message", { title: "Test", description: null, brand_color: "#6366f1", thank_you_message: "新しいサンクスメッセージ" }],
+    ["thank_you_message", { title: "Test", description: null, brand_color: "#635BFF", thank_you_message: "新しいサンクスメッセージ" }],
   ])("%s をSupabase updateで更新する", async (_field, editForm) => {
     mockSupabase = createMockSupabase({
       forms: { data: null, error: null },
@@ -244,7 +244,7 @@ describe("ウィジェットテーマ設定", () => {
   it("デフォルトテーマ値が正しい", () => {
     expect(DEFAULT_THEME).toEqual({
       mode: "light",
-      brandColor: "#6366f1",
+      brandColor: "#635BFF",
       showRating: true,
       showAvatar: true,
       showDate: false,

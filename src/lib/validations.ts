@@ -41,7 +41,7 @@ export const widgetCreateSchema = z.object({
   theme: z
     .object({
       mode: z.enum(["light", "dark"]).default("light"),
-      brandColor: z.string().default("#6366f1"),
+      brandColor: z.string().default("#635BFF"),
       showRating: z.boolean().default(true),
       showAvatar: z.boolean().default(true),
       showDate: z.boolean().default(false),
