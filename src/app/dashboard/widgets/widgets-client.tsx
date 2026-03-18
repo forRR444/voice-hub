@@ -130,7 +130,7 @@ export default function WidgetsClient({
       {/* Create modal */}
       {showCreate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background rounded-xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-background rounded-lg w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-foreground">
                 新しいウィジェット作成
@@ -344,7 +344,7 @@ export default function WidgetsClient({
           {widgets.map((w) => (
             <div
               key={w.id}
-              className="bg-background rounded-xl border border-foreground/10 p-6"
+              className="bg-background rounded-lg border border-foreground/10 p-6"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -414,7 +414,7 @@ export default function WidgetsClient({
                           )}
                         </button>
                       </div>
-                      <pre className="bg-gray-900 text-green-400 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                      <pre className="bg-foreground/5 text-foreground/70 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
                         {getScriptEmbed(w.id)}
                       </pre>
                     </div>
@@ -444,7 +444,7 @@ export default function WidgetsClient({
                           )}
                         </button>
                       </div>
-                      <pre className="bg-gray-900 text-green-400 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                      <pre className="bg-foreground/5 text-foreground/70 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
                         {getIframeEmbed(w.id)}
                       </pre>
                     </div>

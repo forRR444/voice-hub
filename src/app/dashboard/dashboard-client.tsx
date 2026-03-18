@@ -11,7 +11,7 @@ import {
   Plus,
   Search,
   Bookmark,
-  BarChart3,
+  MessageSquare,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
@@ -142,23 +142,11 @@ export default function DashboardClient({
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-8">
+        <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
+        <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
+        <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
         <StatCard
-          icon={<BarChart3 size={20} className="text-indigo-500" />}
-          label="合計"
-          value={stats.total}
-        />
-        <StatCard
-          icon={<CheckCircle size={20} className="text-green-500" />}
-          label="承認済み"
-          value={stats.approved}
-        />
-        <StatCard
-          icon={<Clock size={20} className="text-yellow-500" />}
-          label="未承認"
-          value={stats.pending}
-        />
-        <StatCard
-          icon={<Star size={20} className="text-amber-500" />}
+          icon={<Star size={18} className="text-yellow-500" />}
           label="平均評価"
           value={stats.avg > 0 ? stats.avg.toFixed(1) : "-"}
         />
@@ -239,8 +227,8 @@ function StatCard({
   value: number | string;
 }) {
   return (
-    <div className="bg-background rounded-xl border border-foreground/10 p-4">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="bg-background rounded-lg border border-foreground/10 p-4">
+      <div className="flex items-center gap-2 mb-1">
         {icon}
         <span className="text-sm text-foreground/50">{label}</span>
       </div>
@@ -300,7 +288,7 @@ function TestimonialCard({
   onToggleFeatured: () => void;
 }) {
   return (
-    <div className="bg-background rounded-xl border border-foreground/10 p-5">
+    <div className="bg-background rounded-lg border border-foreground/10 p-5">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-2">
@@ -338,35 +326,35 @@ function TestimonialCard({
           </p>
         </div>
 
-        <div className="flex items-center gap-1 ml-4 shrink-0">
+        <div className="flex items-center gap-2 ml-4 shrink-0">
           {t.status !== "approved" && (
             <button
               onClick={onApprove}
-              className="p-2 text-green-600 hover:bg-green-50 rounded-lg cursor-pointer"
-              title="承認"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs rounded bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
             >
-              <CheckCircle size={18} />
+              <CheckCircle size={14} />
+              承認
             </button>
           )}
           {t.status !== "rejected" && (
             <button
               onClick={onReject}
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
-              title="非承認"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs border border-foreground/10 rounded text-foreground/50 hover:bg-foreground/5 cursor-pointer"
             >
-              <XCircle size={18} />
+              <XCircle size={14} />
+              却下
             </button>
           )}
           <button
             onClick={onToggleFeatured}
-            className={`p-2 rounded-lg cursor-pointer ${
+            className={`p-1.5 rounded cursor-pointer ${
               t.is_featured
-                ? "text-amber-500 hover:bg-amber-50"
+                ? "text-amber-500 hover:bg-foreground/5"
                 : "text-foreground/30 hover:bg-foreground/5"
             }`}
             title={t.is_featured ? "注目を解除" : "注目に設定"}
           >
-            <Bookmark size={18} />
+            <Bookmark size={16} />
           </button>
         </div>
       </div>

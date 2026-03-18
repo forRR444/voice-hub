@@ -106,7 +106,7 @@ export default function TestimonialDetailClient({
         </div>
       )}
 
-      <div className="bg-background rounded-xl border border-foreground/10 p-8">
+      <div className="bg-background rounded-lg border border-foreground/10 p-8">
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -117,7 +117,7 @@ export default function TestimonialDetailClient({
                 className="w-14 h-14 rounded-full object-cover"
               />
             ) : (
-              <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xl">
+              <div className="w-14 h-14 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/50 font-bold text-xl">
                 {t.name.charAt(0)}
               </div>
             )}
@@ -277,7 +277,7 @@ export default function TestimonialDetailClient({
       {/* Delete confirmation */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background rounded-xl p-6 max-w-sm mx-4">
+          <div className="bg-background rounded-lg p-6 max-w-sm mx-4">
             <h3 className="text-lg font-bold text-foreground mb-2">
               削除の確認
             </h3>

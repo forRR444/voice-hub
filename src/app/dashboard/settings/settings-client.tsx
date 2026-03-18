@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Check,
   CreditCard,
-  Zap,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
@@ -47,7 +46,7 @@ export default function SettingsClient({
       <h2 className="text-2xl font-bold text-foreground mb-8">設定</h2>
 
       {/* Workspace name */}
-      <section className="bg-background rounded-xl border border-foreground/10 p-6 mb-6">
+      <section className="bg-background rounded-lg border border-foreground/10 p-6 mb-6">
         <h3 className="text-lg font-semibold text-foreground mb-4">
           ワークスペース
         </h3>
@@ -83,7 +82,7 @@ export default function SettingsClient({
       </section>
 
       {/* Plan info */}
-      <section className="bg-background rounded-xl border border-foreground/10 p-6 mb-6">
+      <section className="bg-background rounded-lg border border-foreground/10 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-foreground">プラン情報</h3>
           <span
@@ -130,7 +129,6 @@ export default function SettingsClient({
             href="/api/stripe/checkout"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
           >
-            <Zap size={16} />
             Proにアップグレード
           </a>
         )}
@@ -138,8 +136,8 @@ export default function SettingsClient({
 
       {/* Pro plan comparison */}
       {!isPro && (
-        <section className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <section className="bg-background rounded-lg border border-foreground/10 p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Proプランの特徴
           </h3>
           <ul className="flex flex-col gap-3">
@@ -152,7 +150,7 @@ export default function SettingsClient({
             ].map((feature) => (
               <li
                 key={feature}
-                className="flex items-center gap-2 text-sm text-gray-700"
+                className="flex items-center gap-2 text-sm text-foreground/70"
               >
                 <Check size={16} className="text-indigo-600 shrink-0" />
                 {feature}
@@ -163,7 +161,6 @@ export default function SettingsClient({
             href="/api/stripe/checkout"
             className="inline-flex items-center gap-2 mt-6 px-6 py-2.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
           >
-            <Zap size={16} />
             今すぐアップグレード
           </a>
         </section>
