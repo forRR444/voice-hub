@@ -17,23 +17,33 @@ import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
+import NextStepsChecklist from "./next-steps-checklist";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
+
+type FormInfo = { id: string; slug: string; title: string };
 
 export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
-  formSlug,
+  forms,
+  hasRealTestimonials,
+  hasApprovedTestimonials,
+  widgetCount,
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
-  formSlug: string | null;
+  forms: FormInfo[];
+  hasRealTestimonials: boolean;
+  hasApprovedTestimonials: boolean;
+  widgetCount: number;
 }) {
   const supabase = createClient();
   const [testimonials, setTestimonials] =
     useState<TestimonialWithTags[]>(initialTestimonials);
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
+  const [showFormMenu, setShowFormMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
 
@@ -95,11 +105,11 @@ export default function DashboardClient({
     );
   }
 
-  function copyFormUrl() {
-    if (!formSlug) return;
-    const url = `${getBaseUrl()}/form/${formSlug}`;
+  function copyFormUrl(slug: string) {
+    const url = `${getBaseUrl()}/form/${slug}`;
     navigator.clipboard.writeText(url);
     setCopiedUrl(true);
+    setShowFormMenu(false);
     setTimeout(() => setCopiedUrl(false), 2000);
   }
 
@@ -117,18 +127,48 @@ export default function DashboardClient({
 
   return (
     <div className="max-w-5xl mx-auto">
+      {/* Next Steps Checklist */}
+      <NextStepsChecklist
+        formSlug={forms.length > 0 ? forms[0].slug : null}
+        hasRealTestimonials={hasRealTestimonials}
+        hasApprovedTestimonials={hasApprovedTestimonials}
+        widgetCount={widgetCount}
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-foreground">お客様の声</h2>
         <div className="flex gap-2">
-          {formSlug && (
-            <button
-              onClick={copyFormUrl}
-              className="flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
-            >
-              <Copy size={16} />
-              {copiedUrl ? "コピーしました" : "フォームURLをコピー"}
-            </button>
+          {forms.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => forms.length === 1 ? copyFormUrl(forms[0].slug) : setShowFormMenu(!showFormMenu)}
+                className="flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+              >
+                <Copy size={16} />
+                {copiedUrl ? "コピーしました" : "フォームURLをコピー"}
+              </button>
+              {showFormMenu && forms.length > 1 && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowFormMenu(false)}
+                  />
+                  <div className="absolute right-0 top-11 z-20 w-56 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
+                    {forms.map((f) => (
+                      <button
+                        key={f.id}
+                        onClick={() => copyFormUrl(f.slug)}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
+                      >
+                        <Copy size={14} />
+                        {f.title}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           )}
           <button
             onClick={() => setShowAddModal(true)}

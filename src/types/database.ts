@@ -2,6 +2,7 @@ export type WorkspaceRow = {
   id: string;
   user_id: string;
   name: string;
+  onboarding_completed: boolean;
   created_at: string;
 };
 
@@ -40,6 +41,7 @@ export type TestimonialRow = {
   status: "pending" | "approved" | "rejected";
   is_featured: boolean;
   permission_granted: boolean;
+  custom_fields?: Record<string, string | boolean | number>;
   source: string;
   submitted_at: string;
   created_at: string;

@@ -57,19 +57,32 @@ export default async function DashboardPage() {
     })
   );
 
+  const hasRealTestimonials = testimonialList.some(
+    (t) => t.source !== "sample"
+  );
+  const hasApprovedTestimonials = testimonialList.some(
+    (t) => t.source !== "sample" && t.status === "approved"
+  );
+
   const { data: forms } = await supabase
     .from("forms")
-    .select("id, slug")
+    .select("id, slug, title")
     .eq("workspace_id", workspace.id)
-    .limit(1);
+    .order("created_at", { ascending: false });
 
-  const formSlug = forms?.[0]?.slug ?? null;
+  const { count: widgetCount } = await supabase
+    .from("widgets")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspace.id);
 
   return (
     <DashboardClient
       workspace={workspace}
       testimonials={testimonialsWithTags}
-      formSlug={formSlug}
+      forms={(forms ?? []) as { id: string; slug: string; title: string }[]}
+      hasRealTestimonials={hasRealTestimonials}
+      hasApprovedTestimonials={hasApprovedTestimonials}
+      widgetCount={widgetCount ?? 0}
     />
   );
 }

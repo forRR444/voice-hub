@@ -31,6 +31,10 @@ export default async function DashboardLayout({
     .eq("user_id", user.id);
   const workspace = workspaces?.[0] ?? null;
 
+  if (workspace && !workspace.onboarding_completed) {
+    redirect("/onboarding");
+  }
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
