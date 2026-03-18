@@ -9,7 +9,6 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       console.error("Validation error:", JSON.stringify(parsed.error.flatten()));
-      console.error("Received body:", JSON.stringify(body));
       return NextResponse.json(
         { error: "入力内容に不備があります", details: parsed.error.flatten() },
         { status: 400 }

@@ -65,6 +65,7 @@ export async function POST(request: Request) {
 
         if (error) {
           console.error("Failed to update workspace after checkout:", error);
+          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
       }
@@ -101,6 +102,7 @@ export async function POST(request: Request) {
 
         if (error) {
           console.error("Failed to update subscription status:", error);
+          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
       }
@@ -122,6 +124,7 @@ export async function POST(request: Request) {
 
         if (error) {
           console.error("Failed to update workspace after deletion:", error);
+          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
       }
