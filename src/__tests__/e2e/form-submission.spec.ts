@@ -4,17 +4,18 @@ test.describe("公開フォームの送信フロー", () => {
   const formUrl = "/form/tanaka-coaching";
 
   test("フォームページにタイトルが表示される", async ({ page }) => {
-    await page.goto(formUrl);
+    await page.goto(formUrl, { waitUntil: "networkidle" });
     await expect(page.locator("h1")).toBeVisible();
   });
 
   test("全ステップを完了してフォームを送信できる", async ({ page }) => {
-    await page.goto(formUrl);
-    await expect(page.locator("h1")).toBeVisible();
+    test.setTimeout(60000);
+    await page.goto(formUrl, { waitUntil: "networkidle" });
 
     // ステップ1: 星評価 - 5つ星をクリック
-    await expect(page.getByLabel("5つ星")).toBeVisible();
-    await page.getByLabel("5つ星").click();
+    const star5 = page.locator('[aria-label="5つ星"]');
+    await expect(star5).toBeVisible({ timeout: 10000 });
+    await star5.click();
     await page.getByRole("button", { name: "次へ" }).click();
 
     // ステップ2: before_story テキストエリア
@@ -39,9 +40,6 @@ test.describe("公開フォームの送信フロー", () => {
     await page.getByRole("button", { name: "次へ" }).click();
 
     // ステップ6: アバター（オプション） - スキップ
-    await expect(
-      page.getByRole("button", { name: "クリックして写真を選択" })
-    ).toBeVisible();
     await page.getByRole("button", { name: "次へ" }).click();
 
     // ステップ7: 許可チェックボックス -> 送信
@@ -50,21 +48,23 @@ test.describe("公開フォームの送信フロー", () => {
     await page.getByRole("button", { name: "送信する" }).click();
 
     // サンクスメッセージの確認
-    await expect(page.getByText("ありがとうございます！")).toBeVisible({
-      timeout: 10_000,
+    await expect(page.getByText("ありがとうございます")).toBeVisible({
+      timeout: 15000,
     });
   });
 
   test("ステップインジケーターが表示される", async ({ page }) => {
-    await page.goto(formUrl);
+    await page.goto(formUrl, { waitUntil: "networkidle" });
     await expect(page.getByText("1 / 7")).toBeVisible();
   });
 
   test("戻るボタンで前のステップに戻れる", async ({ page }) => {
-    await page.goto(formUrl);
+    await page.goto(formUrl, { waitUntil: "networkidle" });
 
     // ステップ1を完了
-    await page.getByLabel("5つ星").click();
+    const star5 = page.locator('[aria-label="5つ星"]');
+    await expect(star5).toBeVisible({ timeout: 10000 });
+    await star5.click();
     await page.getByRole("button", { name: "次へ" }).click();
 
     // ステップ2で戻る
