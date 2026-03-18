@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { FormRow, FormQuestion } from "@/types/database";
 
@@ -20,7 +20,9 @@ const TEXTAREA_MAX = 5000;
 function resizeImage(file: File, maxSize: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
       let { width, height } = img;
       if (width > maxSize || height > maxSize) {
         if (width > height) {
@@ -45,8 +47,11 @@ function resizeImage(file: File, maxSize: number): Promise<Blob> {
         0.85
       );
     };
-    img.onerror = () => reject(new Error("画像の読み込みに失敗しました"));
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("画像の読み込みに失敗しました"));
+    };
+    img.src = objectUrl;
   });
 }
 
@@ -101,6 +106,16 @@ export function FormClient({ form }: { form: FormRow }) {
     avatarPreview: null,
     permission: false,
   });
+
+  // Cleanup preview object URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (formData.avatarPreview) {
+        URL.revokeObjectURL(formData.avatarPreview);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const brandColor = form.brand_color || "#6366f1";
   const currentQuestion = questions[step];
@@ -164,11 +179,16 @@ export function FormClient({ form }: { form: FormRow }) {
         type: "image/jpeg",
       });
       const previewUrl = URL.createObjectURL(resized);
-      setFormData((prev) => ({
-        ...prev,
-        avatar: resizedFile,
-        avatarPreview: previewUrl,
-      }));
+      setFormData((prev) => {
+        if (prev.avatarPreview) {
+          URL.revokeObjectURL(prev.avatarPreview);
+        }
+        return {
+          ...prev,
+          avatar: resizedFile,
+          avatarPreview: previewUrl,
+        };
+      });
     } catch {
       setError("画像の処理に失敗しました");
     }
@@ -178,14 +198,15 @@ export function FormClient({ form }: { form: FormRow }) {
     setSubmitting(true);
     setError(null);
 
-    try {
-      const supabase = createClient();
-      let avatarUrl: string | null = null;
+    const supabase = createClient();
+    let avatarUrl: string | null = null;
+    let uploadedPath: string | null = null;
 
+    try {
       // Upload avatar if present
       if (formData.avatar) {
-        const ext = "jpg";
-        const path = `${form.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const path = `${form.id}/${crypto.randomUUID()}.jpg`;
+        uploadedPath = path;
         const { error: uploadError } = await supabase.storage
           .from("avatars")
           .upload(path, formData.avatar, {
@@ -226,6 +247,10 @@ export function FormClient({ form }: { form: FormRow }) {
 
       setSubmitted(true);
     } catch (err) {
+      // Clean up orphaned avatar file if upload succeeded but submission failed
+      if (uploadedPath) {
+        supabase.storage.from("avatars").remove([uploadedPath]).catch(() => {});
+      }
       setError(
         err instanceof Error
           ? err.message
@@ -361,11 +386,16 @@ export function FormClient({ form }: { form: FormRow }) {
                 type="button"
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
                 onClick={() => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    avatar: null,
-                    avatarPreview: null,
-                  }));
+                  setFormData((prev) => {
+                    if (prev.avatarPreview) {
+                      URL.revokeObjectURL(prev.avatarPreview);
+                    }
+                    return {
+                      ...prev,
+                      avatar: null,
+                      avatarPreview: null,
+                    };
+                  });
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
               >
