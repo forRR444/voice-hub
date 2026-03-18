@@ -84,20 +84,17 @@ export default function SettingsClient({
       {/* Plan info */}
       <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-foreground">プラン情報</h3>
-          <span
-            className={`px-3 py-1 text-sm font-medium rounded-full ${
-              isPro
-                ? "bg-indigo-100 text-indigo-700"
-                : "bg-foreground/5 text-foreground/70"
-            }`}
-          >
-            {isPro ? "Pro" : "Free"}
+          <h3 className="text-lg font-semibold text-foreground">利用状況</h3>
+          <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600">
+            ベータ版
           </span>
         </div>
+        <p className="text-sm text-foreground/50 mb-4">
+          現在ベータ版のため、すべての機能を無料でご利用いただけます。
+        </p>
 
         {/* Usage stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-4">
           <UsageCard
             label="お客様の声"
             used={usage.testimonials}
@@ -114,57 +111,7 @@ export default function SettingsClient({
             limit={limits.widgets}
           />
         </div>
-
-        {/* Actions */}
-        {isPro ? (
-          <a
-            href="/api/stripe/portal"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5"
-          >
-            <CreditCard size={16} />
-            請求情報を管理
-          </a>
-        ) : (
-          <a
-            href="/api/stripe/checkout"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            Proにアップグレード
-          </a>
-        )}
       </section>
-
-      {/* Pro plan comparison */}
-      {!isPro && (
-        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            Proプランの特徴
-          </h3>
-          <ul className="flex flex-col gap-3">
-            {[
-              "お客様の声 - 無制限",
-              "フォーム - 無制限",
-              "ウィジェット - 無制限",
-              "VoiceHubバッジ非表示",
-              "優先サポート",
-            ].map((feature) => (
-              <li
-                key={feature}
-                className="flex items-center gap-2 text-sm text-foreground/70"
-              >
-                <Check size={16} className="text-indigo-600 shrink-0" />
-                {feature}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="/api/stripe/checkout"
-            className="inline-flex items-center gap-2 mt-6 px-6 py-2.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
-          >
-            今すぐアップグレード
-          </a>
-        </section>
-      )}
     </div>
   );
 }
