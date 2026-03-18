@@ -124,7 +124,7 @@ export default function DashboardClient({
           {formSlug && (
             <button
               onClick={copyFormUrl}
-              className="flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-background hover:bg-foreground/5 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
             >
               <Copy size={16} />
               {copiedUrl ? "コピーしました" : "フォームURLをコピー"}
@@ -154,7 +154,7 @@ export default function DashboardClient({
 
       {/* Filter tabs + search */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex gap-1 bg-background rounded-lg border border-foreground/10 p-1">
+        <div className="flex gap-1 bg-white rounded-lg border border-foreground/10 p-1">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -179,7 +179,7 @@ export default function DashboardClient({
             placeholder="検索..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 text-sm border border-foreground/10 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="pl-9 pr-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
       </div>

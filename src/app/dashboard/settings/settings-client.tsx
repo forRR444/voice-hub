@@ -119,7 +119,7 @@ export default function SettingsClient({
         {isPro ? (
           <a
             href="/api/stripe/portal"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-background hover:bg-foreground/5"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5"
           >
             <CreditCard size={16} />
             請求情報を管理

@@ -275,7 +275,7 @@ export default function FormsClient({
                   <div className="mt-4">
                     <button
                       onClick={() => copyUrl(form.slug, form.id)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-background hover:bg-foreground/5 cursor-pointer"
+                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
                     >
                       <Copy size={14} />
                       {copiedId === form.id
