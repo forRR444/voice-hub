@@ -70,11 +70,13 @@ export default function DashboardClient({
       .from("testimonials")
       .update({ status })
       .eq("id", id);
-    if (!error) {
-      setTestimonials((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, status } : t))
-      );
+    if (error) {
+      window.alert("ステータスの更新に失敗しました");
+      return;
     }
+    setTestimonials((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status } : t))
+    );
   }
 
   async function toggleFeatured(id: string, current: boolean) {
@@ -82,13 +84,15 @@ export default function DashboardClient({
       .from("testimonials")
       .update({ is_featured: !current })
       .eq("id", id);
-    if (!error) {
-      setTestimonials((prev) =>
-        prev.map((t) =>
-          t.id === id ? { ...t, is_featured: !current } : t
-        )
-      );
+    if (error) {
+      window.alert("おすすめ設定の更新に失敗しました");
+      return;
     }
+    setTestimonials((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, is_featured: !current } : t
+      )
+    );
   }
 
   function copyFormUrl() {

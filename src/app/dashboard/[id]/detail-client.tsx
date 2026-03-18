@@ -27,59 +27,65 @@ export default function TestimonialDetailClient({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [newTag, setNewTag] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function updateStatus(status: "pending" | "approved" | "rejected") {
+    setErrorMsg(null);
     const { error } = await supabase
       .from("testimonials")
       .update({ status })
       .eq("id", testimonial.id);
-    if (!error) setTestimonial((prev) => ({ ...prev, status }));
+    if (error) { setErrorMsg("ステータスの更新に失敗しました"); return; }
+    setTestimonial((prev) => ({ ...prev, status }));
   }
 
   async function toggleFeatured() {
+    setErrorMsg(null);
     const val = !testimonial.is_featured;
     const { error } = await supabase
       .from("testimonials")
       .update({ is_featured: val })
       .eq("id", testimonial.id);
-    if (!error) setTestimonial((prev) => ({ ...prev, is_featured: val }));
+    if (error) { setErrorMsg("おすすめ設定の更新に失敗しました"); return; }
+    setTestimonial((prev) => ({ ...prev, is_featured: val }));
   }
 
   async function addTag() {
+    setErrorMsg(null);
     const tag = newTag.trim();
     if (!tag || testimonial.tags.includes(tag)) return;
     const { error } = await supabase
       .from("testimonial_tags")
       .insert({ testimonial_id: testimonial.id, tag });
-    if (!error) {
-      setTestimonial((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
-      setNewTag("");
-    }
+    if (error) { setErrorMsg("タグの追加に失敗しました"); return; }
+    setTestimonial((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
+    setNewTag("");
   }
 
   async function removeTag(tag: string) {
+    setErrorMsg(null);
     const { error } = await supabase
       .from("testimonial_tags")
       .delete()
       .eq("testimonial_id", testimonial.id)
       .eq("tag", tag);
-    if (!error) {
-      setTestimonial((prev) => ({
-        ...prev,
-        tags: prev.tags.filter((t) => t !== tag),
-      }));
-    }
+    if (error) { setErrorMsg("タグの削除に失敗しました"); return; }
+    setTestimonial((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tag),
+    }));
   }
 
   async function handleDelete() {
     setDeleting(true);
-    // Tags are automatically deleted via ON DELETE CASCADE in the database
+    setErrorMsg(null);
     const { error } = await supabase
       .from("testimonials")
       .delete()
       .eq("id", testimonial.id);
     setDeleting(false);
-    if (!error) router.push("/dashboard");
+    if (error) { setErrorMsg("削除に失敗しました"); return; }
+    router.push("/dashboard");
   }
 
   const t = testimonial;
@@ -93,6 +99,12 @@ export default function TestimonialDetailClient({
         <ArrowLeft size={16} />
         お客様の声に戻る
       </Link>
+
+      {errorMsg && (
+        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          {errorMsg}
+        </div>
+      )}
 
       <div className="bg-background rounded-xl border border-foreground/10 p-8">
         {/* Header */}
