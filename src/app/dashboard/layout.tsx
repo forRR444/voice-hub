@@ -34,7 +34,7 @@ export default async function DashboardLayout({
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-60 shrink-0 border-r border-foreground/10 flex flex-col">
+      <aside className="w-60 shrink-0 border-r border-foreground/10 bg-white flex flex-col">
         <div className="px-5 py-4 border-b border-foreground/10">
           <h1 className="text-lg font-bold text-foreground">VoiceHub</h1>
           {workspace && (
