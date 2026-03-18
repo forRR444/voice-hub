@@ -9,6 +9,9 @@ import {
   ExternalLink,
   Check,
   X,
+  Pencil,
+  Trash2,
+  MoreHorizontal,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -21,7 +24,7 @@ import { getBaseUrl, formatDate } from "@/lib/utils";
 
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
-  brandColor: "#6366f1",
+  brandColor: "#635BFF",
   showRating: true,
   showAvatar: true,
   showDate: false,
@@ -44,6 +47,16 @@ export default function WidgetsClient({
   const [creating, setCreating] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    type: "carousel" as "carousel" | "grid" | "marquee",
+    theme: { ...DEFAULT_THEME },
+    filter_min_rating: 1,
+    only_featured: false,
+  });
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const [newWidget, setNewWidget] = useState({
     name: "",
@@ -95,6 +108,57 @@ export default function WidgetsClient({
 
   function getIframeEmbed(id: string) {
     return `<iframe src="${baseUrl}/preview/${id}" width="100%" height="400" frameborder="0"></iframe>`;
+  }
+
+  function startEdit(w: WidgetRow) {
+    const theme = w.theme as WidgetTheme;
+    setEditingId(w.id);
+    setEditForm({
+      name: w.name,
+      type: w.type,
+      theme: { ...DEFAULT_THEME, ...theme },
+      filter_min_rating: w.filter_min_rating,
+      only_featured: w.only_featured,
+    });
+  }
+
+  async function saveEdit(id: string) {
+    const { error } = await supabase
+      .from("widgets")
+      .update({
+        name: editForm.name,
+        type: editForm.type,
+        theme: editForm.theme,
+        filter_min_rating: editForm.filter_min_rating,
+        only_featured: editForm.only_featured,
+      })
+      .eq("id", id);
+
+    if (!error) {
+      setWidgets((prev) =>
+        prev.map((w) =>
+          w.id === id
+            ? {
+                ...w,
+                name: editForm.name,
+                type: editForm.type,
+                theme: editForm.theme,
+                filter_min_rating: editForm.filter_min_rating,
+                only_featured: editForm.only_featured,
+              }
+            : w
+        )
+      );
+      setEditingId(null);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    const { error } = await supabase.from("widgets").delete().eq("id", id);
+    if (!error) {
+      setWidgets((prev) => prev.filter((w) => w.id !== id));
+      setDeletingId(null);
+    }
   }
 
   function copyText(text: string, key: string) {
@@ -346,6 +410,161 @@ export default function WidgetsClient({
               key={w.id}
               className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6"
             >
+              {editingId === w.id ? (
+                /* Edit mode */
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      ウィジェット名
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.name}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, name: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      タイプ
+                    </label>
+                    <div className="flex gap-3">
+                      {(["carousel", "grid", "marquee"] as const).map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setEditForm({ ...editForm, type })}
+                          className={`px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                            editForm.type === type
+                              ? "bg-indigo-600 text-white border-indigo-600"
+                              : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
+                          }`}
+                        >
+                          {type === "carousel" ? "カルーセル" : type === "grid" ? "グリッド" : "マーキー"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-foreground/50 mb-1">モード</label>
+                      <select
+                        value={editForm.theme.mode}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            theme: { ...editForm.theme, mode: e.target.value as "light" | "dark" },
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
+                      >
+                        <option value="light">ライト</option>
+                        <option value="dark">ダーク</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-foreground/50 mb-1">ブランドカラー</label>
+                      <input
+                        type="color"
+                        value={editForm.theme.brandColor}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            theme: { ...editForm.theme, brandColor: e.target.value },
+                          })
+                        }
+                        className="w-10 h-10 rounded border border-foreground/10 cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-foreground/50 mb-1">最大表示数</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={50}
+                        value={editForm.theme.maxItems}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            theme: { ...editForm.theme, maxItems: parseInt(e.target.value) || 10 },
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-foreground/50 mb-1">最低評価</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={editForm.filter_min_rating}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            filter_min_rating: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {[
+                      { key: "showRating" as const, label: "評価を表示" },
+                      { key: "showAvatar" as const, label: "アバターを表示" },
+                      { key: "showDate" as const, label: "日付を表示" },
+                      { key: "autoplay" as const, label: "自動再生" },
+                    ].map(({ key, label }) => (
+                      <label key={key} className="flex items-center gap-2 text-sm text-foreground/60">
+                        <input
+                          type="checkbox"
+                          checked={editForm.theme[key]}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              theme: { ...editForm.theme, [key]: e.target.checked },
+                            })
+                          }
+                          className="rounded border-foreground/20"
+                        />
+                        {label}
+                      </label>
+                    ))}
+                    <label className="flex items-center gap-2 text-sm text-foreground/60">
+                      <input
+                        type="checkbox"
+                        checked={editForm.only_featured}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, only_featured: e.target.checked })
+                        }
+                        className="rounded border-foreground/20"
+                      />
+                      注目のみ表示
+                    </label>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="flex items-center gap-1 px-3 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+                    >
+                      <X size={14} />
+                      キャンセル
+                    </button>
+                    <button
+                      onClick={() => saveEdit(w.id)}
+                      className="flex items-center gap-1 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+                    >
+                      <Check size={14} />
+                      保存
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* View mode */
+                <>
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-foreground">
@@ -354,7 +573,7 @@ export default function WidgetsClient({
                   <div className="flex items-center gap-4 mt-2 text-sm text-foreground/50">
                     <span>
                       タイプ:{" "}
-                      {w.type === "carousel" ? "カルーセル" : "グリッド"}
+                      {w.type === "carousel" ? "カルーセル" : w.type === "grid" ? "グリッド" : "マーキー"}
                     </span>
                     <span>
                       モード:{" "}
@@ -365,15 +584,49 @@ export default function WidgetsClient({
                     <span>作成日: {formatDate(w.created_at)}</span>
                   </div>
                 </div>
-                <a
-                  href={`${baseUrl}/preview/${w.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-700"
-                >
-                  <ExternalLink size={14} />
-                  プレビュー
-                </a>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenMenuId(openMenuId === w.id ? null : w.id)}
+                    className="p-2 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5 rounded-lg cursor-pointer"
+                  >
+                    <MoreHorizontal size={18} />
+                  </button>
+                  {openMenuId === w.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setOpenMenuId(null)}
+                      />
+                      <div className="absolute right-0 top-10 z-20 w-44 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
+                        <a
+                          href={`${baseUrl}/preview/${w.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5"
+                          onClick={() => setOpenMenuId(null)}
+                        >
+                          <ExternalLink size={14} />
+                          プレビュー
+                        </a>
+                        <button
+                          onClick={() => { startEdit(w); setOpenMenuId(null); }}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
+                        >
+                          <Pencil size={14} />
+                          編集
+                        </button>
+                        <div className="border-t border-foreground/10 my-1" />
+                        <button
+                          onClick={() => { setDeletingId(w.id); setOpenMenuId(null); }}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-50 cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                          削除
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="mt-4">
@@ -451,8 +704,38 @@ export default function WidgetsClient({
                   </div>
                 )}
               </div>
+                </>
+              )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Delete confirmation */}
+      {deletingId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-sm p-6 max-w-sm mx-4">
+            <h3 className="text-lg font-bold text-foreground mb-2">
+              削除の確認
+            </h3>
+            <p className="text-sm text-foreground/60 mb-6">
+              このウィジェットを削除しますか？埋め込み先でも表示されなくなります。
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeletingId(null)}
+                className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={() => handleDelete(deletingId)}
+                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer"
+              >
+                削除する
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
