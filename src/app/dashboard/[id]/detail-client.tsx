@@ -73,10 +73,7 @@ export default function TestimonialDetailClient({
 
   async function handleDelete() {
     setDeleting(true);
-    await supabase
-      .from("testimonial_tags")
-      .delete()
-      .eq("testimonial_id", testimonial.id);
+    // Tags are automatically deleted via ON DELETE CASCADE in the database
     const { error } = await supabase
       .from("testimonials")
       .delete()

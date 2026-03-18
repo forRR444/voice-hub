@@ -19,7 +19,14 @@ export default async function WidgetsPage() {
     .single();
 
   if (!workspace) {
-    return <WidgetsClient workspace={null as any} widgets={[]} subscriptionStatus="free" />;
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-bold text-foreground">ワークスペースが見つかりません</h2>
+          <p className="text-foreground/60">ワークスペースの作成を完了してください。</p>
+        </div>
+      </div>
+    );
   }
 
   const { data: widgets } = await supabase
