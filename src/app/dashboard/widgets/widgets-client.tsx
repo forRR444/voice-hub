@@ -1,0 +1,460 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Plus,
+  Copy,
+  Code,
+  ExternalLink,
+  Check,
+  X,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  WorkspaceRow,
+  WidgetRow,
+  WidgetTheme,
+  PLAN_LIMITS,
+} from "@/types/database";
+import { getBaseUrl, formatDate } from "@/lib/utils";
+
+const DEFAULT_THEME: WidgetTheme = {
+  mode: "light",
+  brandColor: "#6366f1",
+  showRating: true,
+  showAvatar: true,
+  showDate: false,
+  maxItems: 10,
+  autoplay: true,
+};
+
+export default function WidgetsClient({
+  workspace,
+  widgets: initialWidgets,
+  subscriptionStatus,
+}: {
+  workspace: WorkspaceRow;
+  widgets: WidgetRow[];
+  subscriptionStatus: string;
+}) {
+  const supabase = createClient();
+  const [widgets, setWidgets] = useState<WidgetRow[]>(initialWidgets);
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const [newWidget, setNewWidget] = useState({
+    name: "",
+    type: "carousel" as "carousel" | "grid" | "marquee",
+    theme: { ...DEFAULT_THEME },
+    filter_min_rating: 1,
+    only_featured: false,
+  });
+
+  const plan = subscriptionStatus === "pro" ? "pro" : "free";
+  const limit = PLAN_LIMITS[plan].widgets;
+  const canCreate = widgets.length < limit;
+  const baseUrl = getBaseUrl();
+
+  async function handleCreate() {
+    if (!newWidget.name.trim()) return;
+    setCreating(true);
+
+    const { data, error } = await supabase
+      .from("widgets")
+      .insert({
+        workspace_id: workspace.id,
+        name: newWidget.name,
+        type: newWidget.type,
+        theme: newWidget.theme,
+        filter_min_rating: newWidget.filter_min_rating,
+        only_featured: newWidget.only_featured,
+      })
+      .select()
+      .single();
+
+    setCreating(false);
+    if (!error && data) {
+      setWidgets((prev) => [data, ...prev]);
+      setShowCreate(false);
+      setNewWidget({
+        name: "",
+        type: "carousel",
+        theme: { ...DEFAULT_THEME },
+        filter_min_rating: 1,
+        only_featured: false,
+      });
+    }
+  }
+
+  function getScriptEmbed(id: string) {
+    return `<script src="${baseUrl}/widget/v1/embed.js" defer></script>\n<div data-testimonial-widget="${id}" data-theme="light"></div>`;
+  }
+
+  function getIframeEmbed(id: string) {
+    return `<iframe src="${baseUrl}/preview/${id}" width="100%" height="400" frameborder="0"></iframe>`;
+  }
+
+  function copyText(text: string, key: string) {
+    navigator.clipboard.writeText(text);
+    setCopiedField(key);
+    setTimeout(() => setCopiedField(null), 2000);
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-bold text-foreground">ウィジェット管理</h2>
+        <button
+          onClick={() => setShowCreate(true)}
+          disabled={!canCreate}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+        >
+          <Plus size={16} />
+          新しいウィジェット
+        </button>
+      </div>
+
+      {!canCreate && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+          フリープランではウィジェットは{limit}つまでです。
+          <Link href="/dashboard/settings" className="underline ml-1">
+            アップグレード
+          </Link>
+          して制限を解除しましょう。
+        </div>
+      )}
+
+      {/* Create modal */}
+      {showCreate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background rounded-xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-foreground">
+                新しいウィジェット作成
+              </h3>
+              <button
+                onClick={() => setShowCreate(false)}
+                className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground/70 mb-1">
+                  ウィジェット名 *
+                </label>
+                <input
+                  type="text"
+                  value={newWidget.name}
+                  onChange={(e) =>
+                    setNewWidget({ ...newWidget, name: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="メインページ用"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground/70 mb-1">
+                  タイプ
+                </label>
+                <div className="flex gap-3">
+                  {(["carousel", "grid", "marquee"] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setNewWidget({ ...newWidget, type })}
+                      className={`px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                        newWidget.type === type
+                          ? "bg-indigo-600 text-white border-indigo-600"
+                          : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
+                      }`}
+                    >
+                      {type === "carousel" ? "カルーセル" : type === "grid" ? "グリッド" : "マーキー"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-foreground/10 pt-4">
+                <h4 className="text-sm font-medium text-foreground/70 mb-3">
+                  テーマ設定
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-foreground/50 mb-1">
+                      モード
+                    </label>
+                    <select
+                      value={newWidget.theme.mode}
+                      onChange={(e) =>
+                        setNewWidget({
+                          ...newWidget,
+                          theme: {
+                            ...newWidget.theme,
+                            mode: e.target.value as "light" | "dark",
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
+                    >
+                      <option value="light">ライト</option>
+                      <option value="dark">ダーク</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-foreground/50 mb-1">
+                      ブランドカラー
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={newWidget.theme.brandColor}
+                        onChange={(e) =>
+                          setNewWidget({
+                            ...newWidget,
+                            theme: {
+                              ...newWidget.theme,
+                              brandColor: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-10 h-10 rounded border border-foreground/10 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-foreground/50 mb-1">
+                      最大表示数
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={newWidget.theme.maxItems}
+                      onChange={(e) =>
+                        setNewWidget({
+                          ...newWidget,
+                          theme: {
+                            ...newWidget.theme,
+                            maxItems: parseInt(e.target.value) || 10,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-foreground/50 mb-1">
+                      最低評価
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      value={newWidget.filter_min_rating}
+                      onChange={(e) =>
+                        setNewWidget({
+                          ...newWidget,
+                          filter_min_rating: parseInt(e.target.value) || 1,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 mt-4">
+                  {[
+                    { key: "showRating" as const, label: "評価を表示" },
+                    { key: "showAvatar" as const, label: "アバターを表示" },
+                    { key: "showDate" as const, label: "日付を表示" },
+                    { key: "autoplay" as const, label: "自動再生" },
+                  ].map(({ key, label }) => (
+                    <label
+                      key={key}
+                      className="flex items-center gap-2 text-sm text-foreground/60"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={newWidget.theme[key]}
+                        onChange={(e) =>
+                          setNewWidget({
+                            ...newWidget,
+                            theme: {
+                              ...newWidget.theme,
+                              [key]: e.target.checked,
+                            },
+                          })
+                        }
+                        className="rounded border-foreground/20"
+                      />
+                      {label}
+                    </label>
+                  ))}
+                  <label className="flex items-center gap-2 text-sm text-foreground/60">
+                    <input
+                      type="checkbox"
+                      checked={newWidget.only_featured}
+                      onChange={(e) =>
+                        setNewWidget({
+                          ...newWidget,
+                          only_featured: e.target.checked,
+                        })
+                      }
+                      className="rounded border-foreground/20"
+                    />
+                    注目のみ表示
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-2">
+                <button
+                  onClick={() => setShowCreate(false)}
+                  className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+                >
+                  キャンセル
+                </button>
+                <button
+                  onClick={handleCreate}
+                  disabled={creating || !newWidget.name.trim()}
+                  className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+                >
+                  {creating ? "作成中..." : "作成する"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Widget list */}
+      {widgets.length === 0 ? (
+        <div className="text-center py-16 text-foreground/50">
+          ウィジェットがまだありません。新しいウィジェットを作成してください。
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {widgets.map((w) => (
+            <div
+              key={w.id}
+              className="bg-background rounded-xl border border-foreground/10 p-6"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {w.name}
+                  </h3>
+                  <div className="flex items-center gap-4 mt-2 text-sm text-foreground/50">
+                    <span>
+                      タイプ:{" "}
+                      {w.type === "carousel" ? "カルーセル" : "グリッド"}
+                    </span>
+                    <span>
+                      モード:{" "}
+                      {(w.theme as WidgetTheme).mode === "light"
+                        ? "ライト"
+                        : "ダーク"}
+                    </span>
+                    <span>作成日: {formatDate(w.created_at)}</span>
+                  </div>
+                </div>
+                <a
+                  href={`${baseUrl}/preview/${w.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-700"
+                >
+                  <ExternalLink size={14} />
+                  プレビュー
+                </a>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  onClick={() =>
+                    setExpandedId(expandedId === w.id ? null : w.id)
+                  }
+                  className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                >
+                  <Code size={14} />
+                  埋め込みコードを表示
+                </button>
+
+                {expandedId === w.id && (
+                  <div className="mt-4 flex flex-col gap-4">
+                    {/* Script embed */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-foreground/50">
+                          スクリプト埋め込み
+                        </span>
+                        <button
+                          onClick={() =>
+                            copyText(getScriptEmbed(w.id), `script-${w.id}`)
+                          }
+                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                        >
+                          {copiedField === `script-${w.id}` ? (
+                            <>
+                              <Check size={12} />
+                              コピーしました
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={12} />
+                              コピー
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <pre className="bg-gray-900 text-green-400 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                        {getScriptEmbed(w.id)}
+                      </pre>
+                    </div>
+
+                    {/* iFrame embed */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-foreground/50">
+                          iFrame埋め込み
+                        </span>
+                        <button
+                          onClick={() =>
+                            copyText(getIframeEmbed(w.id), `iframe-${w.id}`)
+                          }
+                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                        >
+                          {copiedField === `iframe-${w.id}` ? (
+                            <>
+                              <Check size={12} />
+                              コピーしました
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={12} />
+                              コピー
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <pre className="bg-gray-900 text-green-400 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                        {getIframeEmbed(w.id)}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
