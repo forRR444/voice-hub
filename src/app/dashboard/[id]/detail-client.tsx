@@ -106,7 +106,7 @@ export default function TestimonialDetailClient({
         </div>
       )}
 
-      <div className="bg-background rounded-lg border border-foreground/10 p-8">
+      <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-8">
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -191,24 +191,21 @@ export default function TestimonialDetailClient({
           <div className="flex gap-2">
             {(
               [
-                { key: "pending", label: "未承認" },
-                { key: "approved", label: "承認済み" },
-                { key: "rejected", label: "非承認" },
+                { key: "pending", label: "未承認", dot: "bg-amber-400" },
+                { key: "approved", label: "承認済み", dot: "bg-emerald-500" },
+                { key: "rejected", label: "非承認", dot: "bg-red-400" },
               ] as const
-            ).map(({ key, label }) => (
+            ).map(({ key, label, dot }) => (
               <button
                 key={key}
                 onClick={() => updateStatus(key)}
-                className={`px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
                   t.status === key
-                    ? key === "approved"
-                      ? "bg-green-100 border-green-300 text-green-800"
-                      : key === "rejected"
-                        ? "bg-red-100 border-red-300 text-red-800"
-                        : "bg-yellow-100 border-yellow-300 text-yellow-800"
-                    : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
+                    ? "border-foreground/20 bg-foreground/5 text-foreground"
+                    : "border-foreground/10 text-foreground/50 hover:bg-foreground/5"
                 }`}
               >
+                <span className={`w-2 h-2 rounded-full ${dot}`} />
                 {label}
               </button>
             ))}
@@ -221,11 +218,11 @@ export default function TestimonialDetailClient({
             onClick={toggleFeatured}
             className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
               t.is_featured
-                ? "bg-amber-50 border-amber-300 text-amber-700"
+                ? "border-violet-300 text-violet-700 bg-violet-50"
                 : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
             }`}
           >
-            <Bookmark size={16} />
+            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
             {t.is_featured ? "注目から解除" : "注目に設定"}
           </button>
         </div>
