@@ -46,6 +46,7 @@ export async function POST(request: Request) {
         status: "pending" as const,
         is_featured: false,
         permission_granted: data.permission_granted,
+        custom_fields: data.custom_fields || {},
         source: "form",
         submitted_at: new Date().toISOString(),
       });

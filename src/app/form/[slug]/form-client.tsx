@@ -13,9 +13,11 @@ type FormData = {
   avatar: File | null;
   avatarPreview: string | null;
   permission: boolean;
+  customFields: Record<string, string | boolean | number>;
 };
 
 const TEXTAREA_MAX = 5000;
+const KNOWN_IDS = ["rating", "before_story", "content", "name", "title", "avatar", "permission"];
 
 function resizeImage(file: File, maxSize: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -105,6 +107,7 @@ export function FormClient({ form }: { form: FormRow }) {
     avatar: null,
     avatarPreview: null,
     permission: false,
+    customFields: {},
   });
 
   // Cleanup preview object URL on unmount to prevent memory leaks
@@ -148,8 +151,18 @@ export function FormClient({ form }: { form: FormRow }) {
         return formData.permission;
       case "avatar":
         return formData.avatar !== null;
-      default:
-        return true;
+      default: {
+        // Custom question validation
+        const customValue = formData.customFields[q.id];
+        if (q.type === "star_rating") {
+          return typeof customValue === "number" && customValue > 0;
+        }
+        if (q.type === "checkbox") {
+          return customValue === true;
+        }
+        // text / textarea
+        return typeof customValue === "string" && customValue.trim().length > 0;
+      }
     }
   };
 
@@ -224,6 +237,14 @@ export function FormClient({ form }: { form: FormRow }) {
         avatarUrl = publicUrlData.publicUrl;
       }
 
+      // Collect custom fields (only non-empty values)
+      const customFields: Record<string, string | boolean | number> = {};
+      for (const [key, value] of Object.entries(formData.customFields)) {
+        if (value !== "" && value !== false && value !== 0) {
+          customFields[key] = value;
+        }
+      }
+
       // Submit testimonial
       const response = await fetch("/api/testimonials", {
         method: "POST",
@@ -237,6 +258,7 @@ export function FormClient({ form }: { form: FormRow }) {
           title: formData.title || undefined,
           avatar_url: avatarUrl,
           permission_granted: formData.permission,
+          ...(Object.keys(customFields).length > 0 && { custom_fields: customFields }),
         }),
       });
 
@@ -299,20 +321,63 @@ export function FormClient({ form }: { form: FormRow }) {
     );
   }
 
+  const updateCustomField = useCallback(
+    (id: string, value: string | boolean | number) => {
+      setFormData((prev) => ({
+        ...prev,
+        customFields: { ...prev.customFields, [id]: value },
+      }));
+    },
+    []
+  );
+
   const renderQuestion = (question: FormQuestion) => {
+    const isKnown = KNOWN_IDS.includes(question.id);
+
     switch (question.type) {
       case "star_rating":
+        if (isKnown) {
+          return (
+            <StarRating
+              value={formData.rating}
+              onChange={(v) => updateField("rating", v)}
+              brandColor={brandColor}
+            />
+          );
+        }
         return (
           <StarRating
-            value={formData.rating}
-            onChange={(v) => updateField("rating", v)}
+            value={(formData.customFields[question.id] as number) || 0}
+            onChange={(v) => updateCustomField(question.id, v)}
             brandColor={brandColor}
           />
         );
 
       case "textarea": {
-        const fieldKey = question.id as "before_story" | "content";
-        const value = formData[fieldKey];
+        if (isKnown) {
+          const fieldKey = question.id as "before_story" | "content";
+          const value = formData[fieldKey];
+          return (
+            <div className="space-y-2">
+              <textarea
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-shadow resize-none min-h-[160px]"
+                style={
+                  {
+                    "--tw-ring-color": brandColor,
+                  } as React.CSSProperties
+                }
+                placeholder={question.placeholder}
+                value={value}
+                onChange={(e) => updateField(fieldKey, e.target.value)}
+                maxLength={TEXTAREA_MAX}
+              />
+              <p className="text-right text-sm text-gray-400">
+                {value.length} / {TEXTAREA_MAX}
+              </p>
+            </div>
+          );
+        }
+        const customValue = (formData.customFields[question.id] as string) || "";
         return (
           <div className="space-y-2">
             <textarea
@@ -323,19 +388,36 @@ export function FormClient({ form }: { form: FormRow }) {
                 } as React.CSSProperties
               }
               placeholder={question.placeholder}
-              value={value}
-              onChange={(e) => updateField(fieldKey, e.target.value)}
+              value={customValue}
+              onChange={(e) => updateCustomField(question.id, e.target.value)}
               maxLength={TEXTAREA_MAX}
             />
             <p className="text-right text-sm text-gray-400">
-              {value.length} / {TEXTAREA_MAX}
+              {customValue.length} / {TEXTAREA_MAX}
             </p>
           </div>
         );
       }
 
       case "text": {
-        const textKey = question.id as "name" | "title";
+        if (isKnown) {
+          const textKey = question.id as "name" | "title";
+          return (
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-shadow"
+              style={
+                {
+                  "--tw-ring-color": brandColor,
+                } as React.CSSProperties
+              }
+              placeholder={question.placeholder}
+              value={formData[textKey]}
+              onChange={(e) => updateField(textKey, e.target.value)}
+              maxLength={100}
+            />
+          );
+        }
         return (
           <input
             type="text"
@@ -346,8 +428,8 @@ export function FormClient({ form }: { form: FormRow }) {
               } as React.CSSProperties
             }
             placeholder={question.placeholder}
-            value={formData[textKey]}
-            onChange={(e) => updateField(textKey, e.target.value)}
+            value={(formData.customFields[question.id] as string) || ""}
+            onChange={(e) => updateCustomField(question.id, e.target.value)}
             maxLength={100}
           />
         );
@@ -405,26 +487,67 @@ export function FormClient({ form }: { form: FormRow }) {
           </div>
         );
 
-      case "checkbox":
+      case "checkbox": {
+        if (isKnown) {
+          return (
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative mt-0.5">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                  checked={formData.permission}
+                  onChange={(e) => updateField("permission", e.target.checked)}
+                />
+                <div
+                  className="w-6 h-6 rounded border-2 border-gray-300 transition-colors peer-checked:border-transparent"
+                  style={{
+                    backgroundColor: formData.permission
+                      ? brandColor
+                      : "transparent",
+                    borderColor: formData.permission ? brandColor : undefined,
+                  }}
+                >
+                  {formData.permission && (
+                    <svg
+                      className="w-full h-full text-white p-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className="text-gray-700 leading-relaxed">
+                はい、掲載を許可します
+              </span>
+            </label>
+          );
+        }
+        const checked = (formData.customFields[question.id] as boolean) || false;
         return (
           <label className="flex items-start gap-3 cursor-pointer group">
             <div className="relative mt-0.5">
               <input
                 type="checkbox"
                 className="peer sr-only"
-                checked={formData.permission}
-                onChange={(e) => updateField("permission", e.target.checked)}
+                checked={checked}
+                onChange={(e) => updateCustomField(question.id, e.target.checked)}
               />
               <div
                 className="w-6 h-6 rounded border-2 border-gray-300 transition-colors peer-checked:border-transparent"
                 style={{
-                  backgroundColor: formData.permission
-                    ? brandColor
-                    : "transparent",
-                  borderColor: formData.permission ? brandColor : undefined,
+                  backgroundColor: checked ? brandColor : "transparent",
+                  borderColor: checked ? brandColor : undefined,
                 }}
               >
-                {formData.permission && (
+                {checked && (
                   <svg
                     className="w-full h-full text-white p-0.5"
                     fill="none"
@@ -442,10 +565,11 @@ export function FormClient({ form }: { form: FormRow }) {
               </div>
             </div>
             <span className="text-gray-700 leading-relaxed">
-              はい、掲載を許可します
+              {question.label}
             </span>
           </label>
         );
+      }
 
       default:
         return null;
@@ -456,7 +580,7 @@ export function FormClient({ form }: { form: FormRow }) {
     <div className="min-h-dvh bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             {form.logo_url && (
               <img
@@ -467,6 +591,14 @@ export function FormClient({ form }: { form: FormRow }) {
             )}
             <h1 className="text-lg font-bold text-gray-900">{form.title}</h1>
           </div>
+          <a
+            href="https://voicehub.jp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            Powered by VoiceHub
+          </a>
           {form.description && (
             <p className="mt-2 text-sm text-gray-500 leading-relaxed">
               {form.description}

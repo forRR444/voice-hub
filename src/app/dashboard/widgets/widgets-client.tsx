@@ -115,7 +115,7 @@ export default function WidgetsClient({
     setEditingId(w.id);
     setEditForm({
       name: w.name,
-      type: w.type,
+      type: w.type as "carousel" | "grid" | "marquee",
       theme: { ...DEFAULT_THEME, ...theme },
       filter_min_rating: w.filter_min_rating,
       only_featured: w.only_featured,

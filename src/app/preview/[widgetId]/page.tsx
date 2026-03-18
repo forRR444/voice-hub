@@ -30,7 +30,7 @@ interface Widget {
   id: string;
   workspace_id: string;
   name: string;
-  type: "carousel" | "grid";
+  type: "carousel" | "grid" | "marquee";
   theme: Theme;
   filter_min_rating: number;
   only_featured: boolean;

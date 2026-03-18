@@ -16,6 +16,7 @@ export const testimonialSubmitSchema = z.object({
   title: z.string().max(100).optional(),
   avatar_url: safeUrlSchema.optional().nullable(),
   permission_granted: z.boolean(),
+  custom_fields: z.record(z.string(), z.union([z.string(), z.boolean(), z.number()])).optional(),
 });
 
 export const testimonialUpdateSchema = z.object({
@@ -55,10 +56,19 @@ export const widgetCreateSchema = z.object({
 
 export const widgetUpdateSchema = widgetCreateSchema.partial();
 
+const formQuestionSchema = z.object({
+  id: z.string().min(1).max(50),
+  label: z.string().min(1).max(200),
+  type: z.enum(["star_rating", "text", "textarea", "image", "checkbox"]),
+  required: z.boolean(),
+  placeholder: z.string().max(200).optional(),
+});
+
 export const formUpdateSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(1000).optional(),
   brand_color: z.string().optional(),
   logo_url: z.string().url().optional().nullable(),
   thank_you_message: z.string().max(500).optional(),
+  questions: z.array(formQuestionSchema).min(1).max(20).optional(),
 });
