@@ -228,26 +228,33 @@
 
       // Autoplay
       if (theme.autoplay !== false && testimonials.length > 1) {
-        var autoId = setInterval(function () {
+        var autoplayFn = function () {
+          if (!container.isConnected) { clearInterval(autoId); return; }
           var maxS = carousel.scrollWidth - carousel.clientWidth;
           if (carousel.scrollLeft >= maxS - 10) {
             carousel.scrollTo({ left: 0, behavior: "smooth" });
           } else {
             carousel.scrollBy({ left: scrollAmt, behavior: "smooth" });
           }
-        }, 4000);
+        };
+
+        var autoId = setInterval(autoplayFn, 4000);
 
         carousel.addEventListener("mouseenter", function () { clearInterval(autoId); });
         carousel.addEventListener("mouseleave", function () {
-          autoId = setInterval(function () {
-            var maxS = carousel.scrollWidth - carousel.clientWidth;
-            if (carousel.scrollLeft >= maxS - 10) {
-              carousel.scrollTo({ left: 0, behavior: "smooth" });
-            } else {
-              carousel.scrollBy({ left: scrollAmt, behavior: "smooth" });
-            }
-          }, 4000);
+          autoId = setInterval(autoplayFn, 4000);
         });
+
+        // Clean up interval when element is removed from DOM
+        if (typeof MutationObserver !== "undefined" && container.parentNode) {
+          var cleanupObserver = new MutationObserver(function () {
+            if (!container.isConnected) {
+              clearInterval(autoId);
+              cleanupObserver.disconnect();
+            }
+          });
+          cleanupObserver.observe(container.parentNode, { childList: true });
+        }
       }
     }
   }
@@ -288,6 +295,7 @@
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             observer.unobserve(el);
+            observer.disconnect();
             fetch(baseUrl + "/api/widgets/" + encodeURIComponent(widgetId))
               .then(function (r) {
                 if (!r.ok) throw new Error("HTTP " + r.status);
