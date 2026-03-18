@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+const safeUrlSchema = z
+  .string()
+  .url()
+  .regex(/^https?:\/\//, {
+    message: "HTTPまたはHTTPS URLのみ許可されています",
+  });
+
 export const testimonialSubmitSchema = z.object({
   form_id: z.string().min(1),
   rating: z.number().min(1).max(5),
@@ -7,7 +14,7 @@ export const testimonialSubmitSchema = z.object({
   before_story: z.string().max(5000).optional(),
   name: z.string().min(1).max(100),
   title: z.string().max(100).optional(),
-  avatar_url: z.string().url().optional().nullable(),
+  avatar_url: safeUrlSchema.optional().nullable(),
   permission_granted: z.boolean(),
 });
 
@@ -23,7 +30,7 @@ export const testimonialManualCreateSchema = z.object({
   name: z.string().min(1).max(100),
   title: z.string().max(100).optional(),
   company: z.string().max(100).optional(),
-  avatar_url: z.string().url().optional().nullable(),
+  avatar_url: safeUrlSchema.optional().nullable(),
   status: z.enum(["pending", "approved", "rejected"]).default("approved"),
   source: z.string().default("manual"),
 });
