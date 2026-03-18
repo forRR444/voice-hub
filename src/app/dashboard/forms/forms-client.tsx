@@ -145,7 +145,7 @@ export default function FormsClient({
           {forms.map((form) => (
             <div
               key={form.id}
-              className="bg-background rounded-lg border border-foreground/10 p-6"
+              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6"
             >
               {editingId === form.id ? (
                 /* Edit mode */

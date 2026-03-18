@@ -344,7 +344,7 @@ export default function WidgetsClient({
           {widgets.map((w) => (
             <div
               key={w.id}
-              className="bg-background rounded-lg border border-foreground/10 p-6"
+              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6"
             >
               <div className="flex items-start justify-between">
                 <div>

@@ -46,7 +46,7 @@ export default function SettingsClient({
       <h2 className="text-2xl font-bold text-foreground mb-8">設定</h2>
 
       {/* Workspace name */}
-      <section className="bg-background rounded-lg border border-foreground/10 p-6 mb-6">
+      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
         <h3 className="text-lg font-semibold text-foreground mb-4">
           ワークスペース
         </h3>
@@ -82,7 +82,7 @@ export default function SettingsClient({
       </section>
 
       {/* Plan info */}
-      <section className="bg-background rounded-lg border border-foreground/10 p-6 mb-6">
+      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-foreground">プラン情報</h3>
           <span
@@ -136,7 +136,7 @@ export default function SettingsClient({
 
       {/* Pro plan comparison */}
       {!isPro && (
-        <section className="bg-background rounded-lg border border-foreground/10 p-6">
+        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
             Proプランの特徴
           </h3>

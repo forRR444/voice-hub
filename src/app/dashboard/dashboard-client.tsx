@@ -227,7 +227,7 @@ function StatCard({
   value: number | string;
 }) {
   return (
-    <div className="bg-background rounded-lg border border-foreground/10 p-4">
+    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4">
       <div className="flex items-center gap-2 mb-1">
         {icon}
         <span className="text-sm text-foreground/50">{label}</span>
@@ -238,20 +238,15 @@ function StatCard({
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { bg: string; text: string; label: string }> = {
-    pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "未承認" },
-    approved: {
-      bg: "bg-green-100",
-      text: "text-green-800",
-      label: "承認済み",
-    },
-    rejected: { bg: "bg-red-100", text: "text-red-800", label: "非承認" },
+  const config: Record<string, { dot: string; label: string }> = {
+    pending: { dot: "bg-amber-400", label: "未承認" },
+    approved: { dot: "bg-emerald-500", label: "承認済み" },
+    rejected: { dot: "bg-red-400", label: "非承認" },
   };
   const c = config[status] ?? config.pending;
   return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${c.bg} ${c.text}`}
-    >
+    <span className="inline-flex items-center gap-1.5 text-xs text-foreground/50">
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
       {c.label}
     </span>
   );
@@ -288,7 +283,7 @@ function TestimonialCard({
   onToggleFeatured: () => void;
 }) {
   return (
-    <div className="bg-background rounded-lg border border-foreground/10 p-5">
+    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-5">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-2">
@@ -299,11 +294,6 @@ function TestimonialCard({
               {t.name}
             </Link>
             <StatusBadge status={t.status} />
-            {t.is_featured && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                注目
-              </span>
-            )}
           </div>
           <Stars rating={t.rating} />
           <p className="text-sm text-foreground/60 mt-2 line-clamp-2">
@@ -327,34 +317,40 @@ function TestimonialCard({
         </div>
 
         <div className="flex items-center gap-2 ml-4 shrink-0">
-          {t.status !== "approved" && (
-            <button
-              onClick={onApprove}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs rounded bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
-            >
-              <CheckCircle size={14} />
-              承認
-            </button>
-          )}
-          {t.status !== "rejected" && (
-            <button
-              onClick={onReject}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs border border-foreground/10 rounded text-foreground/50 hover:bg-foreground/5 cursor-pointer"
-            >
-              <XCircle size={14} />
-              却下
-            </button>
-          )}
+          <button
+            onClick={onApprove}
+            disabled={t.status === "approved"}
+            className={`p-2 rounded ${
+              t.status === "approved"
+                ? "text-foreground/15 cursor-default"
+                : "text-foreground/60 hover:text-emerald-600 cursor-pointer"
+            }`}
+            title="承認"
+          >
+            <CheckCircle size={18} />
+          </button>
+          <button
+            onClick={onReject}
+            disabled={t.status === "rejected"}
+            className={`p-2 rounded ${
+              t.status === "rejected"
+                ? "text-foreground/15 cursor-default"
+                : "text-foreground/60 hover:text-red-500 cursor-pointer"
+            }`}
+            title="却下"
+          >
+            <XCircle size={18} />
+          </button>
           <button
             onClick={onToggleFeatured}
             className={`p-1.5 rounded cursor-pointer ${
               t.is_featured
-                ? "text-amber-500 hover:bg-foreground/5"
-                : "text-foreground/30 hover:bg-foreground/5"
+                ? "text-violet-500 hover:bg-violet-50"
+                : "text-foreground/60 hover:text-foreground/80 hover:bg-foreground/5"
             }`}
             title={t.is_featured ? "注目を解除" : "注目に設定"}
           >
-            <Bookmark size={16} />
+            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
           </button>
         </div>
       </div>
