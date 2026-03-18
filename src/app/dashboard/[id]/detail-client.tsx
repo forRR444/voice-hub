@@ -157,18 +157,14 @@ export default function TestimonialDetailClient({
         )}
 
         {/* Before story */}
-        {(() => {
-          const beforeStory = (t as Record<string, unknown>)["before_story"];
-          if (!beforeStory) return null;
-          return (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-foreground/50 mb-1">
-                ご利用前のお悩み
-              </h3>
-              <p className="text-foreground/70">{String(beforeStory)}</p>
-            </div>
-          );
-        })()}
+        {t.before_story && (
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-foreground/50 mb-1">
+              ご利用前のお悩み
+            </h3>
+            <p className="text-foreground/70">{t.before_story}</p>
+          </div>
+        )}
 
         {/* Content */}
         <div className="mb-6">

@@ -32,6 +32,7 @@ export type TestimonialRow = {
   form_id: string | null;
   rating: number | null;
   content: string;
+  before_story: string | null;
   name: string;
   title: string | null;
   company: string | null;
