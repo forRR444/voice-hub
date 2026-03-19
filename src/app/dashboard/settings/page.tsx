@@ -19,8 +19,7 @@ export default async function SettingsPage() {
     .single();
 
   if (!workspace) {
-    const dummyWorkspace = { id: "", user_id: user.id, name: "マイワークスペース", created_at: new Date().toISOString() };
-    return <SettingsClient workspace={dummyWorkspace as any} subscriptionStatus="free" usage={{ testimonials: 0, forms: 0, widgets: 0 }} />;
+    redirect("/onboarding");
   }
 
   const subscriptionStatus = (workspace as Record<string, unknown>).subscription_status as string ?? "free";
