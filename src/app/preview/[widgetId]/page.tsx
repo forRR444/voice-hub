@@ -160,10 +160,13 @@ function TestimonialCard({
 
 export default async function WidgetPreviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ widgetId: string }>;
+  searchParams: Promise<{ type?: string }>;
 }) {
   const { widgetId } = await params;
+  const { type: typeOverride } = await searchParams;
   const supabase = createAdminClient();
 
   const { data: widget, error: widgetError } = await supabase
@@ -174,6 +177,11 @@ export default async function WidgetPreviewPage({
 
   if (widgetError || !widget) {
     notFound();
+  }
+
+  // Allow type override via query param (e.g. ?type=grid)
+  if (typeOverride && ["carousel", "grid", "marquee", "list", "single", "wall", "badge"].includes(typeOverride)) {
+    widget.type = typeOverride as Widget["type"];
   }
 
   const theme: Theme = widget.theme ?? {};

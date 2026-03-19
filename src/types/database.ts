@@ -91,7 +91,7 @@ export type UserProfile = {
 export const PLAN_LIMITS = {
   free: {
     testimonials: Infinity,
-    forms: Infinity,
+    forms: 1,
     widgets: Infinity,
     showBadge: true,
   },
