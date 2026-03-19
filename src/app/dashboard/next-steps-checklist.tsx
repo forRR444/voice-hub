@@ -101,7 +101,7 @@ export default function NextStepsChecklist({
             {/* Action button for step 4: create widget */}
             {i === 3 && !item.done && (
               <a
-                href="/widgets/new"
+                href="/dashboard/widgets"
                 className="ml-auto flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700"
               >
                 <ExternalLink size={13} />
