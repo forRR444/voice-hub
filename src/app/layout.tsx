@@ -18,12 +18,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ja_JP",
     siteName: "VoiceHub",
+    images: [
+      {
+        url: "/VoiceHub.png",
+        width: 1200,
+        height: 630,
+        alt: "VoiceHub — お客様の声を集めてホームページに自動表示",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "VoiceHub — お客様の声を集めてホームページに自動表示",
     description:
       "フォームURLを送るだけ。集まった声がウィジェットで自動的にWebサイトに表示されます。",
+    images: ["/VoiceHub.png"],
   },
 };
 
