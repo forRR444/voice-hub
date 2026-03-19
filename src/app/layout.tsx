@@ -8,6 +8,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.jp"),
   title: "VoiceHub — お客様の声を集めてホームページに自動表示",
   description:
     "フォームURLを送るだけ。集まったお客様の声がウィジェットで自動的にあなたのWebサイトに表示されます。",
