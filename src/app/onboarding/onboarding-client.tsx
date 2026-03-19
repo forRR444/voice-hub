@@ -68,7 +68,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
       setFormSlug(slug);
       setCompleted(true);
     } catch (error) {
-      console.error("Onboarding error:", error);
+      // Error handled silently in production
     } finally {
       setCreating(false);
     }

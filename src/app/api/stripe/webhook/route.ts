@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
+import { logError } from "@/lib/logger";
 
 function getSupabaseAdmin() {
   return createClient(
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
         process.env.STRIPE_WEBHOOK_SECRET!
       );
     } catch (err) {
-      console.error("Webhook signature verification failed:", err);
+      logError("Webhook signature verification failed:", err);
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
             : session.subscription?.id;
 
         if (!customerId) {
-          console.error("No customer ID in checkout session");
+          logError("No customer ID in checkout session");
           break;
         }
 
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          console.error("Failed to update workspace after checkout:", error);
+          logError("Failed to update workspace after checkout:", error);
           return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          console.error("Failed to update subscription status:", error);
+          logError("Failed to update subscription status:", error);
           return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
@@ -123,7 +124,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          console.error("Failed to update workspace after deletion:", error);
+          logError("Failed to update workspace after deletion:", error);
           return NextResponse.json({ error: "DB update failed" }, { status: 500 });
         }
         break;
@@ -136,7 +137,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    console.error("Webhook error:", error);
+    logError("Webhook error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
