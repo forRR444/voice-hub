@@ -1,14 +1,33 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSubmitSchema } from "@/lib/validations";
+import { rateLimit } from "@/lib/rate-limit";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const parsed = testimonialSubmitSchema.safeParse(body);
 
+    // Rate limit: 5 submissions per form per IP per 15 minutes
+    const forwarded = request.headers.get("x-forwarded-for");
+    const realIp = request.headers.get("x-real-ip");
+    const ip = forwarded?.split(",")[0]?.trim() || realIp || "unknown";
+    const formId = parsed.success ? parsed.data.form_id : "unknown";
+    const { success: withinLimit } = rateLimit(
+      `testimonial:${ip}:${formId}`,
+      5,
+      15 * 60 * 1000
+    );
+    if (!withinLimit) {
+      return NextResponse.json(
+        { error: "送信回数の制限に達しました。しばらくしてからもう一度お試しください。" },
+        { status: 429 }
+      );
+    }
+
     if (!parsed.success) {
-      console.error("Validation error:", JSON.stringify(parsed.error.flatten()));
+      logError("Validation error:", JSON.stringify(parsed.error.flatten()));
       return NextResponse.json(
         { error: "入力内容に不備があります", details: parsed.error.flatten() },
         { status: 400 }
@@ -52,7 +71,7 @@ export async function POST(request: Request) {
       });
 
     if (insertError) {
-      console.error("Testimonial insert error:", insertError);
+      logError("Testimonial insert error:", insertError);
       return NextResponse.json(
         { error: "送信に失敗しました。もう一度お試しください。" },
         { status: 500 }
