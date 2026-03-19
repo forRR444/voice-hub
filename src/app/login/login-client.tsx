@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginClient() {
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ export default function LoginClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">VoiceHub</h1>
+          <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
           <p className="mt-2 text-sm text-foreground/60">
             お客様の声の収集・管理・表示ツール
           </p>
