@@ -288,9 +288,11 @@ describe("プラン制限の適用", () => {
   });
 
   it("canCreateロジックがプラン制限に基づいて正しく評価される", () => {
-    const formsCount = 5;
-    expect(formsCount < PLAN_LIMITS.free.forms).toBe(true);
-    expect(formsCount < 3).toBe(false); // 制限プランのシミュレーション
+    // freeプランはフォーム1つまで（ベータ版制限）
+    expect(0 < PLAN_LIMITS.free.forms).toBe(true);
+    expect(1 < PLAN_LIMITS.free.forms).toBe(false);
+    // proプランは無制限
+    expect(100 < PLAN_LIMITS.pro.forms).toBe(true);
   });
 
   it.each([

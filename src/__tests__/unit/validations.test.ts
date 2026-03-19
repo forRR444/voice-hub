@@ -473,14 +473,17 @@ describe("DEFAULT_FORM_QUESTIONS", () => {
 // ─── PLAN_LIMITS ────────────────────────────────────────────────────────────
 
 describe("PLAN_LIMITS", () => {
-  it.each(["free", "pro"] as const)(
-    "%s プランのtestimonials/forms/widgetsがInfinityである",
-    (plan) => {
-      expect(PLAN_LIMITS[plan].testimonials).toBe(Infinity);
-      expect(PLAN_LIMITS[plan].forms).toBe(Infinity);
-      expect(PLAN_LIMITS[plan].widgets).toBe(Infinity);
-    }
-  );
+  it("pro プランのtestimonials/forms/widgetsがInfinityである", () => {
+    expect(PLAN_LIMITS.pro.testimonials).toBe(Infinity);
+    expect(PLAN_LIMITS.pro.forms).toBe(Infinity);
+    expect(PLAN_LIMITS.pro.widgets).toBe(Infinity);
+  });
+
+  it("free プランのフォーム制限が1である", () => {
+    expect(PLAN_LIMITS.free.testimonials).toBe(Infinity);
+    expect(PLAN_LIMITS.free.forms).toBe(1);
+    expect(PLAN_LIMITS.free.widgets).toBe(Infinity);
+  });
 
   it("バッジ表示がfreeとproで異なる", () => {
     expect(PLAN_LIMITS.free.showBadge).toBe(true);
