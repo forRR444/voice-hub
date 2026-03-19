@@ -467,8 +467,12 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-8">
-        <div className="max-w-5xl mx-auto px-6 text-center text-sm text-gray-400">
-          &copy; 2026 VoiceHub. All rights reserved.
+        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+          <span>&copy; 2026 VoiceHub. All rights reserved.</span>
+          <div className="flex gap-6">
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">利用規約</Link>
+            <Link href="/privacy" className="hover:text-gray-600 transition-colors">プライバシーポリシー</Link>
+          </div>
         </div>
       </footer>
     </div>
