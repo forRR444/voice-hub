@@ -1,6 +1,23 @@
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+// Simple in-memory rate limiter.
+// NOTE: On serverless (Vercel), each instance has its own memory,
+// so this only provides per-instance throttling, not global rate limiting.
+// For production-grade rate limiting, migrate to Upstash Redis.
 
-export function rateLimit(key: string, limit: number, windowMs: number): { success: boolean; remaining: number } {
+const globalStore = globalThis as unknown as {
+  __rateLimitMap?: Map<string, { count: number; resetAt: number }>;
+};
+
+if (!globalStore.__rateLimitMap) {
+  globalStore.__rateLimitMap = new Map();
+}
+
+const rateLimitMap = globalStore.__rateLimitMap;
+
+export function rateLimit(
+  key: string,
+  limit: number,
+  windowMs: number
+): { success: boolean; remaining: number } {
   const now = Date.now();
   const entry = rateLimitMap.get(key);
 
