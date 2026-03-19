@@ -30,7 +30,7 @@ interface Widget {
   id: string;
   workspace_id: string;
   name: string;
-  type: "carousel" | "grid" | "marquee";
+  type: "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
   theme: Theme;
   filter_min_rating: number;
   only_featured: boolean;
@@ -292,6 +292,88 @@ export default async function WidgetPreviewPage({
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-50%); }
               }
+              .list-container {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+              }
+              .list-card {
+                background: ${isDark ? "#1e1e2e" : "#ffffff"};
+                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
+                border-left: 4px solid ${brand};
+                border-radius: 8px;
+                padding: 20px 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+              }
+              .single-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 60vh;
+              }
+              .single-card {
+                background: ${isDark ? "#1e1e2e" : "#ffffff"};
+                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
+                border-radius: 16px;
+                padding: 48px;
+                max-width: 600px;
+                width: 100%;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+              }
+              .wall-container {
+                column-count: 2;
+                column-gap: 16px;
+              }
+              @media (min-width: 768px) {
+                .wall-container { column-count: 3; }
+              }
+              .wall-card {
+                background: ${isDark ? "#1e1e2e" : "#ffffff"};
+                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 16px;
+                break-inside: avoid;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+              }
+              .badge-container {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                background: ${isDark ? "#1e1e2e" : "#ffffff"};
+                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
+                border-radius: 12px;
+                padding: 16px 24px;
+              }
+              .badge-rating {
+                font-size: 36px;
+                font-weight: 700;
+                color: ${isDark ? "#f0f0f0" : "#111827"};
+                line-height: 1;
+              }
+              .badge-stars {
+                color: ${brand};
+                font-size: 20px;
+                letter-spacing: 2px;
+              }
+              .badge-count {
+                font-size: 13px;
+                color: ${isDark ? "#9ca3af" : "#6b7280"};
+              }
+              .badge-link {
+                font-size: 12px;
+                color: ${brand};
+                text-decoration: none;
+              }
+              .badge-link:hover { text-decoration: underline; }
             `,
           }}
         />
@@ -347,6 +429,129 @@ export default async function WidgetPreviewPage({
               &#8250;
             </button>
           </div>
+        ) : widget.type === "list" ? (
+          <div className="list-container">
+            {items.map((t) => (
+              <div key={t.id} className="list-card">
+                {theme.showRating !== false && (
+                  <StarRating rating={t.rating} color={brand} />
+                )}
+                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 15, lineHeight: 1.6, margin: 0 }}>
+                  {t.content}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
+                  {theme.showAvatar !== false && (
+                    t.avatar_url ? (
+                      <img src={t.avatar_url} alt={t.name} width={40} height={40} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                    ) : (
+                      <AvatarFallback name={t.name} color={brand} />
+                    )
+                  )}
+                  <div>
+                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 14 }}>{t.name}</div>
+                    {(t.title || t.company) && (
+                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13 }}>
+                        {[t.title, t.company].filter(Boolean).join(" / ")}
+                      </div>
+                    )}
+                    {theme.showDate && (
+                      <div style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 12, marginTop: 2 }}>
+                        {new Date(t.submitted_at).toLocaleDateString("ja-JP")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : widget.type === "single" ? (
+          <div className="single-container">
+            {items[0] && (
+              <div className="single-card">
+                {theme.showRating !== false && (
+                  <span style={{ color: brand, fontSize: "28px", letterSpacing: "4px" }}>
+                    {Array.from({ length: 5 }, (_, i) => i < items[0].rating ? "\u2605" : "\u2606").join("")}
+                  </span>
+                )}
+                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 20, lineHeight: 1.7, margin: 0 }}>
+                  {items[0].content}
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
+                  {theme.showAvatar !== false && (
+                    items[0].avatar_url ? (
+                      <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28 }}>
+                        {(items[0].name || "?").charAt(0).toUpperCase()}
+                      </div>
+                    )
+                  )}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name}</div>
+                    {(items[0].title || items[0].company) && (
+                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 14, marginTop: 2 }}>
+                        {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
+                      </div>
+                    )}
+                    {theme.showDate && (
+                      <div style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 13, marginTop: 4 }}>
+                        {new Date(items[0].submitted_at).toLocaleDateString("ja-JP")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : widget.type === "wall" ? (
+          <div className="wall-container">
+            {items.map((t) => (
+              <div key={t.id} className="wall-card">
+                {theme.showRating !== false && (
+                  <StarRating rating={t.rating} color={brand} />
+                )}
+                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+                  {t.content}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+                  {theme.showAvatar !== false && (
+                    t.avatar_url ? (
+                      <img src={t.avatar_url} alt={t.name} width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: 36, height: 36, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
+                        {(t.name || "?").charAt(0).toUpperCase()}
+                      </div>
+                    )
+                  )}
+                  <div>
+                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 13 }}>{t.name}</div>
+                    {(t.title || t.company) && (
+                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 12 }}>
+                        {[t.title, t.company].filter(Boolean).join(" / ")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : widget.type === "badge" ? (
+          (() => {
+            const avgRating = items.length > 0 ? items.reduce((sum, t) => sum + t.rating, 0) / items.length : 0;
+            const roundedAvg = Math.round(avgRating * 10) / 10;
+            const filledStars = Math.round(avgRating);
+            return (
+              <div className="badge-container">
+                <div className="badge-rating">{roundedAvg}</div>
+                <div>
+                  <div className="badge-stars">
+                    {Array.from({ length: 5 }, (_, i) => i < filledStars ? "\u2605" : "\u2606").join("")}
+                  </div>
+                  <div className="badge-count">{items.length}件のお客様の声</div>
+                </div>
+              </div>
+            );
+          })()
         ) : (
           <div className="grid-container">
             {items.map((t) => (

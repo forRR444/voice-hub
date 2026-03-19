@@ -55,7 +55,7 @@ export type WidgetRow = {
   id: string;
   workspace_id: string;
   name: string;
-  type: "carousel" | "grid" | "marquee" | "list" | "single";
+  type: "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
   theme: WidgetTheme;
   filter_min_rating: number;
   only_featured: boolean;

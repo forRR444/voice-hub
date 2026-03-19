@@ -204,7 +204,7 @@ describe("widgetCreateSchema", () => {
     }
   });
 
-  it.each(["carousel", "grid", "marquee"] as const)(
+  it.each(["carousel", "grid", "marquee", "list", "single", "wall", "badge"] as const)(
     "ウィジェットタイプ '%s' を受理する",
     (type) => {
       expect(widgetCreateSchema.safeParse({ ...validInput, type }).success).toBe(
@@ -215,7 +215,7 @@ describe("widgetCreateSchema", () => {
 
   it("不正なウィジェットタイプを拒否する", () => {
     expect(
-      widgetCreateSchema.safeParse({ ...validInput, type: "list" }).success
+      widgetCreateSchema.safeParse({ ...validInput, type: "invalid_type" }).success
     ).toBe(false);
   });
 

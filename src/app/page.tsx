@@ -13,7 +13,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-900 leading-tight">
           お客様の声を集めて、
           <br />
-          LPに自動で表示
+          ホームページに自動で表示
         </h1>
         <p className="mt-6 text-lg text-gray-600 max-w-xl mx-auto">
           フォームURLを送るだけ。集まった声がウィジェットで自動的にあなたのWebサイトに表示されます。コピペ作業はもう不要です。
@@ -65,9 +65,9 @@ export default function Home() {
             <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xl font-bold mx-auto">
               3
             </div>
-            <h3 className="mt-4 font-semibold text-gray-900">自動でLPに表示</h3>
+            <h3 className="mt-4 font-semibold text-gray-900">自動でホームページに表示</h3>
             <p className="mt-2 text-sm text-gray-600">
-              埋め込みコードをLPに1回貼るだけ。新しい声は自動的に反映されます。
+              埋め込みコードをホームページに1回貼るだけ。新しい声は自動的に反映されます。
             </p>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function Home() {
                 after: "1つのダッシュボードで一元管理",
               },
               {
-                before: "LPにテキストをコピペ＋写真配置が面倒",
+                before: "ホームページにテキストをコピペ＋写真配置が面倒",
                 after: "ウィジェットが自動表示",
               },
               {
@@ -132,7 +132,7 @@ export default function Home() {
             },
             {
               title: "ペライチ・WordPress対応",
-              desc: "主要なLP作成ツールに対応。iframe版も用意。",
+              desc: "主要なホームページ作成ツールに対応。iframe版も用意。",
             },
             {
               title: "レスポンシブ対応",

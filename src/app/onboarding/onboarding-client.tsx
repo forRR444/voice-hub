@@ -51,7 +51,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
         content:
           "VoiceHubのおかげで、お客様の声を簡単に集めてウェブサイトに表示できるようになりました。セットアップも数分で完了して驚きました！",
         before_story:
-          "お客様の声をLPに載せたかったのですが、手動でコピペするのが手間で更新が止まっていました。",
+          "お客様の声をホームページに載せたかったのですが、手動でコピペするのが手間で更新が止まっていました。",
         name: "VoiceHub サポートチーム",
         title: "サンプル",
         status: "approved",

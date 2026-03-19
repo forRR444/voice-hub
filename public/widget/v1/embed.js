@@ -46,10 +46,33 @@
     .vh-dot { width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
     .vh-dot.active { transform: scale(1.25); }
 
-    /* Badge */
-    .vh-badge { text-align: center; margin-top: 16px; }
-    .vh-badge a { color: var(--vh-dimmed); text-decoration: none; font-size: 11px; }
-    .vh-badge a:hover { text-decoration: underline; }
+    /* List */
+    .vh-list { display: flex; flex-direction: column; gap: 12px; }
+    .vh-list .vh-card { border-radius: 8px; border-left: 4px solid var(--vh-brand); }
+
+    /* Single */
+    .vh-single { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; }
+    .vh-single .vh-stars { font-size: 24px; letter-spacing: 3px; }
+    .vh-single .vh-content { font-size: 18px; line-height: 1.7; max-width: 600px; margin: 16px 0; }
+    .vh-single .vh-avatar, .vh-single .vh-initials { width: 64px; height: 64px; font-size: 24px; }
+    .vh-single .vh-author { flex-direction: column; text-align: center; gap: 8px; }
+    .vh-single-fade { transition: opacity 0.5s ease; }
+
+    /* Wall (masonry) */
+    .vh-wall { column-count: 1; column-gap: 16px; }
+    .vh-wall .vh-card { break-inside: avoid; margin-bottom: 16px; }
+    @media (min-width: 640px) { .vh-wall { column-count: 2; } }
+    @media (min-width: 1024px) { .vh-wall { column-count: 3; } }
+
+    /* Badge widget */
+    .vh-badge-widget { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--vh-text); }
+    .vh-badge-widget .vh-badge-star { font-size: 16px; }
+    .vh-badge-widget .vh-badge-info { color: var(--vh-muted); font-size: 13px; }
+
+    /* Powered-by badge */
+    .vh-powered { text-align: center; margin-top: 16px; }
+    .vh-powered a { color: var(--vh-dimmed); text-decoration: none; font-size: 11px; }
+    .vh-powered a:hover { text-decoration: underline; }
 
     /* Skeleton */
     @keyframes vh-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
@@ -111,12 +134,232 @@
     return escapeHtml(s);
   }
 
+  function poweredBadge(showBadge) {
+    if (!showBadge) return "";
+    return '<div class="vh-powered"><a href="' + escapeAttr(baseUrl) + '" target="_blank" rel="noopener noreferrer">Powered by VoiceHub</a></div>';
+  }
+
+  function renderList(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var brand = theme.brandColor || "#635BFF";
+    var html = '<div class="vh-list" style="--vh-brand:' + brand + '">';
+    for (var i = 0; i < data.testimonials.length; i++) {
+      html += buildCard(data.testimonials[i], theme);
+    }
+    html += "</div>" + poweredBadge(data.showBadge);
+    root.innerHTML = html;
+  }
+
+  function renderSingle(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var brand = theme.brandColor || "#635BFF";
+    var testimonials = data.testimonials;
+    var t = testimonials[0];
+
+    function singleHtml(t) {
+      var html = '<div class="vh-single vh-single-fade">';
+      if (theme.showRating !== false) {
+        html += '<div class="vh-stars" style="color:' + brand + '">' + stars(t.rating, brand) + "</div>";
+      }
+      html += '<div class="vh-content">' + escapeHtml(t.content) + "</div>";
+      html += '<div class="vh-author">';
+      if (theme.showAvatar !== false) {
+        if (t.avatar_url) {
+          html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name) + '">';
+        } else {
+          var letter = (t.name || "?").charAt(0).toUpperCase();
+          html += '<div class="vh-initials" style="background:' + brand + '">' + letter + "</div>";
+        }
+      }
+      html += "<div>";
+      html += '<div class="vh-name">' + escapeHtml(t.name) + "</div>";
+      var subtitle = [t.title, t.company].filter(Boolean).join(" / ");
+      if (subtitle) html += '<div class="vh-title">' + escapeHtml(subtitle) + "</div>";
+      html += "</div></div></div>";
+      return html;
+    }
+
+    root.innerHTML = singleHtml(t) + poweredBadge(data.showBadge);
+
+    // Autoplay fade between testimonials
+    if (theme.autoplay && testimonials.length > 1) {
+      var current = 0;
+      var autoId = setInterval(function () {
+        if (!container.isConnected) { clearInterval(autoId); return; }
+        var el = shadow.querySelector(".vh-single-fade");
+        if (!el) return;
+        el.style.opacity = "0";
+        setTimeout(function () {
+          current = (current + 1) % testimonials.length;
+          var wrap = shadow.querySelector(".vh-single-fade");
+          if (wrap) {
+            wrap.outerHTML = singleHtml(testimonials[current]);
+            var newEl = shadow.querySelector(".vh-single-fade");
+            if (newEl) { newEl.style.opacity = "0"; setTimeout(function () { newEl.style.opacity = "1"; }, 30); }
+          }
+        }, 500);
+      }, 5000);
+
+      if (typeof MutationObserver !== "undefined" && container.parentNode) {
+        var obs = new MutationObserver(function () {
+          if (!container.isConnected) { clearInterval(autoId); obs.disconnect(); }
+        });
+        obs.observe(container.parentNode, { childList: true });
+      }
+    }
+  }
+
+  function renderWall(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var html = '<div class="vh-wall">';
+    for (var i = 0; i < data.testimonials.length; i++) {
+      html += buildCard(data.testimonials[i], theme);
+    }
+    html += "</div>" + poweredBadge(data.showBadge);
+    root.innerHTML = html;
+  }
+
+  function renderBadgeWidget(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var brand = theme.brandColor || "#635BFF";
+    var testimonials = data.testimonials;
+    var total = testimonials.length;
+    var sum = 0;
+    for (var i = 0; i < total; i++) sum += (testimonials[i].rating || 0);
+    var avg = total > 0 ? (sum / total).toFixed(1) : "0.0";
+
+    var html = '<div class="vh-badge-widget">';
+    html += '<span class="vh-badge-star" style="color:' + brand + '">\u2605</span>';
+    html += '<span>' + avg + ' / 5.0</span>';
+    html += '<span class="vh-badge-info">(' + total + '\u4EF6\u306E\u304A\u5BA2\u69D8\u306E\u58F0)</span>';
+    html += "</div>";
+    if (data.showBadge) {
+      html += '<div class="vh-powered" style="margin-top:4px;"><a href="' + escapeAttr(baseUrl) + '" target="_blank" rel="noopener noreferrer" style="font-size:10px;">Powered by VoiceHub</a></div>';
+    }
+    root.innerHTML = html;
+  }
+
+  function renderCarousel(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var brand = theme.brandColor || "#635BFF";
+    var testimonials = data.testimonials;
+
+    var html = '<div class="vh-carousel-wrap">';
+    html += '<button class="vh-nav vh-prev" aria-label="\u524D\u3078">&#8249;</button>';
+    html += '<div class="vh-carousel"><div class="vh-carousel-track">';
+    for (var i = 0; i < testimonials.length; i++) {
+      html += buildCard(testimonials[i], theme);
+    }
+    html += "</div></div>";
+    html += '<button class="vh-nav vh-next" aria-label="\u6B21\u3078">&#8250;</button>';
+    html += "</div>";
+
+    if (testimonials.length > 1) {
+      html += '<div class="vh-dots">';
+      for (var d = 0; d < testimonials.length; d++) {
+        html +=
+          '<button class="vh-dot' +
+          (d === 0 ? " active" : "") +
+          '" data-idx="' +
+          d +
+          '" style="background:' +
+          (d === 0 ? brand : "var(--vh-border)") +
+          '" aria-label="' +
+          (d + 1) +
+          '"></button>';
+      }
+      html += "</div>";
+    }
+
+    html += poweredBadge(data.showBadge);
+    root.innerHTML = html;
+
+    // Carousel interactivity
+    var carousel = shadow.querySelector(".vh-carousel");
+    var prevBtn = shadow.querySelector(".vh-prev");
+    var nextBtn = shadow.querySelector(".vh-next");
+    var dots = shadow.querySelectorAll(".vh-dot");
+    var scrollAmt = 320;
+
+    function scrollTo(idx) {
+      var cards = shadow.querySelectorAll(".vh-carousel-track .vh-card");
+      if (cards[idx]) {
+        carousel.scrollTo({ left: cards[idx].offsetLeft - 4, behavior: "smooth" });
+      }
+    }
+
+    function updateDots() {
+      var cards = shadow.querySelectorAll(".vh-carousel-track .vh-card");
+      var scrollLeft = carousel.scrollLeft;
+      var closest = 0;
+      var minDist = Infinity;
+      for (var c = 0; c < cards.length; c++) {
+        var dist = Math.abs(cards[c].offsetLeft - scrollLeft - 4);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = c;
+        }
+      }
+      for (var dd = 0; dd < dots.length; dd++) {
+        dots[dd].classList.toggle("active", dd === closest);
+        dots[dd].style.background = dd === closest ? brand : "var(--vh-border)";
+      }
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { carousel.scrollBy({ left: -scrollAmt, behavior: "smooth" }); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { carousel.scrollBy({ left: scrollAmt, behavior: "smooth" }); });
+
+    for (var di = 0; di < dots.length; di++) {
+      dots[di].addEventListener("click", function () { scrollTo(parseInt(this.getAttribute("data-idx"), 10)); });
+    }
+
+    carousel.addEventListener("scroll", debounce(updateDots, 100));
+
+    // Autoplay
+    if (theme.autoplay !== false && testimonials.length > 1) {
+      var autoplayFn = function () {
+        if (!container.isConnected) { clearInterval(autoId); return; }
+        var maxS = carousel.scrollWidth - carousel.clientWidth;
+        if (carousel.scrollLeft >= maxS - 10) {
+          carousel.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          carousel.scrollBy({ left: scrollAmt, behavior: "smooth" });
+        }
+      };
+
+      var autoId = setInterval(autoplayFn, 4000);
+
+      carousel.addEventListener("mouseenter", function () { clearInterval(autoId); });
+      carousel.addEventListener("mouseleave", function () {
+        autoId = setInterval(autoplayFn, 4000);
+      });
+
+      if (typeof MutationObserver !== "undefined" && container.parentNode) {
+        var cleanupObserver = new MutationObserver(function () {
+          if (!container.isConnected) {
+            clearInterval(autoId);
+            cleanupObserver.disconnect();
+          }
+        });
+        cleanupObserver.observe(container.parentNode, { childList: true });
+      }
+    }
+  }
+
+  function renderGrid(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var html = '<div class="vh-grid">';
+    for (var g = 0; g < data.testimonials.length; g++) {
+      html += buildCard(data.testimonials[g], theme);
+    }
+    html += "</div>" + poweredBadge(data.showBadge);
+    root.innerHTML = html;
+  }
+
   function renderWidget(container, data) {
     var widget = data.widget;
     var testimonials = data.testimonials;
-    var showBadge = data.showBadge;
     var theme = widget.theme || {};
-    var brand = theme.brandColor || "#635BFF";
     var mode = theme.mode === "dark" ? "vh-dark" : "vh-light";
 
     var shadow = container.shadowRoot || container.attachShadow({ mode: "open" });
@@ -134,128 +377,19 @@
       return;
     }
 
-    var html = "";
-
-    if (widget.type === "carousel") {
-      html += '<div class="vh-carousel-wrap">';
-      html += '<button class="vh-nav vh-prev" aria-label="\u524D\u3078">&#8249;</button>';
-      html += '<div class="vh-carousel"><div class="vh-carousel-track">';
-      for (var i = 0; i < testimonials.length; i++) {
-        html += buildCard(testimonials[i], theme);
-      }
-      html += "</div></div>";
-      html += '<button class="vh-nav vh-next" aria-label="\u6B21\u3078">&#8250;</button>';
-      html += "</div>";
-
-      // Dots
-      if (testimonials.length > 1) {
-        html += '<div class="vh-dots">';
-        for (var d = 0; d < testimonials.length; d++) {
-          html +=
-            '<button class="vh-dot' +
-            (d === 0 ? " active" : "") +
-            '" data-idx="' +
-            d +
-            '" style="background:' +
-            (d === 0 ? brand : "var(--vh-border)") +
-            '" aria-label="' +
-            (d + 1) +
-            '"></button>';
-        }
-        html += "</div>";
-      }
-    } else {
-      html += '<div class="vh-grid">';
-      for (var g = 0; g < testimonials.length; g++) {
-        html += buildCard(testimonials[g], theme);
-      }
-      html += "</div>";
-    }
-
-    if (showBadge) {
-      html +=
-        '<div class="vh-badge"><a href="' +
-        escapeAttr(baseUrl) +
-        '" target="_blank" rel="noopener noreferrer">Powered by VoiceHub</a></div>';
-    }
-
-    root.innerHTML = html;
     shadow.innerHTML = "";
     shadow.appendChild(style);
     shadow.appendChild(root);
 
-    // Carousel interactivity
-    if (widget.type === "carousel") {
-      var carousel = shadow.querySelector(".vh-carousel");
-      var prevBtn = shadow.querySelector(".vh-prev");
-      var nextBtn = shadow.querySelector(".vh-next");
-      var dots = shadow.querySelectorAll(".vh-dot");
-      var scrollAmt = 320;
-
-      function scrollTo(idx) {
-        var cards = shadow.querySelectorAll(".vh-carousel-track .vh-card");
-        if (cards[idx]) {
-          carousel.scrollTo({ left: cards[idx].offsetLeft - 4, behavior: "smooth" });
-        }
-      }
-
-      function updateDots() {
-        var cards = shadow.querySelectorAll(".vh-carousel-track .vh-card");
-        var scrollLeft = carousel.scrollLeft;
-        var closest = 0;
-        var minDist = Infinity;
-        for (var c = 0; c < cards.length; c++) {
-          var dist = Math.abs(cards[c].offsetLeft - scrollLeft - 4);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = c;
-          }
-        }
-        for (var dd = 0; dd < dots.length; dd++) {
-          dots[dd].classList.toggle("active", dd === closest);
-          dots[dd].style.background = dd === closest ? brand : "var(--vh-border)";
-        }
-      }
-
-      if (prevBtn) prevBtn.addEventListener("click", function () { carousel.scrollBy({ left: -scrollAmt, behavior: "smooth" }); });
-      if (nextBtn) nextBtn.addEventListener("click", function () { carousel.scrollBy({ left: scrollAmt, behavior: "smooth" }); });
-
-      for (var di = 0; di < dots.length; di++) {
-        dots[di].addEventListener("click", function () { scrollTo(parseInt(this.getAttribute("data-idx"), 10)); });
-      }
-
-      carousel.addEventListener("scroll", debounce(updateDots, 100));
-
-      // Autoplay
-      if (theme.autoplay !== false && testimonials.length > 1) {
-        var autoplayFn = function () {
-          if (!container.isConnected) { clearInterval(autoId); return; }
-          var maxS = carousel.scrollWidth - carousel.clientWidth;
-          if (carousel.scrollLeft >= maxS - 10) {
-            carousel.scrollTo({ left: 0, behavior: "smooth" });
-          } else {
-            carousel.scrollBy({ left: scrollAmt, behavior: "smooth" });
-          }
-        };
-
-        var autoId = setInterval(autoplayFn, 4000);
-
-        carousel.addEventListener("mouseenter", function () { clearInterval(autoId); });
-        carousel.addEventListener("mouseleave", function () {
-          autoId = setInterval(autoplayFn, 4000);
-        });
-
-        // Clean up interval when element is removed from DOM
-        if (typeof MutationObserver !== "undefined" && container.parentNode) {
-          var cleanupObserver = new MutationObserver(function () {
-            if (!container.isConnected) {
-              clearInterval(autoId);
-              cleanupObserver.disconnect();
-            }
-          });
-          cleanupObserver.observe(container.parentNode, { childList: true });
-        }
-      }
+    switch (widget.type) {
+      case "carousel": renderCarousel(container, shadow, root, data); break;
+      case "list": renderList(container, shadow, root, data); break;
+      case "single": renderSingle(container, shadow, root, data); break;
+      case "wall": renderWall(container, shadow, root, data); break;
+      case "badge": renderBadgeWidget(container, shadow, root, data); break;
+      case "grid":
+      case "marquee":
+      default: renderGrid(container, shadow, root, data); break;
     }
   }
 

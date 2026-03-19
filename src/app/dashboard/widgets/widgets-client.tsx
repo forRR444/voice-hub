@@ -22,6 +22,18 @@ import {
 } from "@/types/database";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 
+const WIDGET_TYPES = [
+  { id: "carousel", label: "カルーセル", desc: "横スクロールで切り替え" },
+  { id: "grid", label: "グリッド", desc: "カード一覧" },
+  { id: "marquee", label: "マーキー", desc: "横に流れ続ける" },
+  { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
+  { id: "list", label: "リスト", desc: "縦に並ぶシンプル表示" },
+  { id: "single", label: "シングル", desc: "1件を大きく表示" },
+  { id: "badge", label: "バッジ", desc: "評価サマリー表示" },
+] as const;
+
+type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
+
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
   brandColor: "#635BFF",
@@ -50,7 +62,7 @@ export default function WidgetsClient({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
-    type: "carousel" as "carousel" | "grid" | "marquee",
+    type: "carousel" as WidgetType,
     theme: { ...DEFAULT_THEME },
     filter_min_rating: 1,
     only_featured: false,
@@ -60,7 +72,7 @@ export default function WidgetsClient({
 
   const [newWidget, setNewWidget] = useState({
     name: "",
-    type: "carousel" as "carousel" | "grid" | "marquee",
+    type: "carousel" as WidgetType,
     theme: { ...DEFAULT_THEME },
     filter_min_rating: 1,
     only_featured: false,
@@ -115,7 +127,7 @@ export default function WidgetsClient({
     setEditingId(w.id);
     setEditForm({
       name: w.name,
-      type: w.type as "carousel" | "grid" | "marquee",
+      type: w.type as WidgetType,
       theme: { ...DEFAULT_THEME, ...theme },
       filter_min_rating: w.filter_min_rating,
       only_featured: w.only_featured,
@@ -227,19 +239,20 @@ export default function WidgetsClient({
                 <label className="block text-sm font-medium text-foreground/70 mb-1">
                   タイプ
                 </label>
-                <div className="flex gap-3">
-                  {(["carousel", "grid", "marquee"] as const).map((type) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {WIDGET_TYPES.map((wt) => (
                     <button
-                      key={type}
+                      key={wt.id}
                       type="button"
-                      onClick={() => setNewWidget({ ...newWidget, type })}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
-                        newWidget.type === type
+                      onClick={() => setNewWidget({ ...newWidget, type: wt.id })}
+                      className={`px-3 py-2 text-left rounded-lg border transition-colors cursor-pointer ${
+                        newWidget.type === wt.id
                           ? "bg-indigo-600 text-white border-indigo-600"
                           : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
                       }`}
                     >
-                      {type === "carousel" ? "カルーセル" : type === "grid" ? "グリッド" : "マーキー"}
+                      <div className="text-sm font-medium">{wt.label}</div>
+                      <div className={`text-xs mt-0.5 ${newWidget.type === wt.id ? "text-indigo-100" : "text-foreground/40"}`}>{wt.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -430,19 +443,20 @@ export default function WidgetsClient({
                     <label className="block text-sm font-medium text-foreground/70 mb-1">
                       タイプ
                     </label>
-                    <div className="flex gap-3">
-                      {(["carousel", "grid", "marquee"] as const).map((type) => (
+                    <div className="grid grid-cols-3 gap-2">
+                      {WIDGET_TYPES.map((wt) => (
                         <button
-                          key={type}
+                          key={wt.id}
                           type="button"
-                          onClick={() => setEditForm({ ...editForm, type })}
-                          className={`px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
-                            editForm.type === type
+                          onClick={() => setEditForm({ ...editForm, type: wt.id })}
+                          className={`px-3 py-2 text-left rounded-lg border transition-colors cursor-pointer ${
+                            editForm.type === wt.id
                               ? "bg-indigo-600 text-white border-indigo-600"
                               : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
                           }`}
                         >
-                          {type === "carousel" ? "カルーセル" : type === "grid" ? "グリッド" : "マーキー"}
+                          <div className="text-sm font-medium">{wt.label}</div>
+                          <div className={`text-xs mt-0.5 ${editForm.type === wt.id ? "text-indigo-100" : "text-foreground/40"}`}>{wt.desc}</div>
                         </button>
                       ))}
                     </div>
@@ -573,7 +587,7 @@ export default function WidgetsClient({
                   <div className="flex items-center gap-4 mt-2 text-sm text-foreground/50">
                     <span>
                       タイプ:{" "}
-                      {w.type === "carousel" ? "カルーセル" : w.type === "grid" ? "グリッド" : "マーキー"}
+                      {WIDGET_TYPES.find((wt) => wt.id === w.type)?.label ?? w.type}
                     </span>
                     <span>
                       モード:{" "}

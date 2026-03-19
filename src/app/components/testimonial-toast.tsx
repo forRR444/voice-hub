@@ -59,10 +59,10 @@ export default function TestimonialToast() {
             <div>
               <p className="text-xs text-gray-500 mb-2">ステップ 1/3</p>
               <h3 className="text-base font-bold text-gray-900 mb-3">
-                お客様の声をLPに表示したいですか？
+                お客様の声をホームページに表示したいですか？
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                お客様の声を載せたLPは、問い合わせ率が<span className="font-semibold text-indigo-600">34%向上</span>するというデータがあります。
+                お客様の声を載せたホームページは、問い合わせ率が<span className="font-semibold text-indigo-600">34%向上</span>するというデータがあります。
               </p>
               <div className="flex flex-col gap-2">
                 <button
