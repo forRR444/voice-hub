@@ -228,12 +228,8 @@ export default function FormsClient({
       )}
 
       {!canCreate && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-          フリープランではフォームは{limit}つまでです。
-          <Link href="/dashboard/settings" className="underline ml-1">
-            アップグレード
-          </Link>
-          して制限を解除しましょう。
+        <div className="mb-6 p-4 bg-foreground/5 border border-foreground/10 rounded-lg text-sm text-foreground/60">
+          ベータ版ではフォームは1つのみ登録できます。
         </div>
       )}
 
