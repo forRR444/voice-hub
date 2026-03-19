@@ -11,15 +11,19 @@ import {
   Tag,
   X,
   Plus,
+  ImageIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
+import SnsImageModal from "../sns-image-modal";
 
 export default function TestimonialDetailClient({
   testimonial: initial,
+  brandColor,
 }: {
   testimonial: TestimonialWithTags;
+  brandColor: string;
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -28,6 +32,7 @@ export default function TestimonialDetailClient({
   const [deleting, setDeleting] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showSnsModal, setShowSnsModal] = useState(false);
 
   async function updateStatus(status: "pending" | "approved" | "rejected") {
     setErrorMsg(null);
@@ -210,17 +215,26 @@ export default function TestimonialDetailClient({
 
         {/* Featured */}
         <div className="border-t border-foreground/10 pt-6 mb-6">
-          <button
-            onClick={toggleFeatured}
-            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
-              t.is_featured
-                ? "border-violet-300 text-violet-700 bg-violet-50"
-                : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
-            }`}
-          >
-            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
-            {t.is_featured ? "注目から解除" : "注目に設定"}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={toggleFeatured}
+              className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                t.is_featured
+                  ? "border-violet-300 text-violet-700 bg-violet-50"
+                  : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
+              }`}
+            >
+              <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
+              {t.is_featured ? "注目から解除" : "注目に設定"}
+            </button>
+            <button
+              onClick={() => setShowSnsModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
+            >
+              <ImageIcon size={14} />
+              SNS画像を作成
+            </button>
+          </div>
         </div>
 
         {/* Tags */}
@@ -294,6 +308,15 @@ export default function TestimonialDetailClient({
             </div>
           </div>
         </div>
+      )}
+
+      {/* SNS Image modal */}
+      {showSnsModal && (
+        <SnsImageModal
+          testimonial={testimonial}
+          brandColor={brandColor}
+          onClose={() => setShowSnsModal(false)}
+        />
       )}
     </div>
   );

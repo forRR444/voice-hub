@@ -41,7 +41,16 @@ export default async function TestimonialDetailPage({
 
   const tags = (tagRows ?? []).map((r: { tag: string }) => r.tag);
 
+  const { data: forms } = await supabase
+    .from("forms")
+    .select("brand_color")
+    .eq("workspace_id", workspace.id)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  const brandColor = forms?.[0]?.brand_color || "#635BFF";
+
   return (
-    <TestimonialDetailClient testimonial={{ ...testimonial, tags }} />
+    <TestimonialDetailClient testimonial={{ ...testimonial, tags }} brandColor={brandColor} />
   );
 }

@@ -66,7 +66,7 @@ export default async function DashboardPage() {
 
   const { data: forms } = await supabase
     .from("forms")
-    .select("id, slug, title")
+    .select("id, slug, title, brand_color")
     .eq("workspace_id", workspace.id)
     .order("created_at", { ascending: false });
 
@@ -74,6 +74,8 @@ export default async function DashboardPage() {
     .from("widgets")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspace.id);
+
+  const brandColor = (forms ?? [])[0]?.brand_color || "#635BFF";
 
   return (
     <DashboardClient
@@ -83,6 +85,7 @@ export default async function DashboardPage() {
       hasRealTestimonials={hasRealTestimonials}
       hasApprovedTestimonials={hasApprovedTestimonials}
       widgetCount={widgetCount ?? 0}
+      brandColor={brandColor}
     />
   );
 }

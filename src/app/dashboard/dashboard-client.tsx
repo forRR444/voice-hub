@@ -12,11 +12,13 @@ import {
   Search,
   Bookmark,
   MessageSquare,
+  ImageIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
+import SnsImageModal from "./sns-image-modal";
 import NextStepsChecklist from "./next-steps-checklist";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
@@ -30,6 +32,7 @@ export default function DashboardClient({
   hasRealTestimonials,
   hasApprovedTestimonials,
   widgetCount,
+  brandColor,
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
@@ -37,6 +40,7 @@ export default function DashboardClient({
   hasRealTestimonials: boolean;
   hasApprovedTestimonials: boolean;
   widgetCount: number;
+  brandColor: string;
 }) {
   const supabase = createClient();
   const [testimonials, setTestimonials] =
@@ -46,6 +50,7 @@ export default function DashboardClient({
   const [showFormMenu, setShowFormMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
 
   const filtered = useMemo(() => {
     let list = testimonials;
@@ -240,6 +245,7 @@ export default function DashboardClient({
               onToggleFeatured={() =>
                 toggleFeatured(t.id, t.is_featured)
               }
+              onCreateSnsImage={() => setSnsImageTarget(t)}
             />
           ))}
         </div>
@@ -251,6 +257,15 @@ export default function DashboardClient({
           workspaceId={workspace.id}
           onClose={() => setShowAddModal(false)}
           onAdded={handleTestimonialAdded}
+        />
+      )}
+
+      {/* SNS Image modal */}
+      {snsImageTarget && (
+        <SnsImageModal
+          testimonial={snsImageTarget}
+          brandColor={brandColor}
+          onClose={() => setSnsImageTarget(null)}
         />
       )}
     </div>
@@ -316,11 +331,13 @@ function TestimonialCard({
   onApprove,
   onReject,
   onToggleFeatured,
+  onCreateSnsImage,
 }: {
   testimonial: TestimonialWithTags;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
+  onCreateSnsImage: () => void;
 }) {
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-5">
@@ -391,6 +408,13 @@ function TestimonialCard({
             title={t.is_featured ? "注目を解除" : "注目に設定"}
           >
             <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
+          </button>
+          <button
+            onClick={onCreateSnsImage}
+            className="p-1.5 rounded text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer"
+            title="SNS画像を作成"
+          >
+            <ImageIcon size={16} />
           </button>
         </div>
       </div>
