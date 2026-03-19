@@ -64,6 +64,13 @@
     @media (min-width: 640px) { .vh-wall { column-count: 2; } }
     @media (min-width: 1024px) { .vh-wall { column-count: 3; } }
 
+    /* Marquee */
+    .vh-marquee { overflow: hidden; position: relative; }
+    .vh-marquee-track { display: flex; gap: 16px; width: max-content; animation: vh-marquee-scroll var(--vh-marquee-duration, 30s) linear infinite; }
+    .vh-marquee:hover .vh-marquee-track { animation-play-state: paused; }
+    .vh-marquee-track .vh-card { min-width: 300px; max-width: 380px; flex-shrink: 0; }
+    @keyframes vh-marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
     /* Badge widget */
     .vh-badge-widget { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--vh-text); }
     .vh-badge-widget .vh-badge-star { font-size: 16px; }
@@ -346,6 +353,22 @@
     }
   }
 
+  function renderMarquee(container, shadow, root, data) {
+    var theme = data.widget.theme || {};
+    var testimonials = data.testimonials;
+    var duration = Math.max(testimonials.length * 6, 20) + "s";
+    var html = '<div class="vh-marquee"><div class="vh-marquee-track" style="--vh-marquee-duration:' + duration + '">';
+    for (var i = 0; i < testimonials.length; i++) {
+      html += buildCard(testimonials[i], theme);
+    }
+    // Duplicate for seamless loop
+    for (var j = 0; j < testimonials.length; j++) {
+      html += buildCard(testimonials[j], theme);
+    }
+    html += "</div></div>" + poweredBadge(data.showBadge);
+    root.innerHTML = html;
+  }
+
   function renderGrid(container, shadow, root, data) {
     var theme = data.widget.theme || {};
     var html = '<div class="vh-grid">';
@@ -383,12 +406,12 @@
 
     switch (widget.type) {
       case "carousel": renderCarousel(container, shadow, root, data); break;
+      case "marquee": renderMarquee(container, shadow, root, data); break;
       case "list": renderList(container, shadow, root, data); break;
       case "single": renderSingle(container, shadow, root, data); break;
       case "wall": renderWall(container, shadow, root, data); break;
       case "badge": renderBadgeWidget(container, shadow, root, data); break;
       case "grid":
-      case "marquee":
       default: renderGrid(container, shadow, root, data); break;
     }
   }
