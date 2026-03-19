@@ -283,6 +283,10 @@ export default async function WidgetPreviewPage({
                 font-size: 12px;
               }
               .badge a:hover { text-decoration: underline; }
+              .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+              .carousel-dot { width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+              .carousel-dot.active { transform: scale(1.25); }
+              .single-fade { transition: opacity 0.5s ease; }
               .marquee-container {
                 overflow: hidden;
                 position: relative;
@@ -436,6 +440,19 @@ export default async function WidgetPreviewPage({
             >
               &#8250;
             </button>
+            {items.length > 1 && (
+              <div className="carousel-dots" id="carousel-dots">
+                {items.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`carousel-dot${i === 0 ? " active" : ""}`}
+                    data-idx={i}
+                    style={{ background: i === 0 ? brand : (isDark ? "#3e3e4e" : "#d1d5db") }}
+                    aria-label={`${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : widget.type === "list" ? (
           <div className="list-container">
@@ -473,36 +490,34 @@ export default async function WidgetPreviewPage({
             ))}
           </div>
         ) : widget.type === "single" ? (
-          <div className="single-container">
+          <div className="single-container" id="single-container">
             {items[0] && (
-              <div className="single-card">
+              <div className="single-card single-fade" id="single-card">
                 {theme.showRating !== false && (
-                  <span style={{ color: brand, fontSize: "28px", letterSpacing: "4px" }}>
+                  <span style={{ color: brand, fontSize: "28px", letterSpacing: "4px" }} className="single-stars">
                     {Array.from({ length: 5 }, (_, i) => i < items[0].rating ? "\u2605" : "\u2606").join("")}
                   </span>
                 )}
-                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 20, lineHeight: 1.7, margin: 0 }}>
+                <p className="single-content" style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 20, lineHeight: 1.7, margin: 0 }}>
                   {items[0].content}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
                   {theme.showAvatar !== false && (
                     items[0].avatar_url ? (
-                      <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                      <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} className="single-avatar" />
                     ) : (
-                      <div style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28 }}>
+                      <div className="single-initials" style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28 }}>
                         {(items[0].name || "?").charAt(0).toUpperCase()}
                       </div>
                     )
                   )}
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name}</div>
-                    {(items[0].title || items[0].company) && (
-                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 14, marginTop: 2 }}>
-                        {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
-                      </div>
-                    )}
+                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name}</div>
+                    <div className="single-subtitle" style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 14, marginTop: 2 }}>
+                      {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
+                    </div>
                     {theme.showDate && (
-                      <div style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 13, marginTop: 4 }}>
+                      <div className="single-date" style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 13, marginTop: 4 }}>
                         {new Date(items[0].submitted_at).toLocaleDateString("ja-JP")}
                       </div>
                     )}
@@ -588,6 +603,9 @@ export default async function WidgetPreviewPage({
                   var carousel = document.getElementById('carousel');
                   var prevBtn = document.getElementById('prev-btn');
                   var nextBtn = document.getElementById('next-btn');
+                  var dots = document.querySelectorAll('.carousel-dot');
+                  var brand = '${brand}';
+                  var dimColor = '${isDark ? "#3e3e4e" : "#d1d5db"}';
                   if (!carousel || !prevBtn || !nextBtn) return;
 
                   var scrollAmount = 340;
@@ -596,6 +614,35 @@ export default async function WidgetPreviewPage({
                   });
                   nextBtn.addEventListener('click', function() {
                     carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                  });
+
+                  function updateDots() {
+                    var cards = carousel.querySelectorAll('.carousel-track > div');
+                    var scrollLeft = carousel.scrollLeft;
+                    var closest = 0;
+                    var minDist = Infinity;
+                    for (var c = 0; c < cards.length; c++) {
+                      var dist = Math.abs(cards[c].offsetLeft - scrollLeft - 4);
+                      if (dist < minDist) { minDist = dist; closest = c; }
+                    }
+                    for (var d = 0; d < dots.length; d++) {
+                      dots[d].style.background = d === closest ? brand : dimColor;
+                      dots[d].style.transform = d === closest ? 'scale(1.25)' : 'scale(1)';
+                    }
+                  }
+
+                  for (var i = 0; i < dots.length; i++) {
+                    dots[i].addEventListener('click', function() {
+                      var idx = parseInt(this.getAttribute('data-idx'), 10);
+                      var cards = carousel.querySelectorAll('.carousel-track > div');
+                      if (cards[idx]) carousel.scrollTo({ left: cards[idx].offsetLeft - 4, behavior: 'smooth' });
+                    });
+                  }
+
+                  var scrollTimer;
+                  carousel.addEventListener('scroll', function() {
+                    clearTimeout(scrollTimer);
+                    scrollTimer = setTimeout(updateDots, 100);
                   });
 
                   ${
@@ -624,6 +671,74 @@ export default async function WidgetPreviewPage({
                   `
                       : ""
                   }
+                })();
+              `,
+            }}
+          />
+        )}
+
+        {widget.type === "single" && items.length > 1 && theme.autoplay !== false && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  var items = ${JSON.stringify(items.map(t => ({
+                    rating: t.rating,
+                    content: t.content,
+                    name: t.name,
+                    title: t.title,
+                    company: t.company,
+                    avatar_url: t.avatar_url,
+                    submitted_at: t.submitted_at,
+                  })))};
+                  var brand = '${brand}';
+                  var isDark = ${isDark};
+                  var showRating = ${theme.showRating !== false};
+                  var showAvatar = ${theme.showAvatar !== false};
+                  var showDate = ${!!theme.showDate};
+                  var current = 0;
+                  var card = document.getElementById('single-card');
+                  if (!card || items.length < 2) return;
+
+                  function starsHtml(rating) {
+                    var s = '';
+                    for (var i = 0; i < 5; i++) s += i < rating ? '\\u2605' : '\\u2606';
+                    return s;
+                  }
+
+                  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+                  function renderItem(t) {
+                    var html = '';
+                    if (showRating) {
+                      html += '<span class="single-stars" style="color:'+brand+';font-size:28px;letter-spacing:4px;">'+starsHtml(t.rating)+'</span>';
+                    }
+                    html += '<p class="single-content" style="color:'+(isDark?'#e0e0e0':'#374151')+';font-size:20px;line-height:1.7;margin:0;">'+esc(t.content)+'</p>';
+                    html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">';
+                    if (showAvatar) {
+                      if (t.avatar_url) {
+                        html += '<img src="'+esc(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
+                      } else {
+                        html += '<div style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;">'+esc((t.name||'?').charAt(0).toUpperCase())+'</div>';
+                      }
+                    }
+                    html += '<div style="text-align:center;">';
+                    html += '<div style="font-weight:700;color:'+(isDark?'#f0f0f0':'#111827')+';font-size:18px;">'+esc(t.name)+'</div>';
+                    var sub = [t.title, t.company].filter(Boolean).join(' / ');
+                    if (sub) html += '<div style="color:'+(isDark?'#9ca3af':'#6b7280')+';font-size:14px;margin-top:2px;">'+esc(sub)+'</div>';
+                    if (showDate) html += '<div style="color:'+(isDark?'#6b7280':'#9ca3af')+';font-size:13px;margin-top:4px;">'+new Date(t.submitted_at).toLocaleDateString('ja-JP')+'</div>';
+                    html += '</div></div>';
+                    return html;
+                  }
+
+                  setInterval(function() {
+                    card.style.opacity = '0';
+                    setTimeout(function() {
+                      current = (current + 1) % items.length;
+                      card.innerHTML = renderItem(items[current]);
+                      card.style.opacity = '1';
+                    }, 500);
+                  }, 5000);
                 })();
               `,
             }}
