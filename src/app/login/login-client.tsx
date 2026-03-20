@@ -15,10 +15,17 @@ export default function LoginClient() {
     setLoading(true);
     setError(null);
 
+    const template = new URLSearchParams(window.location.search).get("template");
+    if (template) {
+      localStorage.setItem("voicehub_template", template);
+    }
+
+    const callbackUrl = new URL("/api/auth/callback", window.location.origin);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo: callbackUrl.toString(),
       },
     });
 

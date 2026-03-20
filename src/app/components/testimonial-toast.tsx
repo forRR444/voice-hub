@@ -126,7 +126,7 @@ export default function TestimonialToast() {
                 5分でお客様の声フォームが完成します。
               </p>
               <a
-                href="/login"
+                href={`/login${selectedTemplate ? `?template=${selectedTemplate}` : ""}`}
                 className="block w-full px-5 py-3 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center"
               >
                 Googleで無料登録
