@@ -1,25 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { generateSlug, getBaseUrl } from "@/lib/utils";
+import { generateSlug } from "@/lib/utils";
 import { DEFAULT_FORM_QUESTIONS, FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow } from "@/types/database";
 
-const TOTAL_STEPS = 4;
-
 export default function OnboardingClient({ workspace }: { workspace: WorkspaceRow }) {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const searchParams = useSearchParams();
+
+  // Template can come from URL params or localStorage (set during login)
+  const [templateFromParam, setTemplateFromParam] = useState<string | null>(
+    searchParams.get("template")
+  );
+
+  useEffect(() => {
+    if (!templateFromParam) {
+      const stored = localStorage.getItem("voicehub_template");
+      if (stored) {
+        setTemplateFromParam(stored);
+        setSelectedTemplate(stored);
+        setStep(2);
+        localStorage.removeItem("voicehub_template");
+      }
+    } else {
+      // Clean up localStorage if URL param was used
+      localStorage.removeItem("voicehub_template");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const TOTAL_STEPS = templateFromParam ? 2 : 4;
+
+  // Map actual step number to progress index for the progress bar
+  function getProgressIndex(currentStep: number): number {
+    if (!templateFromParam) return currentStep;
+    // Popup flow: step 2 → progress 1, step 4 → progress 2
+    if (currentStep === 2) return 1;
+    if (currentStep === 4) return 2;
+    return currentStep;
+  }
+
+  const [step, setStep] = useState(searchParams.get("template") ? 2 : 1);
   const [hasCustomers, setHasCustomers] = useState<boolean | null>(null);
   const [workspaceName, setWorkspaceName] = useState(workspace.name);
-  const [selectedTemplate, setSelectedTemplate] = useState("coaching");
+  const [selectedTemplate, setSelectedTemplate] = useState(
+    searchParams.get("template") || "coaching"
+  );
   const [brandColor, setBrandColor] = useState("#635BFF");
   const [creating, setCreating] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [formSlug, setFormSlug] = useState("");
-  const [copied, setCopied] = useState(false);
 
   async function completeOnboarding() {
     setCreating(true);
@@ -73,20 +104,12 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
         .update({ onboarding_completed: true })
         .eq("id", workspace.id);
 
-      setFormSlug(slug);
       setCompleted(true);
     } catch {
       // Error handled silently
     } finally {
       setCreating(false);
     }
-  }
-
-  function handleCopyUrl() {
-    const url = `${getBaseUrl()}/form/${formSlug}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -98,7 +121,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
             <div
               key={i}
               className={`h-1 flex-1 rounded-full transition-colors ${
-                i < step ? "bg-indigo-500" : "bg-gray-200"
+                i < getProgressIndex(step) ? "bg-indigo-500" : "bg-gray-200"
               }`}
             />
           ))}
@@ -172,18 +195,37 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
           />
 
           <div className="flex justify-between">
+            {!templateFromParam ? (
+              <button
+                onClick={() => { setStep(1); setHasCustomers(null); }}
+                className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 cursor-pointer"
+              >
+                戻る
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setStep(4);
+                  completeOnboarding();
+                }}
+                className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 cursor-pointer"
+              >
+                スキップ
+              </button>
+            )}
             <button
-              onClick={() => { setStep(1); setHasCustomers(null); }}
-              className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 cursor-pointer"
-            >
-              戻る
-            </button>
-            <button
-              onClick={() => setStep(3)}
+              onClick={() => {
+                if (templateFromParam) {
+                  setStep(4);
+                  completeOnboarding();
+                } else {
+                  setStep(3);
+                }
+              }}
               disabled={!workspaceName.trim()}
               className="px-6 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
             >
-              次へ
+              {templateFromParam ? "フォームを作成" : "次へ"}
             </button>
           </div>
         </div>
@@ -262,42 +304,27 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
 
           {completed && (
             <div>
-              <div className="text-5xl mb-4">🎉</div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <div className="relative mx-auto w-20 h-20 mb-6">
+                <div className="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-30" />
+                <div className="relative w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 フォームが完成しました！
               </h2>
-              <p className="text-sm text-gray-500 mb-8">
-                このURLをお客様に送るだけで、声が集まります
+              <p className="text-gray-500 mb-8">
+                フォームの質問内容を確認・編集してから、お客様に送りましょう。
               </p>
 
-              <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3 mb-8">
-                <code className="flex-1 text-sm text-gray-700 truncate text-left">
-                  {getBaseUrl()}/form/{formSlug}
-                </code>
-                <button
-                  onClick={handleCopyUrl}
-                  className="shrink-0 px-3 py-1.5 rounded-md text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
-                >
-                  {copied ? "✓ コピー済み" : "コピー"}
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                <a
-                  href={`${getBaseUrl()}/form/${formSlug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full px-6 py-2.5 rounded-lg text-sm font-medium border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
-                >
-                  フォームをプレビュー
-                </a>
-                <button
-                  onClick={() => router.push("/dashboard")}
-                  className="w-full px-6 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
-                >
-                  ダッシュボードへ
-                </button>
-              </div>
+              <button
+                onClick={() => router.push("/dashboard/forms")}
+                className="w-full px-6 py-3 rounded-xl text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 cursor-pointer transition-colors"
+              >
+                フォームを確認する
+              </button>
             </div>
           )}
         </div>
