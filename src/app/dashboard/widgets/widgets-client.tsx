@@ -660,9 +660,30 @@ export default function WidgetsClient({
                     {w.name}
                   </h3>
                   <div className="flex items-center gap-4 mt-2 text-sm text-foreground/50">
-                    <span>
-                      タイプ:{" "}
-                      {WIDGET_TYPES.find((wt) => wt.id === w.type)?.label ?? w.type}
+                    <span className="flex items-center gap-1">
+                      タイプ:
+                      <select
+                        value={w.type}
+                        onChange={async (e) => {
+                          const newType = e.target.value as WidgetType;
+                          const { error } = await supabase
+                            .from("widgets")
+                            .update({ type: newType })
+                            .eq("id", w.id);
+                          if (!error) {
+                            setWidgets((prev) =>
+                              prev.map((widget) =>
+                                widget.id === w.id ? { ...widget, type: newType } : widget
+                              )
+                            );
+                          }
+                        }}
+                        className="text-sm text-indigo-600 bg-transparent border-none cursor-pointer focus:outline-none font-medium"
+                      >
+                        {WIDGET_TYPES.map((wt) => (
+                          <option key={wt.id} value={wt.id}>{wt.label}</option>
+                        ))}
+                      </select>
                     </span>
                     <span>
                       モード:{" "}
@@ -728,6 +749,7 @@ export default function WidgetsClient({
                   <Code size={14} />
                   埋め込みコードを表示
                 </button>
+              </div>
 
                 {expandedId === w.id && (
                   <div className="mt-4 flex flex-col gap-4">
@@ -792,7 +814,6 @@ export default function WidgetsClient({
                     </div>
                   </div>
                 )}
-              </div>
                 </>
               )}
             </div>
