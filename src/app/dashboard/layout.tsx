@@ -15,7 +15,7 @@ function SidebarContent({ workspaceName }: { workspaceName?: string }) {
   return (
     <>
       <div className="px-5 py-4 border-b border-foreground/10">
-        <h1 className="text-lg font-bold text-foreground">VoiceHub</h1>
+        <a href="/dashboard" className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</a>
         {workspaceName && (
           <p className="text-xs text-foreground/50 mt-0.5 truncate">
             {workspaceName}
