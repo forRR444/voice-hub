@@ -53,6 +53,7 @@ export async function GET(
       )
       .eq("workspace_id", widget.workspace_id)
       .eq("status", "approved")
+      .not("source", "in", '("sample","guide")')
       .gte("rating", widget.filter_min_rating ?? 1)
       .order("submitted_at", { ascending: false });
 
