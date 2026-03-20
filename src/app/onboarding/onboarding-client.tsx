@@ -98,6 +98,24 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
         source: "sample",
       });
 
+      // Create default widget (carousel)
+      await supabase.from("widgets").insert({
+        workspace_id: workspace.id,
+        name: "カルーセル",
+        type: "carousel",
+        theme: {
+          mode: "light",
+          brandColor: brandColor,
+          showRating: true,
+          showAvatar: true,
+          showDate: false,
+          maxItems: 10,
+          autoplay: true,
+        },
+        filter_min_rating: 1,
+        only_featured: false,
+      });
+
       // Mark onboarding complete
       await supabase
         .from("workspaces")
