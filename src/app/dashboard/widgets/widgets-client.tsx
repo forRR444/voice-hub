@@ -757,7 +757,7 @@ export default function WidgetsClient({
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-medium text-foreground/50">
-                          スクリプト埋め込み
+                          スクリプト埋め込み<span className="font-normal text-foreground/30 ml-2">おすすめ・デザインが自然に馴染む</span>
                         </span>
                         <button
                           onClick={() =>
@@ -787,7 +787,7 @@ export default function WidgetsClient({
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-medium text-foreground/50">
-                          iFrame埋め込み
+                          iFrame埋め込み<span className="font-normal text-foreground/30 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
                         </span>
                         <button
                           onClick={() =>
