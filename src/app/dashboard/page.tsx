@@ -58,10 +58,10 @@ export default async function DashboardPage() {
   );
 
   const hasRealTestimonials = testimonialList.some(
-    (t) => t.source !== "sample"
+    (t) => t.source !== "sample" && t.source !== "guide"
   );
   const hasApprovedTestimonials = testimonialList.some(
-    (t) => t.source !== "sample" && t.status === "approved"
+    (t) => t.source !== "sample" && t.source !== "guide" && t.status === "approved"
   );
 
   const { data: forms } = await supabase
