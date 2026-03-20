@@ -85,13 +85,18 @@ export default function SettingsClient({
       <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-foreground">利用状況</h3>
-          <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600">
-            ベータ版
+          <span className="px-3 py-1 text-sm font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+            ⭐ 初期サポーター
           </span>
         </div>
-        <p className="text-sm text-foreground/50 mb-4">
-          現在ベータ版のため、すべての機能を無料でご利用いただけます。正式リリース後もずっと無料でご利用いただけます。
-        </p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
+          <p className="text-sm font-medium text-amber-800">
+            🎉 先着10名の初期サポーター特典が適用されています
+          </p>
+          <p className="text-xs text-amber-600 mt-1">
+            正式リリース後も、すべての機能をずっと無料でご利用いただけます。
+          </p>
+        </div>
 
         {/* Usage stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
