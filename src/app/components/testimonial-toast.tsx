@@ -19,6 +19,12 @@ export default function TestimonialToast() {
 
   const totalSteps = 3;
 
+  function handleRegister() {
+    localStorage.setItem("voicehub_template", selectedTemplate || "coaching");
+    localStorage.setItem("voicehub_skip_onboarding", "true");
+    window.location.href = "/login";
+  }
+
   return (
     <div
       className={`fixed bottom-6 right-6 z-50 w-[360px] transition-all duration-500 ${
@@ -113,24 +119,26 @@ export default function TestimonialToast() {
           {step === 2 && (
             <div className="text-center">
               <p className="text-xs text-gray-500 mb-2">ステップ 3/3</p>
-              <div className="text-3xl mb-3">🎉</div>
+              <div className="relative mx-auto w-14 h-14 mb-4">
+                <div className="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-30" />
+                <div className="relative w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <svg className="w-7 h-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
               <h3 className="text-base font-bold text-gray-900 mb-2">
                 準備ができました！
               </h3>
-              <p className="text-sm text-gray-600 mb-1">
-                {selectedTemplate
-                  ? `「${FORM_TEMPLATES.find((t) => t.id === selectedTemplate)?.label}」テンプレートで`
-                  : ""}
-              </p>
               <p className="text-sm text-gray-600 mb-5">
-                5分でお客様の声フォームが完成します。
+                Googleアカウントで登録すると、フォームが自動で作成されます。
               </p>
-              <a
-                href={`/login${selectedTemplate ? `?template=${selectedTemplate}` : ""}`}
-                className="block w-full px-5 py-3 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center"
+              <button
+                onClick={handleRegister}
+                className="block w-full px-5 py-3 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
               >
                 Googleで無料登録
-              </a>
+              </button>
               <p className="mt-3 text-xs text-gray-400">
                 クレジットカード不要
               </p>
@@ -138,7 +146,7 @@ export default function TestimonialToast() {
           )}
         </div>
 
-        {/* Navigation (step 1 only) */}
+        {/* Navigation (step 1 & 2) */}
         {step === 1 && (
           <div className="px-5 pb-4 flex items-center justify-between">
             <button
