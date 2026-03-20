@@ -23,11 +23,26 @@ export default async function OnboardingPage() {
     .single<WorkspaceRow>();
 
   if (!workspace) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">ワークスペースを準備中...</p>
-      </div>
-    );
+    const { data: newWorkspace, error } = await supabase
+      .from("workspaces")
+      .insert({
+        user_id: user.id,
+        name: user.user_metadata?.full_name || "マイサービス",
+        subscription_status: "free",
+        onboarding_completed: false,
+      })
+      .select("*")
+      .single<WorkspaceRow>();
+
+    if (error || !newWorkspace) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-gray-500">ワークスペースの作成に失敗しました。ページをリロードしてください。</p>
+        </div>
+      );
+    }
+
+    return <OnboardingClient workspace={newWorkspace} />;
   }
 
   if (workspace.onboarding_completed) {
