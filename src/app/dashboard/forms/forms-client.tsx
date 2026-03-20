@@ -8,8 +8,6 @@ import {
   Pencil,
   Check,
   X,
-  ChevronUp,
-  ChevronDown,
   Trash2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -40,7 +38,6 @@ export default function FormsClient({
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editQuestions, setEditQuestions] = useState<FormQuestion[]>([]);
-  const [showTypePicker, setShowTypePicker] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("coaching");
 
@@ -84,7 +81,6 @@ export default function FormsClient({
       thank_you_message: form.thank_you_message,
     });
     setEditQuestions(form.questions.map((q) => ({ ...q })));
-    setShowTypePicker(false);
   }
 
   async function saveEdit(id: string) {
@@ -118,44 +114,6 @@ export default function FormsClient({
     }
   }
 
-  const QUESTION_TYPE_LABELS: Record<FormQuestion["type"], string> = {
-    star_rating: "星評価",
-    text: "テキスト",
-    textarea: "テキストエリア",
-    checkbox: "チェックボックス",
-    image: "画像",
-  };
-
-  function updateQuestion(index: number, updates: Partial<FormQuestion>) {
-    setEditQuestions((prev) =>
-      prev.map((q, i) => (i === index ? { ...q, ...updates } : q))
-    );
-  }
-
-  function moveQuestion(index: number, direction: "up" | "down") {
-    const newIndex = direction === "up" ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= editQuestions.length) return;
-    setEditQuestions((prev) => {
-      const next = [...prev];
-      [next[index], next[newIndex]] = [next[newIndex], next[index]];
-      return next;
-    });
-  }
-
-  function deleteQuestion(index: number) {
-    setEditQuestions((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function addQuestion(type: FormQuestion["type"]) {
-    const newQuestion: FormQuestion = {
-      id: crypto.randomUUID(),
-      label: "",
-      type,
-      required: false,
-    };
-    setEditQuestions((prev) => [...prev, newQuestion]);
-    setShowTypePicker(false);
-  }
 
   function copyUrl(slug: string, id: string) {
     const url = `${getBaseUrl()}/form/${slug}`;
@@ -315,138 +273,77 @@ export default function FormsClient({
                       />
                     </div>
                   </div>
-                  {/* Question Editor */}
+                  {/* Question Editor - Toggle Style */}
                   <div className="border-t border-foreground/10 pt-4">
-                    <h4 className="text-sm font-semibold text-foreground mb-3">
-                      質問の編集
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
+                      フォームに含める質問
                     </h4>
-                    <div className="flex flex-col gap-3">
-                      {editQuestions.map((q, index) => {
-                        const isCore = CORE_QUESTION_IDS.includes(q.id);
-                        const showPlaceholder =
-                          q.type === "text" || q.type === "textarea";
-                        return (
-                          <div
-                            key={q.id}
-                            className="border border-foreground/10 rounded-lg p-3"
-                          >
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-foreground/5 text-foreground/60">
-                                {QUESTION_TYPE_LABELS[q.type]}
-                              </span>
-                              {isCore && (
-                                <span className="text-xs text-foreground/40">
-                                  コア
-                                </span>
-                              )}
-                              <div className="ml-auto flex items-center gap-1">
-                                <button
-                                  onClick={() => moveQuestion(index, "up")}
-                                  disabled={index === 0}
-                                  className="p-1 text-foreground/40 hover:text-foreground/70 disabled:opacity-30 cursor-pointer"
-                                  title="上に移動"
-                                >
-                                  <ChevronUp size={16} />
-                                </button>
-                                <button
-                                  onClick={() => moveQuestion(index, "down")}
-                                  disabled={
-                                    index === editQuestions.length - 1
-                                  }
-                                  className="p-1 text-foreground/40 hover:text-foreground/70 disabled:opacity-30 cursor-pointer"
-                                  title="下に移動"
-                                >
-                                  <ChevronDown size={16} />
-                                </button>
-                                <button
-                                  onClick={() => deleteQuestion(index)}
-                                  disabled={isCore}
-                                  className="p-1 text-red-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                                  title={
-                                    isCore
-                                      ? "コア質問は削除できません"
-                                      : "削除"
-                                  }
-                                >
-                                  <Trash2 size={16} />
-                                </button>
+                    <p className="text-xs text-foreground/40 mb-4">
+                      必要な質問をON/OFFで選べます。必須の質問は外せません。
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      {(() => {
+                        const AVAILABLE_QUESTIONS: { id: string; label: string; type: FormQuestion["type"]; required?: boolean; placeholder?: string; alwaysOn?: boolean }[] = [
+                          { id: "rating", label: "総合評価（星）", type: "star_rating", required: true },
+                          { id: "before_story", label: "利用前の悩み（Before）", type: "textarea", required: true, placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした..." },
+                          { id: "content", label: "感想・レビュー", type: "textarea", required: true },
+                          { id: "name", label: "お名前", type: "text", required: true, placeholder: "山田 太郎" },
+                          { id: "title", label: "職業・肩書き", type: "text", required: false, placeholder: "例：ライフコーチ" },
+                          { id: "avatar", label: "写真", type: "image", required: false },
+                          { id: "permission", label: "掲載許可", type: "checkbox", required: true, alwaysOn: true },
+                        ];
+
+                        return AVAILABLE_QUESTIONS.map((aq) => {
+                          const isOn = editQuestions.some((q) => q.id === aq.id);
+                          const isAlwaysOn = aq.alwaysOn === true;
+
+                          function toggle() {
+                            if (isAlwaysOn) return;
+                            if (isOn) {
+                              setEditQuestions((prev) => prev.filter((q) => q.id !== aq.id));
+                            } else {
+                              const newQ: FormQuestion = {
+                                id: aq.id,
+                                label: aq.label.replace(/（.*）/, ""),
+                                type: aq.type,
+                                required: aq.required ?? false,
+                                ...(aq.placeholder ? { placeholder: aq.placeholder } : {}),
+                              };
+                              // Insert in correct order
+                              const ORDER = ["rating", "before_story", "content", "name", "title", "avatar", "permission"];
+                              setEditQuestions((prev) => {
+                                const next = [...prev, newQ];
+                                next.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
+                                return next;
+                              });
+                            }
+                          }
+
+                          return (
+                            <div
+                              key={aq.id}
+                              onClick={() => toggle()}
+                              className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                                isOn
+                                  ? "border-indigo-200 bg-indigo-50/50"
+                                  : "border-foreground/10 bg-white"
+                              } ${isAlwaysOn ? "opacity-80" : "cursor-pointer hover:border-foreground/20"}`}
+                            >
+                              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                                isOn ? "bg-indigo-600 border-indigo-600" : "border-gray-300"
+                              } ${isAlwaysOn ? "opacity-50" : ""}`}>
+                                {isOn && (
+                                  <Check size={14} className="text-white" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-medium text-foreground">{aq.label}</span>
+                                {isAlwaysOn && <span className="ml-1 text-red-500">*</span>}
                               </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                              <input
-                                type="text"
-                                value={q.label}
-                                onChange={(e) =>
-                                  updateQuestion(index, {
-                                    label: e.target.value,
-                                  })
-                                }
-                                placeholder="質問ラベル"
-                                className="w-full px-3 py-1.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                              />
-                              {showPlaceholder && (
-                                <input
-                                  type="text"
-                                  value={q.placeholder ?? ""}
-                                  onChange={(e) =>
-                                    updateQuestion(index, {
-                                      placeholder: e.target.value || undefined,
-                                    })
-                                  }
-                                  placeholder="プレースホルダー"
-                                  className="w-full px-3 py-1.5 border border-foreground/10 rounded-lg text-sm text-foreground/60 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                />
-                              )}
-                              <label className="flex items-center gap-2 text-sm text-foreground/60">
-                                <input
-                                  type="checkbox"
-                                  checked={q.required}
-                                  onChange={(e) =>
-                                    updateQuestion(index, {
-                                      required: e.target.checked,
-                                    })
-                                  }
-                                  className="rounded border-foreground/20"
-                                />
-                                必須
-                              </label>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Add question */}
-                    <div className="mt-3 relative">
-                      <button
-                        onClick={() => setShowTypePicker(!showTypePicker)}
-                        className="flex items-center gap-1 px-3 py-2 text-sm text-foreground/60 border border-dashed border-foreground/20 rounded-lg hover:bg-foreground/5 w-full justify-center cursor-pointer"
-                      >
-                        <Plus size={14} />
-                        質問を追加
-                      </button>
-                      {showTypePicker && (
-                        <div className="absolute left-0 right-0 mt-1 bg-white border border-foreground/10 rounded-lg shadow-lg z-10 py-1">
-                          {(
-                            [
-                              ["text", "テキスト"],
-                              ["textarea", "テキストエリア"],
-                              ["star_rating", "星評価"],
-                              ["checkbox", "チェックボックス"],
-                            ] as const
-                          ).map(([type, label]) => (
-                            <button
-                              key={type}
-                              onClick={() =>
-                                addQuestion(type as FormQuestion["type"])
-                              }
-                              className="block w-full text-left px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
-                            >
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                          );
+                        });
+                      })()}
                     </div>
                   </div>
 
