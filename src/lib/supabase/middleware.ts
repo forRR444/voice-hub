@@ -29,6 +29,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // Skip auth check for public pages
+  const publicPaths = ["/", "/terms", "/privacy"];
+  if (publicPaths.includes(request.nextUrl.pathname)) {
+    return supabaseResponse;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
