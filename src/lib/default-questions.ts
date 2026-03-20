@@ -24,7 +24,7 @@ const COMMON_END: FormQuestion[] = [
     id: "name",
     label: "お名前",
     type: "text",
-    required: true,
+    required: false,
     placeholder: "山田 太郎",
   },
   {
@@ -59,7 +59,7 @@ export const FORM_TEMPLATES: FormTemplate[] = [
         id: "before_story",
         label: "ご利用前はどんなお悩みがありましたか？",
         type: "textarea",
-        required: true,
+        required: false,
         placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした...",
       },
       {
@@ -82,7 +82,7 @@ export const FORM_TEMPLATES: FormTemplate[] = [
         id: "before_story",
         label: "受講前はどんな課題がありましたか？",
         type: "textarea",
-        required: true,
+        required: false,
         placeholder: "例：独学で勉強していましたが、なかなか成果が出ませんでした...",
       },
       {
@@ -105,7 +105,7 @@ export const FORM_TEMPLATES: FormTemplate[] = [
         id: "before_story",
         label: "施術前はどんな症状やお悩みがありましたか？",
         type: "textarea",
-        required: true,
+        required: false,
         placeholder: "例：肩こりがひどく、頭痛に悩まされていました...",
       },
       {
