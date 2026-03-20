@@ -132,6 +132,16 @@ export function FormClient({ form }: { form: FormRow }) {
     []
   );
 
+  const updateCustomField = useCallback(
+    (id: string, value: string | boolean | number) => {
+      setFormData((prev) => ({
+        ...prev,
+        customFields: { ...prev.customFields, [id]: value },
+      }));
+    },
+    []
+  );
+
   const isCurrentStepValid = (): boolean => {
     const q = currentQuestion;
     if (!q.required) return true;
@@ -320,16 +330,6 @@ export function FormClient({ form }: { form: FormRow }) {
       </div>
     );
   }
-
-  const updateCustomField = useCallback(
-    (id: string, value: string | boolean | number) => {
-      setFormData((prev) => ({
-        ...prev,
-        customFields: { ...prev.customFields, [id]: value },
-      }));
-    },
-    []
-  );
 
   const renderQuestion = (question: FormQuestion) => {
     const isKnown = KNOWN_IDS.includes(question.id);
