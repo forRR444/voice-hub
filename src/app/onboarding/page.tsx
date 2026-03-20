@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { WorkspaceRow } from "@/types/database";
 import OnboardingClient from "./onboarding-client";
 
@@ -42,12 +43,16 @@ export default async function OnboardingPage() {
       );
     }
 
-    return <OnboardingClient workspace={newWorkspace} />;
+    const admin = createAdminClient();
+    const { count: totalUsers1 } = await admin.from("workspaces").select("id", { count: "exact", head: true });
+    return <OnboardingClient workspace={newWorkspace} betaUserCount={totalUsers1 ?? 0} />;
   }
 
   if (workspace.onboarding_completed) {
     redirect("/dashboard");
   }
 
-  return <OnboardingClient workspace={workspace} />;
+  const admin = createAdminClient();
+  const { count: totalUsers2 } = await admin.from("workspaces").select("id", { count: "exact", head: true });
+  return <OnboardingClient workspace={workspace} betaUserCount={totalUsers2 ?? 0} />;
 }

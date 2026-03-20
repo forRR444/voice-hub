@@ -7,7 +7,7 @@ import { generateSlug } from "@/lib/utils";
 import { DEFAULT_FORM_QUESTIONS, FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow } from "@/types/database";
 
-export default function OnboardingClient({ workspace }: { workspace: WorkspaceRow }) {
+export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -211,6 +211,12 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+      {/* Early adopter banner */}
+      {betaUserCount <= 10 && (
+        <div className="bg-indigo-50 text-indigo-700 text-sm rounded-lg px-4 py-3 mb-6 text-center">
+          先着10名限定：正式リリース後もずっと無料でご利用いただけます（現在 {betaUserCount}/10名）
+        </div>
+      )}
       {/* Progress bar */}
       {!completed && (
         <div className="flex gap-2 mb-8">

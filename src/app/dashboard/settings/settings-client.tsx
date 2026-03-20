@@ -90,7 +90,7 @@ export default function SettingsClient({
           </span>
         </div>
         <p className="text-sm text-foreground/50 mb-4">
-          現在ベータ版のため、すべての機能を無料でご利用いただけます。
+          現在ベータ版のため、すべての機能を無料でご利用いただけます。正式リリース後もずっと無料でご利用いただけます。
         </p>
 
         {/* Usage stats */}
