@@ -14,6 +14,8 @@ export function createMockQueryBuilder(result: QueryResult) {
     "update",
     "delete",
     "eq",
+    "neq",
+    "not",
     "gte",
     "order",
     "limit",

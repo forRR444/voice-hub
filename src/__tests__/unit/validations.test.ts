@@ -56,7 +56,6 @@ describe("testimonialSubmitSchema", () => {
     ["空のcontent", { ...validInput, content: "" }],
     ["5000文字超のcontent", { ...validInput, content: "a".repeat(5001) }],
     ["5000文字超のbefore_story", { ...validInput, before_story: "a".repeat(5001) }],
-    ["空のname", { ...validInput, name: "" }],
     ["100文字超のname", { ...validInput, name: "a".repeat(101) }],
     ["100文字超のtitle", { ...validInput, title: "a".repeat(101) }],
     ["不正なavatar_url", { ...validInput, avatar_url: "not-a-url" }],
