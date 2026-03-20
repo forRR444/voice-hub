@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Check,
   CreditCard,
+  Crown,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
@@ -85,7 +86,8 @@ export default function SettingsClient({
       <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-foreground">利用状況</h3>
-          <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">
+          <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
+            <Crown size={14} />
             初期サポーター
           </span>
         </div>
