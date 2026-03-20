@@ -9,10 +9,10 @@ const safeUrlSchema = z
 
 export const testimonialSubmitSchema = z.object({
   form_id: z.string().min(1),
-  rating: z.number().min(1).max(5),
-  content: z.string().min(1).max(5000),
+  rating: z.number().min(1).max(5).optional(),
+  content: z.string().min(1).max(5000).optional(),
   before_story: z.string().max(5000).optional(),
-  name: z.string().min(1).max(100),
+  name: z.string().min(1).max(100).optional(),
   title: z.string().max(100).optional(),
   avatar_url: safeUrlSchema.optional().nullable(),
   permission_granted: z.boolean(),

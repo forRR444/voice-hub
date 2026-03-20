@@ -56,10 +56,10 @@ export async function POST(request: Request) {
       .insert({
         workspace_id: form.workspace_id,
         form_id: form.id,
-        rating: data.rating,
-        content: data.content,
+        rating: data.rating ?? null,
+        content: data.content ?? "",
         before_story: data.before_story || null,
-        name: data.name,
+        name: data.name ?? "",
         title: data.title || null,
         avatar_url: data.avatar_url || null,
         status: "pending" as const,
