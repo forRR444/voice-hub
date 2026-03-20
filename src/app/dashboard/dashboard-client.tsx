@@ -13,6 +13,7 @@ import {
   Bookmark,
   MessageSquare,
   ImageIcon,
+  Crown,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
@@ -28,7 +29,6 @@ export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
   forms,
-  hasRealTestimonials,
   hasApprovedTestimonials,
   widgetCount,
   brandColor,
@@ -36,7 +36,6 @@ export default function DashboardClient({
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
   forms: FormInfo[];
-  hasRealTestimonials: boolean;
   hasApprovedTestimonials: boolean;
   widgetCount: number;
   brandColor: string;
@@ -44,6 +43,7 @@ export default function DashboardClient({
   const supabase = createClient();
   const [testimonials, setTestimonials] =
     useState<TestimonialWithTags[]>(initialTestimonials);
+  const hasReal = useMemo(() => testimonials.some((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
   const [showFormMenu, setShowFormMenu] = useState(false);
@@ -134,9 +134,17 @@ export default function DashboardClient({
     <div className="max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
-        <h2 className="text-2xl font-bold text-foreground">{hasRealTestimonials ? "お客様の声" : "ご登録ありがとうございます"}</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-foreground">{hasReal ? "お客様の声" : "ご登録ありがとうございます"}</h2>
+          {!hasReal && (
+            <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
+              <Crown size={12} />
+              初期サポーター
+            </span>
+          )}
+        </div>
         <div className="flex gap-2">
-          {forms.length > 0 && hasRealTestimonials && (
+          {forms.length > 0 && hasReal && (
             <div className="relative">
               <button
                 onClick={() => forms.length === 1 ? copyFormUrl(forms[0].slug) : setShowFormMenu(!showFormMenu)}

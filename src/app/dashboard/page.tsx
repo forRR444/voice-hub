@@ -82,7 +82,6 @@ export default async function DashboardPage() {
       workspace={workspace}
       testimonials={testimonialsWithTags}
       forms={(forms ?? []) as { id: string; slug: string; title: string }[]}
-      hasRealTestimonials={hasRealTestimonials}
       hasApprovedTestimonials={hasApprovedTestimonials}
       widgetCount={widgetCount ?? 0}
       brandColor={brandColor}
