@@ -4,7 +4,7 @@ test.describe("認証とログインページ", () => {
   test("ログインページにVoiceHubのブランディングが表示される", async ({ page }) => {
     await page.goto("/login");
     await expect(
-      page.getByText("VoiceHub", { exact: true })
+      page.getByRole("link", { name: "VoiceHub" })
     ).toBeVisible();
     await expect(
       page.getByText("お客様の声の収集・管理・表示ツール")
