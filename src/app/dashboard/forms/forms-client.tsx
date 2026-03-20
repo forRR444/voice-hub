@@ -234,7 +234,7 @@ export default function FormsClient({
                       className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-foreground/70 mb-1">
                         ブランドカラー
@@ -285,9 +285,9 @@ export default function FormsClient({
                       {(() => {
                         const AVAILABLE_QUESTIONS: { id: string; label: string; type: FormQuestion["type"]; required?: boolean; placeholder?: string; alwaysOn?: boolean }[] = [
                           { id: "rating", label: "総合評価（星）", type: "star_rating", required: true },
-                          { id: "before_story", label: "利用前の悩み（Before）", type: "textarea", required: true, placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした..." },
+                          { id: "before_story", label: "利用前の悩み（Before）", type: "textarea", required: false, placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした..." },
                           { id: "content", label: "感想・レビュー", type: "textarea", required: true },
-                          { id: "name", label: "お名前", type: "text", required: true, placeholder: "山田 太郎" },
+                          { id: "name", label: "お名前", type: "text", required: false, placeholder: "山田 太郎" },
                           { id: "title", label: "職業・肩書き", type: "text", required: false, placeholder: "例：ライフコーチ" },
                           { id: "avatar", label: "写真", type: "image", required: false },
                           { id: "permission", label: "掲載許可", type: "checkbox", required: true, alwaysOn: true },
@@ -409,7 +409,13 @@ export default function FormsClient({
                       title={form.brand_color}
                     />
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4 flex items-center gap-3">
+                    <button
+                      onClick={() => startEdit(form)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                    >
+                      質問内容を確認
+                    </button>
                     <button
                       onClick={() => copyUrl(form.slug, form.id)}
                       className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
@@ -426,6 +432,7 @@ export default function FormsClient({
           ))}
         </div>
       )}
+
     </div>
   );
 }

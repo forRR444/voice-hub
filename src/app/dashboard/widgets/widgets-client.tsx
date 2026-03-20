@@ -336,7 +336,7 @@ export default function WidgetsClient({
                 <h4 className="text-sm font-medium text-foreground/70 mb-3">
                   テーマ設定
                 </h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-foreground/50 mb-1">
                       モード
@@ -536,7 +536,7 @@ export default function WidgetsClient({
                       ))}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs text-foreground/50 mb-1">モード</label>
                       <select

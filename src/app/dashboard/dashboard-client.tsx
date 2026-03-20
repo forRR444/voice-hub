@@ -19,7 +19,6 @@ import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import SnsImageModal from "./sns-image-modal";
-import NextStepsChecklist from "./next-steps-checklist";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
 
@@ -69,10 +68,11 @@ export default function DashboardClient({
   }, [testimonials, filter, search]);
 
   const stats = useMemo(() => {
-    const total = testimonials.length;
-    const approved = testimonials.filter((t) => t.status === "approved").length;
-    const pending = testimonials.filter((t) => t.status === "pending").length;
-    const rated = testimonials.filter((t) => t.rating != null);
+    const real = testimonials.filter((t) => t.source !== "guide" && t.source !== "sample");
+    const total = real.length;
+    const approved = real.filter((t) => t.status === "approved").length;
+    const pending = real.filter((t) => t.status === "pending").length;
+    const rated = real.filter((t) => t.rating != null);
     const avg =
       rated.length > 0
         ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length
@@ -132,19 +132,11 @@ export default function DashboardClient({
 
   return (
     <div className="max-w-5xl mx-auto">
-      {/* Next Steps Checklist */}
-      <NextStepsChecklist
-        formSlug={forms.length > 0 ? forms[0].slug : null}
-        hasRealTestimonials={hasRealTestimonials}
-        hasApprovedTestimonials={hasApprovedTestimonials}
-        widgetCount={widgetCount}
-      />
-
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-foreground">お客様の声</h2>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
+        <h2 className="text-2xl font-bold text-foreground">{hasRealTestimonials ? "お客様の声" : "ご登録ありがとうございます"}</h2>
         <div className="flex gap-2">
-          {forms.length > 0 && (
+          {forms.length > 0 && hasRealTestimonials && (
             <div className="relative">
               <button
                 onClick={() => forms.length === 1 ? copyFormUrl(forms[0].slug) : setShowFormMenu(!showFormMenu)}
@@ -186,7 +178,7 @@ export default function DashboardClient({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      {stats.total > 0 && <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
         <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
         <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
@@ -195,10 +187,10 @@ export default function DashboardClient({
           label="平均評価"
           value={stats.avg > 0 ? stats.avg.toFixed(1) : "-"}
         />
-      </div>
+      </div>}
 
       {/* Filter tabs + search */}
-      <div className="flex items-center justify-between mb-4">
+      {stats.total > 0 && <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div className="flex gap-1 bg-white rounded-lg border border-foreground/10 p-1">
           {tabs.map((tab) => (
             <button
@@ -227,7 +219,7 @@ export default function DashboardClient({
             className="pl-9 pr-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
-      </div>
+      </div>}
 
       {/* Testimonial list */}
       {filtered.length === 0 ? (
@@ -246,6 +238,44 @@ export default function DashboardClient({
                 toggleFeatured(t.id, t.is_featured)
               }
               onCreateSnsImage={() => setSnsImageTarget(t)}
+              onDeleteGuide={async (id) => {
+                await supabase.from("testimonials").delete().eq("id", id);
+                setTestimonials((prev) => prev.filter((item) => item.id !== id));
+              }}
+              formSlug={forms.length > 0 ? forms[0].slug : undefined}
+              onCopyUrl={forms.length > 0 ? async () => {
+                copyFormUrl(forms[0].slug);
+                // Insert next guide message if not already exists
+                const { data: existing } = await supabase
+                  .from("testimonials")
+                  .select("id")
+                  .eq("workspace_id", workspace.id)
+                  .eq("source", "guide")
+                  .neq("id", t.id)
+                  .limit(1);
+                if (!existing || existing.length === 0) {
+                  const { data: newGuide } = await supabase
+                    .from("testimonials")
+                    .insert({
+                      workspace_id: workspace.id,
+                      form_id: forms[0].id,
+                      rating: 5,
+                      content: "お客様の回答が届いたら「承認」ボタンを押してください。ホームページへの埋め込みは[[ウィジェット管理]]から設定できます。以上でガイドを終了します。",
+                      name: "VoiceHub ガイド",
+                      title: "ご案内",
+                      status: "approved",
+                      is_featured: false,
+                      permission_granted: true,
+                      source: "guide",
+                    })
+                    .select()
+                    .single();
+                  if (newGuide) {
+                    setTestimonials((prev) => [{ ...newGuide, tags: [] }, ...prev]);
+                  }
+                }
+              } : undefined}
+              urlCopied={copiedUrl}
             />
           ))}
         </div>
@@ -332,13 +362,70 @@ function TestimonialCard({
   onReject,
   onToggleFeatured,
   onCreateSnsImage,
+  formSlug,
+  onCopyUrl,
+  urlCopied,
+  onDeleteGuide,
 }: {
   testimonial: TestimonialWithTags;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
   onCreateSnsImage: () => void;
+  formSlug?: string;
+  onCopyUrl?: () => void;
+  urlCopied?: boolean;
+  onDeleteGuide?: (id: string) => void;
 }) {
+  if (t.source === "guide") {
+    return (
+      <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5 relative">
+        {onDeleteGuide && (
+          <button
+            onClick={() => onDeleteGuide(t.id)}
+            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
+          >
+            <XCircle size={16} />
+          </button>
+        )}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="font-medium text-foreground">{t.name}</span>
+          <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+        </div>
+        <p className="text-sm text-foreground/60 leading-relaxed">
+          {t.content.includes("[[") ? (
+            <>
+              {t.content.split("[[").map((part, i) => {
+                if (i === 0) return part;
+                const [linkText, rest] = part.split("]]");
+                return (
+                  <span key={i}>
+                    <Link href="/dashboard/widgets" className="text-indigo-600 hover:underline">{linkText}</Link>
+                    {rest}
+                  </span>
+                );
+              })}
+            </>
+          ) : t.content}
+        </p>
+        {formSlug && onCopyUrl && t.content.includes("URLをコピー") && (
+          <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
+            <code className="flex-1 text-xs text-foreground/60 truncate">
+              {getBaseUrl()}/form/{formSlug}
+            </code>
+            <button
+              onClick={onCopyUrl}
+              className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+            >
+              {urlCopied ? "✓ コピー済み" : "URLをコピー"}
+            </button>
+          </div>
+        )}
+        <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-5">
       <div className="flex items-start justify-between">

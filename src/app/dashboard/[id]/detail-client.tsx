@@ -111,7 +111,7 @@ export default function TestimonialDetailClient({
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-8">
+      <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 md:p-8">
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -189,7 +189,7 @@ export default function TestimonialDetailClient({
           <h3 className="text-sm font-medium text-foreground/70 mb-3">
             ステータス
           </h3>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(
               [
                 { key: "pending", label: "未承認", dot: "bg-amber-400" },

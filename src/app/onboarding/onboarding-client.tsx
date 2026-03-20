@@ -17,6 +17,76 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
   );
 
   useEffect(() => {
+    const skipOnboarding = localStorage.getItem("voicehub_skip_onboarding");
+    if (skipOnboarding) {
+      // Popup flow: auto-create everything and go to dashboard
+      const storedTemplate = localStorage.getItem("voicehub_template") || "coaching";
+      localStorage.removeItem("voicehub_skip_onboarding");
+      localStorage.removeItem("voicehub_template");
+      const storedName = workspace.name || "マイサービス";
+      setSelectedTemplate(storedTemplate);
+      setWorkspaceName(storedName);
+      setTemplateFromParam(storedTemplate);
+      // Auto-complete
+      (async () => {
+        setCreating(true);
+        try {
+          const supabase = createClient();
+          const slug = generateSlug();
+          const template = FORM_TEMPLATES.find(t => t.id === storedTemplate);
+
+          await supabase.from("workspaces").update({ name: storedName }).eq("id", workspace.id);
+
+          const { data: form, error: formError } = await supabase
+            .from("forms")
+            .insert({
+              workspace_id: workspace.id,
+              slug,
+              title: "お客様の声をお聞かせください",
+              questions: template?.questions || DEFAULT_FORM_QUESTIONS,
+              brand_color: "#635BFF",
+              thank_you_message: "ご回答いただきありがとうございます！",
+            })
+            .select("id")
+            .single();
+
+          if (formError) throw formError;
+
+          // Insert guide message
+          await supabase.from("testimonials").insert({
+            workspace_id: workspace.id,
+            form_id: form.id,
+            rating: 5,
+            content: "下のURLをコピーして、お客様にLINEやメールで送ってください。",
+            name: "VoiceHub ガイド",
+            title: "ご案内",
+            status: "approved",
+            is_featured: false,
+            permission_granted: true,
+            source: "guide",
+          });
+
+          await supabase.from("widgets").insert({
+            workspace_id: workspace.id,
+            name: "カルーセル",
+            type: "carousel",
+            theme: { mode: "light", brandColor: "#635BFF", showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
+            filter_min_rating: 1,
+            only_featured: false,
+          });
+
+          await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
+
+          router.push("/dashboard");
+        } catch {
+          // If auto-setup fails, fall back to normal onboarding
+          setCreating(false);
+          setStep(1);
+        }
+      })();
+      return;
+    }
+
     if (!templateFromParam) {
       const stored = localStorage.getItem("voicehub_template");
       if (stored) {
@@ -26,9 +96,9 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
         localStorage.removeItem("voicehub_template");
       }
     } else {
-      // Clean up localStorage if URL param was used
       localStorage.removeItem("voicehub_template");
     }
+    setChecking(false);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const TOTAL_STEPS = templateFromParam ? 2 : 4;
@@ -51,6 +121,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
   const [brandColor, setBrandColor] = useState("#635BFF");
   const [creating, setCreating] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   async function completeOnboarding() {
     setCreating(true);
@@ -81,21 +152,18 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
 
       if (formError) throw formError;
 
-      // Insert sample testimonial
+      // Insert guide message
       await supabase.from("testimonials").insert({
         workspace_id: workspace.id,
         form_id: form.id,
         rating: 5,
-        content:
-          "VoiceHubのおかげで、お客様の声を簡単に集めてウェブサイトに表示できるようになりました。セットアップも数分で完了して驚きました！",
-        before_story:
-          "お客様の声をホームページに載せたかったのですが、手動でコピペするのが手間で更新が止まっていました。",
-        name: "VoiceHub サポートチーム",
-        title: "サンプル",
+        content: "下のURLをコピーして、お客様にLINEやメールで送ってください。お客様の回答がここに届きます。",
+        name: "VoiceHub ガイド",
+        title: "ご案内",
         status: "approved",
-        is_featured: true,
+        is_featured: false,
         permission_granted: true,
-        source: "sample",
+        source: "guide",
       });
 
       // Create default widget (carousel)
@@ -128,6 +196,17 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
     } finally {
       setCreating(false);
     }
+  }
+
+  if (checking || (creating && !completed)) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+        <div className="py-12 text-center">
+          <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-gray-500">準備中...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -261,7 +340,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
 
           {/* Template selection */}
           <label className="block text-sm font-medium text-gray-700 mb-2">業種テンプレート</label>
-          <div className="grid grid-cols-2 gap-2 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
             {FORM_TEMPLATES.map((tpl) => (
               <button
                 key={tpl.id}
@@ -338,7 +417,7 @@ export default function OnboardingClient({ workspace }: { workspace: WorkspaceRo
               </p>
 
               <button
-                onClick={() => router.push("/dashboard/forms")}
+                onClick={() => router.push("/dashboard")}
                 className="w-full px-6 py-3 rounded-xl text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 cursor-pointer transition-colors"
               >
                 フォームを確認する
