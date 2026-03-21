@@ -42,12 +42,12 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function Card({ item, compact }: { item: typeof SAMPLE_DATA[0]; compact?: boolean }) {
+function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: boolean; fill?: boolean }) {
   return (
     <div style={{
       background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12,
       padding: compact ? 16 : 20, display: "flex", flexDirection: "column", gap: 10,
-      minWidth: compact ? 240 : 280, maxWidth: compact ? 280 : 360, flexShrink: 0,
+      minWidth: 0, maxWidth: fill ? "none" : (compact ? 280 : 360), flexShrink: 0, width: "100%",
     }}>
       <Stars rating={item.rating} />
       <p style={{ color: "#374151", fontSize: 14, lineHeight: 1.7, margin: 0, flex: 1 }}>
@@ -67,9 +67,9 @@ function Card({ item, compact }: { item: typeof SAMPLE_DATA[0]; compact?: boolea
 function CarouselDemo() {
   const [idx, setIdx] = useState(0);
   return (
-    <div style={{ position: "relative", overflow: "hidden", padding: "20px 0" }}>
+    <div style={{ position: "relative", overflow: "hidden", padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
-        <Card item={SAMPLE_DATA[idx]} />
+        <Card item={SAMPLE_DATA[idx]} fill />
       </div>
       <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 16 }}>
         {SAMPLE_DATA.map((_, i) => (
@@ -85,9 +85,9 @@ function CarouselDemo() {
 
 function GridDemo() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16, padding: 20 }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5">
       {SAMPLE_DATA.slice(0, 4).map((item, i) => (
-        <Card key={i} item={item} compact />
+        <Card key={i} item={item} compact fill />
       ))}
     </div>
   );
@@ -110,11 +110,9 @@ function MarqueeDemo() {
 
 function WallDemo() {
   return (
-    <div style={{ columnCount: 2, columnGap: 16, padding: 20 }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
       {SAMPLE_DATA.map((item, i) => (
-        <div key={i} style={{ breakInside: "avoid", marginBottom: 16 }}>
-          <Card item={item} compact />
-        </div>
+        <Card key={i} item={item} compact fill />
       ))}
     </div>
   );
@@ -122,7 +120,7 @@ function WallDemo() {
 
 function ListDemo() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20, maxWidth: 480, margin: "0 auto" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20, maxWidth: 480, width: "100%", margin: "0 auto" }}>
       {SAMPLE_DATA.slice(0, 3).map((item, i) => (
         <div key={i} style={{
           background: "#fff", border: "1px solid #e5e7eb", borderLeft: `3px solid ${BRAND}`,
@@ -142,7 +140,7 @@ function SingleDemo() {
     <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
       <div style={{
         background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16,
-        padding: 32, maxWidth: 480, textAlign: "center",
+        padding: 20, maxWidth: 480, width: "100%", textAlign: "center",
       }}>
         <Stars rating={5} />
         <p style={{ color: "#374151", fontSize: 18, lineHeight: 1.8, margin: "16px 0" }}>

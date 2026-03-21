@@ -89,7 +89,8 @@ function TestimonialCard({
         display: "flex",
         flexDirection: "column",
         gap: 12,
-        minWidth: 300,
+        minWidth: 0,
+        width: "100%",
         maxWidth: 400,
         flexShrink: 0,
       }}
@@ -226,7 +227,7 @@ export default async function WidgetPreviewPage({
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         background: isDark ? "#121220" : "#f9fafb",
         color: isDark ? "#e0e0e0" : "#111827",
-        padding: 24,
+        padding: "16px 12px",
         minHeight: "100vh",
       }}
     >
@@ -244,6 +245,9 @@ export default async function WidgetPreviewPage({
                 display: flex;
                 gap: 16px;
                 padding: 4px;
+              }
+              .carousel-track > div {
+                min-width: min(300px, 85vw);
               }
               .grid-container {
                 display: grid;
@@ -294,9 +298,12 @@ export default async function WidgetPreviewPage({
               }
               .marquee-track {
                 display: flex;
-                gap: 24px;
+                gap: 16px;
                 animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
                 width: max-content;
+              }
+              .marquee-track > div {
+                min-width: min(300px, 85vw);
               }
               .marquee-container:hover .marquee-track {
                 animation-play-state: paused;
@@ -330,7 +337,7 @@ export default async function WidgetPreviewPage({
                 background: ${isDark ? "#1e1e2e" : "#ffffff"};
                 border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
                 border-radius: 16px;
-                padding: 48px;
+                padding: 24px;
                 max-width: 600px;
                 width: 100%;
                 text-align: center;
@@ -339,11 +346,17 @@ export default async function WidgetPreviewPage({
                 align-items: center;
                 gap: 20px;
               }
+              @media (min-width: 640px) {
+                .single-card { padding: 48px; }
+              }
               .wall-container {
-                column-count: 2;
+                column-count: 1;
                 column-gap: 16px;
               }
               @media (min-width: 768px) {
+                .wall-container { column-count: 2; }
+              }
+              @media (min-width: 1024px) {
                 .wall-container { column-count: 3; }
               }
               .wall-card {

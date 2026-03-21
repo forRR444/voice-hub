@@ -61,7 +61,7 @@
     /* Wall (masonry) */
     .vh-wall { column-count: 1; column-gap: 16px; }
     .vh-wall .vh-card { break-inside: avoid; margin-bottom: 16px; }
-    @media (min-width: 640px) { .vh-wall { column-count: 2; } }
+    @media (min-width: 768px) { .vh-wall { column-count: 2; } }
     @media (min-width: 1024px) { .vh-wall { column-count: 3; } }
 
     /* Marquee */
