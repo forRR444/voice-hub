@@ -30,7 +30,7 @@ export default function Home() {
         <div className="relative max-w-4xl mx-auto px-6 text-center">
         <a href="#pricing" className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
           <Star size={14} />
-          ベータ版 — 今なら全機能が無料
+          先着10名は正式リリース後もずっと無料
         </a>
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
           お客様の声を集めて、
