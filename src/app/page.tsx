@@ -32,7 +32,7 @@ export default function Home() {
           <Star size={14} />
           ベータ版 — 今なら全機能が無料
         </a>
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
           お客様の声を集めて、
           <br />
           ホームページに<span className="text-indigo-600">自動で表示。</span>
@@ -178,14 +178,14 @@ export default function Home() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="flex items-stretch rounded-2xl overflow-hidden border border-gray-200"
+                className="flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden border border-gray-200"
               >
                 <div className="flex-1 bg-gray-50 px-6 py-5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Before</p>
                   <p className="text-gray-500">{item.before}</p>
                 </div>
-                <div className="flex items-center justify-center px-4 bg-white">
-                  <ArrowRight size={20} className="text-indigo-600" />
+                <div className="flex items-center justify-center px-4 py-2 sm:py-0 bg-white">
+                  <ArrowRight size={20} className="text-indigo-600 rotate-90 sm:rotate-0" />
                 </div>
                 <div className="flex-1 bg-white px-6 py-5">
                   <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">After</p>
@@ -218,7 +218,7 @@ export default function Home() {
             <p className="mt-4 text-sm text-gray-500 text-center">お客様が回答するフォーム画面</p>
             <div className="mt-3 text-center">
               <Link
-                href="/form/tanaka-coaching"
+                href="/form/demo"
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
               >
                 収集フォームを試す →
