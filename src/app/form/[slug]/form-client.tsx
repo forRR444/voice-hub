@@ -90,7 +90,7 @@ function StarRating({
   );
 }
 
-export function FormClient({ form }: { form: FormRow }) {
+export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
   const questions = form.questions;
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -221,6 +221,13 @@ export function FormClient({ form }: { form: FormRow }) {
     setSubmitting(true);
     setError(null);
 
+    if (demo) {
+      await new Promise((r) => setTimeout(r, 800));
+      setSubmitted(true);
+      setSubmitting(false);
+      return;
+    }
+
     const supabase = createClient();
     let avatarUrl: string | null = null;
     let uploadedPath: string | null = null;
@@ -326,6 +333,15 @@ export function FormClient({ form }: { form: FormRow }) {
             {form.thank_you_message ||
               "お声をお寄せいただき、誠にありがとうございます。いただいた内容は大切に活用させていただきます。"}
           </p>
+          {demo && (
+            <a
+              href="/"
+              className="inline-block mt-2 px-6 py-3 text-sm font-medium text-white rounded-lg transition-colors"
+              style={{ backgroundColor: brandColor }}
+            >
+              VoiceHubのトップに戻る
+            </a>
+          )}
         </div>
       </div>
     );
@@ -580,7 +596,7 @@ export function FormClient({ form }: { form: FormRow }) {
     <div className="min-h-dvh bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="max-w-lg mx-auto flex items-center justify-between">
+        <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3">
             {form.logo_url && (
               <img
@@ -595,7 +611,7 @@ export function FormClient({ form }: { form: FormRow }) {
             href="https://voicehub.jp"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-gray-400 hover:text-gray-600"
+            className="block mt-1 text-xs text-gray-400 hover:text-gray-600"
           >
             Powered by VoiceHub
           </a>
