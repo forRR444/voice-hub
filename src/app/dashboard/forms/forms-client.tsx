@@ -14,6 +14,7 @@ import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, FormRow, FormQuestion, PLAN_LIMITS } from "@/types/database";
 import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
 import { CORE_QUESTION_IDS, FORM_TEMPLATES } from "@/lib/default-questions";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 export default function FormsClient({
   workspace,
@@ -33,7 +34,7 @@ export default function FormsClient({
   const [editForm, setEditForm] = useState({
     title: "",
     description: "",
-    brand_color: "#635BFF",
+    brand_color: DEFAULT_BRAND_COLOR,
     thank_you_message: "",
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -59,7 +60,7 @@ export default function FormsClient({
         title: "お客様の声フォーム",
         description: "ぜひご感想をお聞かせください",
         questions: template.questions,
-        brand_color: "#635BFF",
+        brand_color: DEFAULT_BRAND_COLOR,
         thank_you_message: "ご回答いただきありがとうございます！",
       })
       .select()

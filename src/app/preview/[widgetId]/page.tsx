@@ -1,40 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
+import { DEFAULT_BRAND_COLOR, TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
+import type { WidgetRow, WidgetTheme, TestimonialRow } from "@/types/database";
 
 export const dynamic = "force-dynamic";
-
-interface Theme {
-  mode?: "light" | "dark";
-  brandColor?: string;
-  showRating?: boolean;
-  showAvatar?: boolean;
-  showDate?: boolean;
-  maxItems?: number;
-  autoplay?: boolean;
-}
-
-interface Testimonial {
-  id: string;
-  name: string;
-  title: string | null;
-  company: string | null;
-  avatar_url: string | null;
-  rating: number;
-  content: string;
-  before_story: string | null;
-  is_featured: boolean;
-  submitted_at: string;
-}
-
-interface Widget {
-  id: string;
-  workspace_id: string;
-  name: string;
-  type: "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
-  theme: Theme;
-  filter_min_rating: number;
-  only_featured: boolean;
-}
 
 /** Escape a string for safe embedding inside a <script> tag */
 function safeJsonForScript(data: unknown): string {
@@ -43,8 +12,10 @@ function safeJsonForScript(data: unknown): string {
 
 /** Validate hex color to prevent CSS/JS injection */
 function sanitizeColor(color: string): string {
-  return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : "#635BFF";
+  return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : DEFAULT_BRAND_COLOR;
 }
+
+type Testimonial = Omit<Pick<TestimonialRow, "id" | "name" | "title" | "company" | "avatar_url" | "rating" | "content" | "before_story" | "is_featured" | "submitted_at">, "rating"> & { rating: number };
 
 function StarRating({ rating, color }: { rating: number; color: string }) {
   return (
@@ -84,10 +55,10 @@ function TestimonialCard({
   theme,
 }: {
   t: Testimonial;
-  theme: Theme;
+  theme: WidgetTheme;
 }) {
   const isDark = theme.mode === "dark";
-  const brand = sanitizeColor(theme.brandColor || "#635BFF");
+  const brand = sanitizeColor(theme.brandColor || DEFAULT_BRAND_COLOR);
 
   return (
     <div
@@ -184,7 +155,7 @@ export default async function WidgetPreviewPage({
     .from("widgets")
     .select("*")
     .eq("id", widgetId)
-    .single<Widget>();
+    .single<WidgetRow>();
 
   if (widgetError || !widget) {
     notFound();
@@ -192,10 +163,10 @@ export default async function WidgetPreviewPage({
 
   // Allow type override via query param (e.g. ?type=grid)
   if (typeOverride && ["carousel", "grid", "marquee", "list", "single", "wall", "badge"].includes(typeOverride)) {
-    widget.type = typeOverride as Widget["type"];
+    widget.type = typeOverride as WidgetRow["type"];
   }
 
-  const theme: Theme = widget.theme ?? {};
+  const theme: WidgetTheme = widget.theme ?? {} as WidgetTheme;
 
   // Fetch workspace for badge
   const { data: workspace } = await supabase
@@ -209,9 +180,7 @@ export default async function WidgetPreviewPage({
   // Fetch testimonials
   let query = supabase
     .from("testimonials")
-    .select(
-      "id, name, title, company, avatar_url, rating, content, before_story, is_featured, submitted_at"
-    )
+    .select(TESTIMONIAL_SELECT_COLUMNS)
     .eq("workspace_id", widget.workspace_id)
     .eq("status", "approved")
     .not("source", "in", '("sample","guide")')
@@ -226,10 +195,10 @@ export default async function WidgetPreviewPage({
   query = query.limit(maxItems);
 
   const { data: testimonials } = await query;
-  const items: Testimonial[] = (testimonials as Testimonial[]) ?? [];
+  const items = (testimonials as Testimonial[]) ?? [];
 
   const isDark = theme.mode === "dark";
-  const brand = sanitizeColor(theme.brandColor || "#635BFF");
+  const brand = sanitizeColor(theme.brandColor || DEFAULT_BRAND_COLOR);
 
   return (
     <div

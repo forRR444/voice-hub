@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import TestimonialDetailClient from "./detail-client";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export default async function TestimonialDetailPage({
     .order("created_at", { ascending: false })
     .limit(1);
 
-  const brandColor = forms?.[0]?.brand_color || "#635BFF";
+  const brandColor = forms?.[0]?.brand_color || DEFAULT_BRAND_COLOR;
 
   return (
     <TestimonialDetailClient testimonial={{ ...testimonial, tags }} brandColor={brandColor} />

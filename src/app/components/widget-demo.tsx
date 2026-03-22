@@ -1,16 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 
-const WIDGET_TYPES = [
-  { label: "カルーセル", type: "carousel" },
-  { label: "グリッド", type: "grid" },
-  { label: "マーキー", type: "marquee" },
-  { label: "Wall of Love", type: "wall" },
-  { label: "リスト", type: "list" },
-  { label: "シングル", type: "single" },
-  { label: "バッジ", type: "badge" },
-];
+const DEMO_WIDGET_TYPES = WIDGET_TYPES.map((w) => ({ label: w.label, type: w.id }));
 
 const SAMPLE_DATA = [
   { name: "田中 美咲", title: "ライフコーチ", rating: 5, content: "コーチングを受けてから売上が大幅に伸びました。本当に感謝しています。" },
@@ -20,7 +13,7 @@ const SAMPLE_DATA = [
   { name: "高橋 真由", title: "オンライン講座運営", rating: 5, content: "受講生の声を集める仕組みができて、講座の信頼感が上がりました。" },
 ];
 
-const BRAND = "#635BFF";
+const BRAND = DEFAULT_BRAND_COLOR;
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -190,7 +183,7 @@ export default function WidgetDemo() {
   return (
     <div>
       <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {WIDGET_TYPES.map((w, i) => (
+        {DEMO_WIDGET_TYPES.map((w, i) => (
           <button
             key={w.type}
             onClick={() => setActive(i)}
@@ -205,7 +198,7 @@ export default function WidgetDemo() {
         ))}
       </div>
       <div className="rounded-2xl border border-gray-200 overflow-hidden bg-gray-50">
-        {RENDERERS[WIDGET_TYPES[active].type]()}
+        {RENDERERS[DEMO_WIDGET_TYPES[active].type]()}
       </div>
     </div>
   );

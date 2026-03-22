@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 const safeUrlSchema = z
   .string()
@@ -42,7 +43,7 @@ export const widgetCreateSchema = z.object({
   theme: z
     .object({
       mode: z.enum(["light", "dark"]).default("light"),
-      brandColor: z.string().default("#635BFF"),
+      brandColor: z.string().default(DEFAULT_BRAND_COLOR),
       showRating: z.boolean().default(true),
       showAvatar: z.boolean().default(true),
       showDate: z.boolean().default(false),

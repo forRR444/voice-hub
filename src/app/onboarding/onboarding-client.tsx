@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { generateSlug } from "@/lib/utils";
 import { DEFAULT_FORM_QUESTIONS, FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow } from "@/types/database";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
               slug,
               title: "お客様の声をお聞かせください",
               questions: template?.questions || DEFAULT_FORM_QUESTIONS,
-              brand_color: "#635BFF",
+              brand_color: DEFAULT_BRAND_COLOR,
               thank_you_message: "ご回答いただきありがとうございます！",
             })
             .select("id")
@@ -70,7 +71,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             workspace_id: workspace.id,
             name: "カルーセル",
             type: "carousel",
-            theme: { mode: "light", brandColor: "#635BFF", showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
+            theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
             filter_min_rating: 1,
             only_featured: false,
           });
@@ -118,7 +119,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
   const [selectedTemplate, setSelectedTemplate] = useState(
     searchParams.get("template") || "coaching"
   );
-  const [brandColor, setBrandColor] = useState("#635BFF");
+  const [brandColor, setBrandColor] = useState(DEFAULT_BRAND_COLOR);
   const [creating, setCreating] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [checking, setChecking] = useState(true);

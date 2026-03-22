@@ -21,95 +21,15 @@ import {
   PLAN_LIMITS,
 } from "@/types/database";
 import { getBaseUrl, formatDate } from "@/lib/utils";
-
-const WIDGET_TYPES = [
-  { id: "carousel", label: "カルーセル", desc: "横スクロールで切り替え" },
-  { id: "grid", label: "グリッド", desc: "カード一覧" },
-  { id: "marquee", label: "マーキー", desc: "横に流れ続ける" },
-  { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
-  { id: "list", label: "リスト", desc: "縦に並ぶシンプル表示" },
-  { id: "single", label: "シングル", desc: "1件を大きく表示" },
-  { id: "badge", label: "バッジ", desc: "評価サマリー表示" },
-] as const;
-
-function WidgetPreviewIcon({ type, selected }: { type: string; selected: boolean }) {
-  const bg = selected ? "bg-indigo-100" : "bg-foreground/5";
-  const bar = selected ? "bg-indigo-300" : "bg-foreground/20";
-  const block = selected ? "bg-indigo-200" : "bg-foreground/10";
-
-  switch (type) {
-    case "carousel":
-      return (
-        <div className={`w-full h-16 ${bg} rounded flex items-center justify-center gap-1 px-2`}>
-          <div className={`w-1 h-8 ${bar} rounded-sm shrink-0`} />
-          <div className={`w-10 h-10 ${block} rounded`} />
-          <div className={`w-10 h-10 ${block} rounded`} />
-          <div className={`w-10 h-10 ${block} rounded`} />
-          <div className={`w-1 h-8 ${bar} rounded-sm shrink-0`} />
-        </div>
-      );
-    case "grid":
-      return (
-        <div className={`w-full h-16 ${bg} rounded p-2`}>
-          <div className="grid grid-cols-3 gap-1 h-full">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className={`${block} rounded-sm`} />
-            ))}
-          </div>
-        </div>
-      );
-    case "marquee":
-      return (
-        <div className={`w-full h-16 ${bg} rounded flex items-center gap-1 px-2 overflow-hidden`}>
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className={`w-12 h-10 ${block} rounded shrink-0`} />
-          ))}
-        </div>
-      );
-    case "wall":
-      return (
-        <div className={`w-full h-16 ${bg} rounded p-2`}>
-          <div className="grid grid-cols-3 gap-1 h-full">
-            <div className={`${block} rounded-sm row-span-2`} />
-            <div className={`${block} rounded-sm`} />
-            <div className={`${block} rounded-sm row-span-2`} />
-            <div className={`${block} rounded-sm`} />
-          </div>
-        </div>
-      );
-    case "list":
-      return (
-        <div className={`w-full h-16 ${bg} rounded p-2 flex flex-col gap-1`}>
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className={`w-full flex-1 ${block} rounded-sm border-l-2 ${selected ? "border-indigo-400" : "border-foreground/30"}`} />
-          ))}
-        </div>
-      );
-    case "single":
-      return (
-        <div className={`w-full h-16 ${bg} rounded flex items-center justify-center p-2`}>
-          <div className={`w-20 h-12 ${block} rounded`} />
-        </div>
-      );
-    case "badge":
-      return (
-        <div className={`w-full h-16 ${bg} rounded flex items-center justify-center`}>
-          <div className={`${block} rounded-full px-4 py-2 flex items-center gap-2`}>
-            <div className={`w-5 h-5 ${bar} rounded-sm`} />
-            <div className={`w-12 h-2 ${bar} rounded`} />
-          </div>
-        </div>
-      );
-    default:
-      return null;
-  }
-}
+import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
+import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
+import { WidgetPreviewIcon } from "./widget-preview-icon";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
 
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
-  brandColor: "#635BFF",
+  brandColor: DEFAULT_BRAND_COLOR,
   showRating: true,
   showAvatar: true,
   showDate: false,
@@ -133,9 +53,9 @@ export default function WidgetsClient({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState<WidgetFormState>({
     name: "",
-    type: "carousel" as WidgetType,
+    type: "carousel",
     theme: { ...DEFAULT_THEME },
     filter_min_rating: 1,
     only_featured: false,
@@ -143,9 +63,9 @@ export default function WidgetsClient({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  const [newWidget, setNewWidget] = useState({
+  const [newWidget, setNewWidget] = useState<WidgetFormState>({
     name: "",
-    type: "carousel" as WidgetType,
+    type: "carousel",
     theme: { ...DEFAULT_THEME },
     filter_min_rating: 1,
     only_featured: false,
@@ -293,177 +213,7 @@ export default function WidgetsClient({
             </div>
 
             <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground/70 mb-1">
-                  ウィジェット名 *
-                </label>
-                <input
-                  type="text"
-                  value={newWidget.name}
-                  onChange={(e) =>
-                    setNewWidget({ ...newWidget, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="メインページ用"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground/70 mb-1">
-                  タイプ
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {WIDGET_TYPES.map((wt) => (
-                    <button
-                      key={wt.id}
-                      type="button"
-                      onClick={() => setNewWidget({ ...newWidget, type: wt.id })}
-                      className={`p-2 text-left rounded-lg border-2 transition-colors cursor-pointer ${
-                        newWidget.type === wt.id
-                          ? "border-indigo-600 bg-white"
-                          : "border-foreground/10 bg-white hover:border-foreground/30"
-                      }`}
-                    >
-                      <WidgetPreviewIcon type={wt.id} selected={newWidget.type === wt.id} />
-                      <div className={`text-sm font-medium mt-2 ${newWidget.type === wt.id ? "text-indigo-600" : "text-foreground/70"}`}>{wt.label}</div>
-                      <div className="text-xs text-foreground/40">{wt.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="border-t border-foreground/10 pt-4">
-                <h4 className="text-sm font-medium text-foreground/70 mb-3">
-                  テーマ設定
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs text-foreground/50 mb-1">
-                      モード
-                    </label>
-                    <select
-                      value={newWidget.theme.mode}
-                      onChange={(e) =>
-                        setNewWidget({
-                          ...newWidget,
-                          theme: {
-                            ...newWidget.theme,
-                            mode: e.target.value as "light" | "dark",
-                          },
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
-                    >
-                      <option value="light">ライト</option>
-                      <option value="dark">ダーク</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-foreground/50 mb-1">
-                      ブランドカラー
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={newWidget.theme.brandColor}
-                        onChange={(e) =>
-                          setNewWidget({
-                            ...newWidget,
-                            theme: {
-                              ...newWidget.theme,
-                              brandColor: e.target.value,
-                            },
-                          })
-                        }
-                        className="w-10 h-10 rounded border border-foreground/10 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-foreground/50 mb-1">
-                      最大表示数
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={50}
-                      value={newWidget.theme.maxItems}
-                      onChange={(e) =>
-                        setNewWidget({
-                          ...newWidget,
-                          theme: {
-                            ...newWidget.theme,
-                            maxItems: parseInt(e.target.value) || 10,
-                          },
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-foreground/50 mb-1">
-                      最低評価
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={5}
-                      value={newWidget.filter_min_rating}
-                      onChange={(e) =>
-                        setNewWidget({
-                          ...newWidget,
-                          filter_min_rating: parseInt(e.target.value) || 1,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 mt-4">
-                  {[
-                    { key: "showRating" as const, label: "評価を表示" },
-                    { key: "showAvatar" as const, label: "アバターを表示" },
-                    { key: "showDate" as const, label: "日付を表示" },
-                    { key: "autoplay" as const, label: "自動再生" },
-                  ].map(({ key, label }) => (
-                    <label
-                      key={key}
-                      className="flex items-center gap-2 text-sm text-foreground/60"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={newWidget.theme[key]}
-                        onChange={(e) =>
-                          setNewWidget({
-                            ...newWidget,
-                            theme: {
-                              ...newWidget.theme,
-                              [key]: e.target.checked,
-                            },
-                          })
-                        }
-                        className="rounded border-foreground/20"
-                      />
-                      {label}
-                    </label>
-                  ))}
-                  <label className="flex items-center gap-2 text-sm text-foreground/60">
-                    <input
-                      type="checkbox"
-                      checked={newWidget.only_featured}
-                      onChange={(e) =>
-                        setNewWidget({
-                          ...newWidget,
-                          only_featured: e.target.checked,
-                        })
-                      }
-                      className="rounded border-foreground/20"
-                    />
-                    注目のみ表示
-                  </label>
-                </div>
-              </div>
+              <WidgetThemeForm form={newWidget} onChange={setNewWidget} />
 
               <div className="flex justify-end gap-3 mt-2">
                 <button
@@ -500,140 +250,7 @@ export default function WidgetsClient({
               {editingId === w.id ? (
                 /* Edit mode */
                 <div className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground/70 mb-1">
-                      ウィジェット名
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.name}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, name: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground/70 mb-1">
-                      タイプ
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {WIDGET_TYPES.map((wt) => (
-                        <button
-                          key={wt.id}
-                          type="button"
-                          onClick={() => setEditForm({ ...editForm, type: wt.id })}
-                          className={`p-2 text-left rounded-lg border-2 transition-colors cursor-pointer ${
-                            editForm.type === wt.id
-                              ? "border-indigo-600 bg-white"
-                              : "border-foreground/10 bg-white hover:border-foreground/30"
-                          }`}
-                        >
-                          <WidgetPreviewIcon type={wt.id} selected={editForm.type === wt.id} />
-                          <div className={`text-sm font-medium mt-2 ${editForm.type === wt.id ? "text-indigo-600" : "text-foreground/70"}`}>{wt.label}</div>
-                          <div className="text-xs text-foreground/40">{wt.desc}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs text-foreground/50 mb-1">モード</label>
-                      <select
-                        value={editForm.theme.mode}
-                        onChange={(e) =>
-                          setEditForm({
-                            ...editForm,
-                            theme: { ...editForm.theme, mode: e.target.value as "light" | "dark" },
-                          })
-                        }
-                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
-                      >
-                        <option value="light">ライト</option>
-                        <option value="dark">ダーク</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs text-foreground/50 mb-1">ブランドカラー</label>
-                      <input
-                        type="color"
-                        value={editForm.theme.brandColor}
-                        onChange={(e) =>
-                          setEditForm({
-                            ...editForm,
-                            theme: { ...editForm.theme, brandColor: e.target.value },
-                          })
-                        }
-                        className="w-10 h-10 rounded border border-foreground/10 cursor-pointer"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-foreground/50 mb-1">最大表示数</label>
-                      <input
-                        type="number"
-                        min={1}
-                        max={50}
-                        value={editForm.theme.maxItems}
-                        onChange={(e) =>
-                          setEditForm({
-                            ...editForm,
-                            theme: { ...editForm.theme, maxItems: parseInt(e.target.value) || 10 },
-                          })
-                        }
-                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-foreground/50 mb-1">最低評価</label>
-                      <input
-                        type="number"
-                        min={1}
-                        max={5}
-                        value={editForm.filter_min_rating}
-                        onChange={(e) =>
-                          setEditForm({
-                            ...editForm,
-                            filter_min_rating: parseInt(e.target.value) || 1,
-                          })
-                        }
-                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {[
-                      { key: "showRating" as const, label: "評価を表示" },
-                      { key: "showAvatar" as const, label: "アバターを表示" },
-                      { key: "showDate" as const, label: "日付を表示" },
-                      { key: "autoplay" as const, label: "自動再生" },
-                    ].map(({ key, label }) => (
-                      <label key={key} className="flex items-center gap-2 text-sm text-foreground/60">
-                        <input
-                          type="checkbox"
-                          checked={editForm.theme[key]}
-                          onChange={(e) =>
-                            setEditForm({
-                              ...editForm,
-                              theme: { ...editForm.theme, [key]: e.target.checked },
-                            })
-                          }
-                          className="rounded border-foreground/20"
-                        />
-                        {label}
-                      </label>
-                    ))}
-                    <label className="flex items-center gap-2 text-sm text-foreground/60">
-                      <input
-                        type="checkbox"
-                        checked={editForm.only_featured}
-                        onChange={(e) =>
-                          setEditForm({ ...editForm, only_featured: e.target.checked })
-                        }
-                        className="rounded border-foreground/20"
-                      />
-                      注目のみ表示
-                    </label>
-                  </div>
+                  <WidgetThemeForm form={editForm} onChange={setEditForm} />
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setEditingId(null)}

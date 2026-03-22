@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
@@ -75,7 +76,7 @@ export default async function DashboardPage() {
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspace.id);
 
-  const brandColor = (forms ?? [])[0]?.brand_color || "#635BFF";
+  const brandColor = (forms ?? [])[0]?.brand_color || DEFAULT_BRAND_COLOR;
 
   return (
     <DashboardClient

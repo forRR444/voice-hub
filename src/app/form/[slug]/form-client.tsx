@@ -3,6 +3,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { FormRow, FormQuestion } from "@/types/database";
+import { DEFAULT_BRAND_COLOR, TEXTAREA_MAX_LENGTH, IMAGE_MAX_SIZE_BYTES, IMAGE_RESIZED_MAX_BYTES, IMAGE_RESIZE_MAX_PX } from "@/lib/constants";
+import { resizeImage } from "@/lib/image-utils";
+import { StarRatingInput } from "@/app/components/star-rating-input";
 
 type FormData = {
   rating: number;
@@ -16,79 +19,9 @@ type FormData = {
   customFields: Record<string, string | boolean | number>;
 };
 
-const TEXTAREA_MAX = 5000;
+const TEXTAREA_MAX = TEXTAREA_MAX_LENGTH;
 const KNOWN_IDS = ["rating", "before_story", "content", "name", "title", "avatar", "permission"];
 
-function resizeImage(file: File, maxSize: number): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      let { width, height } = img;
-      if (width > maxSize || height > maxSize) {
-        if (width > height) {
-          height = Math.round((height * maxSize) / width);
-          width = maxSize;
-        } else {
-          width = Math.round((width * maxSize) / height);
-          height = maxSize;
-        }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d")!;
-      ctx.drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error("画像の変換に失敗しました"));
-        },
-        "image/jpeg",
-        0.85
-      );
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error("画像の読み込みに失敗しました"));
-    };
-    img.src = objectUrl;
-  });
-}
-
-function StarRating({
-  value,
-  onChange,
-  brandColor,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  brandColor: string;
-}) {
-  const [hover, setHover] = useState(0);
-
-  return (
-    <div className="flex gap-2">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          className="text-4xl transition-transform hover:scale-110 focus:outline-none"
-          style={{
-            color: star <= (hover || value) ? brandColor : "#d1d5db",
-          }}
-          onMouseEnter={() => setHover(star)}
-          onMouseLeave={() => setHover(0)}
-          onClick={() => onChange(star)}
-          aria-label={`${star}つ星`}
-        >
-          ★
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
   const questions = form.questions;
@@ -120,7 +53,7 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const brandColor = form.brand_color || "#635BFF";
+  const brandColor = form.brand_color || DEFAULT_BRAND_COLOR;
   const currentQuestion = questions[step];
   const totalSteps = questions.length;
   const progress = ((step + 1) / totalSteps) * 100;
@@ -185,7 +118,7 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > IMAGE_MAX_SIZE_BYTES) {
       setError("ファイルサイズが大きすぎます（10MB以下にしてください）");
       return;
     }
@@ -193,8 +126,8 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
     setError(null);
 
     try {
-      const resized = await resizeImage(file, 800);
-      if (resized.size > 2 * 1024 * 1024) {
+      const resized = await resizeImage(file, IMAGE_RESIZE_MAX_PX);
+      if (resized.size > IMAGE_RESIZED_MAX_BYTES) {
         setError("画像の圧縮後もサイズが大きすぎます。別の画像をお試しください。");
         return;
       }
@@ -354,7 +287,7 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
       case "star_rating":
         if (isKnown) {
           return (
-            <StarRating
+            <StarRatingInput
               value={formData.rating}
               onChange={(v) => updateField("rating", v)}
               brandColor={brandColor}
@@ -362,7 +295,7 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
           );
         }
         return (
-          <StarRating
+          <StarRatingInput
             value={(formData.customFields[question.id] as number) || 0}
             onChange={(v) => updateCustomField(question.id, v)}
             brandColor={brandColor}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FormClient } from "../[slug]/form-client";
 import type { FormRow } from "@/types/database";
+import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "田中コーチングサロン — お客様の声フォーム（デモ）",
@@ -15,7 +16,7 @@ const DEMO_FORM: FormRow = {
   title: "田中コーチングサロン",
   description:
     "ご利用いただきありがとうございます。ぜひご感想をお聞かせください。",
-  brand_color: "#635BFF",
+  brand_color: DEFAULT_BRAND_COLOR,
   logo_url: null,
   thank_you_message:
     "ご回答ありがとうございました！これはデモフォームです。実際のデータは送信されていません。",
