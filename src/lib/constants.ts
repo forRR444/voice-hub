@@ -1,0 +1,31 @@
+// ブランドカラーのデフォルト値
+export const DEFAULT_BRAND_COLOR = "#635BFF";
+
+// テキスト入力の最大文字数
+export const TEXTAREA_MAX_LENGTH = 5000;
+
+// 画像サイズ制限
+export const IMAGE_MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+export const IMAGE_RESIZED_MAX_BYTES = 2 * 1024 * 1024; // 2MB
+export const IMAGE_RESIZE_MAX_PX = 800;
+
+// レート制限設定
+export const RATE_LIMITS = {
+  formGet: { limit: 60, windowMs: 60 * 1000 },
+  testimonialSubmit: { limit: 5, windowMs: 15 * 60 * 1000 },
+} as const;
+
+// ウィジェットタイプ一覧
+export const WIDGET_TYPES = [
+  { id: "carousel", label: "カルーセル", desc: "横スクロールで切り替え" },
+  { id: "grid", label: "グリッド", desc: "カード一覧" },
+  { id: "marquee", label: "マーキー", desc: "横に流れ続ける" },
+  { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
+  { id: "list", label: "リスト", desc: "縦に並ぶシンプル表示" },
+  { id: "single", label: "シングル", desc: "1件を大きく表示" },
+  { id: "badge", label: "バッジ", desc: "評価サマリー表示" },
+] as const;
+
+// テスティモニアル取得時の共通カラム
+export const TESTIMONIAL_SELECT_COLUMNS =
+  "id, name, title, company, avatar_url, rating, content, before_story, is_featured, submitted_at";
