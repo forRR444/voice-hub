@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
+import { WIDGET_TYPES } from "@/lib/constants";
 
 export default function Home() {
   return (
@@ -241,7 +242,7 @@ export default function Home() {
             ホームページへの表示タイプ
           </h3>
           <p className="text-center text-sm text-gray-500 mb-8">
-            7種類から選べます。タブを切り替えてご覧ください。
+            {WIDGET_TYPES.length}種類から選べます。タブを切り替えてご覧ください。
           </p>
           <WidgetDemo />
         </div>
@@ -273,7 +274,7 @@ export default function Home() {
                 <Code2 size={20} />
               </div>
               <h3 className="font-bold text-gray-900">埋め込みウィジェット</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">カルーセル・グリッド・マーキー・Wall of Love・リスト・シングル・バッジの7タイプ。コードをコピペするだけで完成。</p>
+              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプのウィジェット。コードをコピペするだけで完成。`}</p>
             </div>
             <div className="bg-white rounded-xl p-6 border border-gray-200">
               <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
@@ -381,7 +382,7 @@ export default function Home() {
                 "お客様の声フォーム 無制限",
                 "お客様の声の登録数 無制限",
                 "埋め込みウィジェット 無制限",
-                "7種類のウィジェットデザイン",
+                `${WIDGET_TYPES.length}種類のウィジェットデザイン`,
                 "手動追加OK",
                 "ペライチ・WordPress対応",
               ].map((item, i) => (
@@ -429,7 +430,7 @@ export default function Home() {
             />
             <FaqItem
               q="お客様の声はどのようにホームページに表示されますか？"
-              a="カルーセル（スライド式）・グリッド（タイル式）・マーキー（流れる表示）・Wall of Love（メイソンリー式）・リスト・シングル（大きく1件表示）・バッジ（評価サマリー）の7タイプから選べます。どれもスマホ対応で、デザイン崩れの心配はありません。"
+              a={`${WIDGET_TYPES.length}タイプから選べます。カルーセル・グリッド・マーキー・デュアルマーキーなど多彩なデザイン。どれもスマホ対応で、デザイン崩れの心配はありません。`}
             />
             <FaqItem
               q="届いたレビューは全て表示されるのですか？"
