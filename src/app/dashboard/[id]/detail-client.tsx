@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
+import { useTestimonialOperations } from "@/hooks/use-testimonial-operations";
 import SnsImageModal from "../sns-image-modal";
 
 export default function TestimonialDetailClient({
@@ -27,33 +28,12 @@ export default function TestimonialDetailClient({
 }) {
   const supabase = createClient();
   const router = useRouter();
-  const [testimonial, setTestimonial] = useState(initial);
+  const { testimonial, setTestimonial, errorMsg, setErrorMsg, updateStatus, toggleFeatured } =
+    useTestimonialOperations(initial);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [newTag, setNewTag] = useState("");
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showSnsModal, setShowSnsModal] = useState(false);
-
-  async function updateStatus(status: "pending" | "approved" | "rejected") {
-    setErrorMsg(null);
-    const { error } = await supabase
-      .from("testimonials")
-      .update({ status })
-      .eq("id", testimonial.id);
-    if (error) { setErrorMsg("ステータスの更新に失敗しました"); return; }
-    setTestimonial((prev) => ({ ...prev, status }));
-  }
-
-  async function toggleFeatured() {
-    setErrorMsg(null);
-    const val = !testimonial.is_featured;
-    const { error } = await supabase
-      .from("testimonials")
-      .update({ is_featured: val })
-      .eq("id", testimonial.id);
-    if (error) { setErrorMsg("おすすめ設定の更新に失敗しました"); return; }
-    setTestimonial((prev) => ({ ...prev, is_featured: val }));
-  }
 
   async function addTag() {
     setErrorMsg(null);
