@@ -19,7 +19,7 @@ type Testimonial = Omit<Pick<TestimonialRow, "id" | "name" | "title" | "company"
 
 function StarRating({ rating, color }: { rating: number; color: string }) {
   return (
-    <span style={{ color, fontSize: "16px", letterSpacing: "2px" }}>
+    <span style={{ color, fontSize: "14px", letterSpacing: "1px" }}>
       {Array.from({ length: 5 }, (_, i) =>
         i < rating ? "\u2605" : "\u2606"
       ).join("")}
@@ -32,8 +32,8 @@ function AvatarFallback({ name, color }: { name: string; color: string }) {
   return (
     <div
       style={{
-        width: 48,
-        height: 48,
+        width: 36,
+        height: 36,
         borderRadius: "50%",
         backgroundColor: color,
         color: "#fff",
@@ -41,7 +41,7 @@ function AvatarFallback({ name, color }: { name: string; color: string }) {
         alignItems: "center",
         justifyContent: "center",
         fontWeight: 700,
-        fontSize: 20,
+        fontSize: 15,
         flexShrink: 0,
       }}
     >
@@ -53,9 +53,11 @@ function AvatarFallback({ name, color }: { name: string; color: string }) {
 function TestimonialCard({
   t,
   theme,
+  clamp,
 }: {
   t: Testimonial;
   theme: WidgetTheme;
+  clamp?: boolean;
 }) {
   const isDark = theme.mode === "dark";
   const brand = sanitizeColor(theme.brandColor || DEFAULT_BRAND_COLOR);
@@ -65,14 +67,14 @@ function TestimonialCard({
       style={{
         background: isDark ? "#1e1e2e" : "#ffffff",
         border: `1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"}`,
-        borderRadius: 12,
-        padding: 24,
+        borderRadius: 10,
+        padding: 16,
         display: "flex",
         flexDirection: "column",
-        gap: 12,
+        gap: 8,
         minWidth: 0,
         width: "100%",
-        maxWidth: 400,
+        maxWidth: 300,
         flexShrink: 0,
       }}
     >
@@ -80,9 +82,10 @@ function TestimonialCard({
         <StarRating rating={t.rating} color={brand} />
       )}
       <p
+        className={clamp ? "clamp-content" : undefined}
         style={{
           color: isDark ? "#e0e0e0" : "#374151",
-          fontSize: 15,
+          fontSize: 13,
           lineHeight: 1.6,
           margin: 0,
           flex: 1,
@@ -90,14 +93,17 @@ function TestimonialCard({
       >
         {t.content}
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
+      {clamp && t.content.length > 60 && (
+        <button className="read-more-btn">もっと見る</button>
+      )}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
         {theme.showAvatar !== false &&
           (t.avatar_url ? (
             <img
               src={t.avatar_url}
               alt={t.name}
-              width={48}
-              height={48}
+              width={36}
+              height={36}
               style={{ borderRadius: "50%", objectFit: "cover" }}
             />
           ) : (
@@ -108,7 +114,7 @@ function TestimonialCard({
             style={{
               fontWeight: 600,
               color: isDark ? "#f0f0f0" : "#111827",
-              fontSize: 14,
+              fontSize: 12,
             }}
           >
             {t.name}
@@ -117,7 +123,7 @@ function TestimonialCard({
             <div
               style={{
                 color: isDark ? "#9ca3af" : "#6b7280",
-                fontSize: 13,
+                fontSize: 11,
               }}
             >
               {[t.title, t.company].filter(Boolean).join(" / ")}
@@ -127,8 +133,8 @@ function TestimonialCard({
             <div
               style={{
                 color: isDark ? "#6b7280" : "#9ca3af",
-                fontSize: 12,
-                marginTop: 2,
+                fontSize: 11,
+                marginTop: 1,
               }}
             >
               {new Date(t.submitted_at).toLocaleDateString("ja-JP")}
@@ -162,7 +168,7 @@ export default async function WidgetPreviewPage({
   }
 
   // Allow type override via query param (e.g. ?type=grid)
-  if (typeOverride && ["carousel", "grid", "marquee", "list", "single", "wall", "badge"].includes(typeOverride)) {
+  if (typeOverride && ["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"].includes(typeOverride)) {
     widget.type = typeOverride as WidgetRow["type"];
   }
 
@@ -213,6 +219,26 @@ export default async function WidgetPreviewPage({
       <style
         dangerouslySetInnerHTML={{
           __html: `
+              .clamp-content {
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+              }
+              .clamp-content.expanded {
+                -webkit-line-clamp: unset;
+                display: block;
+              }
+              .read-more-btn {
+                background: none;
+                border: none;
+                padding: 0;
+                margin-top: 4px;
+                font-size: 12px;
+                color: ${brand};
+                cursor: pointer;
+              }
+              .read-more-btn:hover { text-decoration: underline; }
               .carousel-wrapper {
                 overflow-x: auto;
                 scroll-behavior: smooth;
@@ -226,7 +252,7 @@ export default async function WidgetPreviewPage({
                 padding: 4px;
               }
               .carousel-track > div {
-                min-width: min(300px, 85vw);
+                min-width: min(200px, 44vw);
               }
               .grid-container {
                 display: grid;
@@ -282,7 +308,7 @@ export default async function WidgetPreviewPage({
                 width: max-content;
               }
               .marquee-track > div {
-                min-width: min(300px, 85vw);
+                min-width: min(200px, 44vw);
               }
               .marquee-container:hover .marquee-track {
                 animation-play-state: paused;
@@ -290,6 +316,49 @@ export default async function WidgetPreviewPage({
               @keyframes marquee-scroll {
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-50%); }
+              }
+              .dual-marquee-container {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                overflow: hidden;
+              }
+              .dual-marquee-row {
+                overflow: hidden;
+                position: relative;
+              }
+              .dual-marquee-track {
+                display: flex;
+                gap: 16px;
+                width: max-content;
+              }
+              .dual-marquee-track > div {
+                min-width: min(200px, 44vw);
+              }
+              .dual-marquee-track--left {
+                animation: dual-marquee-left var(--dual-marquee-duration, 30s) linear infinite;
+              }
+              .dual-marquee-track--right {
+                animation: dual-marquee-right var(--dual-marquee-duration, 30s) linear infinite;
+              }
+              .dual-marquee-container:hover .dual-marquee-track--left,
+              .dual-marquee-container:hover .dual-marquee-track--right {
+                animation-play-state: paused;
+              }
+              @keyframes dual-marquee-left {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+              @keyframes dual-marquee-right {
+                0% { transform: translateX(-50%); }
+                100% { transform: translateX(0); }
+              }
+              @media (min-width: 640px) {
+                .carousel-track > div,
+                .marquee-track > div,
+                .dual-marquee-track > div {
+                  min-width: 280px;
+                }
               }
               .list-container {
                 display: flex;
@@ -399,10 +468,10 @@ export default async function WidgetPreviewPage({
               style={{ ["--marquee-duration" as string]: `${Math.max(items.length * 6, 20)}s` }}
             >
               {items.map((t) => (
-                <TestimonialCard key={t.id} t={t} theme={theme} />
+                <TestimonialCard key={t.id} t={t} theme={theme} clamp />
               ))}
               {items.map((t) => (
-                <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} />
+                <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
               ))}
             </div>
           </div>
@@ -551,6 +620,37 @@ export default async function WidgetPreviewPage({
               </div>
             ))}
           </div>
+        ) : widget.type === "dual-marquee" ? (
+          (() => {
+            const mid = Math.ceil(items.length / 2);
+            const rowA = items.slice(0, mid);
+            const rowB = items.length > 1 ? items.slice(mid) : items;
+            const duration = `${Math.max(items.length * 6, 20)}s`;
+            return (
+              <div className="dual-marquee-container" style={{ ["--dual-marquee-duration" as string]: duration }}>
+                <div className="dual-marquee-row">
+                  <div className="dual-marquee-track dual-marquee-track--left">
+                    {rowA.map((t) => (
+                      <TestimonialCard key={t.id} t={t} theme={theme} clamp />
+                    ))}
+                    {rowA.map((t) => (
+                      <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
+                    ))}
+                  </div>
+                </div>
+                <div className="dual-marquee-row">
+                  <div className="dual-marquee-track dual-marquee-track--right">
+                    {rowB.map((t) => (
+                      <TestimonialCard key={t.id} t={t} theme={theme} clamp />
+                    ))}
+                    {rowB.map((t) => (
+                      <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()
         ) : widget.type === "badge" ? (
           (() => {
             const avgRating = items.length > 0 ? items.reduce((sum, t) => sum + t.rating, 0) / items.length : 0;
@@ -571,7 +671,7 @@ export default async function WidgetPreviewPage({
         ) : (
           <div className="grid-container">
             {items.map((t) => (
-              <TestimonialCard key={t.id} t={t} theme={theme} />
+              <TestimonialCard key={t.id} t={t} theme={theme} clamp />
             ))}
           </div>
         )}
@@ -737,6 +837,24 @@ export default async function WidgetPreviewPage({
             }}
           />
         )}
+
+        {/* Read more toggle script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                document.addEventListener('click', function(e) {
+                  var btn = e.target.closest('.read-more-btn');
+                  if (!btn) return;
+                  var card = btn.previousElementSibling;
+                  if (!card || !card.classList.contains('clamp-content')) return;
+                  var isExpanded = card.classList.toggle('expanded');
+                  btn.textContent = isExpanded ? '閉じる' : 'もっと見る';
+                });
+              })();
+            `,
+          }}
+        />
     </div>
   );
 }
