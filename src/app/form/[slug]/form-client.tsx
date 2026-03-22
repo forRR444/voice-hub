@@ -646,6 +646,14 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
             {step + 1} / {totalSteps}
           </p>
 
+          {/* Honeypot - hidden from humans, bots fill this */}
+          <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, overflow: "hidden" }}>
+            <label>
+              Website
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
           {/* Question */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900 leading-relaxed">

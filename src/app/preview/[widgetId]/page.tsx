@@ -36,6 +36,16 @@ interface Widget {
   only_featured: boolean;
 }
 
+/** Escape a string for safe embedding inside a <script> tag */
+function safeJsonForScript(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+}
+
+/** Validate hex color to prevent CSS/JS injection */
+function sanitizeColor(color: string): string {
+  return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : "#635BFF";
+}
+
 function StarRating({ rating, color }: { rating: number; color: string }) {
   return (
     <span style={{ color, fontSize: "16px", letterSpacing: "2px" }}>
@@ -77,7 +87,7 @@ function TestimonialCard({
   theme: Theme;
 }) {
   const isDark = theme.mode === "dark";
-  const brand = theme.brandColor || "#635BFF";
+  const brand = sanitizeColor(theme.brandColor || "#635BFF");
 
   return (
     <div
@@ -219,7 +229,7 @@ export default async function WidgetPreviewPage({
   const items: Testimonial[] = (testimonials as Testimonial[]) ?? [];
 
   const isDark = theme.mode === "dark";
-  const brand = theme.brandColor || "#635BFF";
+  const brand = sanitizeColor(theme.brandColor || "#635BFF");
 
   return (
     <div
@@ -696,7 +706,7 @@ export default async function WidgetPreviewPage({
             dangerouslySetInnerHTML={{
               __html: `
                 (function() {
-                  var items = ${JSON.stringify(items.map(t => ({
+                  var items = ${safeJsonForScript(items.map(t => ({
                     rating: t.rating,
                     content: t.content,
                     name: t.name,

@@ -88,6 +88,10 @@
     .vh-skeleton-row .vh-skeleton { min-width: 300px; flex: 1; }
   `;
 
+  function sanitizeColor(c) {
+    return /^#[0-9a-fA-F]{3,8}$/.test(c) ? c : "#635BFF";
+  }
+
   function stars(rating, color) {
     var s = "";
     for (var i = 0; i < 5; i++) s += i < rating ? "\u2605" : "\u2606";
@@ -103,7 +107,7 @@
   }
 
   function buildCard(t, theme) {
-    var brand = theme.brandColor || "#635BFF";
+    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var html = '<div class="vh-card">';
 
     if (theme.showRating !== false) {
@@ -148,7 +152,7 @@
 
   function renderList(container, shadow, root, data) {
     var theme = data.widget.theme || {};
-    var brand = theme.brandColor || "#635BFF";
+    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var html = '<div class="vh-list" style="--vh-brand:' + brand + '">';
     for (var i = 0; i < data.testimonials.length; i++) {
       html += buildCard(data.testimonials[i], theme);
@@ -159,7 +163,7 @@
 
   function renderSingle(container, shadow, root, data) {
     var theme = data.widget.theme || {};
-    var brand = theme.brandColor || "#635BFF";
+    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var testimonials = data.testimonials;
     var t = testimonials[0];
 
@@ -228,7 +232,7 @@
 
   function renderBadgeWidget(container, shadow, root, data) {
     var theme = data.widget.theme || {};
-    var brand = theme.brandColor || "#635BFF";
+    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var testimonials = data.testimonials;
     var total = testimonials.length;
     var sum = 0;
@@ -248,7 +252,7 @@
 
   function renderCarousel(container, shadow, root, data) {
     var theme = data.widget.theme || {};
-    var brand = theme.brandColor || "#635BFF";
+    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var testimonials = data.testimonials;
 
     var html = '<div class="vh-carousel-wrap">';

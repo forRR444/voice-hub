@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSubmitSchema } from "@/lib/validations";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimitAsync } from "@/lib/rate-limit";
 import { logError } from "@/lib/logger";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
+    // ハニーポット: ボットがこのフィールドを埋めたら拒否
+    if (body.website || body.url || body.email_confirm) {
+      return NextResponse.json({ success: true }); // ボットには成功に見せる
+    }
+
     const parsed = testimonialSubmitSchema.safeParse(body);
 
     // Rate limit: 5 submissions per form per IP per 15 minutes
@@ -14,7 +20,7 @@ export async function POST(request: Request) {
     const realIp = request.headers.get("x-real-ip");
     const ip = forwarded?.split(",")[0]?.trim() || realIp || "unknown";
     const formId = parsed.success ? parsed.data.form_id : "unknown";
-    const { success: withinLimit } = rateLimit(
+    const { success: withinLimit } = await rateLimitAsync(
       `testimonial:${ip}:${formId}`,
       5,
       15 * 60 * 1000

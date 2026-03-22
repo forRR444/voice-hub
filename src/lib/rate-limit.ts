@@ -1,35 +1,52 @@
-// Simple in-memory rate limiter.
-// NOTE: On serverless (Vercel), each instance has its own memory,
-// so this only provides per-instance throttling, not global rate limiting.
-// For production-grade rate limiting, migrate to Upstash Redis.
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-const globalStore = globalThis as unknown as {
-  __rateLimitMap?: Map<string, { count: number; resetAt: number }>;
-};
+// Upstash Redis が設定されていればグローバルレート制限を使用
+// 未設定の場合はインメモリのフォールバック（開発環境向け）
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      })
+    : null;
 
-if (!globalStore.__rateLimitMap) {
-  globalStore.__rateLimitMap = new Map();
+const upstashLimiters = new Map<string, Ratelimit>();
+
+function getUpstashLimiter(windowMs: number, limit: number): Ratelimit {
+  const key = `${windowMs}:${limit}`;
+  if (!upstashLimiters.has(key)) {
+    upstashLimiters.set(
+      key,
+      new Ratelimit({
+        redis: redis!,
+        limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+        analytics: false,
+      })
+    );
+  }
+  return upstashLimiters.get(key)!;
 }
 
-const rateLimitMap = globalStore.__rateLimitMap;
+// インメモリフォールバック（開発環境用）
+const memoryStore = new Map<string, { count: number; resetAt: number }>();
 
-export function rateLimit(
+function memoryRateLimit(
   key: string,
   limit: number,
   windowMs: number
 ): { success: boolean; remaining: number } {
   const now = Date.now();
-  const entry = rateLimitMap.get(key);
+  const entry = memoryStore.get(key);
 
-  // Clean up expired entries periodically
-  if (rateLimitMap.size > 10000) {
-    for (const [k, v] of rateLimitMap) {
-      if (v.resetAt < now) rateLimitMap.delete(k);
+  if (memoryStore.size > 10000) {
+    for (const [k, v] of memoryStore) {
+      if (v.resetAt < now) memoryStore.delete(k);
     }
   }
 
   if (!entry || entry.resetAt < now) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + windowMs });
+    memoryStore.set(key, { count: 1, resetAt: now + windowMs });
     return { success: true, remaining: limit - 1 };
   }
 
@@ -39,4 +56,26 @@ export function rateLimit(
 
   entry.count++;
   return { success: true, remaining: limit - entry.count };
+}
+
+export async function rateLimitAsync(
+  key: string,
+  limit: number,
+  windowMs: number
+): Promise<{ success: boolean; remaining: number }> {
+  if (redis) {
+    const limiter = getUpstashLimiter(windowMs, limit);
+    const result = await limiter.limit(key);
+    return { success: result.success, remaining: result.remaining };
+  }
+  return memoryRateLimit(key, limit, windowMs);
+}
+
+// 同期版（後方互換性のため維持、インメモリのみ）
+export function rateLimit(
+  key: string,
+  limit: number,
+  windowMs: number
+): { success: boolean; remaining: number } {
+  return memoryRateLimit(key, limit, windowMs);
 }
