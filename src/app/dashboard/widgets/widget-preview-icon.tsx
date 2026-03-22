@@ -60,6 +60,21 @@ export function WidgetPreviewIcon({ type, selected }: { type: string; selected: 
           <div className={`w-20 h-12 ${block} rounded`} />
         </div>
       );
+    case "dual-marquee":
+      return (
+        <div className={`w-full h-16 ${bg} rounded p-2 flex flex-col gap-1 overflow-hidden`}>
+          <div className="flex gap-1 flex-1">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className={`w-10 h-full ${block} rounded-sm shrink-0`} />
+            ))}
+          </div>
+          <div className="flex gap-1 flex-1">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className={`w-10 h-full ${block} rounded-sm shrink-0`} />
+            ))}
+          </div>
+        </div>
+      );
     case "badge":
       return (
         <div className={`w-full h-16 ${bg} rounded flex items-center justify-center`}>

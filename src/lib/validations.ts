@@ -39,7 +39,7 @@ export const testimonialManualCreateSchema = z.object({
 
 export const widgetCreateSchema = z.object({
   name: z.string().min(1).max(100),
-  type: z.enum(["carousel", "grid", "marquee", "list", "single", "wall", "badge"]),
+  type: z.enum(["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"]),
   theme: z
     .object({
       mode: z.enum(["light", "dark"]).default("light"),

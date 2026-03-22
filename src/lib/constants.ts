@@ -23,6 +23,7 @@ export const WIDGET_TYPES = [
   { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
   { id: "list", label: "リスト", desc: "縦に並ぶシンプル表示" },
   { id: "single", label: "シングル", desc: "1件を大きく表示" },
+  { id: "dual-marquee", label: "デュアルマーキー", desc: "2行が逆方向に横スクロール" },
   { id: "badge", label: "バッジ", desc: "評価サマリー表示" },
 ] as const;
 

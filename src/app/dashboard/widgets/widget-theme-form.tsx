@@ -4,7 +4,7 @@ import type { WidgetTheme } from "@/types/database";
 import { WIDGET_TYPES } from "@/lib/constants";
 import { WidgetPreviewIcon } from "./widget-preview-icon";
 
-type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "badge";
+type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 
 export type WidgetFormState = {
   name: string;
