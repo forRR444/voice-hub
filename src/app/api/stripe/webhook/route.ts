@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getStripeCustomerId, getStripeSubscriptionId } from "@/lib/stripe-utils";
 import Stripe from "stripe";
 import { logError } from "@/lib/logger";
-
-function getSupabaseAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
 
 export async function POST(request: Request) {
   try {
@@ -42,21 +36,15 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const customerId =
-          typeof session.customer === "string"
-            ? session.customer
-            : session.customer?.id;
-        const subscriptionId =
-          typeof session.subscription === "string"
-            ? session.subscription
-            : session.subscription?.id;
+        const customerId = getStripeCustomerId(session.customer);
+        const subscriptionId = getStripeSubscriptionId(session.subscription);
 
         if (!customerId) {
           logError("No customer ID in checkout session");
           break;
         }
 
-        const { error } = await getSupabaseAdmin()
+        const { error } = await createAdminClient()
           .from("workspaces")
           .update({
             subscription_status: "pro",
@@ -73,10 +61,7 @@ export async function POST(request: Request) {
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId =
-          typeof subscription.customer === "string"
-            ? subscription.customer
-            : subscription.customer.id;
+        const customerId = getStripeCustomerId(subscription.customer)!;
 
         let subscriptionStatus: string;
         switch (subscription.status) {
@@ -93,7 +78,7 @@ export async function POST(request: Request) {
             subscriptionStatus = "free";
         }
 
-        const { error } = await getSupabaseAdmin()
+        const { error } = await createAdminClient()
           .from("workspaces")
           .update({
             subscription_status: subscriptionStatus,
@@ -110,12 +95,9 @@ export async function POST(request: Request) {
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId =
-          typeof subscription.customer === "string"
-            ? subscription.customer
-            : subscription.customer.id;
+        const customerId = getStripeCustomerId(subscription.customer)!;
 
-        const { error } = await getSupabaseAdmin()
+        const { error } = await createAdminClient()
           .from("workspaces")
           .update({
             subscription_status: "canceled",

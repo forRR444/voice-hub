@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { rateLimitAsync } from "@/lib/rate-limit";
+import { getClientIp, checkRateLimit } from "@/lib/api-utils";
+import { RATE_LIMITS } from "@/lib/constants";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  // Rate limit: 60 requests per IP per minute
-  const forwarded = _request.headers.get("x-forwarded-for");
-  const realIp = _request.headers.get("x-real-ip");
-  const ip = forwarded?.split(",")[0]?.trim() || realIp || "unknown";
-  const { success: withinLimit } = await rateLimitAsync(`form-get:${ip}`, 60, 60 * 1000);
-  if (!withinLimit) {
-    return NextResponse.json(
-      { error: "リクエスト数の制限に達しました。しばらくしてからもう一度お試しください。" },
-      { status: 429 }
-    );
-  }
+  const ip = getClientIp(_request);
+  const { limit, windowMs } = RATE_LIMITS.formGet;
+  const rateLimited = await checkRateLimit(`form-get:${ip}`, limit, windowMs);
+  if (rateLimited) return rateLimited;
 
   const { slug } = await params;
   const supabase = await createClient();

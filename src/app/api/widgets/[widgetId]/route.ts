@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { handleApiError } from "@/lib/api-utils";
+import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,9 +50,7 @@ export async function GET(
     // Build testimonials query
     let query = supabase
       .from("testimonials")
-      .select(
-        "id, name, title, company, avatar_url, rating, content, before_story, is_featured, submitted_at"
-      )
+      .select(TESTIMONIAL_SELECT_COLUMNS)
       .eq("workspace_id", widget.workspace_id)
       .eq("status", "approved")
       .not("source", "in", '("sample","guide")')
@@ -83,10 +83,7 @@ export async function GET(
         },
       }
     );
-  } catch {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500, headers: corsHeaders }
-    );
+  } catch (error) {
+    return handleApiError(error, "Internal server error", corsHeaders);
   }
 }

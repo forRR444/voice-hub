@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSubmitSchema } from "@/lib/validations";
-import { rateLimitAsync } from "@/lib/rate-limit";
+import { getClientIp, checkRateLimit, handleApiError } from "@/lib/api-utils";
 import { logError } from "@/lib/logger";
+import { RATE_LIMITS } from "@/lib/constants";
 
 export async function POST(request: Request) {
   try {
@@ -15,22 +16,11 @@ export async function POST(request: Request) {
 
     const parsed = testimonialSubmitSchema.safeParse(body);
 
-    // Rate limit: 5 submissions per form per IP per 15 minutes
-    const forwarded = request.headers.get("x-forwarded-for");
-    const realIp = request.headers.get("x-real-ip");
-    const ip = forwarded?.split(",")[0]?.trim() || realIp || "unknown";
+    const ip = getClientIp(request);
     const formId = parsed.success ? parsed.data.form_id : "unknown";
-    const { success: withinLimit } = await rateLimitAsync(
-      `testimonial:${ip}:${formId}`,
-      5,
-      15 * 60 * 1000
-    );
-    if (!withinLimit) {
-      return NextResponse.json(
-        { error: "送信回数の制限に達しました。しばらくしてからもう一度お試しください。" },
-        { status: 429 }
-      );
-    }
+    const { limit, windowMs } = RATE_LIMITS.testimonialSubmit;
+    const rateLimited = await checkRateLimit(`testimonial:${ip}:${formId}`, limit, windowMs);
+    if (rateLimited) return rateLimited;
 
     if (!parsed.success) {
       logError("Validation error:", JSON.stringify(parsed.error.flatten()));
@@ -85,10 +75,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
