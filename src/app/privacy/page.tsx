@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       </header>
       <main className="max-w-2xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">プライバシーポリシー</h1>
-        <p className="text-sm text-gray-400 mb-12">最終更新日: 2026年3月20日</p>
+        <p className="text-sm text-gray-400 mb-12">最終更新日: 2026年3月23日</p>
         <div className="space-y-8 text-[15px] text-gray-700 leading-[1.9]">
           <p>
             VoiceHub（以下「当社」といいます。）は、本サービスにおけるユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます。）を定めます。
@@ -108,9 +108,19 @@ export default function PrivacyPage() {
                   <td className="px-4 py-2 border-b border-gray-100">ホスティング・配信</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-2">Google OAuth</td>
-                  <td className="px-4 py-2">Google LLC（米国）</td>
-                  <td className="px-4 py-2">ユーザー認証</td>
+                  <td className="px-4 py-2 border-b border-gray-100">Google OAuth</td>
+                  <td className="px-4 py-2 border-b border-gray-100">Google LLC（米国）</td>
+                  <td className="px-4 py-2 border-b border-gray-100">ユーザー認証</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 border-b border-gray-100">Google Analytics</td>
+                  <td className="px-4 py-2 border-b border-gray-100">Google LLC（米国）</td>
+                  <td className="px-4 py-2 border-b border-gray-100">アクセス解析</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2">PostHog</td>
+                  <td className="px-4 py-2">PostHog Inc.（米国）</td>
+                  <td className="px-4 py-2">アクセス解析・ユーザー行動分析・セッション録画</td>
                 </tr>
               </tbody>
             </table>
@@ -127,6 +137,7 @@ export default function PrivacyPage() {
           <ol className="list-decimal pl-5 space-y-2">
             <li>本サービスでは、ユーザーの認証状態の維持およびサービス改善のため、Cookie及びこれに類する技術を使用します。</li>
             <li>当社は、アクセスログ（IPアドレス、ブラウザ種別、アクセス日時等）を収集する場合があります。これらの情報は単独で個人を特定するものではありませんが、サービスの安定運用・不正アクセスの検知等に利用します。</li>
+            <li>当社は、サービス改善を目的として、Google Analytics および PostHog を用いてユーザーの操作情報（ページ閲覧、クリック、スクロール等）を収集・分析します。PostHog ではセッション録画（画面操作の録画）を行う場合があります。これらの情報はサービスの品質向上のみに利用し、個人を特定する目的では使用しません。</li>
             <li>ユーザーは、ブラウザの設定によりCookieの受け取りを拒否することができますが、その場合、本サービスの一部機能が利用できなくなることがあります。</li>
           </ol>
 
