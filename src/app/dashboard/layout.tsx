@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LayoutDashboard, FileText, Code, Settings } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
+import { PostHogIdentify } from "./posthog-identify";
 
 const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
@@ -83,6 +84,13 @@ export default async function DashboardLayout({
             <LogoutButton />
           </div>
         </header>
+
+        {/* PostHog user identification */}
+        <PostHogIdentify
+          userId={user.id}
+          email={user.email}
+          workspaceName={workspace?.name}
+        />
 
         {/* Page content */}
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
