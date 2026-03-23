@@ -41,15 +41,15 @@ export default function LoginClient() {
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
           <p className="mt-2 text-sm text-foreground/60">
-            お客様の声の収集・管理・表示ツール
+            無料で始める
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-foreground/10 bg-background px-4 py-3 text-sm font-medium text-foreground hover:bg-foreground/5 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-foreground/10 bg-white px-4 py-3 text-sm font-medium text-foreground hover:bg-foreground/5 transition-colors cursor-pointer disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -73,13 +73,21 @@ export default function LoginClient() {
                 />
               </svg>
             )}
-            Googleでログイン
+            Googleで無料登録（10秒）
           </button>
+
+          <p className="text-center text-xs text-foreground/40">
+            クレジットカード不要
+          </p>
 
           {error && (
             <p className="text-center text-xs text-red-500">{error}</p>
           )}
         </div>
+
+        <p className="text-center text-xs text-foreground/30">
+          登録することで<Link href="/terms" className="text-indigo-600 hover:underline">利用規約</Link>と<Link href="/privacy" className="text-indigo-600 hover:underline">プライバシーポリシー</Link>に同意したものとみなされます
+        </p>
       </div>
     </div>
   );
