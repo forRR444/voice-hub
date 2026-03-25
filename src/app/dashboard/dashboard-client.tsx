@@ -186,7 +186,7 @@ export default function DashboardClient({
       </div>
 
       {/* Stats */}
-      {stats.total > 0 && <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+      {stats.total > 0 && <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8">
         <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
         <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
         <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
@@ -320,12 +320,12 @@ function StatCard({
   value: number | string;
 }) {
   return (
-    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4">
-      <div className="flex items-center gap-2 mb-1">
-        {icon}
-        <span className="text-sm text-foreground/50">{label}</span>
+    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-2.5 sm:p-4">
+      <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
+        <span className="hidden sm:block">{icon}</span>
+        <span className="text-[10px] sm:text-sm text-foreground/50">{label}</span>
       </div>
-      <p className="text-2xl font-bold text-foreground">{value}</p>
+      <p className="text-lg sm:text-2xl font-bold text-foreground">{value}</p>
     </div>
   );
 }
