@@ -31,19 +31,37 @@ export default async function DashboardPage() {
     );
   }
 
-  const { data: testimonials } = await supabase
-    .from("testimonials")
-    .select("*")
-    .eq("workspace_id", workspace.id)
-    .order("submitted_at", { ascending: false });
+  // Run queries in parallel
+  const [
+    { data: testimonials },
+    { data: forms },
+    { count: widgetCount },
+  ] = await Promise.all([
+    supabase
+      .from("testimonials")
+      .select("*")
+      .eq("workspace_id", workspace.id)
+      .order("submitted_at", { ascending: false }),
+    supabase
+      .from("forms")
+      .select("id, slug, title, brand_color")
+      .eq("workspace_id", workspace.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("widgets")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspace.id),
+  ]);
 
   const testimonialList = (testimonials ?? []) as TestimonialRow[];
 
   const ids = testimonialList.map((t) => t.id);
-  const { data: tagRows } = await supabase
-    .from("testimonial_tags")
-    .select("*")
-    .in("testimonial_id", ids.length > 0 ? ids : ["__none__"]);
+  const { data: tagRows } = ids.length > 0
+    ? await supabase
+        .from("testimonial_tags")
+        .select("*")
+        .in("testimonial_id", ids)
+    : { data: [] };
 
   const tagMap: Record<string, string[]> = {};
   (tagRows ?? []).forEach((row: { testimonial_id: string; tag: string }) => {
@@ -64,17 +82,6 @@ export default async function DashboardPage() {
   const hasApprovedTestimonials = testimonialList.some(
     (t) => t.source !== "sample" && t.source !== "guide" && t.status === "approved"
   );
-
-  const { data: forms } = await supabase
-    .from("forms")
-    .select("id, slug, title, brand_color")
-    .eq("workspace_id", workspace.id)
-    .order("created_at", { ascending: false });
-
-  const { count: widgetCount } = await supabase
-    .from("widgets")
-    .select("id", { count: "exact", head: true })
-    .eq("workspace_id", workspace.id);
 
   const brandColor = (forms ?? [])[0]?.brand_color || DEFAULT_BRAND_COLOR;
 
