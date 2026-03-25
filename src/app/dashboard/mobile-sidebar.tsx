@@ -48,13 +48,13 @@ export function MobileSidebar({
             onClick={() => setOpen(false)}
           />
           <aside className="fixed inset-y-0 left-0 w-60 bg-white flex flex-col z-50 shadow-xl">
-            <div className="flex items-center justify-end p-3">
+            <div className="absolute top-3 right-3">
               <button
                 onClick={() => setOpen(false)}
-                className="p-2 text-foreground/60 hover:text-foreground cursor-pointer"
+                className="p-1.5 text-foreground/60 hover:text-foreground cursor-pointer"
                 aria-label="メニューを閉じる"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
             <div onClick={() => setOpen(false)}>
