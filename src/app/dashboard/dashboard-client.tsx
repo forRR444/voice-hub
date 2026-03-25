@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   Star,
@@ -14,6 +14,8 @@ import {
   MessageSquare,
   ImageIcon,
   Crown,
+  ChevronDown,
+  MoreVertical,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
@@ -48,6 +50,7 @@ export default function DashboardClient({
   const [search, setSearch] = useState("");
   const [showFormMenu, setShowFormMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
 
@@ -133,9 +136,9 @@ export default function DashboardClient({
   return (
     <div className="max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold text-foreground">{hasReal ? "お客様の声" : "ご登録ありがとうございます"}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">{hasReal ? "お客様の声" : "ご登録ありがとうございます"}</h2>
           {!hasReal && (
             <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
               <Crown size={12} />
@@ -143,12 +146,12 @@ export default function DashboardClient({
             </span>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
           {forms.length > 0 && hasReal && (
             <div className="relative">
               <button
                 onClick={() => forms.length === 1 ? copyFormUrl(forms[0].slug) : setShowFormMenu(!showFormMenu)}
-                className="flex items-center gap-2 px-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
               >
                 <Copy size={16} />
                 {copiedUrl ? "コピーしました" : "フォームURLをコピー"}
@@ -177,7 +180,7 @@ export default function DashboardClient({
           )}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
           >
             <Plus size={16} />
             手動で追加
@@ -198,27 +201,67 @@ export default function DashboardClient({
       </div>}
 
       {/* Filter tabs + search */}
-      {stats.total > 0 && <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-        <div className="flex gap-1 bg-white rounded-lg border border-foreground/10 p-1">
+      {stats.total > 0 && <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+        {/* Mobile: search + dropdown in one row */}
+        <div className="flex gap-2 items-center sm:hidden">
+          <div className="relative flex-1">
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
+            <input
+              type="text"
+              placeholder="検索..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-7 pr-3 py-1.5 text-xs border border-foreground/10 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setFilterOpen(!filterOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-foreground/10 rounded-lg bg-white cursor-pointer"
+            >
+              {tabs.find((t) => t.key === filter)?.label}
+              <ChevronDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
+            </button>
+            {filterOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setFilterOpen(false)} />
+                <div className="absolute right-0 top-9 z-20 w-32 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => { setFilter(tab.key); setFilterOpen(false); }}
+                      className={`w-full text-left px-3 py-2 text-xs cursor-pointer ${
+                        filter === tab.key
+                          ? "text-indigo-600 font-medium bg-indigo-50"
+                          : "text-foreground/60 hover:bg-foreground/5"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        {/* Desktop: tabs */}
+        <div className="hidden sm:flex gap-1 bg-foreground/[0.03] rounded-lg border border-foreground/10 p-1">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
               className={`px-4 py-1.5 text-sm rounded-md transition-colors cursor-pointer ${
                 filter === tab.key
-                  ? "bg-indigo-600 text-white"
-                  : "text-foreground/60 hover:bg-foreground/5"
+                  ? "bg-white text-foreground font-medium shadow-sm"
+                  : "text-foreground/50 hover:text-foreground/70"
               }`}
             >
               {tab.label}
             </button>
           ))}
         </div>
-        <div className="relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
-          />
+        <div className="relative hidden sm:block">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
           <input
             type="text"
             placeholder="検索..."
@@ -321,11 +364,11 @@ function StatCard({
 }) {
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-2.5 sm:p-4">
-      <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
+      <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
         <span className="hidden sm:block">{icon}</span>
-        <span className="text-[10px] sm:text-sm text-foreground/50">{label}</span>
+        <span className="text-[10px] sm:text-xs text-foreground/40 font-medium uppercase tracking-wide">{label}</span>
       </div>
-      <p className="text-lg sm:text-2xl font-bold text-foreground">{value}</p>
+      <p className="text-xl sm:text-3xl font-bold text-foreground">{value}</p>
     </div>
   );
 }
@@ -435,22 +478,33 @@ function TestimonialCard({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-5">
+    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 hover:border-foreground/20 transition-colors">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
             <Link
               href={`/dashboard/${t.id}`}
-              className="font-medium text-foreground hover:text-indigo-600"
+              className="text-sm sm:text-base font-semibold text-foreground hover:text-indigo-600"
             >
               {t.name}
             </Link>
             <StatusBadge status={t.status} />
           </div>
-          <Stars rating={t.rating} />
-          <p className="text-sm text-foreground/60 mt-2 line-clamp-2">
+          <div className="flex items-center gap-2 mb-0.5">
+            <Stars rating={t.rating} />
+            <span className="text-[10px] text-foreground/25">{formatDate(t.submitted_at)}</span>
+          </div>
+          <p className="text-xs sm:text-sm text-foreground/50 mt-2 line-clamp-2 leading-relaxed">
             {t.content}
           </p>
+          {([t.before_story, t.title, t.company].some(Boolean) || (t.custom_fields && Object.keys(t.custom_fields).length > 0)) && (
+            <Link
+              href={`/dashboard/${t.id}`}
+              className="inline-block mt-1.5 text-[10px] sm:text-xs text-indigo-500 hover:text-indigo-700"
+            >
+              詳細を見る →
+            </Link>
+          )}
           {t.tags.length > 0 && (
             <div className="flex gap-1 mt-2">
               {t.tags.map((tag) => (
@@ -463,12 +517,10 @@ function TestimonialCard({
               ))}
             </div>
           )}
-          <p className="text-xs text-foreground/30 mt-2">
-            {formatDate(t.submitted_at)}
-          </p>
         </div>
 
-        <div className="flex items-center gap-2 ml-4 shrink-0">
+        {/* Desktop: inline buttons */}
+        <div className="hidden sm:flex items-center gap-2 ml-4 shrink-0">
           <button
             onClick={onApprove}
             disabled={t.status === "approved"}
@@ -512,7 +564,84 @@ function TestimonialCard({
             <ImageIcon size={16} />
           </button>
         </div>
+        {/* Mobile: overflow menu */}
+        <CardOverflowMenu
+          status={t.status}
+          isFeatured={t.is_featured}
+          onApprove={onApprove}
+          onReject={onReject}
+          onToggleFeatured={onToggleFeatured}
+          onCreateSnsImage={onCreateSnsImage}
+        />
       </div>
+    </div>
+  );
+}
+
+function CardOverflowMenu({
+  status,
+  isFeatured,
+  onApprove,
+  onReject,
+  onToggleFeatured,
+  onCreateSnsImage,
+}: {
+  status: string;
+  isFeatured: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+  onToggleFeatured: () => void;
+  onCreateSnsImage: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative sm:hidden ml-2 shrink-0">
+      <button
+        onClick={() => setOpen(!open)}
+        className="p-1.5 rounded text-foreground/40 hover:text-foreground/60 cursor-pointer"
+      >
+        <MoreVertical size={16} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-8 z-20 w-36 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
+            {status !== "approved" && (
+              <button
+                onClick={() => { onApprove(); setOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-emerald-600 hover:bg-foreground/5 cursor-pointer"
+              >
+                <CheckCircle size={14} />
+                承認
+              </button>
+            )}
+            {status !== "rejected" && (
+              <button
+                onClick={() => { onReject(); setOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-500 hover:bg-foreground/5 cursor-pointer"
+              >
+                <XCircle size={14} />
+                却下
+              </button>
+            )}
+            <button
+              onClick={() => { onToggleFeatured(); setOpen(false); }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
+            >
+              <Bookmark size={14} className={isFeatured ? "fill-violet-500 text-violet-500" : ""} />
+              {isFeatured ? "注目を解除" : "注目に設定"}
+            </button>
+            <button
+              onClick={() => { onCreateSnsImage(); setOpen(false); }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
+            >
+              <ImageIcon size={14} />
+              SNS画像を作成
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
