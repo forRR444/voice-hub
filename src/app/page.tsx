@@ -23,50 +23,53 @@ export default function Home() {
       <TestimonialToast />
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-20 pb-24">
+      <section className="relative overflow-hidden pt-14 pb-16 sm:pt-20 sm:pb-24">
         {/* Blob backgrounds */}
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-200 rounded-full opacity-40 blur-[128px] pointer-events-none" />
         <div className="absolute top-1/3 -left-20 w-[350px] h-[350px] bg-violet-200 rounded-full opacity-30 blur-[128px] pointer-events-none" />
         <div className="absolute top-1/4 -right-20 w-[300px] h-[300px] bg-sky-200 rounded-full opacity-30 blur-[128px] pointer-events-none" />
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
-        <a href="#pricing" className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
+        <a href="#pricing" className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
           <Star size={14} />
           先着10名は正式リリース後もずっと無料
         </a>
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
+        <h1 className="text-[1.65rem] sm:text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
           お客様の声を集めて、
           <br />
           ホームページに<span className="text-indigo-600">自動で表示。</span>
         </h1>
-        <div className="mt-8 flex justify-center gap-8 sm:gap-12">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <MessageSquareText size={22} className="text-indigo-600" />
+        <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
+          <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
+              <MessageSquareText size={18} className="text-indigo-600 sm:hidden" />
+              <MessageSquareText size={22} className="text-indigo-600 hidden sm:block" />
             </div>
-            <span className="text-xs text-gray-600">フォームで収集</span>
+            <span className="text-[10px] sm:text-xs text-gray-600">フォームで収集</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <LayoutDashboard size={22} className="text-indigo-600" />
+          <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
+              <LayoutDashboard size={18} className="text-indigo-600 sm:hidden" />
+              <LayoutDashboard size={22} className="text-indigo-600 hidden sm:block" />
             </div>
-            <span className="text-xs text-gray-600">一元管理</span>
+            <span className="text-[10px] sm:text-xs text-gray-600">一元管理</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <Code2 size={22} className="text-indigo-600" />
+          <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
+              <Code2 size={18} className="text-indigo-600 sm:hidden" />
+              <Code2 size={22} className="text-indigo-600 hidden sm:block" />
             </div>
-            <span className="text-xs text-gray-600">HPに自動表示</span>
+            <span className="text-[10px] sm:text-xs text-gray-600">HPに自動表示</span>
           </div>
         </div>
-        <p className="mt-8 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 sm:mt-8 text-base sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
           お客様にフォームURLを送って、届いた声を承認するだけ。
           <br className="hidden md:block" />
           あとはホームページに自動反映。
         </p>
-        <div className="mt-10">
+        <div className="mt-8 sm:mt-10">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
           >
             無料で始める
             <ArrowRight size={18} />
@@ -75,7 +78,14 @@ export default function Home() {
         <p className="mt-5 text-sm text-gray-400">
           クレジットカード不要 / Googleアカウントで10秒登録
         </p>
-        <div className="mt-14 max-w-3xl mx-auto">
+        <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-gray-400">
+          <span>10秒で登録</span>
+          <span>→</span>
+          <span>30秒でフォーム完成</span>
+          <span>→</span>
+          <span>URLを送るだけ</span>
+        </div>
+        <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
           <img
             src="/Dashboard.png"
             alt="VoiceHub ダッシュボード画面"
@@ -86,19 +96,19 @@ export default function Home() {
       </section>
 
       {/* Stats */}
-      <section className="border-y border-gray-200 py-10">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="border-y border-gray-200 py-8 sm:py-10">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16">
             <div className="text-center">
-              <p className="text-3xl font-bold text-indigo-600">97%</p>
+              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">97%</p>
               <p className="mt-1 text-sm text-gray-500">の消費者がレビューを参考にする<sup className="text-gray-400">※1</sup></p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-indigo-600">+34%</p>
+              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">+34%</p>
               <p className="mt-1 text-sm text-gray-500">お客様の声で成約率が向上<sup className="text-gray-400">※2</sup></p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-indigo-600">5分</p>
+              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">5分</p>
               <p className="mt-1 text-sm text-gray-500">でセットアップ完了</p>
             </div>
           </div>
@@ -110,55 +120,57 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section className="py-20">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+      <section className="py-14 sm:py-20">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             あなたがやることは、<span className="text-indigo-600">2つだけ。</span>
           </h2>
-          <p className="text-center text-gray-500 mb-14">
+          <p className="text-center text-gray-500 mb-10 sm:mb-14">
             それ以外は全部、VoiceHubがやります。
           </p>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-lg font-bold mb-4">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 text-white rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-lg font-bold mb-2.5 sm:mb-4">
                 1
               </div>
-              <h3 className="text-lg font-bold text-gray-900">フォームURLを送る</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+              <h3 className="text-[15px] sm:text-lg font-bold text-gray-900">フォームURLを送る</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
                 お客様にURLを送るだけ。LINEでもメールでもOK。ステップ形式で、お客様も迷わず回答できます。
               </p>
-              <div className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
-                <CheckCircle2 size={12} />
+              <div className="mt-3 sm:mt-4 inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
+                <CheckCircle2 size={10} className="sm:hidden" />
+                <CheckCircle2 size={12} className="hidden sm:block" />
                 コピペで送るだけ
               </div>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-lg font-bold mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 text-white rounded-lg sm:rounded-xl flex items-center justify-center text-sm sm:text-lg font-bold mb-2.5 sm:mb-4">
                 2
               </div>
-              <h3 className="text-lg font-bold text-gray-900">届いた声を承認する</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+              <h3 className="text-[15px] sm:text-lg font-bold text-gray-900">届いた声を承認する</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
                 ダッシュボードに届いた声を確認。「承認」ボタンを押すだけ。内容を見て選べるので安心です。
               </p>
-              <div className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
-                <CheckCircle2 size={12} />
+              <div className="mt-3 sm:mt-4 inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
+                <CheckCircle2 size={10} className="sm:hidden" />
+                <CheckCircle2 size={12} className="hidden sm:block" />
                 ワンクリック
               </div>
             </div>
           </div>
-          <p className="mt-8 text-center text-sm text-gray-500">
+          <p className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500">
             ※ ホームページへの埋め込みコードは初回に一度貼るだけ。以降は承認するたびに自動で反映されます。
           </p>
         </div>
       </section>
 
       {/* Before/After transformation */}
-      <section className="bg-gray-50 py-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-14">
+      <section className="bg-gray-50 py-14 sm:py-20">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-10 sm:mb-14">
             導入するだけで、こう変わります。
           </h2>
-          <div className="space-y-5">
+          <div className="space-y-3 sm:space-y-5">
             {[
               {
                 before: "LINEで個別にお願い → スクショ保存 → トリミング",
@@ -181,16 +193,16 @@ export default function Home() {
                 key={i}
                 className="flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden border border-gray-200"
               >
-                <div className="flex-1 bg-gray-50 px-6 py-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Before</p>
-                  <p className="text-gray-500">{item.before}</p>
+                <div className="flex-1 bg-gray-50 px-3 py-3 sm:px-6 sm:py-5">
+                  <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 sm:mb-2">Before</p>
+                  <p className="text-xs sm:text-base text-gray-500">{item.before}</p>
                 </div>
                 <div className="flex items-center justify-center px-4 py-2 sm:py-0 bg-white">
                   <ArrowRight size={20} className="text-indigo-600 rotate-90 sm:rotate-0" />
                 </div>
-                <div className="flex-1 bg-white px-6 py-5">
-                  <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">After</p>
-                  <p className="text-gray-900 font-medium">{item.after}</p>
+                <div className="flex-1 bg-white px-3 py-3 sm:px-6 sm:py-5">
+                  <p className="text-[10px] sm:text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1 sm:mb-2">After</p>
+                  <p className="text-xs sm:text-base text-gray-900 font-medium">{item.after}</p>
                 </div>
               </div>
             ))}
@@ -199,16 +211,16 @@ export default function Home() {
       </section>
 
       {/* Product screenshots */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+      <section className="py-14 sm:py-20">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             実際の画面をご覧ください。
           </h2>
           <p className="text-center text-gray-500 mb-8">
             お客様が回答するフォームと、ホームページに表示されるウィジェット。
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-16">
           {/* Form screenshot */}
           <div>
             <img
@@ -238,7 +250,7 @@ export default function Home() {
           </div>
 
           {/* Widget demo */}
-          <h3 className="text-xl font-bold text-center text-gray-900 mb-2">
+          <h3 className="text-lg sm:text-xl font-bold text-center text-gray-900 mb-2">
             ホームページへの表示タイプ
           </h3>
           <p className="text-center text-sm text-gray-500 mb-8">
@@ -249,108 +261,108 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="features" className="bg-gray-50 py-20 scroll-mt-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+      <section id="features" className="bg-gray-50 py-14 sm:py-20 scroll-mt-20">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             シンプルだけど、必要な機能は全部入り。
           </h2>
-          <div className="grid md:grid-cols-3 gap-6 mt-14">
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-14">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <MessageSquareText size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">お客様の声 収集フォーム</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">星評価、Before/After、写真アップロード。ステップ形式でお客様が答えやすいから回答率が上がります。</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">お客様の声 収集フォーム</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">星評価、Before/After、写真アップロード。ステップ形式でお客様が答えやすいから回答率が上がります。</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <LayoutDashboard size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">管理ダッシュボード</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">承認・タグ付け・検索をひとつの画面で。もう「あの声どこだっけ？」と探し回る必要はありません。</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">管理ダッシュボード</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">承認・タグ付け・検索をひとつの画面で。もう「あの声どこだっけ？」と探し回る必要はありません。</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <Code2 size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">埋め込みウィジェット</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプのウィジェット。コードをコピペするだけで完成。`}</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプのウィジェット。コードをコピペするだけで完成。`}</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <PenLine size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">手動追加もOK</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">過去にLINEやメールでもらった声もまとめて登録できます。</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">手動追加もOK</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">過去にLINEやメールでもらった声もまとめて登録できます。</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <Smartphone size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">どのデバイスでも綺麗</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">スマホでもPCでも美しく表示。ペライチ・WordPress・Wixなど主要ツールに対応。</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">どのデバイスでも綺麗</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">スマホでもPCでも美しく表示。ペライチ・WordPress・Wixなど主要ツールに対応。</p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-gray-200">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <Zap size={20} />
               </div>
-              <h3 className="font-bold text-gray-900">5分でセットアップ完了</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">Googleアカウントでログイン → フォーム作成 → URL送信。ITが苦手でも迷いません。</p>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">5分でセットアップ完了</h3>
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">Googleアカウントでログイン → フォーム作成 → URL送信。ITが苦手でも迷いません。</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Who is it for */}
-      <section className="py-20">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+      <section className="py-14 sm:py-20">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             こんな方におすすめです。
           </h2>
-          <p className="text-center text-gray-500 mb-12">
+          <p className="text-center text-gray-500 mb-8 sm:mb-12">
             「お客様の声」が売上に直結する仕事をしている方にぴったりです。
           </p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">コーチ・コンサルタント</p>
-                <p className="text-sm text-gray-500">受講生の声が次の集客につながる</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">コーチ・コンサルタント</p>
+                <p className="text-xs sm:text-sm text-gray-500">受講生の声が次の集客につながる</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">オンライン講座の運営者</p>
-                <p className="text-sm text-gray-500">受講後の変化を可視化したい</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">オンライン講座の運営者</p>
+                <p className="text-xs sm:text-sm text-gray-500">受講後の変化を可視化したい</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">セラピスト・カウンセラー</p>
-                <p className="text-sm text-gray-500">口コミが信頼構築の生命線</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">セラピスト・カウンセラー</p>
+                <p className="text-xs sm:text-sm text-gray-500">口コミが信頼構築の生命線</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">ヨガ・フィットネス講師</p>
-                <p className="text-sm text-gray-500">生徒さんの声で新規集客を加速</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">ヨガ・フィットネス講師</p>
+                <p className="text-xs sm:text-sm text-gray-500">生徒さんの声で新規集客を加速</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">フリーランス</p>
-                <p className="text-sm text-gray-500">実績の証明としてポートフォリオに</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">フリーランス</p>
+                <p className="text-xs sm:text-sm text-gray-500">実績の証明としてポートフォリオに</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
+              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-gray-900">スモールビジネスオーナー</p>
-                <p className="text-sm text-gray-500">お客様の生の声が最強の営業マン</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネスオーナー</p>
+                <p className="text-xs sm:text-sm text-gray-500">お客様の生の声が最強の営業マン</p>
               </div>
             </div>
           </div>
@@ -358,26 +370,26 @@ export default function Home() {
       </section>
 
       {/* Pricing teaser */}
-      <section id="pricing" className="bg-gray-50 py-20 scroll-mt-20">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <section id="pricing" className="bg-gray-50 py-14 sm:py-20 scroll-mt-20">
+        <div className="max-w-2xl mx-auto px-5 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             今なら、ベータ版で全機能が<span className="text-indigo-600">無料。</span>
           </h2>
-          <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+          <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 leading-relaxed">
             VoiceHubは現在ベータ版です。
             <br />
             すべての機能を無料でお使いいただけます。
             <br />
             <span className="font-medium text-gray-800">正式リリース後も、ベータユーザーには特別価格をご用意しています。</span>
           </p>
-          <div className="bg-white rounded-2xl border-2 border-indigo-600 p-8 max-w-sm mx-auto">
+          <div className="bg-white rounded-2xl border-2 border-indigo-600 p-6 sm:p-8 max-w-sm mx-auto">
             <div className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mb-4">
               <Star size={12} />
               ベータ限定
             </div>
-            <p className="text-4xl font-bold text-gray-900">¥0</p>
+            <p className="text-3xl sm:text-4xl font-bold text-gray-900">¥0</p>
             <p className="text-sm text-gray-500 mt-1">全機能が無料で使い放題</p>
-            <ul className="mt-6 space-y-3 text-left">
+            <ul className="mt-5 sm:mt-6 space-y-2.5 sm:space-y-3 text-left">
               {[
                 "お客様の声フォーム 無制限",
                 "お客様の声の登録数 無制限",
@@ -386,7 +398,7 @@ export default function Home() {
                 "手動追加OK",
                 "ペライチ・WordPress対応",
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
                   <CheckCircle2 size={16} className="text-indigo-600 shrink-0" />
                   {item}
                 </li>
@@ -394,7 +406,7 @@ export default function Home() {
             </ul>
             <Link
               href="/login"
-              className="block mt-8 w-full px-6 py-3.5 text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors text-center"
+              className="block mt-6 sm:mt-8 w-full px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors text-center"
             >
               無料で始める
             </Link>
@@ -406,9 +418,9 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-20 scroll-mt-20">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+      <section id="faq" className="py-14 sm:py-20 scroll-mt-20">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
             よくある質問
           </h2>
           <div className="space-y-3">
@@ -441,21 +453,21 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-indigo-600 py-24">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-white leading-tight">
+      <section className="bg-indigo-600 py-16 sm:py-24">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
             お客様の声は、あなたの代わりに
             <br />
             24時間、営業してくれます。
           </h2>
-          <p className="mt-6 text-lg text-indigo-100">
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-indigo-100">
             まだ手動で声を集めて、手動で載せますか？
             <br />
             VoiceHubなら、今日から変えられます。
           </p>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center gap-2 mt-10 px-10 py-4 text-lg font-semibold bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 mt-8 sm:mt-10 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors"
           >
             無料で始める
             <ArrowRight size={20} />
@@ -463,12 +475,19 @@ export default function Home() {
           <p className="mt-4 text-sm text-indigo-200">
             Googleアカウントで10秒登録 / クレジットカード不要
           </p>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-indigo-300">
+            <span>10秒で登録</span>
+            <span>→</span>
+            <span>30秒でフォーム完成</span>
+            <span>→</span>
+            <span>URLを送るだけ</span>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-8">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+      <footer className="border-t border-gray-200 py-6 sm:py-8">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
           <span>&copy; 2026 VoiceHub. All rights reserved.</span>
           <div className="flex gap-6">
             <Link href="/terms" className="hover:text-gray-600 transition-colors">利用規約</Link>
