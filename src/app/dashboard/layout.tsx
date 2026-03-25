@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, FileText, Code, Settings } from "lucide-react";
@@ -16,7 +17,7 @@ function SidebarContent({ workspaceName }: { workspaceName?: string }) {
   return (
     <>
       <div className="px-5 py-4 border-b border-foreground/10">
-        <a href="/dashboard" className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</a>
+        <Link href="/dashboard" className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
         {workspaceName && (
           <p className="text-xs text-foreground/50 mt-0.5 truncate">
             {workspaceName}
@@ -26,14 +27,14 @@ function SidebarContent({ workspaceName }: { workspaceName?: string }) {
 
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => (
-          <a
+          <Link
             key={item.href}
             href={item.href}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
           >
             <item.icon className="h-4 w-4" />
             {item.label}
-          </a>
+          </Link>
         ))}
       </nav>
     </>
