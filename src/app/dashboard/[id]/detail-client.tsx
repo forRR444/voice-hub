@@ -22,9 +22,11 @@ import SnsImageModal from "../sns-image-modal";
 export default function TestimonialDetailClient({
   testimonial: initial,
   brandColor,
+  questionLabels = {},
 }: {
   testimonial: TestimonialWithTags;
   brandColor: string;
+  questionLabels?: Record<string, string>;
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -93,83 +95,84 @@ export default function TestimonialDetailClient({
 
       <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 md:p-8">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex items-start justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             {t.avatar_url ? (
               <img
                 src={t.avatar_url}
                 alt={t.name}
-                className="w-14 h-14 rounded-full object-cover"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover"
               />
             ) : (
-              <div className="w-14 h-14 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/50 font-bold text-xl">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/50 font-bold text-base sm:text-xl">
                 {t.name.charAt(0)}
               </div>
             )}
             <div>
-              <h2 className="text-xl font-bold text-foreground">{t.name}</h2>
-              {(t.title || t.company) && (
-                <p className="text-sm text-foreground/50">
-                  {[t.title, t.company].filter(Boolean).join(" / ")}
-                </p>
-              )}
+              <h2 className="text-base sm:text-xl font-bold text-foreground">{t.name}</h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                {(t.title || t.company) && (
+                  <p className="text-xs sm:text-sm text-foreground/50">
+                    {[t.title, t.company].filter(Boolean).join(" / ")}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+            className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
             title="削除"
           >
-            <Trash2 size={18} />
+            <Trash2 size={16} className="sm:hidden" />
+            <Trash2 size={18} className="hidden sm:block" />
           </button>
         </div>
 
-        {/* Rating */}
+        {/* Rating + date */}
         {t.rating != null && (
-          <div className="flex gap-1 mb-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={20}
-                className={
-                  i < (t.rating ?? 0)
-                    ? "fill-amber-400 text-amber-400"
-                    : "text-foreground/20"
-                }
-              />
-            ))}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  size={16}
+                  className={
+                    i < (t.rating ?? 0)
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-foreground/20"
+                  }
+                />
+              ))}
+            </div>
+            <span className="text-[10px] sm:text-xs text-foreground/25">{formatDate(t.submitted_at)}</span>
           </div>
         )}
 
         {/* Before story */}
         {t.before_story && (
-          <div className="mb-4">
-            <h3 className="text-sm font-medium text-foreground/50 mb-1">
-              ご利用前のお悩み
+          <div className="mb-3 sm:mb-4 bg-foreground/[0.02] rounded-lg p-3 sm:p-4 border border-foreground/5">
+            <h3 className="text-[10px] sm:text-xs font-medium text-foreground/40 mb-1 sm:mb-1.5">
+              {questionLabels.before_story || "ご利用前のお悩み"}
             </h3>
-            <p className="text-foreground/70">{t.before_story}</p>
+            <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed">{t.before_story}</p>
           </div>
         )}
 
         {/* Content */}
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-foreground/50 mb-1">
-            お客様の声
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-[10px] sm:text-xs font-medium text-foreground/40 mb-1 sm:mb-1.5">
+            {questionLabels.content || "お客様の声"}
           </h3>
-          <p className="text-foreground/70 whitespace-pre-wrap">{t.content}</p>
-        </div>
-
-        {/* Meta */}
-        <div className="text-xs text-foreground/30 mb-6">
-          投稿日: {formatDate(t.submitted_at)} | ソース: {t.source}
+          <p className="text-sm sm:text-base text-foreground/70 whitespace-pre-wrap leading-relaxed">{t.content}</p>
         </div>
 
         {/* Status */}
-        <div className="border-t border-foreground/10 pt-6 mb-6">
-          <h3 className="text-sm font-medium text-foreground/70 mb-3">
+        <div className="border-t border-foreground/10 pt-4 sm:pt-6 mb-4 sm:mb-6">
+          <h3 className="text-xs sm:text-sm font-medium text-foreground/40 mb-2 sm:mb-3">
             ステータス
           </h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {(
               [
                 { key: "pending", label: "未承認", dot: "bg-amber-400" },
@@ -180,61 +183,61 @@ export default function TestimonialDetailClient({
               <button
                 key={key}
                 onClick={() => updateStatus(key)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-lg border transition-colors cursor-pointer ${
                   t.status === key
                     ? "border-foreground/20 bg-foreground/5 text-foreground"
                     : "border-foreground/10 text-foreground/50 hover:bg-foreground/5"
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${dot}`} />
+                <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${dot}`} />
                 {label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Featured */}
-        <div className="border-t border-foreground/10 pt-6 mb-6">
-          <div className="flex gap-2">
+        {/* Featured + SNS */}
+        <div className="border-t border-foreground/10 pt-4 sm:pt-6 mb-4 sm:mb-6">
+          <div className="flex gap-1.5 sm:gap-2">
             <button
               onClick={toggleFeatured}
-              className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-lg border transition-colors cursor-pointer ${
                 t.is_featured
                   ? "border-violet-300 text-violet-700 bg-violet-50"
                   : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
               }`}
             >
-              <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
+              <Bookmark size={14} className={t.is_featured ? "fill-violet-500" : ""} />
               {t.is_featured ? "注目から解除" : "注目に設定"}
             </button>
             <button
               onClick={() => setShowSnsModal(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
             >
               <ImageIcon size={14} />
-              SNS画像を作成
+              SNS画像
             </button>
           </div>
         </div>
 
         {/* Tags */}
-        <div className="border-t border-foreground/10 pt-6">
-          <h3 className="text-sm font-medium text-foreground/70 mb-3 flex items-center gap-2">
-            <Tag size={16} />
+        <div className="border-t border-foreground/10 pt-4 sm:pt-6">
+          <h3 className="text-xs sm:text-sm font-medium text-foreground/40 mb-2 sm:mb-3 flex items-center gap-1.5">
+            <Tag size={14} />
             タグ
           </h3>
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3">
             {t.tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-3 py-1 bg-foreground/5 text-foreground/70 text-sm rounded-full"
+                className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 bg-foreground/5 text-foreground/70 text-xs sm:text-sm rounded-full"
               >
                 {tag}
                 <button
                   onClick={() => removeTag(tag)}
                   className="text-foreground/40 hover:text-foreground/60 cursor-pointer"
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </button>
               </span>
             ))}
@@ -248,13 +251,14 @@ export default function TestimonialDetailClient({
                 e.key === "Enter" && (e.preventDefault(), addTag())
               }
               placeholder="新しいタグ..."
-              className="px-3 py-2 text-sm border border-foreground/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <button
               onClick={addTag}
-              className="flex items-center gap-1 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
             >
-              <Plus size={14} />
+              <Plus size={12} className="sm:hidden" />
+              <Plus size={14} className="hidden sm:block" />
               追加
             </button>
           </div>
