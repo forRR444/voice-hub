@@ -254,7 +254,7 @@ export default function Home() {
             ホームページへの表示タイプ
           </h3>
           <p className="text-center text-sm text-gray-500 mb-8">
-            {WIDGET_TYPES.length}種類から選べます。タブを切り替えてご覧ください。
+            {WIDGET_TYPES.length}種類から選べます。
           </p>
           <WidgetDemo />
         </div>

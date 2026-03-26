@@ -242,26 +242,36 @@ const RENDERERS: Record<string, () => React.ReactNode> = {
 
 export default function WidgetDemo() {
   const [active, setActive] = useState(0);
+  const total = DEMO_WIDGET_TYPES.length;
+
+  function prev() {
+    setActive((i) => (i - 1 + total) % total);
+  }
+  function next() {
+    setActive((i) => (i + 1) % total);
+  }
 
   return (
     <div>
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {DEMO_WIDGET_TYPES.map((w, i) => (
-          <button
-            key={w.type}
-            onClick={() => setActive(i)}
-            className={`px-4 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
-              active === i
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            {w.label}
-          </button>
-        ))}
-      </div>
       <div className="rounded-2xl border border-gray-200 overflow-hidden bg-gray-50">
         {RENDERERS[DEMO_WIDGET_TYPES[active].type]()}
+      </div>
+      <div className="flex items-center justify-center gap-4 mt-4">
+        <button
+          onClick={prev}
+          className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 cursor-pointer transition-colors"
+        >
+          ‹
+        </button>
+        <span className="text-sm text-gray-500 min-w-[3rem] text-center">
+          {active + 1} / {total}
+        </span>
+        <button
+          onClick={next}
+          className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 cursor-pointer transition-colors"
+        >
+          ›
+        </button>
       </div>
     </div>
   );
