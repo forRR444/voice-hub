@@ -98,18 +98,18 @@ export default function Home() {
       {/* Stats */}
       <section className="border-y border-gray-200 py-8 sm:py-10">
         <div className="max-w-3xl mx-auto px-5 sm:px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16">
+          <div className="grid grid-cols-3 gap-4 sm:gap-16">
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">97%</p>
-              <p className="mt-1 text-sm text-gray-500">の消費者がレビューを参考にする<sup className="text-gray-400">※1</sup></p>
+              <p className="text-xl sm:text-3xl font-bold text-indigo-600">97%</p>
+              <p className="mt-1 text-[11px] sm:text-sm text-gray-500">の消費者がレビューを参考にする<sup className="text-gray-400">※1</sup></p>
             </div>
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">+34%</p>
-              <p className="mt-1 text-sm text-gray-500">お客様の声で成約率が向上<sup className="text-gray-400">※2</sup></p>
+              <p className="text-xl sm:text-3xl font-bold text-indigo-600">+34%</p>
+              <p className="mt-1 text-[11px] sm:text-sm text-gray-500">お客様の声で成約率が向上<sup className="text-gray-400">※2</sup></p>
             </div>
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-indigo-600">5分</p>
-              <p className="mt-1 text-sm text-gray-500">でセットアップ完了</p>
+              <p className="text-xl sm:text-3xl font-bold text-indigo-600">5分</p>
+              <p className="mt-1 text-[11px] sm:text-sm text-gray-500">でセットアップ完了</p>
             </div>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row justify-center gap-x-6 gap-y-1 text-[11px] text-gray-400">
