@@ -291,7 +291,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
-                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプ。コピペするだけで完成。`}</p>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}種類の表示方法。埋め込みコードをコピペするだけ。`}</p>
               </div>
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
