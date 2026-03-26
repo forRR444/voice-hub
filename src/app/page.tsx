@@ -334,32 +334,32 @@ export default function Home() {
           <p className="text-center text-gray-500 mb-8 sm:mb-12">
             「お客様の声」が売上に直結する仕事をしている方にぴったりです。
           </p>
-          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900">コーチ・コンサルタント</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">コーチ・コンサル</p>
                 <p className="text-xs sm:text-sm text-gray-500">受講生の声が次の集客につながる</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900">オンライン講座の運営者</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">オンライン講座</p>
                 <p className="text-xs sm:text-sm text-gray-500">受講後の変化を可視化したい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900">セラピスト・カウンセラー</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">セラピスト</p>
                 <p className="text-xs sm:text-sm text-gray-500">口コミが信頼構築の生命線</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900">ヨガ・フィットネス講師</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900"><span className="sm:hidden">ヨガ<br />フィットネス</span><span className="hidden sm:inline">ヨガ・フィットネス</span></p>
                 <p className="text-xs sm:text-sm text-gray-500">生徒さんの声で新規集客を加速</p>
               </div>
             </div>
@@ -373,7 +373,7 @@ export default function Home() {
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネスオーナー</p>
+                <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネス</p>
                 <p className="text-xs sm:text-sm text-gray-500">お客様の生の声が最強の営業マン</p>
               </div>
             </div>
