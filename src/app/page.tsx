@@ -266,7 +266,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             シンプルだけど、必要な機能は全部入り。
           </h2>
-          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-14">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
             <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
                 <MessageSquareText size={20} />
