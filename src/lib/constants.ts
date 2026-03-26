@@ -19,11 +19,11 @@ export const RATE_LIMITS = {
 export const WIDGET_TYPES = [
   { id: "carousel", label: "カルーセル", desc: "横スクロールで切り替え" },
   { id: "grid", label: "グリッド", desc: "カード一覧" },
-  { id: "marquee", label: "マーキー", desc: "横に流れ続ける" },
-  { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
   { id: "list", label: "リスト", desc: "縦に並ぶシンプル表示" },
-  { id: "single", label: "シングル", desc: "1件を大きく表示" },
+  { id: "wall", label: "Wall of Love", desc: "Masonry風の大量表示" },
+  { id: "marquee", label: "マーキー", desc: "横に流れ続ける" },
   { id: "dual-marquee", label: "デュアルマーキー", desc: "2行が逆方向に横スクロール" },
+  { id: "single", label: "シングル", desc: "1件を大きく表示" },
   { id: "badge", label: "バッジ", desc: "評価サマリー表示" },
 ] as const;
 
