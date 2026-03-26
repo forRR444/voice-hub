@@ -20,15 +20,9 @@ export default function FaqItem({ q, a }: { q: string; a: string }) {
           }`}
         />
       </div>
-      <div
-        className={`grid transition-all duration-200 ${
-          open ? "grid-rows-[1fr] mt-3 opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-      >
-        <div className="overflow-hidden">
-          <p className="text-sm text-gray-600 leading-relaxed">{a}</p>
-        </div>
-      </div>
+      {open && (
+        <p className="text-sm text-gray-600 leading-relaxed mt-3">{a}</p>
+      )}
     </button>
   );
 }
