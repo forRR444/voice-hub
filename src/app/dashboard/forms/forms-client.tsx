@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   Plus,
@@ -9,7 +9,10 @@ import {
   Check,
   X,
   Trash2,
+  QrCode,
+  Download,
 } from "lucide-react";
+import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, FormRow, FormQuestion, PLAN_LIMITS } from "@/types/database";
 import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
@@ -41,6 +44,8 @@ export default function FormsClient({
   const [editQuestions, setEditQuestions] = useState<FormQuestion[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("coaching");
+  const [qrForm, setQrForm] = useState<{ slug: string; title: string } | null>(null);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   const plan = subscriptionStatus === "pro" ? "pro" : "free";
   const limit = PLAN_LIMITS[plan].forms;
@@ -121,6 +126,29 @@ export default function FormsClient({
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  }
+
+  function downloadQr() {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const size = 400;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const img = new Image();
+    img.onload = () => {
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+      const a = document.createElement("a");
+      a.download = `qrcode-${qrForm?.slug ?? "form"}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
   }
 
   return (
@@ -426,6 +454,13 @@ export default function FormsClient({
                         ? "コピーしました"
                         : "フォームURLをコピー"}
                     </button>
+                    <button
+                      onClick={() => setQrForm({ slug: form.slug, title: form.title })}
+                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                    >
+                      <QrCode size={14} />
+                      QRコード
+                    </button>
                   </div>
                 </div>
               )}
@@ -434,6 +469,47 @@ export default function FormsClient({
         </div>
       )}
 
+      {/* QR Code modal */}
+      {qrForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-foreground">QRコード</h3>
+              <button
+                onClick={() => setQrForm(null)}
+                className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <p className="text-sm text-foreground/50 mb-4 truncate">{qrForm.title}</p>
+            <div ref={qrRef} className="flex justify-center p-4 bg-white border border-foreground/10 rounded-lg">
+              <QRCode
+                value={`${getBaseUrl()}/form/${qrForm.slug}`}
+                size={200}
+              />
+            </div>
+            <p className="text-xs text-foreground/40 text-center mt-3 break-all">
+              {getBaseUrl()}/form/{qrForm.slug}
+            </p>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={downloadQr}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+              >
+                <Download size={14} />
+                PNG保存
+              </button>
+              <button
+                onClick={() => setQrForm(null)}
+                className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
