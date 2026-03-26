@@ -197,8 +197,8 @@ export default function Home() {
                   <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 sm:mb-2">Before</p>
                   <p className="text-xs sm:text-base text-gray-500">{item.before}</p>
                 </div>
-                <div className="flex items-center justify-center px-4 py-2 sm:py-0 bg-white">
-                  <ArrowRight size={20} className="text-indigo-600 rotate-90 sm:rotate-0" />
+                <div className="hidden sm:flex items-center justify-center px-4 bg-white">
+                  <ArrowRight size={20} className="text-indigo-600" />
                 </div>
                 <div className="flex-1 bg-white px-3 py-3 sm:px-6 sm:py-5">
                   <p className="text-[10px] sm:text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1 sm:mb-2">After</p>
