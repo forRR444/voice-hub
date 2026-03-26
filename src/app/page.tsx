@@ -333,7 +333,7 @@ export default function Home() {
 
       {/* Who is it for */}
       <section className="py-14 sm:py-20">
-        <div className="max-w-3xl mx-auto px-5 sm:px-6">
+        <div className="max-w-3xl sm:max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             こんな方におすすめです。
           </h2>
