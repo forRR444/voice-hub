@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { FormRow, FormQuestion } from "@/types/database";
 import { DEFAULT_BRAND_COLOR, TEXTAREA_MAX_LENGTH, IMAGE_MAX_SIZE_BYTES, IMAGE_RESIZED_MAX_BYTES, IMAGE_RESIZE_MAX_PX } from "@/lib/constants";
@@ -267,13 +268,13 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
               "お声をお寄せいただき、誠にありがとうございます。いただいた内容は大切に活用させていただきます。"}
           </p>
           {demo && (
-            <a
+            <Link
               href="/"
               className="inline-block mt-2 px-6 py-3 text-sm font-medium text-white rounded-lg transition-colors"
               style={{ backgroundColor: brandColor }}
             >
               VoiceHubのトップに戻る
-            </a>
+            </Link>
           )}
         </div>
       </div>

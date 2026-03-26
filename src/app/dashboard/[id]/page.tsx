@@ -56,7 +56,7 @@ export default async function TestimonialDetailPage({
   const brandColor = forms?.[0]?.brand_color || DEFAULT_BRAND_COLOR;
 
   // Get question labels from the form linked to this testimonial
-  let questionLabels: Record<string, string> = {};
+  const questionLabels: Record<string, string> = {};
   if (testimonial.form_id) {
     // Check if the form is already in our fetched forms
     const linkedForm = forms?.find((f: { brand_color: string; questions: { id: string; label: string }[] }) =>

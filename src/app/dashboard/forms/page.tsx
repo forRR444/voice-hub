@@ -38,7 +38,7 @@ export default async function FormsPage() {
   const formList = forms ?? [];
   const formIds = formList.map((f: { id: string }) => f.id);
 
-  let submissionCounts: Record<string, number> = {};
+  const submissionCounts: Record<string, number> = {};
   if (formIds.length > 0) {
     const { data: testimonials } = await supabase
       .from("testimonials")
