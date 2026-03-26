@@ -9,9 +9,15 @@ import {
   PenLine,
   Smartphone,
   Zap,
-  CheckCircle2,
   ArrowRight,
   Star,
+  CheckCircle2,
+  Users,
+  GraduationCap,
+  Heart,
+  Dumbbell,
+  Briefcase,
+  Store,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
@@ -336,42 +342,42 @@ export default function Home() {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Users size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">コーチ・コンサル</p>
                 <p className="text-xs sm:text-sm text-gray-500">受講生の声が次の集客につながる</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <GraduationCap size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">オンライン講座</p>
                 <p className="text-xs sm:text-sm text-gray-500">受講後の変化を可視化したい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Heart size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">セラピスト</p>
                 <p className="text-xs sm:text-sm text-gray-500">口コミが信頼構築の生命線</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Dumbbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900"><span className="sm:hidden">ヨガ<br />フィットネス</span><span className="hidden sm:inline">ヨガ・フィットネス</span></p>
                 <p className="text-xs sm:text-sm text-gray-500">生徒さんの声で新規集客を加速</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Briefcase size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">フリーランス</p>
                 <p className="text-xs sm:text-sm text-gray-500">実績の証明としてポートフォリオに</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <CheckCircle2 size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Store size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネス</p>
                 <p className="text-xs sm:text-sm text-gray-500">お客様の生の声が最強の営業マン</p>
