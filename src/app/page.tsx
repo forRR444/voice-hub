@@ -266,48 +266,60 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             シンプルだけど、必要な機能は全部入り。
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-6 mt-10 sm:mt-14">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <MessageSquareText size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">お客様の声 収集フォーム</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">星評価、Before/After、写真アップロード。ステップ形式でお客様が答えやすいから回答率が上がります。</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">お客様の声 収集フォーム</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">星評価・写真付き。ステップ形式で回答率アップ。</p>
+              </div>
             </div>
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <LayoutDashboard size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">管理ダッシュボード</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">承認・タグ付け・検索をひとつの画面で。もう「あの声どこだっけ？」と探し回る必要はありません。</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">管理ダッシュボード</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">承認・タグ付け・検索をひとつの画面で。</p>
+              </div>
             </div>
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <Code2 size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプのウィジェット。コードをコピペするだけで完成。`}</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}タイプ。コピペするだけで完成。`}</p>
+              </div>
             </div>
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <PenLine size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">手動追加もOK</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">過去にLINEやメールでもらった声もまとめて登録できます。</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">手動追加もOK</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">LINEやメールでもらった声もまとめて登録。</p>
+              </div>
             </div>
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <Smartphone size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">どのデバイスでも綺麗</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">スマホでもPCでも美しく表示。ペライチ・WordPress・Wixなど主要ツールに対応。</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">どのデバイスでも綺麗</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">ペライチ・WordPress・Wixなど主要ツールに対応。</p>
+              </div>
             </div>
-            <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
                 <Zap size={20} />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900">5分でセットアップ完了</h3>
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">Googleアカウントでログイン → フォーム作成 → URL送信。ITが苦手でも迷いません。</p>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">5分でセットアップ完了</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">ログイン → フォーム作成 → URL送信。</p>
+              </div>
             </div>
           </div>
         </div>
