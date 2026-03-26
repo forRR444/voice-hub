@@ -207,7 +207,7 @@ describe("embed.js コード構造", () => {
     it("カードを複製してシームレスループする", () => {
       const marqueeFunc = embedSource.substring(
         embedSource.indexOf("function renderMarquee"),
-        embedSource.indexOf("function renderGrid")
+        embedSource.indexOf("function renderDualMarquee")
       );
       // 2つのforループがある（オリジナル+複製）
       const forCount = (marqueeFunc.match(/for \(var/g) || []).length;
