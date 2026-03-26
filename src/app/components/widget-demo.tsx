@@ -253,10 +253,7 @@ export default function WidgetDemo() {
 
   return (
     <div>
-      <div className="rounded-2xl border border-gray-200 overflow-hidden bg-gray-50">
-        {RENDERERS[DEMO_WIDGET_TYPES[active].type]()}
-      </div>
-      <div className="flex items-center justify-center gap-4 mt-4">
+      <div className="flex items-center justify-center gap-4 mb-4">
         <button
           onClick={prev}
           className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 cursor-pointer transition-colors"
@@ -272,6 +269,9 @@ export default function WidgetDemo() {
         >
           ›
         </button>
+      </div>
+      <div className="rounded-2xl border border-gray-200 overflow-hidden bg-gray-50">
+        {RENDERERS[DEMO_WIDGET_TYPES[active].type]()}
       </div>
     </div>
   );
