@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       .order("submitted_at", { ascending: false }),
     supabase
       .from("forms")
-      .select("id, slug, title, brand_color")
+      .select("id, slug, title, brand_color, questions")
       .eq("workspace_id", workspace.id)
       .order("created_at", { ascending: false }),
     supabase
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
     <DashboardClient
       workspace={workspace}
       testimonials={testimonialsWithTags}
-      forms={(forms ?? []) as { id: string; slug: string; title: string }[]}
+      forms={(forms ?? []) as { id: string; slug: string; title: string; brand_color: string; questions: import("@/types/database").FormQuestion[] }[]}
       hasApprovedTestimonials={hasApprovedTestimonials}
       widgetCount={widgetCount ?? 0}
       brandColor={brandColor}

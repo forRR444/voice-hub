@@ -19,10 +19,9 @@ export default function TestimonialToast() {
 
   const totalSteps = 3;
 
-  function handleRegister() {
+  function handleTry() {
     localStorage.setItem("voicehub_template", selectedTemplate || "coaching");
-    localStorage.setItem("voicehub_skip_onboarding", "true");
-    window.location.href = "/login";
+    window.location.href = "/try";
   }
 
   return (
@@ -132,16 +131,16 @@ export default function TestimonialToast() {
                 準備ができました！
               </h3>
               <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-5">
-                Googleアカウントで登録すると、フォームが自動で作成されます。
+                登録なしでフォームを作成・プレビューできます。
               </p>
               <button
-                onClick={handleRegister}
+                onClick={handleTry}
                 className="block w-full px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
               >
-                Googleで無料登録
+                フォームを作ってみる
               </button>
               <p className="mt-2 sm:mt-3 text-[10px] sm:text-xs text-gray-400">
-                クレジットカード不要
+                登録不要・無料
               </p>
             </div>
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useImperativeHandle, forwardRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { FormRow, FormQuestion } from "@/types/database";
@@ -24,7 +24,11 @@ const TEXTAREA_MAX = TEXTAREA_MAX_LENGTH;
 const KNOWN_IDS = ["rating", "before_story", "content", "name", "title", "avatar", "permission"];
 
 
-export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
+export type FormClientHandle = {
+  skip: () => void;
+};
+
+export const FormClient = forwardRef<FormClientHandle, { form: FormRow; demo?: boolean; onDemoClose?: () => void }>(function FormClient({ form, demo, onDemoClose }, ref) {
   const questions = form.questions.filter((q) => q.enabled !== false);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -245,6 +249,15 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
       handleSubmit();
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    skip: () => {
+      if (step < totalSteps - 1) {
+        setStep(step + 1);
+        setError(null);
+      }
+    },
+  }), [step, totalSteps]);
 
   const handleBack = () => {
     if (step > 0) {
@@ -555,15 +568,33 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
       {/* Header */}
       <header className="bg-white border-b border-gray-100 px-4 py-4">
         <div className="max-w-lg mx-auto">
-          <div className="flex items-center gap-3">
-            {form.logo_url && (
-              <img
-                src={form.logo_url}
-                alt=""
-                className="w-8 h-8 rounded object-contain"
-              />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3 min-w-0">
+              {form.logo_url && (
+                <img
+                  src={form.logo_url}
+                  alt=""
+                  className="w-8 h-8 rounded object-contain shrink-0"
+                />
+              )}
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">{form.title}</h1>
+            </div>
+            {demo && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (step < totalSteps - 1) {
+                    setStep(step + 1);
+                    setError(null);
+                  } else {
+                    onDemoClose?.();
+                  }
+                }}
+                className="text-xs sm:text-sm text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
+              >
+                スキップ →
+              </button>
             )}
-            <h1 className="text-lg font-bold text-gray-900">{form.title}</h1>
           </div>
           <a
             href="https://voicehub.jp"
@@ -645,7 +676,7 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
               type="button"
               onClick={handleNext}
               disabled={
-                (currentQuestion.required && !isCurrentStepValid()) ||
+                (!demo && currentQuestion.required && !isCurrentStepValid()) ||
                 submitting
               }
               className="flex-1 rounded-lg px-6 py-3 text-white font-medium transition-colors focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
@@ -662,4 +693,4 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
       </main>
     </div>
   );
-}
+});

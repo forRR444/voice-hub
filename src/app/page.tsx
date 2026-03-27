@@ -31,9 +31,9 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden pt-14 pb-16 sm:pt-20 sm:pb-24">
         {/* Blob backgrounds */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-200 rounded-full opacity-40 blur-[128px] pointer-events-none" />
-        <div className="absolute top-1/3 -left-20 w-[350px] h-[350px] bg-violet-200 rounded-full opacity-30 blur-[128px] pointer-events-none" />
-        <div className="absolute top-1/4 -right-20 w-[300px] h-[300px] bg-sky-200 rounded-full opacity-30 blur-[128px] pointer-events-none" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-indigo-200 rounded-full opacity-40 blur-[100px] sm:blur-[128px] pointer-events-none" />
+        <div className="absolute top-1/3 -left-10 sm:-left-20 w-[200px] sm:w-[350px] h-[200px] sm:h-[350px] bg-violet-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
+        <div className="absolute top-1/4 -right-10 sm:-right-20 w-[180px] sm:w-[300px] h-[180px] sm:h-[300px] bg-sky-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
         <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
         <a href="#pricing" className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
           <Star size={14} />
@@ -72,24 +72,15 @@ export default function Home() {
           <br className="hidden md:block" />
           あとはホームページに自動反映。
         </p>
-        <div className="mt-8 sm:mt-10">
+        <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
           <Link
-            href="/login"
+            href="/try"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
           >
-            無料で始める
-            <ArrowRight size={18} />
+            無料で試してみる
+            <ArrowRight size={16} />
           </Link>
-        </div>
-        <p className="mt-5 text-sm text-gray-400">
-          クレジットカード不要 / Googleアカウントで10秒登録
-        </p>
-        <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-gray-400">
-          <span>10秒で登録</span>
-          <span>→</span>
-          <span>30秒でフォーム完成</span>
-          <span>→</span>
-          <span>URLを送るだけ</span>
+          <span className="text-xs text-gray-400">登録不要・30秒で体験</span>
         </div>
         <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
           <img
@@ -421,10 +412,10 @@ export default function Home() {
               ))}
             </ul>
             <Link
-              href="/login"
+              href="/try"
               className="block mt-6 sm:mt-8 w-full px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors text-center"
             >
-              無料で始める
+              まずは試してみる
             </Link>
             <p className="mt-3 text-xs text-gray-400">
               クレジットカード不要
@@ -481,22 +472,15 @@ export default function Home() {
             <br />
             VoiceHubならこれが全部まとまります。
           </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center gap-2 mt-8 sm:mt-10 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors"
-          >
-            無料で始める
-            <ArrowRight size={20} />
-          </Link>
-          <p className="mt-4 text-sm text-indigo-200">
-            Googleアカウントで10秒登録 / クレジットカード不要
-          </p>
-          <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-indigo-300">
-            <span>10秒で登録</span>
-            <span>→</span>
-            <span>30秒でフォーム完成</span>
-            <span>→</span>
-            <span>URLを送るだけ</span>
+          <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
+            <Link
+              href="/try"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors"
+            >
+              無料で試してみる
+              <ArrowRight size={18} />
+            </Link>
+            <span className="text-xs text-indigo-200">登録不要・30秒で体験</span>
           </div>
         </div>
       </section>

@@ -45,7 +45,13 @@ export default async function OnboardingPage() {
 
     const admin = createAdminClient();
     const { count: totalUsers1 } = await admin.from("workspaces").select("id", { count: "exact", head: true });
-    return <OnboardingClient workspace={newWorkspace} betaUserCount={totalUsers1 ?? 0} />;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-lg">
+          <OnboardingClient workspace={newWorkspace} betaUserCount={totalUsers1 ?? 0} />
+        </div>
+      </div>
+    );
   }
 
   if (workspace.onboarding_completed) {
@@ -54,5 +60,11 @@ export default async function OnboardingPage() {
 
   const admin = createAdminClient();
   const { count: totalUsers2 } = await admin.from("workspaces").select("id", { count: "exact", head: true });
-  return <OnboardingClient workspace={workspace} betaUserCount={totalUsers2 ?? 0} />;
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-lg">
+        <OnboardingClient workspace={workspace} betaUserCount={totalUsers2 ?? 0} />
+      </div>
+    </div>
+  );
 }

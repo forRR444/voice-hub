@@ -41,7 +41,9 @@ export default function LoginClient() {
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
           <p className="mt-2 text-sm text-foreground/60">
-            無料で始める
+            {typeof window !== "undefined" && new URLSearchParams(window.location.search).get("from") === "try"
+              ? "ログインしてフォームを保存"
+              : "無料で始める"}
           </p>
         </div>
 

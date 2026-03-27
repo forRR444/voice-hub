@@ -21,9 +21,9 @@ export default function PublicHeader() {
           </nav>
           <Link
             href="/login"
-            className="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-gray-400 hover:text-gray-900 transition-colors"
           >
-            無料で始める
+            ログイン
           </Link>
         </div>
       </div>
