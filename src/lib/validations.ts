@@ -60,9 +60,11 @@ export const widgetUpdateSchema = widgetCreateSchema.partial();
 const formQuestionSchema = z.object({
   id: z.string().min(1).max(50),
   label: z.string().min(1).max(200),
-  type: z.enum(["star_rating", "text", "textarea", "image", "checkbox"]),
+  type: z.enum(["star_rating", "text", "textarea", "image", "checkbox", "select"]),
   required: z.boolean(),
   placeholder: z.string().max(200).optional(),
+  options: z.array(z.string().max(100)).max(20).optional(),
+  enabled: z.boolean().optional(),
 });
 
 export const formUpdateSchema = z.object({

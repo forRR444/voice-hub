@@ -22,9 +22,11 @@ export type FormRow = {
 export type FormQuestion = {
   id: string;
   label: string;
-  type: "star_rating" | "text" | "textarea" | "image" | "checkbox";
+  type: "star_rating" | "text" | "textarea" | "image" | "checkbox" | "select";
   required: boolean;
   placeholder?: string;
+  options?: string[];
+  enabled?: boolean;
 };
 
 export type TestimonialRow = {
