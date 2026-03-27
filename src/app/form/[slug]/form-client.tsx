@@ -25,7 +25,7 @@ const KNOWN_IDS = ["rating", "before_story", "content", "name", "title", "avatar
 
 
 export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
-  const questions = form.questions;
+  const questions = form.questions.filter((q) => q.enabled !== false);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -103,6 +103,9 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
         }
         if (q.type === "checkbox") {
           return customValue === true;
+        }
+        if (q.type === "select") {
+          return typeof customValue === "string" && customValue.length > 0;
         }
         // text / textarea
         return typeof customValue === "string" && customValue.trim().length > 0;
@@ -384,6 +387,27 @@ export function FormClient({ form, demo }: { form: FormRow; demo?: boolean }) {
           />
         );
       }
+
+      case "select":
+        return (
+          <select
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 transition-shadow bg-white"
+            style={
+              {
+                "--tw-ring-color": brandColor,
+              } as React.CSSProperties
+            }
+            value={(formData.customFields[question.id] as string) || ""}
+            onChange={(e) => updateCustomField(question.id, e.target.value)}
+          >
+            <option value="">選択してください</option>
+            {(question.options || []).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        );
 
       case "image":
         return (
