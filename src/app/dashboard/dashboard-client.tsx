@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Star,
@@ -59,25 +59,23 @@ export default function DashboardClient({
     workspaceName: string;
     brandColor: string;
     questions: FormQuestion[];
-  } | null>(null);
-  const [applyingTry, setApplyingTry] = useState(false);
-  const [tryChoice, setTryChoice] = useState<"current" | "new" | null>(null);
-
-  useEffect(() => {
+  } | null>(() => {
+    if (typeof window === "undefined" || forms.length === 0) return null;
     const raw = localStorage.getItem("voicehub_try_data");
-    if (!raw) return;
+    if (!raw) return null;
     localStorage.removeItem("voicehub_try_data");
     try {
       const parsed = JSON.parse(raw);
       const savedAt = new Date(parsed.savedAt);
       const daysOld = (Date.now() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysOld < 7 && parsed.questions && forms.length > 0) {
-        setTryData(parsed);
-      }
+      if (daysOld < 7 && parsed.questions) return parsed;
     } catch {
       // invalid JSON
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    return null;
+  });
+  const [applyingTry, setApplyingTry] = useState(false);
+  const [tryChoice, setTryChoice] = useState<"current" | "new" | null>(null);
 
   async function applyTryData() {
     if (!tryData || forms.length === 0) return;

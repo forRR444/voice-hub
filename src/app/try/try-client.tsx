@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, Eye, Loader2 } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
@@ -13,31 +12,27 @@ import { createClient } from "@/lib/supabase/client";
 
 const TRY_STORAGE_KEY = "voicehub_try_data";
 
+function getInitialState() {
+  if (typeof window === "undefined") return { step: 1, template: "coaching", questions: FORM_TEMPLATES[0].questions };
+  const saved = localStorage.getItem("voicehub_template");
+  if (saved) {
+    localStorage.removeItem("voicehub_template");
+    const tpl = FORM_TEMPLATES.find((t) => t.id === saved);
+    if (tpl) return { step: 2, template: saved, questions: tpl.questions };
+  }
+  return { step: 1, template: "coaching", questions: FORM_TEMPLATES[0].questions };
+}
+
 export default function TryClient() {
-  const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [selectedTemplate, setSelectedTemplate] = useState("coaching");
+  const initial = getInitialState();
+  const [step, setStep] = useState(initial.step);
+  const [selectedTemplate, setSelectedTemplate] = useState(initial.template);
   const [workspaceName, setWorkspaceName] = useState("");
   const [brandColor, setBrandColor] = useState(DEFAULT_BRAND_COLOR);
-  const [questions, setQuestions] = useState<FormQuestion[]>(
-    FORM_TEMPLATES[0].questions
-  );
+  const [questions, setQuestions] = useState<FormQuestion[]>(initial.questions);
   const [showPreview, setShowPreview] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const formRef = useRef<FormClientHandle>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("voicehub_template");
-    if (saved) {
-      localStorage.removeItem("voicehub_template");
-      const template = FORM_TEMPLATES.find((t) => t.id === saved);
-      if (template) {
-        setSelectedTemplate(saved);
-        setQuestions(template.questions);
-        setStep(2);
-      }
-    }
-  }, []);
 
   function handleTemplateChange(templateId: string) {
     setSelectedTemplate(templateId);

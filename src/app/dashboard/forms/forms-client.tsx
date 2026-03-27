@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Link from "next/link";
 import {
   Plus,
   Copy,
@@ -16,7 +15,7 @@ import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, FormRow, FormQuestion, PLAN_LIMITS } from "@/types/database";
 import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
-import { CORE_QUESTION_IDS, FORM_TEMPLATES } from "@/lib/default-questions";
+import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import QuestionEditor from "@/app/components/question-editor";
 
