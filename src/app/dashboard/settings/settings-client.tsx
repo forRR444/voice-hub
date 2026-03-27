@@ -27,7 +27,7 @@ export default function SettingsClient({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const plan = subscriptionStatus === "pro" ? "pro" : "free";
@@ -127,40 +127,44 @@ export default function SettingsClient({
       </section>
 
       {/* Delete account */}
-      <section className="bg-white rounded-lg border border-red-200 shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-2">
-          アカウント削除
-        </h3>
-        <p className="text-sm text-foreground/60 mb-4">
-          アカウントを削除すると、すべてのデータ（お客様の声、フォーム、ウィジェット）が完全に削除されます。この操作は取り消せません。
-        </p>
+      <div className="mt-8 text-center">
         <button
           onClick={() => setShowDeleteConfirm(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50 cursor-pointer"
+          className="text-xs text-red-500 hover:text-red-600 cursor-pointer"
         >
-          <Trash2 size={14} />
           アカウントを削除する
         </button>
-      </section>
+      </div>
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              本当に削除しますか？
+              アカウントの削除
             </h3>
             <p className="text-sm text-foreground/60 mb-4">
-              すべてのデータが完全に削除されます。確認のため「<span className="font-semibold text-red-600">削除する</span>」と入力してください。
+              すべてのデータが完全に削除されます。この操作は取り消せません。
             </p>
-            <input
-              type="text"
-              value={deleteConfirmText}
-              onChange={(e) => setDeleteConfirmText(e.target.value)}
-              placeholder="削除する"
-              className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 mb-4"
-            />
+            <label className="flex items-center gap-2 mb-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={deleteConfirmed}
+                onChange={(e) => setDeleteConfirmed(e.target.checked)}
+                className="w-4 h-4 accent-red-500 cursor-pointer"
+              />
+              <span className="text-sm text-foreground/70">理解した上で削除します</span>
+            </label>
             <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeleteConfirmed(false);
+                }}
+                className="flex-1 px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+              >
+                キャンセル
+              </button>
               <button
                 onClick={async () => {
                   setDeleting(true);
@@ -172,19 +176,10 @@ export default function SettingsClient({
                     setDeleting(false);
                   }
                 }}
-                disabled={deleteConfirmText !== "削除する" || deleting}
-                className="flex-1 px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+                disabled={!deleteConfirmed || deleting}
+                className="flex-1 px-4 py-2 text-sm text-red-500 border border-foreground/10 rounded-lg hover:bg-foreground/5 disabled:opacity-30 cursor-pointer"
               >
-                {deleting ? "削除中..." : "完全に削除する"}
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeleteConfirmText("");
-                }}
-                className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                キャンセル
+                {deleting ? "削除中..." : "削除する"}
               </button>
             </div>
           </div>
