@@ -66,9 +66,7 @@ export default function DashboardClient({
     localStorage.removeItem("voicehub_try_data");
     try {
       const parsed = JSON.parse(raw);
-      const savedAt = new Date(parsed.savedAt);
-      const daysOld = (Date.now() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysOld < 7 && parsed.questions) return parsed;
+      if (parsed.questions) return parsed;
     } catch {
       // invalid JSON
     }
