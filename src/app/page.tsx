@@ -129,10 +129,10 @@ export default function Home() {
       <section className="py-14 sm:py-20">
         <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            あなたがやることは、<span className="text-indigo-600">2つだけ。</span>
+            やることは<span className="text-indigo-600">2つだけ。</span>
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-14">
-            それ以外は全部、VoiceHubがやります。
+            あとは自動でホームページに反映されます。
           </p>
           <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
             <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
@@ -174,7 +174,7 @@ export default function Home() {
       <section className="bg-gray-50 py-14 sm:py-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-10 sm:mb-14">
-            導入するだけで、こう変わります。
+            こんな面倒から解放されます。
           </h2>
           <div className="space-y-3 sm:space-y-5">
             {[
@@ -192,7 +192,7 @@ export default function Home() {
               },
               {
                 before: "声を集めるのが申し訳なくて頼めない",
-                after: "プロ仕様のフォームだから、お客様も気持ちよく書ける",
+                after: "フォームURLを送るだけなので、気軽にお願いできる",
               },
             ].map((item, i) => (
               <div
@@ -220,10 +220,10 @@ export default function Home() {
       <section className="py-14 sm:py-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            実際の画面をご覧ください。
+            こんな感じで使えます。
           </h2>
           <p className="text-center text-gray-500 mb-8">
-            お客様が回答するフォームと、ホームページに表示されるウィジェット。
+            回答フォームと、ホームページに表示されるウィジェット。
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-16">
@@ -270,7 +270,7 @@ export default function Home() {
       <section id="features" className="bg-gray-50 py-14 sm:py-20 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            シンプルだけど、必要な機能は全部入り。
+            できること
           </h2>
           <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-6 mt-10 sm:mt-14">
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
@@ -335,52 +335,52 @@ export default function Home() {
       <section className="py-14 sm:py-20">
         <div className="max-w-3xl sm:max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            こんな方におすすめです。
+            こんな方が使っています
           </h2>
           <p className="text-center text-gray-500 mb-8 sm:mb-12">
-            「お客様の声」が売上に直結する仕事をしている方にぴったりです。
+            口コミや感想を集客に活かしたい方に。
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <Users size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">コーチ・コンサル</p>
-                <p className="text-xs sm:text-sm text-gray-500">受講生の声が次の集客につながる</p>
+                <p className="text-xs sm:text-sm text-gray-500">受講生の声をLPに載せたい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <GraduationCap size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">オンライン講座</p>
-                <p className="text-xs sm:text-sm text-gray-500">受講後の変化を可視化したい</p>
+                <p className="text-xs sm:text-sm text-gray-500">受講者の感想をまとめたい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <Heart size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">セラピスト</p>
-                <p className="text-xs sm:text-sm text-gray-500">口コミが信頼構築の生命線</p>
+                <p className="text-xs sm:text-sm text-gray-500">口コミをホームページに載せたい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <Dumbbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900"><span className="sm:hidden">ヨガ<br />フィットネス</span><span className="hidden sm:inline">ヨガ・フィットネス</span></p>
-                <p className="text-xs sm:text-sm text-gray-500">生徒さんの声で新規集客を加速</p>
+                <p className="text-xs sm:text-sm text-gray-500">生徒さんの声を集めたい</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <Briefcase size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">フリーランス</p>
-                <p className="text-xs sm:text-sm text-gray-500">実績の証明としてポートフォリオに</p>
+                <p className="text-xs sm:text-sm text-gray-500">クライアントの声をポートフォリオに</p>
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
               <Store size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネス</p>
-                <p className="text-xs sm:text-sm text-gray-500">お客様の生の声が最強の営業マン</p>
+                <p className="text-xs sm:text-sm text-gray-500">お客様の声をHPに載せたい</p>
               </div>
             </div>
           </div>
@@ -394,11 +394,9 @@ export default function Home() {
             今なら、ベータ版で全機能が<span className="text-indigo-600">無料。</span>
           </h2>
           <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 leading-relaxed">
-            VoiceHubは現在ベータ版です。
+            現在ベータ版につき、全機能を無料で使えます。
             <br />
-            すべての機能を無料でお使いいただけます。
-            <br />
-            <span className="font-medium text-gray-800">正式リリース後も、ベータユーザーには特別価格をご用意しています。</span>
+            <span className="font-medium text-gray-800">ベータユーザーには正式リリース後も特別価格を適用します。</span>
           </p>
           <div className="bg-white rounded-2xl border-2 border-indigo-600 p-6 sm:p-8 max-w-sm mx-auto">
             <div className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mb-4">
@@ -444,27 +442,27 @@ export default function Home() {
           <div className="space-y-3">
             <FaqItem
               q="本当に無料ですか？"
-              a="はい。ベータ期間中はすべての機能を無料でお使いいただけます。正式リリース後に有料プランを用意しますが、ベータユーザーには特別割引を適用します。"
+              a="はい。ベータ期間中は全機能を無料で使えます。正式リリース後に有料プランを予定していますが、ベータユーザーには特別価格を用意します。"
             />
             <FaqItem
               q="ITが苦手でも使えますか？"
-              a="はい、使えます。Googleアカウントでログインして、フォームを作って、URLを送るだけ。パソコンが苦手な方でも5分で始められるように設計しています。"
+              a="使えます。Googleアカウントでログインして、フォームを作って、URLを送るだけです。5分あれば始められます。"
             />
             <FaqItem
               q="ペライチやWordPressに対応していますか？"
-              a="はい。埋め込みコード（スクリプトタグ）をコピペするだけで表示されます。iframe版もあるので、ほぼすべてのホームページ作成ツールに対応しています。"
+              a="対応しています。埋め込みコードをコピペするだけです。iframe版もあるので、ほぼどのツールでも使えます。"
             />
             <FaqItem
               q="お客様の声が少なくても使えますか？"
-              a="もちろんです。まずは1件から始めましょう。過去にLINEやメールでもらった声を手動で追加することもできます。"
+              a="もちろんです。1件からでも使えます。過去にLINEやメールでもらった声も手動で追加できます。"
             />
             <FaqItem
               q="お客様の声はどのようにホームページに表示されますか？"
-              a={`${WIDGET_TYPES.length}タイプから選べます。カルーセル・グリッド・マーキー・デュアルマーキーなど多彩なデザイン。どれもスマホ対応で、デザイン崩れの心配はありません。`}
+              a={`${WIDGET_TYPES.length}種類のウィジェットから選べます。カルーセル・グリッド・マーキーなど。すべてスマホ対応です。`}
             />
             <FaqItem
               q="届いたレビューは全て表示されるのですか？"
-              a="いいえ。ご自身でダッシュボードから確認し、承認したレビューだけがホームページに表示されます。載せたくない声は非承認にすればOKです。"
+              a="いいえ。ダッシュボードで承認した声だけが表示されます。載せたくない声は非承認にできます。"
             />
           </div>
         </div>
@@ -474,14 +472,12 @@ export default function Home() {
       <section className="bg-indigo-600 py-16 sm:py-24">
         <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
-            お客様の声は、あなたの代わりに
-            <br />
-            24時間、営業してくれます。
+            お客様の声、<br />ちゃんと活かせていますか？
           </h2>
           <p className="mt-4 sm:mt-6 text-base sm:text-lg text-indigo-100">
-            まだ手動で声を集めて、手動で載せますか？
+            集めて、管理して、ホームページに載せる。
             <br />
-            VoiceHubなら、今日から変えられます。
+            VoiceHubならこれが全部まとまります。
           </p>
           <Link
             href="/login"
