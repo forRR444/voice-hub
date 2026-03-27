@@ -129,7 +129,7 @@ export default function Home() {
       <section className="py-14 sm:py-20">
         <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            やることは<span className="text-indigo-600">2つだけ。</span>
+            <span className="text-indigo-600">2ステップ</span>で完了
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-14">
             あとは自動でホームページに反映されます。
@@ -220,7 +220,7 @@ export default function Home() {
       <section className="py-14 sm:py-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
-            こんな感じで使えます。
+            実際の画面をご覧ください。
           </h2>
           <p className="text-center text-gray-500 mb-8">
             回答フォームと、ホームページに表示されるウィジェット。
@@ -472,7 +472,9 @@ export default function Home() {
       <section className="bg-indigo-600 py-16 sm:py-24">
         <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
-            お客様の声、<br />ちゃんと活かせていますか？
+            お客様の声は、
+            <br />
+            24時間、営業してくれます。
           </h2>
           <p className="mt-4 sm:mt-6 text-base sm:text-lg text-indigo-100">
             集めて、管理して、ホームページに載せる。
