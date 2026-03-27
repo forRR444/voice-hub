@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "利用規約 — VoiceHub",
+  description: "VoiceHubの利用規約です。サービスのご利用にあたっての条件をご確認ください。",
 };
 
 export default function TermsPage() {

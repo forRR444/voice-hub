@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "プライバシーポリシー — VoiceHub",
+  description: "VoiceHubのプライバシーポリシーです。個人情報の取り扱い、収集方法、利用目的についてご説明します。",
 };
 
 export default function PrivacyPage() {

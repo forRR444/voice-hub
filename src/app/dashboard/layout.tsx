@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 import { LayoutDashboard, FileText, Code, Settings } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
