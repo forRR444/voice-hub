@@ -344,6 +344,72 @@ describe("formUpdateSchema", () => {
   ])("不正な入力を拒否する: %s", (_label, input) => {
     expect(formUpdateSchema.safeParse(input).success).toBe(false);
   });
+
+  it("selectタイプの質問をoptionsつきで受理する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "select_1", label: "満足度", type: "select", required: false, options: ["とても満足", "満足", "普通"] },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("不正な質問タイプを拒否する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "q1", label: "テスト", type: "invalid_type", required: false },
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("selectタイプのoptionsが21個以上で拒否する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "s1", label: "選択", type: "select", required: false, options: Array.from({ length: 21 }, (_, i) => `選択肢${i + 1}`) },
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("selectタイプのoptionsが20個以内で受理する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "s1", label: "選択", type: "select", required: false, options: Array.from({ length: 20 }, (_, i) => `選択肢${i + 1}`) },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("selectタイプの各optionが100文字超で拒否する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "s1", label: "選択", type: "select", required: false, options: ["a".repeat(101)] },
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("enabled: falseの質問を受理する", () => {
+    const result = formUpdateSchema.safeParse({
+      questions: [
+        { id: "rating", label: "総合評価", type: "star_rating", required: true, enabled: true },
+        { id: "before_story", label: "利用前の悩み", type: "textarea", required: false, enabled: false },
+        { id: "permission", label: "掲載許可", type: "checkbox", required: true },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("enabled未指定の質問はフィルタで表示対象になる", () => {
+    const questions = [
+      { id: "q1", label: "Q1", type: "text" as const, required: false },
+      { id: "q2", label: "Q2", type: "text" as const, required: false, enabled: false },
+      { id: "q3", label: "Q3", type: "text" as const, required: false, enabled: true },
+    ];
+    const visible = questions.filter((q) => q.enabled !== false);
+    expect(visible.map((q) => q.id)).toEqual(["q1", "q3"]);
+  });
 });
 
 // ─── ユーティリティ関数 ──────────────────────────────────────────────────────
