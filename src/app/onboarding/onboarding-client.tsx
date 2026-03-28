@@ -156,7 +156,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         } catch {
           setCreating(false);
           setChecking(false);
-          setStep(1);
+          setStep(0);
         }
       })();
       return;
