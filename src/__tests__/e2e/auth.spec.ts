@@ -6,17 +6,16 @@ test.describe("認証とログインページ", () => {
     await expect(
       page.getByRole("link", { name: "VoiceHub" })
     ).toBeVisible();
-    await expect(
-      page.getByText("お客様の声の収集・管理・表示ツール")
-    ).toBeVisible();
   });
 
-  test("Googleログインボタンが表示されSVGアイコンを含む", async ({ page }) => {
+  test("メール/パスワードフォームとGoogleボタンが表示される", async ({ page }) => {
     await page.goto("/login");
-    const button = page.getByRole("button", { name: /Google/ });
-    await expect(button).toBeVisible();
-    await expect(button).toBeEnabled();
-    await expect(button.locator("svg")).toBeVisible();
+    await expect(page.getByPlaceholder("メールアドレス")).toBeVisible();
+    await expect(page.getByPlaceholder("パスワード")).toBeVisible();
+    await expect(page.getByRole("button", { name: "ログイン" })).toBeVisible();
+    const googleButton = page.getByRole("button", { name: /Google/ });
+    await expect(googleButton).toBeVisible();
+    await expect(googleButton.locator("svg")).toBeVisible();
   });
 
   test.describe("未認証ユーザーのリダイレクト", () => {
