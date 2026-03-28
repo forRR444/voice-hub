@@ -22,6 +22,8 @@ export default async function SettingsPage() {
     redirect("/onboarding");
   }
 
+  const hasPassword = user.identities?.some((i) => i.provider === "email") ?? false;
+
   const subscriptionStatus = (workspace as Record<string, unknown>).subscription_status as string ?? "free";
 
   const { count: testimonialCount } = await supabase
@@ -43,6 +45,7 @@ export default async function SettingsPage() {
     <SettingsClient
       workspace={workspace}
       subscriptionStatus={subscriptionStatus}
+      hasPassword={hasPassword}
       usage={{
         testimonials: testimonialCount ?? 0,
         forms: formCount ?? 0,

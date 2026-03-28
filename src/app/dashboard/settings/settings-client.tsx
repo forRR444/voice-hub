@@ -10,15 +10,18 @@ import {
   Trash2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
 
 export default function SettingsClient({
   workspace,
   subscriptionStatus,
+  hasPassword,
   usage,
 }: {
   workspace: WorkspaceRow;
   subscriptionStatus: string;
+  hasPassword: boolean;
   usage: { testimonials: number; forms: number; widgets: number };
 }) {
   const supabase = createClient();
@@ -29,6 +32,11 @@ export default function SettingsClient({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const plan = subscriptionStatus === "pro" ? "pro" : "free";
   const limits = PLAN_LIMITS[plan];
@@ -125,6 +133,82 @@ export default function SettingsClient({
           />
         </div>
       </section>
+
+      {/* Password change (email users only) */}
+      {hasPassword && (
+        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            パスワード変更
+          </h3>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const passErr = validatePassword(newPassword);
+              if (passErr) { setPasswordError(passErr); return; }
+              const matchErr = validatePasswordMatch(newPassword, confirmNewPassword);
+              if (matchErr) { setPasswordError(matchErr); return; }
+
+              setPasswordSaving(true);
+              setPasswordError(null);
+              const { error } = await supabase.auth.updateUser({ password: newPassword });
+              setPasswordSaving(false);
+              if (error) {
+                setPasswordError(error.message);
+              } else {
+                setPasswordSaved(true);
+                setNewPassword("");
+                setConfirmNewPassword("");
+                setTimeout(() => setPasswordSaved(false), 2000);
+              }
+            }}
+            className="space-y-3"
+          >
+            <div>
+              <label className="block text-sm font-medium text-foreground/70 mb-1">
+                新しいパスワード
+              </label>
+              <input
+                type="password"
+                placeholder="8文字以上"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground/70 mb-1">
+                新しいパスワード（確認）
+              </label>
+              <input
+                type="password"
+                placeholder="もう一度入力"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            {passwordError && (
+              <p className="text-xs text-red-500">{passwordError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={passwordSaving || !newPassword}
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+            >
+              {passwordSaved ? (
+                <>
+                  <Check size={14} />
+                  変更しました
+                </>
+              ) : passwordSaving ? (
+                "変更中..."
+              ) : (
+                "パスワードを変更"
+              )}
+            </button>
+          </form>
+        </section>
+      )}
 
       {/* Delete account */}
       <div className="mt-8 text-center">
