@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { validateEmail, validatePassword } from "@/lib/validation";
-import { preserveTemplate } from "@/lib/auth-utils";
+import { preserveTemplate, translateOAuthError } from "@/lib/auth-utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -54,7 +54,7 @@ export default function LoginClient() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(translateOAuthError(error.message));
       setLoading(null);
     }
   }

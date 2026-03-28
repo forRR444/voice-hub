@@ -248,11 +248,16 @@ export default function SettingsClient({
               <button
                 onClick={async () => {
                   setDeleting(true);
-                  const res = await fetch("/api/account", { method: "DELETE" });
-                  if (res.ok) {
-                    router.push("/");
-                  } else {
-                    alert("削除に失敗しました。もう一度お試しください。");
+                  try {
+                    const res = await fetch("/api/account", { method: "DELETE" });
+                    if (res.ok) {
+                      router.push("/");
+                    } else {
+                      alert("削除に失敗しました。もう一度お試しください。");
+                      setDeleting(false);
+                    }
+                  } catch {
+                    alert("ネットワークエラーが発生しました。もう一度お試しください。");
                     setDeleting(false);
                   }
                 }}

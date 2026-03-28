@@ -282,16 +282,23 @@ export default function WidgetsClient({
                         value={w.type}
                         onChange={async (e) => {
                           const newType = e.target.value as WidgetType;
+                          const previousType = w.type;
+                          setWidgets((prev) =>
+                            prev.map((widget) =>
+                              widget.id === w.id ? { ...widget, type: newType } : widget
+                            )
+                          );
                           const { error } = await supabase
                             .from("widgets")
                             .update({ type: newType })
                             .eq("id", w.id);
-                          if (!error) {
+                          if (error) {
                             setWidgets((prev) =>
                               prev.map((widget) =>
-                                widget.id === w.id ? { ...widget, type: newType } : widget
+                                widget.id === w.id ? { ...widget, type: previousType } : widget
                               )
                             );
+                            alert("タイプの変更に失敗しました。もう一度お試しください。");
                           }
                         }}
                         className="text-sm text-indigo-600 bg-transparent border-none cursor-pointer focus:outline-none font-medium"

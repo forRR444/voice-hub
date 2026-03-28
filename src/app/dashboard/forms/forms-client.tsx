@@ -45,6 +45,9 @@ export default function FormsClient({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("coaching");
   const [qrForm, setQrForm] = useState<{ slug: string; title: string } | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteFormId, setDeleteFormId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
   const plan = subscriptionStatus === "pro" ? "pro" : "free";
@@ -356,11 +359,9 @@ export default function FormsClient({
                         <Pencil size={16} />
                       </button>
                       <button
-                        onClick={async () => {
-                          if (!window.confirm("このフォームを削除しますか？関連する回答は残ります。")) return;
-                          const { error } = await supabase.from("forms").delete().eq("id", form.id);
-                          if (error) { window.alert("削除に失敗しました"); return; }
-                          setForms((prev) => prev.filter((f) => f.id !== form.id));
+                        onClick={() => {
+                          setDeleteFormId(form.id);
+                          setShowDeleteConfirm(true);
                         }}
                         className="p-2 text-foreground/40 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
                         title="削除"
@@ -406,6 +407,49 @@ export default function FormsClient({
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirm && deleteFormId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              フォームの削除
+            </h3>
+            <p className="text-sm text-foreground/60 mb-4">
+              このフォームを削除しますか？関連する回答は残ります。
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeleteFormId(null);
+                }}
+                className="flex-1 px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={async () => {
+                  setDeleting(true);
+                  const { error } = await supabase.from("forms").delete().eq("id", deleteFormId);
+                  setDeleting(false);
+                  if (error) {
+                    alert("削除に失敗しました");
+                    return;
+                  }
+                  setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
+                  setShowDeleteConfirm(false);
+                  setDeleteFormId(null);
+                }}
+                disabled={deleting}
+                className="flex-1 px-4 py-2 text-sm text-red-500 border border-foreground/10 rounded-lg hover:bg-foreground/5 disabled:opacity-30 cursor-pointer"
+              >
+                {deleting ? "削除中..." : "削除する"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

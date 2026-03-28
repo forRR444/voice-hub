@@ -73,11 +73,15 @@ function SampleCard({ t, className, compact }: { t: typeof SAMPLE_TESTIMONIALS[n
 
 function getInitialState() {
   if (typeof window === "undefined") return { step: 1, template: "coaching", questions: FORM_TEMPLATES[0].questions };
-  const saved = localStorage.getItem("voicehub_template");
-  if (saved) {
-    localStorage.removeItem("voicehub_template");
-    const tpl = FORM_TEMPLATES.find((t) => t.id === saved);
-    if (tpl) return { step: 2, template: saved, questions: tpl.questions };
+  try {
+    const saved = localStorage.getItem("voicehub_template");
+    if (saved) {
+      localStorage.removeItem("voicehub_template");
+      const tpl = FORM_TEMPLATES.find((t) => t.id === saved);
+      if (tpl) return { step: 2, template: saved, questions: tpl.questions };
+    }
+  } catch {
+    // localStorage unavailable (private browsing, storage full, etc.)
   }
   return { step: 1, template: "coaching", questions: FORM_TEMPLATES[0].questions };
 }
@@ -99,16 +103,20 @@ export default function TryClient() {
   }
 
   function saveTryData() {
-    localStorage.setItem(
-      TRY_STORAGE_KEY,
-      JSON.stringify({
-        template: selectedTemplate,
-        workspaceName: workspaceName.trim() || "マイサービス",
-        brandColor,
-        questions,
-        savedAt: new Date().toISOString(),
-      })
-    );
+    try {
+      localStorage.setItem(
+        TRY_STORAGE_KEY,
+        JSON.stringify({
+          template: selectedTemplate,
+          workspaceName: workspaceName.trim() || "マイサービス",
+          brandColor,
+          questions,
+          savedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // localStorage unavailable (private browsing, storage full, etc.)
+    }
   }
 
 

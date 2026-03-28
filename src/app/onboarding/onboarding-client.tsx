@@ -25,6 +25,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
   const [completed, setCompleted] = useState(false);
   const [checking, setChecking] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const formRef = useRef<FormClientHandle>(null);
 
   useEffect(() => {
@@ -84,7 +85,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
               await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
               router.push("/dashboard");
-            } catch {
+            } catch (e) {
+              setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
               setCreating(false);
               setChecking(false);
               setStep(1);
@@ -151,7 +153,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
           await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
           router.push("/dashboard");
-        } catch {
+        } catch (e) {
+          setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
           setCreating(false);
           setChecking(false);
           setStep(0);
@@ -182,6 +185,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
   async function completeOnboarding() {
     setCreating(true);
+    setError(null);
     try {
       const supabase = createClient();
       const slug = generateSlug();
@@ -242,8 +246,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         .eq("id", workspace.id);
 
       setCompleted(true);
-    } catch {
-      // Error handled silently
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "フォームの作成に失敗しました。もう一度お試しください。");
     } finally {
       setCreating(false);
     }
@@ -280,6 +284,13 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         {betaUserCount <= 10 && (
           <div className="bg-indigo-50 text-indigo-700 text-sm rounded-lg px-4 py-3 mb-6 text-center">
             先着10名限定：正式リリース後もずっと無料でご利用いただけます（現在 {betaUserCount}/10名）
+          </div>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-6 text-center">
+            {error}
           </div>
         )}
 
