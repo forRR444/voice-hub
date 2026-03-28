@@ -31,6 +31,10 @@ vi.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logError: vi.fn(),
+}));
+
 // ---------------------------------------------------------------------------
 // ヘルパー
 // ---------------------------------------------------------------------------
@@ -147,13 +151,51 @@ describe("POST /api/stripe/webhook", () => {
       expect(response.status).toBe(200);
       expect(mockFrom).not.toHaveBeenCalled();
     });
+
+    it("subscriptionがnullの場合nullを保存する", async () => {
+      mockConstructEvent.mockReturnValue(
+        makeStripeEvent("checkout.session.completed", {
+          customer: "cus_no_sub",
+          subscription: null,
+        })
+      );
+
+      const { POST } = await import("@/app/api/stripe/webhook/route");
+      const response = await POST(makeWebhookRequest("{}", "valid_sig"));
+
+      expect(response.status).toBe(200);
+      expect(mockUpdate).toHaveBeenCalledWith({
+        subscription_status: "pro",
+        stripe_subscription_id: null,
+      });
+    });
+
+    it("DB更新エラーで500を返す", async () => {
+      setupSupabaseMock({ data: null, error: { message: "DB error" } });
+      mockConstructEvent.mockReturnValue(
+        makeStripeEvent("checkout.session.completed", {
+          customer: "cus_123",
+          subscription: "sub_456",
+        })
+      );
+
+      const { POST } = await import("@/app/api/stripe/webhook/route");
+      const response = await POST(makeWebhookRequest("{}", "valid_sig"));
+      const json = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(json.error).toBe("DB update failed");
+    });
   });
 
   describe("customer.subscription.updated", () => {
     it.each([
       ["active", "pro"],
+      ["trialing", "pro"],
       ["canceled", "canceled"],
+      ["unpaid", "canceled"],
       ["past_due", "canceled"],
+      ["incomplete", "free"],
     ] as const)(
       "status '%s' のときsubscription_statusを '%s' に設定する",
       async (stripeStatus, expectedDbStatus) => {
@@ -176,25 +218,62 @@ describe("POST /api/stripe/webhook", () => {
         expect(mockEq).toHaveBeenCalledWith("stripe_customer_id", "cus_200");
       }
     );
+
+    it("DB更新エラーで500を返す", async () => {
+      setupSupabaseMock({ data: null, error: { message: "DB error" } });
+      mockConstructEvent.mockReturnValue(
+        makeStripeEvent("customer.subscription.updated", {
+          id: "sub_err",
+          customer: "cus_200",
+          status: "active",
+        })
+      );
+
+      const { POST } = await import("@/app/api/stripe/webhook/route");
+      const response = await POST(makeWebhookRequest("{}", "valid_sig"));
+      const json = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(json.error).toBe("DB update failed");
+    });
   });
 
-  it("customer.subscription.deletedでcanceledに設定しsubscription_idをクリアする", async () => {
-    mockConstructEvent.mockReturnValue(
-      makeStripeEvent("customer.subscription.deleted", {
-        id: "sub_deleted",
-        customer: "cus_500",
-      })
-    );
+  describe("customer.subscription.deleted", () => {
+    it("canceledに設定しsubscription_idをクリアする", async () => {
+      mockConstructEvent.mockReturnValue(
+        makeStripeEvent("customer.subscription.deleted", {
+          id: "sub_deleted",
+          customer: "cus_500",
+        })
+      );
 
-    const { POST } = await import("@/app/api/stripe/webhook/route");
-    const response = await POST(makeWebhookRequest("{}", "valid_sig"));
+      const { POST } = await import("@/app/api/stripe/webhook/route");
+      const response = await POST(makeWebhookRequest("{}", "valid_sig"));
 
-    expect(response.status).toBe(200);
-    expect(mockUpdate).toHaveBeenCalledWith({
-      subscription_status: "canceled",
-      stripe_subscription_id: null,
+      expect(response.status).toBe(200);
+      expect(mockUpdate).toHaveBeenCalledWith({
+        subscription_status: "canceled",
+        stripe_subscription_id: null,
+      });
+      expect(mockEq).toHaveBeenCalledWith("stripe_customer_id", "cus_500");
     });
-    expect(mockEq).toHaveBeenCalledWith("stripe_customer_id", "cus_500");
+
+    it("DB更新エラーで500を返す", async () => {
+      setupSupabaseMock({ data: null, error: { message: "DB error" } });
+      mockConstructEvent.mockReturnValue(
+        makeStripeEvent("customer.subscription.deleted", {
+          id: "sub_del_err",
+          customer: "cus_500",
+        })
+      );
+
+      const { POST } = await import("@/app/api/stripe/webhook/route");
+      const response = await POST(makeWebhookRequest("{}", "valid_sig"));
+      const json = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(json.error).toBe("DB update failed");
+    });
   });
 
   it("未処理のイベントタイプではDB更新なしで200を返す", async () => {
