@@ -53,8 +53,16 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect logged-in users away from login
-  if (user && request.nextUrl.pathname === "/login") {
+  // Protect update-password route (requires active session from reset link)
+  if (!user && request.nextUrl.pathname.startsWith("/update-password")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // Redirect logged-in users away from auth pages
+  const authPages = ["/login", "/signup", "/reset-password"];
+  if (user && authPages.includes(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

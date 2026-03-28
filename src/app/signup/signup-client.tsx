@@ -1,18 +1,26 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { validateEmail, validatePassword } from "@/lib/validation";
+import { validateEmail, validatePassword, validatePasswordMatch, generatePassword } from "@/lib/validation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Wand2 } from "lucide-react";
 import Link from "next/link";
 
-export default function LoginClient() {
+export default function SignupClient() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState<"email" | "google" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [emailSent, setEmailSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  function handleGeneratePassword() {
+    const pw = generatePassword();
+    setPassword(pw);
+    setConfirmPassword(pw);
+    setShowPassword(true);
+  }
 
   const supabase = createClient();
 
@@ -23,23 +31,33 @@ export default function LoginClient() {
     }
   }
 
-  async function handleEmailLogin(e: React.FormEvent) {
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     const emailErr = validateEmail(email);
     if (emailErr) { setError(emailErr); return; }
     const passErr = validatePassword(password);
     if (passErr) { setError(passErr); return; }
+    const matchErr = validatePasswordMatch(password, confirmPassword);
+    if (matchErr) { setError(matchErr); return; }
 
     setLoading("email");
     setError(null);
     preserveTemplate();
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/api/auth/confirm`,
+      },
+    });
+
     if (error) {
-      setError("メールアドレスまたはパスワードが正しくありません");
+      setError(error.message);
       setLoading(null);
     } else {
-      router.push("/dashboard");
+      setEmailSent(true);
+      setLoading(null);
     }
   }
 
@@ -63,21 +81,39 @@ export default function LoginClient() {
     }
   }
 
-  const isFromTry = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("from") === "try";
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="w-full max-w-sm space-y-6 text-center">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">メールを確認してください</h1>
+            <p className="mt-3 text-sm text-foreground/60">
+              <span className="font-medium text-foreground">{email}</span> に確認メールを送信しました。
+              メール内のリンクをクリックして登録を完了してください。
+            </p>
+          </div>
+          <p className="text-xs text-foreground/40">
+            メールが届かない場合は、迷惑メールフォルダをご確認ください。
+          </p>
+          <Link href="/login" className="inline-block text-sm text-indigo-600 hover:underline">
+            ログインページに戻る
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
-          <p className="mt-2 text-sm text-foreground/60">
-            {isFromTry ? "ログインしてフォームを保存" : "ログイン"}
-          </p>
+          <p className="mt-2 text-sm text-foreground/60">無料で始める</p>
         </div>
 
         <div className="space-y-4">
-          {/* Email/Password form */}
-          <form onSubmit={handleEmailLogin} className="space-y-3">
+          {/* Email/Password signup form */}
+          <form onSubmit={handleSignup} className="space-y-3">
             <div>
               <input
                 type="email"
@@ -88,11 +124,43 @@ export default function LoginClient() {
               />
             </div>
             <div>
+              <div className="flex gap-2">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="パスワード（8文字以上）"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="flex-1 px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={handleGeneratePassword}
+                  title="パスワードを自動生成"
+                  className="flex items-center gap-1.5 px-3 py-2.5 border border-foreground/10 rounded-lg text-xs text-foreground/60 hover:bg-foreground/5 transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  <Wand2 size={14} />
+                  自動生成
+                </button>
+              </div>
+              {showPassword && password && (
+                <p className="mt-1.5 text-xs text-foreground/50 break-all bg-foreground/5 rounded px-2 py-1.5 font-mono">
+                  {password}
+                  <button
+                    type="button"
+                    onClick={() => { navigator.clipboard.writeText(password); }}
+                    className="ml-2 text-indigo-600 hover:underline cursor-pointer"
+                  >
+                    コピー
+                  </button>
+                </p>
+              )}
+            </div>
+            <div>
               <input
-                type="password"
-                placeholder="パスワード"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type={showPassword ? "text" : "password"}
+                placeholder="パスワード（確認）"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -102,15 +170,9 @@ export default function LoginClient() {
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50"
             >
               {loading === "email" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              ログイン
+              無料で登録
             </button>
           </form>
-
-          <div className="text-right">
-            <Link href="/reset-password" className="text-xs text-indigo-600 hover:underline">
-              パスワードを忘れた方
-            </Link>
-          </div>
 
           {/* Divider */}
           <div className="flex items-center gap-3">
@@ -119,7 +181,7 @@ export default function LoginClient() {
             <div className="flex-1 border-t border-foreground/10" />
           </div>
 
-          {/* Google login */}
+          {/* Google signup */}
           <button
             onClick={handleGoogleLogin}
             disabled={!!loading}
@@ -135,7 +197,7 @@ export default function LoginClient() {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
             )}
-            Googleでログイン
+            Googleで登録
           </button>
 
           <p className="text-center text-xs text-foreground/40">
@@ -149,8 +211,8 @@ export default function LoginClient() {
 
         <div className="text-center space-y-2">
           <p className="text-sm text-foreground/60">
-            アカウントをお持ちでない方は
-            <Link href="/signup" className="text-indigo-600 hover:underline ml-1">新規登録</Link>
+            すでにアカウントをお持ちの方は
+            <Link href="/login" className="text-indigo-600 hover:underline ml-1">ログイン</Link>
           </p>
           <p className="text-xs text-foreground/30">
             登録することで<Link href="/terms" className="text-indigo-600 hover:underline">利用規約</Link>と<Link href="/privacy" className="text-indigo-600 hover:underline">プライバシーポリシー</Link>に同意したものとみなされます

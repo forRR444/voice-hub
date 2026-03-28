@@ -15,6 +15,25 @@ export async function GET(request: Request) {
     });
 
     if (!error) {
+      // Password reset: redirect to update password page
+      if (type === "recovery") {
+        return NextResponse.redirect(`${origin}/update-password`);
+      }
+
+      // Email verification (signup): check onboarding status
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: workspace } = await supabase
+          .from("workspaces")
+          .select("onboarding_completed")
+          .eq("user_id", user.id)
+          .single();
+
+        if (!workspace || !workspace.onboarding_completed) {
+          return NextResponse.redirect(`${origin}/onboarding`);
+        }
+      }
+
       return NextResponse.redirect(`${origin}/dashboard`);
     }
   }
