@@ -32,15 +32,11 @@ export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
   forms,
-  hasApprovedTestimonials,
-  widgetCount,
   brandColor,
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
   forms: FormInfo[];
-  hasApprovedTestimonials: boolean;
-  widgetCount: number;
   brandColor: string;
 }) {
   const supabase = createClient();

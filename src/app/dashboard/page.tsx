@@ -35,7 +35,6 @@ export default async function DashboardPage() {
   const [
     { data: testimonials },
     { data: forms },
-    { count: widgetCount },
   ] = await Promise.all([
     supabase
       .from("testimonials")
@@ -47,10 +46,6 @@ export default async function DashboardPage() {
       .select("id, slug, title, brand_color, questions")
       .eq("workspace_id", workspace.id)
       .order("created_at", { ascending: false }),
-    supabase
-      .from("widgets")
-      .select("id", { count: "exact", head: true })
-      .eq("workspace_id", workspace.id),
   ]);
 
   const testimonialList = (testimonials ?? []) as TestimonialRow[];
@@ -76,13 +71,6 @@ export default async function DashboardPage() {
     })
   );
 
-  const hasRealTestimonials = testimonialList.some(
-    (t) => t.source !== "sample" && t.source !== "guide"
-  );
-  const hasApprovedTestimonials = testimonialList.some(
-    (t) => t.source !== "sample" && t.source !== "guide" && t.status === "approved"
-  );
-
   const brandColor = (forms ?? [])[0]?.brand_color || DEFAULT_BRAND_COLOR;
 
   return (
@@ -90,8 +78,6 @@ export default async function DashboardPage() {
       workspace={workspace}
       testimonials={testimonialsWithTags}
       forms={(forms ?? []) as { id: string; slug: string; title: string; brand_color: string; questions: import("@/types/database").FormQuestion[] }[]}
-      hasApprovedTestimonials={hasApprovedTestimonials}
-      widgetCount={widgetCount ?? 0}
       brandColor={brandColor}
     />
   );

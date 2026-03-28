@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextResponse } from "next/server";
 import {
   createMockSupabase,
   createMockQueryBuilder,
@@ -60,8 +61,6 @@ beforeEach(() => {
       message = "サーバーエラーが発生しました",
       headers?: Record<string, string>
     ) => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { NextResponse } = require("next/server");
       return NextResponse.json(
         { error: message },
         { status: 500, ...(headers ? { headers } : {}) }
@@ -292,7 +291,7 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
       only_featured: true,
       theme: { maxItems: 5 },
     };
-    const mockSupa = setupWidgetMock(
+    setupWidgetMock(
       { data: widgetData, error: null },
       { data: { subscription_status: "pro" }, error: null },
       { data: [{ id: "t-1", name: "Featured", rating: 5 }], error: null }

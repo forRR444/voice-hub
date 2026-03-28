@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import AuthInput from "@/app/components/auth-input";
 
 export default function UpdatePasswordClient() {
   const [password, setPassword] = useState("");
@@ -47,21 +48,21 @@ export default function UpdatePasswordClient() {
         <div className="space-y-4">
           <form onSubmit={handleUpdate} className="space-y-3">
             <div>
-              <input
+              <AuthInput
                 type="password"
                 placeholder="新しいパスワード（8文字以上）"
                 value={password}
+                autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div>
-              <input
+              <AuthInput
                 type="password"
                 placeholder="新しいパスワード（確認）"
                 value={confirmPassword}
+                autoComplete="new-password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <button

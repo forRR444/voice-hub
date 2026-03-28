@@ -23,7 +23,6 @@ import {
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
-import { WidgetPreviewIcon } from "./widget-preview-icon";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 

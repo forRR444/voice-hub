@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeft, Eye } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug } from "@/lib/utils";
 import { DEFAULT_FORM_QUESTIONS, FORM_TEMPLATES } from "@/lib/default-questions";
-import { WorkspaceRow, FormQuestion } from "@/types/database";
+import { WorkspaceRow, FormQuestion, FormRow } from "@/types/database";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import QuestionEditor from "@/app/components/question-editor";
 import { FormClient, type FormClientHandle } from "@/app/form/[slug]/form-client";
-import { useRef } from "react";
-import type { FormRow } from "@/types/database";
 
 export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();

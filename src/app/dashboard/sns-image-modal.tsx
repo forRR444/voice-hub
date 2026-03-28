@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { X, Download, Loader2 } from "lucide-react";
 import {
   generateTestimonialImage,
-  TEMPLATES,
   TemplateSize,
 } from "@/lib/canvas-image-generator";
 import { TestimonialWithTags } from "@/types/database";

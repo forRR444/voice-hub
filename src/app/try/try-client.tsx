@@ -285,7 +285,7 @@ export default function TryClient() {
                 <div className="relative" style={{ height: 180 }}>
                   <img
                     src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=360&fit=crop&crop=center"
-                    alt=""
+                    alt="サロンの内装イメージ"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.45) 100%)" }} />
@@ -312,7 +312,7 @@ export default function TryClient() {
                 <div className="flex">
                   <img
                     src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=240&h=200&fit=crop&crop=center&sat=-100"
-                    alt=""
+                    alt="サロンの施術イメージ"
                     className="w-[45%] object-cover"
                     style={{ height: 110 }}
                   />

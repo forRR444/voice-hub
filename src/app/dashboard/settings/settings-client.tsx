@@ -2,12 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Check,
-  CreditCard,
   Crown,
-  Trash2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword, validatePasswordMatch } from "@/lib/validation";
@@ -40,7 +37,6 @@ export default function SettingsClient({
 
   const plan = subscriptionStatus === "pro" ? "pro" : "free";
   const limits = PLAN_LIMITS[plan];
-  const isPro = plan === "pro";
 
   async function saveName() {
     if (!name.trim()) return;

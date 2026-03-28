@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // We need to test the in-memory fallback path (no Redis).
 // The module reads env vars at import time, so we ensure they're unset.

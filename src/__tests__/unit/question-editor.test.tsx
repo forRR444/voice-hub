@@ -6,7 +6,7 @@ import type { FormQuestion } from "@/types/database";
 // Mock @dnd-kit to avoid DOM measurement issues in jsdom
 vi.mock("@dnd-kit/core", () => {
   return {
-    DndContext: ({ children, onDragEnd }: any) => <div data-testid="dnd-context">{children}</div>,
+    DndContext: ({ children }: any) => <div data-testid="dnd-context">{children}</div>,
     closestCenter: vi.fn(),
     KeyboardSensor: vi.fn(),
     PointerSensor: vi.fn(),
