@@ -22,7 +22,12 @@ beforeEach(() => {
 });
 
 describe("GET /api/auth/confirm", () => {
-  it("token_hashがない場合は/login?error=authにリダイレクトする", async () => {
+  it("codeもtoken_hashもない場合は/login?error=authにリダイレクトする", async () => {
+    const mockSupa = {
+      auth: {},
+    };
+    mockCreateServerClient.mockResolvedValue(mockSupa);
+
     const { GET } = await import("@/app/api/auth/confirm/route");
     const response = await GET(makeRequest("http://localhost/api/auth/confirm"));
 
@@ -32,7 +37,82 @@ describe("GET /api/auth/confirm", () => {
     expect(location.searchParams.get("error")).toBe("auth");
   });
 
-  it("recovery typeの場合は/update-passwordにリダイレクトする", async () => {
+  it("PKCE code: onboarding未完了の場合は/onboardingにリダイレクトする", async () => {
+    const mockSupa = {
+      auth: {
+        exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: "user-1" } },
+          error: null,
+        }),
+      },
+      from: vi.fn(() =>
+        chainable({ data: { onboarding_completed: false }, error: null })
+      ),
+    };
+    mockCreateServerClient.mockResolvedValue(mockSupa);
+
+    const { GET } = await import("@/app/api/auth/confirm/route");
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?code=test-code")
+    );
+
+    expect(response.status).toBe(307);
+    const location = new URL(response.headers.get("location")!);
+    expect(location.pathname).toBe("/onboarding");
+  });
+
+  it("PKCE code: onboarding完了の場合は/dashboardにリダイレクトする", async () => {
+    const mockSupa = {
+      auth: {
+        exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: "user-1" } },
+          error: null,
+        }),
+      },
+      from: vi.fn(() =>
+        chainable({ data: { onboarding_completed: true }, error: null })
+      ),
+    };
+    mockCreateServerClient.mockResolvedValue(mockSupa);
+
+    const { GET } = await import("@/app/api/auth/confirm/route");
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?code=test-code")
+    );
+
+    expect(response.status).toBe(307);
+    const location = new URL(response.headers.get("location")!);
+    expect(location.pathname).toBe("/dashboard");
+  });
+
+  it("PKCE code + recovery typeの場合は/update-passwordにリダイレクトする", async () => {
+    const mockSupa = {
+      auth: {
+        exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: "user-1" } },
+          error: null,
+        }),
+      },
+      from: vi.fn(() =>
+        chainable({ data: { onboarding_completed: true }, error: null })
+      ),
+    };
+    mockCreateServerClient.mockResolvedValue(mockSupa);
+
+    const { GET } = await import("@/app/api/auth/confirm/route");
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?code=test-code&type=recovery")
+    );
+
+    expect(response.status).toBe(307);
+    const location = new URL(response.headers.get("location")!);
+    expect(location.pathname).toBe("/update-password");
+  });
+
+  it("token_hash: recovery typeの場合は/update-passwordにリダイレクトする", async () => {
     const mockSupa = {
       auth: {
         verifyOtp: vi.fn().mockResolvedValue({ error: null }),
@@ -57,57 +137,7 @@ describe("GET /api/auth/confirm", () => {
     expect(location.pathname).toBe("/update-password");
   });
 
-  it("signup typeでonboarding未完了の場合は/onboardingにリダイレクトする", async () => {
-    const mockSupa = {
-      auth: {
-        verifyOtp: vi.fn().mockResolvedValue({ error: null }),
-        getUser: vi.fn().mockResolvedValue({
-          data: { user: { id: "user-1" } },
-          error: null,
-        }),
-      },
-      from: vi.fn(() =>
-        chainable({ data: { onboarding_completed: false }, error: null })
-      ),
-    };
-    mockCreateServerClient.mockResolvedValue(mockSupa);
-
-    const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(
-      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
-    );
-
-    expect(response.status).toBe(307);
-    const location = new URL(response.headers.get("location")!);
-    expect(location.pathname).toBe("/onboarding");
-  });
-
-  it("signup typeでonboarding完了の場合は/dashboardにリダイレクトする", async () => {
-    const mockSupa = {
-      auth: {
-        verifyOtp: vi.fn().mockResolvedValue({ error: null }),
-        getUser: vi.fn().mockResolvedValue({
-          data: { user: { id: "user-1" } },
-          error: null,
-        }),
-      },
-      from: vi.fn(() =>
-        chainable({ data: { onboarding_completed: true }, error: null })
-      ),
-    };
-    mockCreateServerClient.mockResolvedValue(mockSupa);
-
-    const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(
-      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
-    );
-
-    expect(response.status).toBe(307);
-    const location = new URL(response.headers.get("location")!);
-    expect(location.pathname).toBe("/dashboard");
-  });
-
-  it("OTP検証失敗の場合は/login?error=authにリダイレクトする", async () => {
+  it("token_hash: OTP検証失敗の場合は/login?error=authにリダイレクトする", async () => {
     const mockSupa = {
       auth: {
         verifyOtp: vi.fn().mockResolvedValue({ error: { message: "Invalid" } }),
