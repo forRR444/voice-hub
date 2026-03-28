@@ -6,7 +6,7 @@ import { logError } from "@/lib/logger";
 
 export async function DELETE(request: NextRequest) {
   try {
-    const rateLimited = await checkRateLimit(getClientIp(request), "account_delete", 3, 60);
+    const rateLimited = await checkRateLimit(`account_delete:${getClientIp(request)}`, 3, 60000);
     if (rateLimited) return rateLimited;
 
     const supabase = await createClient();

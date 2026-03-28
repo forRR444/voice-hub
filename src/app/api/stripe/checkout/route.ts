@@ -7,7 +7,7 @@ import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
-    const rateLimited = await checkRateLimit(getClientIp(request), "stripe_checkout", 10, 60);
+    const rateLimited = await checkRateLimit(`stripe_checkout:${getClientIp(request)}`, 10, 60000);
     if (rateLimited) return rateLimited;
     const supabase = await createClient();
     const {
