@@ -2,14 +2,14 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, Eye, Loader2, Wand2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Eye, Loader2 } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import type { FormQuestion, FormRow } from "@/types/database";
 import QuestionEditor from "@/app/components/question-editor";
 import { FormClient, type FormClientHandle } from "@/app/form/[slug]/form-client";
 import { createClient } from "@/lib/supabase/client";
-import { validateEmail, validatePassword, validatePasswordMatch, generatePassword } from "@/lib/validation";
+import { validateEmail, validatePassword, validatePasswordMatch } from "@/lib/validation";
 
 const TRY_STORAGE_KEY = "voicehub_try_data";
 
@@ -39,7 +39,6 @@ export default function TryClient() {
   const [signupLoading, setSignupLoading] = useState(false);
   const [signupError, setSignupError] = useState<string | null>(null);
   const [signupEmailSent, setSignupEmailSent] = useState(false);
-  const [showTryPassword, setShowTryPassword] = useState(false);
   const formRef = useRef<FormClientHandle>(null);
 
   function handleTemplateChange(templateId: string) {
@@ -281,45 +280,19 @@ export default function TryClient() {
                     onChange={(e) => setSignupEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
-                  <div className="flex gap-2">
-                    <input
-                      type={showTryPassword ? "text" : "password"}
-                      placeholder="パスワード（8文字以上）"
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const pw = generatePassword();
-                        setSignupPassword(pw);
-                        setSignupConfirm(pw);
-                        setShowTryPassword(true);
-                      }}
-                      title="パスワードを自動生成"
-                      className="flex items-center gap-1.5 px-3 py-3 border border-gray-300 rounded-lg text-xs text-gray-500 hover:bg-gray-50 cursor-pointer whitespace-nowrap"
-                    >
-                      <Wand2 size={14} />
-                      自動生成
-                    </button>
-                  </div>
-                  {showTryPassword && signupPassword && (
-                    <p className="text-xs text-gray-500 break-all bg-gray-50 rounded px-2 py-1.5 font-mono">
-                      {signupPassword}
-                      <button
-                        type="button"
-                        onClick={() => { navigator.clipboard.writeText(signupPassword); }}
-                        className="ml-2 text-indigo-600 hover:underline cursor-pointer"
-                      >
-                        コピー
-                      </button>
-                    </p>
-                  )}
                   <input
-                    type={showTryPassword ? "text" : "password"}
+                    type="password"
+                    placeholder="パスワード（8文字以上）"
+                    value={signupPassword}
+                    autoComplete="new-password"
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <input
+                    type="password"
                     placeholder="パスワード（確認）"
                     value={signupConfirm}
+                    autoComplete="new-password"
                     onChange={(e) => setSignupConfirm(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />

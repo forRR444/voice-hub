@@ -1,4 +1,4 @@
-import { validateEmail, validatePassword, validatePasswordMatch, generatePassword } from "@/lib/validation";
+import { validateEmail, validatePassword, validatePasswordMatch } from "@/lib/validation";
 
 describe("validateEmail", () => {
   it("空文字でエラーを返す", () => {
@@ -42,27 +42,5 @@ describe("validatePasswordMatch", () => {
 
   it("一致でnullを返す", () => {
     expect(validatePasswordMatch("password1", "password1")).toBeNull();
-  });
-});
-
-describe("generatePassword", () => {
-  it("デフォルトで16文字のパスワードを生成する", () => {
-    expect(generatePassword()).toHaveLength(16);
-  });
-
-  it("指定した長さのパスワードを生成する", () => {
-    expect(generatePassword(8)).toHaveLength(8);
-    expect(generatePassword(32)).toHaveLength(32);
-  });
-
-  it("毎回異なるパスワードを生成する", () => {
-    const passwords = new Set(Array.from({ length: 20 }, () => generatePassword()));
-    expect(passwords.size).toBe(20);
-  });
-
-  it("バリデーションを通過するパスワードを生成する", () => {
-    for (let i = 0; i < 10; i++) {
-      expect(validatePassword(generatePassword())).toBeNull();
-    }
   });
 });

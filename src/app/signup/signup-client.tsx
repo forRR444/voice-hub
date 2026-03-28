@@ -1,9 +1,9 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { validateEmail, validatePassword, validatePasswordMatch, generatePassword } from "@/lib/validation";
+import { validateEmail, validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { useState } from "react";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function SignupClient() {
@@ -13,14 +13,6 @@ export default function SignupClient() {
   const [loading, setLoading] = useState<"email" | "google" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  function handleGeneratePassword() {
-    const pw = generatePassword();
-    setPassword(pw);
-    setConfirmPassword(pw);
-    setShowPassword(true);
-  }
 
   const supabase = createClient();
 
@@ -124,42 +116,21 @@ export default function SignupClient() {
               />
             </div>
             <div>
-              <div className="flex gap-2">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="パスワード（8文字以上）"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="flex-1 px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  type="button"
-                  onClick={handleGeneratePassword}
-                  title="パスワードを自動生成"
-                  className="flex items-center gap-1.5 px-3 py-2.5 border border-foreground/10 rounded-lg text-xs text-foreground/60 hover:bg-foreground/5 transition-colors cursor-pointer whitespace-nowrap"
-                >
-                  <Wand2 size={14} />
-                  自動生成
-                </button>
-              </div>
-              {showPassword && password && (
-                <p className="mt-1.5 text-xs text-foreground/50 break-all bg-foreground/5 rounded px-2 py-1.5 font-mono">
-                  {password}
-                  <button
-                    type="button"
-                    onClick={() => { navigator.clipboard.writeText(password); }}
-                    className="ml-2 text-indigo-600 hover:underline cursor-pointer"
-                  >
-                    コピー
-                  </button>
-                </p>
-              )}
+              <input
+                type="password"
+                placeholder="パスワード（8文字以上）"
+                value={password}
+                autoComplete="new-password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
             </div>
             <div>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 placeholder="パスワード（確認）"
                 value={confirmPassword}
+                autoComplete="new-password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-3 py-2.5 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
