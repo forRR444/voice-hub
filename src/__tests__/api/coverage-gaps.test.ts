@@ -60,6 +60,7 @@ beforeEach(() => {
       message = "サーバーエラーが発生しました",
       headers?: Record<string, string>
     ) => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { NextResponse } = require("next/server");
       return NextResponse.json(
         { error: message },

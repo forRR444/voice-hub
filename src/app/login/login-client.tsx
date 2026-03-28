@@ -63,8 +63,6 @@ export default function LoginClient() {
     }
   }
 
-  const isFromTry = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("from") === "try";
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
