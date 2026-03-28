@@ -24,10 +24,10 @@ export async function GET(
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    // Fetch widget config
+    // Fetch widget config (only fields needed for rendering)
     const { data: widget, error: widgetError } = await supabase
       .from("widgets")
-      .select("*")
+      .select("id, workspace_id, type, theme, filter_min_rating, only_featured")
       .eq("id", widgetId)
       .single();
 
@@ -73,8 +73,11 @@ export async function GET(
       );
     }
 
+    // Exclude internal fields from response
+    const { workspace_id: _, ...publicWidget } = widget;
+
     return NextResponse.json(
-      { widget, testimonials: testimonials ?? [], showBadge },
+      { widget: publicWidget, testimonials: testimonials ?? [], showBadge },
       {
         headers: {
           ...corsHeaders,

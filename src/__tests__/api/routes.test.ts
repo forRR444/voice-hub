@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextResponse } from "next/server";
 import {
   createMockSupabase,
   createMockQueryBuilder,
@@ -29,6 +30,18 @@ vi.mock("@/lib/stripe", () => ({
 vi.mock("@/lib/utils", () => ({
   getBaseUrl: () => "http://localhost:3000",
   cn: (...args: unknown[]) => args.filter(Boolean).join(" "),
+}));
+
+vi.mock("@/lib/api-utils", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(null),
+  getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
+  handleApiError: vi.fn((_error: unknown, message = "サーバーエラーが発生しました", headers?: Record<string, string>) => {
+    return NextResponse.json({ error: message }, { status: 500, ...(headers ? { headers } : {}) });
+  }),
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logError: vi.fn(),
 }));
 
 // ---------------------------------------------------------------------------
@@ -218,7 +231,8 @@ describe("GET /api/widgets/[widgetId]", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.widget).toEqual(widgetData);
+    const { workspace_id: _, ...expectedWidget } = widgetData;
+    expect(json.widget).toEqual(expectedWidget);
     expect(json.testimonials).toEqual(testimonialsList);
     expect(json.showBadge).toBe(true);
   });
@@ -294,7 +308,8 @@ describe("Stripe認証チェック", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { POST } = await importRoute();
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(401);

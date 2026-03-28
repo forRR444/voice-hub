@@ -17,7 +17,7 @@ export async function GET(
 
   const { data: form, error } = await supabase
     .from("forms")
-    .select("*")
+    .select("id, slug, title, description, questions, brand_color, logo_url, thank_you_message")
     .eq("slug", slug)
     .single();
 

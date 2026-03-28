@@ -46,7 +46,15 @@ describe("validatePassword", () => {
   });
 
   it("8文字ちょうどでnullを返す（境界値）", () => {
-    expect(validatePassword("12345678")).toBeNull();
+    expect(validatePassword("secur3Pw")).toBeNull();
+  });
+
+  it.each([
+    ["password", "password"],
+    ["12345678", "12345678"],
+    ["QWERTY12（大文字小文字無視）", "QWERTY12"],
+  ])("推測されやすいパスワードを拒否する: %s", (_label, pw) => {
+    expect(validatePassword(pw)).toBe("このパスワードは推測されやすいため使用できません");
   });
 
   it("長いパスワードでnullを返す", () => {

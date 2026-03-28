@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, STRIPE_PRICES } from "@/lib/stripe";
 import { getBaseUrl } from "@/lib/utils";
+import { checkRateLimit, getClientIp } from "@/lib/api-utils";
 import { logError } from "@/lib/logger";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkRateLimit(getClientIp(request), "stripe_checkout", 10, 60);
+    if (rateLimited) return rateLimited;
     const supabase = await createClient();
     const {
       data: { user },

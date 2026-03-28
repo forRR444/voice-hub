@@ -1,10 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRateLimit, getClientIp } from "@/lib/api-utils";
 import { logError } from "@/lib/logger";
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
+    const rateLimited = await checkRateLimit(getClientIp(request), "account_delete", 3, 60);
+    if (rateLimited) return rateLimited;
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -47,6 +51,9 @@ export async function DELETE() {
       // ワークスペースを削除
       await admin.from("workspaces").delete().eq("id", wsId);
     }
+
+    // セッションを無効化
+    await supabase.auth.signOut();
 
     // Supabase Authからユーザーを削除
     const { error: authError } = await admin.auth.admin.deleteUser(user.id);

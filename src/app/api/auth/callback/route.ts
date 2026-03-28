@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+  const baseUrl = getBaseUrl();
 
   if (code) {
     const supabase = await createClient();
@@ -23,15 +25,15 @@ export async function GET(request: Request) {
         const workspace = workspaces?.[0] ?? null;
 
         if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${origin}/onboarding`);
+          return NextResponse.redirect(`${baseUrl}/onboarding`);
         }
 
-        return NextResponse.redirect(`${origin}/dashboard`);
+        return NextResponse.redirect(`${baseUrl}/dashboard`);
       }
 
-      return NextResponse.redirect(`${origin}/dashboard`);
+      return NextResponse.redirect(`${baseUrl}/dashboard`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  return NextResponse.redirect(`${baseUrl}/login?error=auth`);
 }

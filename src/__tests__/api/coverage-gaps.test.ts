@@ -78,7 +78,8 @@ describe("DELETE /api/account - catch block", () => {
     mockCreateServerClient.mockRejectedValue(new Error("Unexpected crash"));
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(500);
     const body = await response.json();

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { makeRequest } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Module mocks
@@ -12,6 +13,15 @@ vi.mock("@/lib/supabase/server", () => ({
 const mockCreateAdminClient = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => mockCreateAdminClient(),
+}));
+
+vi.mock("@/lib/api-utils", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(null),
+  getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logError: vi.fn(),
 }));
 
 // ---------------------------------------------------------------------------
@@ -63,6 +73,7 @@ function createServerMock(user: { id: string } | null) {
         data: { user },
         error: user ? null : { message: "Not authenticated" },
       }),
+      signOut: vi.fn().mockResolvedValue({ error: null }),
     },
   };
 }
@@ -81,7 +92,8 @@ describe("DELETE /api/account", () => {
     mockCreateServerClient.mockResolvedValue(createServerMock(null));
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(401);
     const body = await response.json();
@@ -98,7 +110,8 @@ describe("DELETE /api/account", () => {
     mockCreateAdminClient.mockReturnValue(admin);
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(200);
     expect((await response.json()).success).toBe(true);
@@ -139,7 +152,8 @@ describe("DELETE /api/account", () => {
     mockCreateAdminClient.mockReturnValue(admin);
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(200);
 
@@ -165,7 +179,8 @@ describe("DELETE /api/account", () => {
     mockCreateAdminClient.mockReturnValue(admin);
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(200);
 
@@ -188,7 +203,8 @@ describe("DELETE /api/account", () => {
     mockCreateAdminClient.mockReturnValue(admin);
 
     const { DELETE } = await import("@/app/api/account/route");
-    const response = await DELETE();
+    const request = makeRequest("http://localhost/api/account", { method: "DELETE" });
+    const response = await DELETE(request as any);
 
     expect(response.status).toBe(500);
     const body = await response.json();

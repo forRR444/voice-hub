@@ -1,8 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { makeRequest } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Mock setup
 // ---------------------------------------------------------------------------
+
+vi.mock("@/lib/api-utils", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(null),
+  getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
+}));
 
 const mockGetUser = vi.fn();
 const mockFrom = vi.fn();
@@ -77,7 +83,8 @@ describe("POST /api/stripe/portal", () => {
     setupAuthFailure();
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(401);
@@ -88,7 +95,8 @@ describe("POST /api/stripe/portal", () => {
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(401);
@@ -100,7 +108,8 @@ describe("POST /api/stripe/portal", () => {
     setupWorkspaceNotFound();
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(404);
@@ -118,7 +127,8 @@ describe("POST /api/stripe/portal", () => {
     mockFrom.mockReturnValue({ select: mockSelect });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(404);
@@ -134,7 +144,8 @@ describe("POST /api/stripe/portal", () => {
     });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(400);
@@ -152,7 +163,8 @@ describe("POST /api/stripe/portal", () => {
     });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(400);
@@ -173,7 +185,8 @@ describe("POST /api/stripe/portal", () => {
     });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(200);
@@ -188,7 +201,8 @@ describe("POST /api/stripe/portal", () => {
     mockGetUser.mockRejectedValue(new Error("Unexpected error"));
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const response = await POST();
+    const request = makeRequest("http://localhost/api/stripe/portal", { method: "POST" });
+    const response = await POST(request as any);
     const json = await response.json();
 
     expect(response.status).toBe(500);

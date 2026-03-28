@@ -1,12 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { getBaseUrl } from "@/lib/utils";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
+  const baseUrl = getBaseUrl();
 
   const supabase = await createClient();
 
@@ -18,7 +20,7 @@ export async function GET(request: Request) {
 
       // Check if this is a recovery flow
       if (type === "recovery") {
-        return NextResponse.redirect(`${origin}/update-password`);
+        return NextResponse.redirect(`${baseUrl}/update-password`);
       }
 
       if (user) {
@@ -29,11 +31,11 @@ export async function GET(request: Request) {
           .single();
 
         if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${origin}/onboarding`);
+          return NextResponse.redirect(`${baseUrl}/onboarding`);
         }
       }
 
-      return NextResponse.redirect(`${origin}/dashboard`);
+      return NextResponse.redirect(`${baseUrl}/dashboard`);
     }
   }
 
@@ -46,7 +48,7 @@ export async function GET(request: Request) {
 
     if (!error) {
       if (type === "recovery") {
-        return NextResponse.redirect(`${origin}/update-password`);
+        return NextResponse.redirect(`${baseUrl}/update-password`);
       }
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -58,13 +60,13 @@ export async function GET(request: Request) {
           .single();
 
         if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${origin}/onboarding`);
+          return NextResponse.redirect(`${baseUrl}/onboarding`);
         }
       }
 
-      return NextResponse.redirect(`${origin}/dashboard`);
+      return NextResponse.redirect(`${baseUrl}/dashboard`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  return NextResponse.redirect(`${baseUrl}/login?error=auth`);
 }
