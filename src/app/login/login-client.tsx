@@ -70,9 +70,14 @@ export default function LoginClient() {
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
-          <p className="mt-2 text-sm text-foreground/60">
-            {isFromTry ? "ログインしてフォームを保存" : "ログイン"}
-          </p>
+          <div className="mt-4 flex gap-12 justify-center border-b border-foreground/10">
+            <span className="pb-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
+              ログイン
+            </span>
+            <Link href="/signup" className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors">
+              新規登録
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-4">
