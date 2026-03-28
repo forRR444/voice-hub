@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
-import { LayoutDashboard, FileText, Code, Settings } from "lucide-react";
+import { LayoutDashboard, FileText, Code, Settings, MessageSquare, ExternalLink } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
 import { PostHogIdentify } from "./posthog-identify";
@@ -15,7 +15,6 @@ const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
   { href: "/dashboard/forms", label: "フォーム設定", icon: FileText },
   { href: "/dashboard/widgets", label: "ウィジェット", icon: Code },
-  { href: "/dashboard/settings", label: "設定", icon: Settings },
 ];
 
 function SidebarContent({ workspaceName }: { workspaceName?: string }) {
@@ -41,6 +40,23 @@ function SidebarContent({ workspaceName }: { workspaceName?: string }) {
             {item.label}
           </Link>
         ))}
+        <a
+          href="https://forms.gle/XA7EA9CNGr67WeSk7"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
+        >
+          <MessageSquare className="h-4 w-4" />
+          お問い合わせ
+          <ExternalLink className="h-3 w-3" />
+        </a>
+        <Link
+          href="/dashboard/settings"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
+        >
+          <Settings className="h-4 w-4" />
+          設定
+        </Link>
       </nav>
     </>
   );

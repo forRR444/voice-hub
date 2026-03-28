@@ -492,6 +492,7 @@ export default function Home() {
           <div className="flex gap-6">
             <Link href="/terms" className="hover:text-gray-600 transition-colors">利用規約</Link>
             <Link href="/privacy" className="hover:text-gray-600 transition-colors">プライバシーポリシー</Link>
+            <a href="https://forms.gle/XA7EA9CNGr67WeSk7" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">お問い合わせ</a>
           </div>
         </div>
       </footer>
