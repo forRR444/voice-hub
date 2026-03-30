@@ -186,7 +186,7 @@ export default function TryClient() {
         }))
       );
     }
-    setStep(3);
+    setStep(2);
   }
 
   const displayTestimonials = importedReviews.length > 0 ? importedReviews : SAMPLE_TESTIMONIALS;
@@ -371,8 +371,17 @@ export default function TryClient() {
             <p className="text-sm text-gray-500 text-center mb-6">
               {importedReviews.length > 0
                 ? "取り込んだGoogle口コミをこんな風にサイトに表示できます"
-                : "このフォームでお客様の声を集めると...\nこんな風にサイトに表示できます"}
+                : "口コミをこんな風にサイトに表示できます"}
             </p>
+
+            <Link
+              href="/signup?from=try"
+              onClick={() => saveTryData()}
+              className="w-full flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 text-sm font-medium text-white hover:bg-indigo-700 mb-2"
+            >
+              無料で登録してサイトに貼り付ける
+            </Link>
+            <p className="text-xs text-gray-400 text-center mb-6">登録不要・クレジットカード不要</p>
 
             {/* HP mockup */}
             <div className="rounded-xl overflow-hidden mb-4 shadow-lg border border-gray-100 -mx-2">
@@ -464,23 +473,11 @@ export default function TryClient() {
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 text-center mb-4">
+            <p className="text-xs text-gray-400 text-center mt-2 mb-4">
               ペライチ・WordPress・どんなサイトにも埋め込めます
             </p>
 
-            <Link
-              href="/signup?from=try"
-              onClick={() => saveTryData()}
-              className="w-full flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 text-sm font-medium text-white hover:bg-indigo-700"
-            >
-              無料で登録して保存
-            </Link>
-
-            <p className="text-xs text-gray-400 text-center mt-3">
-              クレジットカード不要
-            </p>
-
-            <div className="flex items-center justify-center gap-4 mt-4">
+            <div className="flex items-center justify-center gap-4 mt-2">
               <button
                 onClick={() => setStep(1)}
                 className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer"

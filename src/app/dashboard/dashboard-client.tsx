@@ -347,12 +347,8 @@ export default function DashboardClient({
         </div>
       )}
 
-      {/* Try data comparison modal */}
-      {forms.length > 0 && (
-        <TryDataDetector
-          existingForm={forms[0]}
-        />
-      )}
+      {/* Try data: Google口コミをサイレントインポート */}
+      <TryDataDetector workspaceId={workspace.id} />
 
       {/* Add modal */}
       {showAddModal && (
