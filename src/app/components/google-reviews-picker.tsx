@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Search, Star, MapPin, ChevronLeft } from "lucide-react";
 
 type Place = {
@@ -119,6 +119,16 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
       relativePublishTimeDescription: r.relativePublishTimeDescription,
     }));
 
+  const selectAllRef = useRef<HTMLInputElement>(null);
+  const isAllSelected = reviews.length > 0 && selectedIds.size === reviews.length;
+  const isIndeterminate = selectedIds.size > 0 && selectedIds.size < reviews.length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate]);
+
   const listClass = scrollable
     ? "overflow-y-auto flex-1 min-h-0 flex flex-col gap-2"
     : "flex flex-col gap-2";
@@ -203,14 +213,15 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
               <div className="flex items-center justify-between py-2 border-y border-gray-100 shrink-0">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
+                    ref={selectAllRef}
                     type="checkbox"
-                    checked={selectedIds.size === reviews.length}
+                    checked={isAllSelected}
                     onChange={toggleSelectAll}
                     className="accent-indigo-600 cursor-pointer"
                   />
                   <span className="text-sm text-gray-600">すべて選択</span>
                 </label>
-                <span className="text-xs text-gray-400">
+                <span className="text-sm text-gray-400">
                   {selectedIds.size > 0
                     ? `${selectedIds.size} / ${reviews.length}件`
                     : `${reviews.length}件`}
@@ -237,7 +248,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="text-sm font-medium text-gray-800 truncate">
-                          {review.authorAttribution.displayName}
+                          Googleユーザー
                         </span>
                         <span className="text-xs text-gray-400 shrink-0">
                           {review.relativePublishTimeDescription}
