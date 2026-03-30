@@ -249,7 +249,7 @@ export default function TryClient() {
                 )}
 
                 {googlePlaces.length > 0 && (
-                  <div className="flex flex-col gap-2 max-h-52 overflow-y-auto">
+                  <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto">
                     {googlePlaces.map((place) => (
                       <button
                         key={place.id}
