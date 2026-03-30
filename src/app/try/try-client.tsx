@@ -2,31 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, Search, Star, MapPin } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import type { FormQuestion } from "@/types/database";
+import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
 
 const TRY_STORAGE_KEY = "voicehub_try_data";
-
-type Place = {
-  id: string;
-  displayName: { text: string };
-  formattedAddress: string;
-};
-
-type GoogleReview = {
-  name: string;
-  rating: number;
-  text?: { text: string };
-  originalText?: { text: string };
-  authorAttribution: {
-    displayName: string;
-    photoUri?: string;
-  };
-  publishTime: string;
-  relativePublishTimeDescription: string;
-};
 
 type ImportedReview = {
   id: string;
@@ -34,7 +16,6 @@ type ImportedReview = {
   title: string;
   rating: number;
   content: string;
-  photoUri?: string;
   publishTime: string;
 };
 
@@ -68,22 +49,9 @@ function SampleCard({ t, className, compact }: { t: ImportedReview; className?: 
   );
 }
 
-type GoogleStep = "search" | "reviews";
-
 export default function TryClient() {
   const [step, setStep] = useState(1);
   const [questions] = useState<FormQuestion[]>(FORM_TEMPLATES[0].questions);
-
-  // Google Reviews state
-  const [googleStep, setGoogleStep] = useState<GoogleStep>("search");
-  const [googleQuery, setGoogleQuery] = useState("");
-  const [googleSearchLoading, setGoogleSearchLoading] = useState(false);
-  const [googlePlaces, setGooglePlaces] = useState<Place[]>([]);
-  const [googleSelectedPlace, setGoogleSelectedPlace] = useState<Place | null>(null);
-  const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
-  const [googleReviewsLoading, setGoogleReviewsLoading] = useState(false);
-  const [googleSelectedIds, setGoogleSelectedIds] = useState<Set<string>>(new Set());
-  const [googleError, setGoogleError] = useState("");
   const [importedReviews, setImportedReviews] = useState<ImportedReview[]>([]);
 
   function saveTryData() {
@@ -104,88 +72,17 @@ export default function TryClient() {
     }
   }
 
-  // Google Reviews: ビジネス検索
-  async function handleGoogleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!googleQuery.trim()) return;
-    setGoogleSearchLoading(true);
-    setGoogleError("");
-    setGooglePlaces([]);
-
-    const res = await fetch(
-      `/api/google-reviews?action=search&query=${encodeURIComponent(googleQuery)}`
+  function handleImport(picked: PickedReview[]) {
+    setImportedReviews(
+      picked.map((r, i) => ({
+        id: `google-${i}`,
+        name: "Googleユーザー",
+        title: r.relativePublishTimeDescription,
+        rating: r.rating,
+        content: r.content,
+        publishTime: r.publishTime,
+      }))
     );
-    const data = await res.json();
-    setGoogleSearchLoading(false);
-
-    if (!res.ok) {
-      setGoogleError(data.error || "検索に失敗しました");
-      return;
-    }
-    setGooglePlaces(data.places);
-    if (data.places.length === 0) {
-      setGoogleError("ビジネスが見つかりませんでした。別のキーワードで試してください。");
-    }
-  }
-
-  // Google Reviews: ビジネス選択 → 口コミ取得
-  async function handleGoogleSelectPlace(place: Place) {
-    setGoogleSelectedPlace(place);
-    setGoogleStep("reviews");
-    setGoogleSelectedIds(new Set());
-    setGoogleError("");
-    setGoogleReviewsLoading(true);
-    setGoogleReviews([]);
-
-    const res = await fetch(
-      `/api/google-reviews?action=reviews&placeId=${encodeURIComponent(place.id)}`
-    );
-    const data = await res.json();
-    setGoogleReviewsLoading(false);
-
-    if (!res.ok) {
-      setGoogleError(data.error || "口コミの取得に失敗しました");
-      return;
-    }
-    setGoogleReviews(data.reviews);
-    if (data.reviews.length === 0) {
-      setGoogleError("口コミがまだありません。");
-    }
-  }
-
-  function toggleGoogleSelect(reviewName: string) {
-    setGoogleSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(reviewName)) next.delete(reviewName);
-      else next.add(reviewName);
-      return next;
-    });
-  }
-
-  function toggleGoogleSelectAll() {
-    if (googleSelectedIds.size === googleReviews.length) {
-      setGoogleSelectedIds(new Set());
-    } else {
-      setGoogleSelectedIds(new Set(googleReviews.map((r) => r.name)));
-    }
-  }
-
-  // Google Reviews: 取り込んで次へ
-  function handleGoogleNext() {
-    if (googleSelectedIds.size > 0) {
-      const selected = googleReviews.filter((r) => googleSelectedIds.has(r.name));
-      setImportedReviews(
-        selected.map((r, i) => ({
-          id: `google-${i}`,
-          name: "Googleユーザー",
-          title: r.relativePublishTimeDescription,
-          rating: r.rating,
-          content: r.originalText?.text || r.text?.text || "",
-          photoUri: undefined,
-          publishTime: r.publishTime,
-        }))
-      );
-    }
     setStep(2);
   }
 
@@ -218,147 +115,28 @@ export default function TryClient() {
               </p>
             </div>
 
-            {googleError && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-                {googleError}
-              </div>
-            )}
-
-            {googleStep === "search" && (
-              <>
-                <form onSubmit={handleGoogleSearch} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={googleQuery}
-                    onChange={(e) => setGoogleQuery(e.target.value)}
-                    placeholder="ビジネス名を入力（例：田中歯科クリニック 東京）"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+            <GoogleReviewsPicker
+              footer={(selectedReviews) => (
+                <div className="flex justify-end gap-2 mt-2">
                   <button
-                    type="submit"
-                    disabled={googleSearchLoading || !googleQuery.trim()}
-                    className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer flex items-center gap-1.5 shrink-0"
+                    onClick={() => setStep(2)}
+                    className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
                   >
-                    <Search size={15} />
-                    検索
+                    スキップして次へ
                   </button>
-                </form>
-
-                {googleSearchLoading && (
-                  <p className="text-sm text-gray-400 text-center py-2">検索中...</p>
-                )}
-
-                {googlePlaces.length > 0 && (
-                  <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto">
-                    {googlePlaces.map((place) => (
-                      <button
-                        key={place.id}
-                        onClick={() => handleGoogleSelectPlace(place)}
-                        className="text-left p-3 rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors cursor-pointer"
-                      >
-                        <p className="text-sm font-medium text-gray-900">{place.displayName.text}</p>
-                        <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                          <MapPin size={11} />
-                          {place.formattedAddress}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-
-            {googleStep === "reviews" && (
-              <>
-                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => { setGoogleStep("search"); setGoogleError(""); }}
-                    className="text-xs text-indigo-600 hover:text-indigo-800 cursor-pointer"
+                    onClick={() => handleImport(selectedReviews)}
+                    disabled={selectedReviews.length === 0}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
                   >
-                    ← 検索に戻る
+                    {selectedReviews.length > 0
+                      ? `${selectedReviews.length}件を取り込む`
+                      : "取り込む"}
+                    <ArrowRight size={16} />
                   </button>
-                  <span className="text-sm font-medium text-gray-700 truncate">
-                    {googleSelectedPlace?.displayName.text}
-                  </span>
                 </div>
-
-                {googleReviewsLoading && (
-                  <p className="text-sm text-gray-400 text-center py-2">取得中...</p>
-                )}
-
-                {googleReviews.length > 0 && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={toggleGoogleSelectAll}
-                        className="text-xs text-indigo-600 hover:text-indigo-800 cursor-pointer"
-                      >
-                        {googleSelectedIds.size === googleReviews.length ? "選択を解除" : "全て選択"}
-                      </button>
-                      <span className="text-xs text-gray-400">{googleReviews.length}件</span>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {googleReviews.map((review) => (
-                        <label
-                          key={review.name}
-                          className={`flex gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                            googleSelectedIds.has(review.name)
-                              ? "border-indigo-300 bg-indigo-50/50"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={googleSelectedIds.has(review.name)}
-                            onChange={() => toggleGoogleSelect(review.name)}
-                            className="mt-0.5 accent-indigo-600 cursor-pointer shrink-0"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-1">
-                              <span className="text-sm font-medium text-gray-800 truncate">
-                                {review.authorAttribution.displayName}
-                              </span>
-                              <span className="text-xs text-gray-400 shrink-0">
-                                {review.relativePublishTimeDescription}
-                              </span>
-                            </div>
-                            <div className="flex gap-0.5 mb-1">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} size={12}
-                                  className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-gray-200"}
-                                />
-                              ))}
-                            </div>
-                            {(review.originalText?.text || review.text?.text) && (
-                              <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                                {review.originalText?.text || review.text?.text}
-                              </p>
-                            )}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-
-            <div className="flex justify-end gap-2 mt-2">
-                <button
-                  onClick={() => setStep(2)}
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                >
-                  スキップして次へ
-                </button>
-                <button
-                  onClick={handleGoogleNext}
-                  disabled={googleSelectedIds.size === 0}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-                >
-                  {googleSelectedIds.size > 0 ? `${googleSelectedIds.size}件を取り込む` : "取り込む"}
-                  <ArrowRight size={16} />
-                </button>
-            </div>
+              )}
+            />
           </div>
         )}
 
@@ -503,7 +281,6 @@ export default function TryClient() {
           トップに戻る
         </Link>
       </p>
-
     </>
   );
 }
