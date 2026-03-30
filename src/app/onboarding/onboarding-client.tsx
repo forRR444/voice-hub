@@ -35,10 +35,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
   const supabase = createClient();
 
   const [step, setStep] = useState(1);
-  const [path, setPath] = useState<"form" | "google" | null>(null);
   const [workspaceName, setWorkspaceName] = useState(workspace.name);
-  const [selectedTemplate, setSelectedTemplate] = useState("coaching");
-  const [questions, setQuestions] = useState<FormQuestion[]>(FORM_TEMPLATES[0].questions);
+  const [questions] = useState<FormQuestion[]>(FORM_TEMPLATES[0].questions);
   const [creating, setCreating] = useState(false);
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -198,25 +196,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
       return;
     }
 
-    // Template from localStorage
-    const stored = localStorage.getItem("voicehub_template");
-    if (stored) {
-      localStorage.removeItem("voicehub_template");
-      const template = FORM_TEMPLATES.find(t => t.id === stored);
-      if (template) {
-        setSelectedTemplate(stored);
-        setQuestions(template.questions);
-      }
-    }
-
     setChecking(false);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleTemplateChange(templateId: string) {
-    setSelectedTemplate(templateId);
-    const template = FORM_TEMPLATES.find((t) => t.id === templateId);
-    if (template) setQuestions(template.questions);
-  }
 
   // Google Reviews: ビジネス検索
   async function handleGoogleSearch(e: React.FormEvent) {
@@ -269,7 +250,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
     }
   }
 
-  // Step 2 → Step 3: Google口コミ保存 + フォーム・ウィジェット作成
+  // Step 1 → Step 2: フォーム・ウィジェット作成 + Google口コミ保存
   async function handleSetupAndNext(skipGoogle = false) {
     setCreating(true);
     setError(null);
@@ -277,14 +258,13 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
       await supabase.from("workspaces").update({ name: workspaceName }).eq("id", workspace.id);
 
       const slug = generateSlug();
-      const template = FORM_TEMPLATES.find(t => t.id === selectedTemplate);
       const { data: form, error: formError } = await supabase
         .from("forms")
         .insert({
           workspace_id: workspace.id,
           slug,
           title: "お客様の声をお聞かせください",
-          questions: template?.questions || questions,
+          questions,
           brand_color: DEFAULT_BRAND_COLOR,
           thank_you_message: "ご回答いただきありがとうございます！",
         })
@@ -292,7 +272,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         .single();
       if (formError) throw formError;
 
-      // Google口コミをインポート
       if (!skipGoogle && googleSelectedIds.size > 0) {
         const toImport = googleReviews.filter(r => googleSelectedIds.has(r.name));
         await supabase.from("testimonials").insert(
@@ -340,7 +319,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
       if (widgetError) throw widgetError;
 
       setWidgetId(widget.id);
-      setStep(3);
+      setStep(2);
     } catch (e) {
       setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
     } finally {
@@ -348,7 +327,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
     }
   }
 
-  // Step 3 → ダッシュボード
+  // Step 2 → ダッシュボード
   async function handleFinish() {
     await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
     router.push("/dashboard");
@@ -393,103 +372,13 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
       {/* Progress bar */}
       <div className="flex gap-2 mb-8">
-        {[1, 2, 3].map((i) => (
+        {[1, 2].map((i) => (
           <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= step ? "bg-indigo-500" : "bg-gray-200"}`} />
         ))}
       </div>
 
-      {/* Step 1: パス選択 */}
+      {/* Step 1: Google口コミ取り込み */}
       {step === 1 && (
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">どちらで始めますか？</h2>
-          <p className="text-sm text-gray-500 text-center mb-8">あとからどちらも使えます。</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => { setPath("form"); setStep(2); }}
-              className="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors cursor-pointer text-left"
-            >
-              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900 text-center">フォームを作成する</p>
-                <p className="text-xs text-gray-500 text-center mt-1">お客様に記入してもらう</p>
-              </div>
-            </button>
-
-            <button
-              onClick={() => { setPath("google"); setStep(2); }}
-              className="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors cursor-pointer text-left"
-            >
-              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900 text-center">Google口コミを取り込む</p>
-                <p className="text-xs text-gray-500 text-center mt-1">既存の口コミをすぐに表示</p>
-              </div>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: フォームパス - サービス名 + テンプレート */}
-      {step === 2 && path === "form" && (
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">フォームを作りましょう</h2>
-          <p className="text-sm text-gray-500 text-center mb-6">サービス名と業種を選んでください。</p>
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">サービス名</label>
-          <input
-            type="text"
-            value={workspaceName}
-            onChange={(e) => setWorkspaceName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6"
-            placeholder="例：山田コーチング"
-            autoFocus
-          />
-
-          <label className="block text-sm font-medium text-gray-700 mb-2">業種テンプレート</label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
-            {FORM_TEMPLATES.map((tpl) => (
-              <button
-                key={tpl.id}
-                onClick={() => handleTemplateChange(tpl.id)}
-                className={`text-left p-3 rounded-lg border-2 transition-colors cursor-pointer ${
-                  selectedTemplate === tpl.id ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <span className="block text-sm font-medium text-gray-900">{tpl.label}</span>
-                <span className="block text-xs text-gray-500 mt-0.5">{tpl.description}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex justify-between">
-            <button onClick={() => setStep(1)} className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 cursor-pointer">
-              <ArrowLeft size={16} />戻る
-            </button>
-            <button
-              onClick={() => handleSetupAndNext(true)}
-              disabled={!workspaceName.trim()}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-            >
-              作成する <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Googleパス - 口コミ取り込み */}
-      {step === 2 && path === "google" && (
         <div className="flex flex-col gap-4">
           <div className="text-center mb-2">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Google口コミを取り込む</h2>
@@ -573,7 +462,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                     </button>
                     <span className="text-xs text-gray-400">{googleReviews.length}件</span>
                   </div>
-                  <div className="flex flex-col gap-2 max-h-56 overflow-y-auto">
+                  <div className="flex flex-col gap-2">
                     {googleReviews.map((review) => (
                       <label
                         key={review.name}
@@ -611,35 +500,27 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             </>
           )}
 
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-end gap-2 mt-2">
             <button
-              onClick={() => setStep(1)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 cursor-pointer"
+              onClick={() => handleSetupAndNext(true)}
+              className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
             >
-              <ArrowLeft size={16} />戻る
+              スキップして次へ
             </button>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleSetupAndNext(true)}
-                className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
-              >
-                スキップして次へ
-              </button>
-              <button
-                onClick={() => handleSetupAndNext(false)}
-                disabled={googleSelectedIds.size === 0}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-              >
-                {googleSelectedIds.size > 0 ? `${googleSelectedIds.size}件を取り込む` : "取り込む"}
-                <ArrowRight size={16} />
-              </button>
-            </div>
+            <button
+              onClick={() => handleSetupAndNext(false)}
+              disabled={googleSelectedIds.size === 0}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+            >
+              {googleSelectedIds.size > 0 ? `${googleSelectedIds.size}件を取り込む` : "取り込む"}
+              <ArrowRight size={16} />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Step 3: 埋め込みコード */}
-      {step === 3 && (
+      {/* Step 2: 埋め込みコード */}
+      {step === 2 && (
         <div>
           <div className="text-center mb-6">
             <div className="relative mx-auto w-16 h-16 mb-4">
@@ -682,6 +563,15 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             ダッシュボードへ
             <ArrowRight size={16} />
           </button>
+
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              <ArrowLeft size={14} />戻る
+            </button>
+          </div>
         </div>
       )}
     </div>
