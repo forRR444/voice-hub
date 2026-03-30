@@ -177,11 +177,11 @@ export default function TryClient() {
       setImportedReviews(
         selected.map((r, i) => ({
           id: `google-${i}`,
-          name: r.authorAttribution.displayName,
+          name: "Googleユーザー",
           title: r.relativePublishTimeDescription,
           rating: r.rating,
           content: r.originalText?.text || r.text?.text || "",
-          photoUri: r.authorAttribution.photoUri,
+          photoUri: undefined,
           publishTime: r.publishTime,
         }))
       );

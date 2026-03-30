@@ -29,10 +29,10 @@ export default function TryDataDetector({
         parsed.googleReviews.map((r) => ({
           workspace_id: workspaceId,
           form_id: null,
-          name: r.name,
+          name: "Googleユーザー",
           content: r.content,
           rating: r.rating,
-          avatar_url: r.photoUri || null,
+          avatar_url: null,
           status: "approved",
           source: "google",
           is_featured: false,

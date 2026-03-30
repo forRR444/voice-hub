@@ -128,10 +128,10 @@ export default function GoogleReviewsModal({
     const rows = toImport.map((r) => ({
       workspace_id: workspaceId,
       form_id: null,
-      name: r.authorAttribution.displayName,
+      name: "Googleユーザー",
       content: r.originalText?.text || r.text?.text || "",
       rating: r.rating,
-      avatar_url: r.authorAttribution.photoUri || null,
+      avatar_url: null,
       status: "pending" as const,
       source: "google",
       is_featured: false,
