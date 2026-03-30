@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { getClientIp, checkRateLimit } from "@/lib/api-utils";
+import { RATE_LIMITS } from "@/lib/constants";
 
 const PLACES_API_BASE = "https://places.googleapis.com/v1";
 
@@ -9,6 +12,30 @@ export async function GET(request: NextRequest) {
       { error: "Google Places APIキーが設定されていません" },
       { status: 500 }
     );
+  }
+
+  // ログイン状態を確認してレートリミットを分ける
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const ip = getClientIp(request);
+
+  if (user) {
+    const { limit, windowMs } = RATE_LIMITS.googleReviewsUser;
+    const rateLimited = await checkRateLimit(`google-reviews:user:${user.id}`, limit, windowMs);
+    if (rateLimited) return rateLimited;
+  } else {
+    const hourly = await checkRateLimit(
+      `google-reviews:guest:hourly:${ip}`,
+      RATE_LIMITS.googleReviewsGuestHourly.limit,
+      RATE_LIMITS.googleReviewsGuestHourly.windowMs,
+    );
+    if (hourly) return hourly;
+    const daily = await checkRateLimit(
+      `google-reviews:guest:daily:${ip}`,
+      RATE_LIMITS.googleReviewsGuestDaily.limit,
+      RATE_LIMITS.googleReviewsGuestDaily.windowMs,
+    );
+    if (daily) return daily;
   }
 
   const { searchParams } = new URL(request.url);

@@ -13,6 +13,9 @@ export const IMAGE_RESIZE_MAX_PX = 800;
 export const RATE_LIMITS = {
   formGet: { limit: 60, windowMs: 60 * 1000 },
   testimonialSubmit: { limit: 5, windowMs: 15 * 60 * 1000 },
+  googleReviewsGuestHourly: { limit: 6, windowMs: 60 * 60 * 1000 },       // 未ログイン: 3フロー/時間
+  googleReviewsGuestDaily: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },  // 未ログイン: 10フロー/日
+  googleReviewsUser: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },         // ログイン済み: 10フロー/日
 } as const;
 
 // ウィジェットタイプ一覧
