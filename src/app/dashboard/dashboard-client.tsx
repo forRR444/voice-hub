@@ -288,9 +288,11 @@ export default function DashboardClient({
       </div>}
 
       {/* Testimonial list */}
-      {filtered.length === 0 ? (
+      {filtered.length === 0 && !search.trim() && filter === "all" ? (
+        <GuideCard formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl} />
+      ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-foreground/50">
-          お客様の声がまだありません
+          該当する口コミがありません
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -300,47 +302,14 @@ export default function DashboardClient({
               testimonial={t}
               onApprove={() => updateStatus(t.id, "approved")}
               onReject={() => updateStatus(t.id, "rejected")}
-              onToggleFeatured={() =>
-                toggleFeatured(t.id, t.is_featured)
-              }
+              onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
               onCreateSnsImage={() => setSnsImageTarget(t)}
               onDeleteGuide={async (id) => {
                 await supabase.from("testimonials").delete().eq("id", id);
                 setTestimonials((prev) => prev.filter((item) => item.id !== id));
               }}
               formSlug={forms.length > 0 ? forms[0].slug : undefined}
-              onCopyUrl={forms.length > 0 ? async () => {
-                copyFormUrl(forms[0].slug);
-                // Insert next guide message if not already exists
-                const { data: existing } = await supabase
-                  .from("testimonials")
-                  .select("id")
-                  .eq("workspace_id", workspace.id)
-                  .eq("source", "guide")
-                  .neq("id", t.id)
-                  .limit(1);
-                if (!existing || existing.length === 0) {
-                  const { data: newGuide } = await supabase
-                    .from("testimonials")
-                    .insert({
-                      workspace_id: workspace.id,
-                      form_id: forms[0].id,
-                      rating: 5,
-                      content: "お客様の回答が届いたら「承認」ボタンを押してください。ホームページへの埋め込みは[[ウィジェット管理]]から設定できます。以上でガイドを終了します。",
-                      name: "VoiceHub ガイド",
-                      title: "ご案内",
-                      status: "approved",
-                      is_featured: false,
-                      permission_granted: true,
-                      source: "guide",
-                    })
-                    .select()
-                    .single();
-                  if (newGuide) {
-                    setTestimonials((prev) => [{ ...newGuide, tags: [] }, ...prev]);
-                  }
-                }
-              } : undefined}
+              onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined}
               urlCopied={copiedUrl}
             />
           ))}
@@ -430,6 +399,34 @@ function Stars({ rating }: { rating: number | null }) {
           }
         />
       ))}
+    </div>
+  );
+}
+
+function GuideCard({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
+  return (
+    <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="font-medium text-foreground">VoiceHub ガイド</span>
+        <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+      </div>
+      <p className="text-sm text-foreground/60 leading-relaxed">
+        下のURLをコピーして、お客様にLINEやメールで送ってください。お客様の回答がここに届きます。
+      </p>
+      {formSlug && onCopyUrl && (
+        <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
+          <code className="flex-1 text-xs text-foreground/60 truncate">
+            {getBaseUrl()}/form/{formSlug}
+          </code>
+          <button
+            onClick={onCopyUrl}
+            className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+          >
+            {urlCopied ? "✓ コピー済み" : "URLをコピー"}
+          </button>
+        </div>
+      )}
+      <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
     </div>
   );
 }

@@ -103,18 +103,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                 );
               }
 
-              await supabase.from("testimonials").insert({
-                workspace_id: workspace.id,
-                form_id: form.id,
-                rating: 5,
-                content: "下のURLをコピーして、お客様にLINEやメールで送ってください。",
-                name: "VoiceHub ガイド",
-                title: "ご案内",
-                status: "approved",
-                is_featured: false,
-                permission_granted: true,
-                source: "guide",
-              });
               await supabase.from("widgets").insert({
                 workspace_id: workspace.id,
                 name: "カルーセル",
@@ -164,18 +152,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             .select("id")
             .single();
           if (formError) throw formError;
-          await supabase.from("testimonials").insert({
-            workspace_id: workspace.id,
-            form_id: form.id,
-            rating: 5,
-            content: "下のURLをコピーして、お客様にLINEやメールで送ってください。",
-            name: "VoiceHub ガイド",
-            title: "ご案内",
-            status: "approved",
-            is_featured: false,
-            permission_granted: true,
-            source: "guide",
-          });
           await supabase.from("widgets").insert({
             workspace_id: workspace.id,
             name: "カルーセル",
@@ -291,18 +267,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         );
       }
 
-      await supabase.from("testimonials").insert({
-        workspace_id: workspace.id,
-        form_id: form.id,
-        rating: 5,
-        content: "下のURLをコピーして、お客様にLINEやメールで送ってください。お客様の回答がここに届きます。",
-        name: "VoiceHub ガイド",
-        title: "ご案内",
-        status: "approved",
-        is_featured: false,
-        permission_granted: true,
-        source: "guide",
-      });
 
       const { data: widget, error: widgetError } = await supabase
         .from("widgets")
