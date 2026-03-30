@@ -20,20 +20,26 @@ export async function GET(request: NextRequest) {
   const ip = getClientIp(request);
 
   if (user) {
-    const { limit, windowMs } = RATE_LIMITS.googleReviewsUser;
-    const rateLimited = await checkRateLimit(`google-reviews:user:${user.id}`, limit, windowMs);
+    const rateLimited = await checkRateLimit(
+      `google-reviews:user:${user.id}`,
+      RATE_LIMITS.googleReviewsUser.limit,
+      RATE_LIMITS.googleReviewsUser.windowMs,
+      "本日の利用上限に達しました。",
+    );
     if (rateLimited) return rateLimited;
   } else {
     const hourly = await checkRateLimit(
       `google-reviews:guest:hourly:${ip}`,
       RATE_LIMITS.googleReviewsGuestHourly.limit,
       RATE_LIMITS.googleReviewsGuestHourly.windowMs,
+      "1時間あたりの利用上限に達しました。",
     );
     if (hourly) return hourly;
     const daily = await checkRateLimit(
       `google-reviews:guest:daily:${ip}`,
       RATE_LIMITS.googleReviewsGuestDaily.limit,
       RATE_LIMITS.googleReviewsGuestDaily.windowMs,
+      "本日の利用上限に達しました。",
     );
     if (daily) return daily;
   }

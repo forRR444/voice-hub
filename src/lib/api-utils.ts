@@ -18,13 +18,11 @@ export async function checkRateLimit(
   key: string,
   limit: number,
   windowMs: number,
+  message = "リクエスト数の制限に達しました。しばらくしてからもう一度お試しください。",
 ): Promise<NextResponse | null> {
   const { success } = await rateLimitAsync(key, limit, windowMs);
   if (!success) {
-    return NextResponse.json(
-      { error: "リクエスト数の制限に達しました。しばらくしてからもう一度お試しください。" },
-      { status: 429 },
-    );
+    return NextResponse.json({ error: message }, { status: 429 });
   }
   return null;
 }
