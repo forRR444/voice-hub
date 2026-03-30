@@ -11,6 +11,7 @@ import {
   QrCode,
   Download,
 } from "lucide-react";
+import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, FormRow, FormQuestion, PLAN_LIMITS } from "@/types/database";
@@ -40,7 +41,7 @@ export default function FormsClient({
     brand_color: DEFAULT_BRAND_COLOR,
     thank_you_message: "",
   });
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { copiedKey: copiedId, copy } = useCopy();
   const [editQuestions, setEditQuestions] = useState<FormQuestion[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("coaching");
@@ -125,10 +126,7 @@ export default function FormsClient({
 
 
   function copyUrl(slug: string, id: string) {
-    const url = `${getBaseUrl()}/form/${slug}`;
-    navigator.clipboard.writeText(url);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    copy(`${getBaseUrl()}/form/${slug}`, id);
   }
 
   function downloadQr() {

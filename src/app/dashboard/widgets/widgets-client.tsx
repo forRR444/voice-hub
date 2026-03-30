@@ -23,6 +23,8 @@ import {
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
+import Modal from "@/app/components/modal";
+import { useCopy } from "@/hooks/use-copy";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 
@@ -49,7 +51,7 @@ export default function WidgetsClient({
   const [widgets, setWidgets] = useState<WidgetRow[]>(initialWidgets);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { copiedKey: copiedField, copy: copyText } = useCopy();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<WidgetFormState>({
@@ -165,12 +167,6 @@ export default function WidgetsClient({
     }
   }
 
-  function copyText(text: string, key: string) {
-    navigator.clipboard.writeText(text);
-    setCopiedField(key);
-    setTimeout(() => setCopiedField(null), 2000);
-  }
-
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -197,41 +193,32 @@ export default function WidgetsClient({
 
       {/* Create modal */}
       {showCreate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-sm w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-foreground">
-                新しいウィジェット作成
-              </h3>
+        <Modal
+          title="新しいウィジェット作成"
+          onClose={() => setShowCreate(false)}
+          rounded="rounded-lg"
+          className="max-h-[90vh] overflow-y-auto"
+        >
+          <div className="flex flex-col gap-4">
+            <WidgetThemeForm form={newWidget} onChange={setNewWidget} />
+
+            <div className="flex justify-end gap-3 mt-2">
               <button
                 onClick={() => setShowCreate(false)}
-                className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"
+                className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
               >
-                <X size={20} />
+                キャンセル
+              </button>
+              <button
+                onClick={handleCreate}
+                disabled={creating || !newWidget.name.trim()}
+                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+              >
+                {creating ? "作成中..." : "作成する"}
               </button>
             </div>
-
-            <div className="flex flex-col gap-4">
-              <WidgetThemeForm form={newWidget} onChange={setNewWidget} />
-
-              <div className="flex justify-end gap-3 mt-2">
-                <button
-                  onClick={() => setShowCreate(false)}
-                  className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-                >
-                  キャンセル
-                </button>
-                <button
-                  onClick={handleCreate}
-                  disabled={creating || !newWidget.name.trim()}
-                  className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-                >
-                  {creating ? "作成中..." : "作成する"}
-                </button>
-              </div>
-            </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Widget list */}

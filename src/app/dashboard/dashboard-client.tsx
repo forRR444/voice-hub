@@ -24,6 +24,7 @@ import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
 import SnsImageModal from "./sns-image-modal";
+import { useCopy } from "@/hooks/use-copy";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
 
@@ -50,7 +51,7 @@ export default function DashboardClient({
   const [showAddModal, setShowAddModal] = useState(false);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState(false);
+  const { copiedKey: copiedUrl, copy } = useCopy();
   const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
   const filtered = useMemo(() => {
     let list = testimonials;
@@ -112,11 +113,8 @@ export default function DashboardClient({
   }
 
   function copyFormUrl(slug: string) {
-    const url = `${getBaseUrl()}/form/${slug}`;
-    navigator.clipboard.writeText(url);
-    setCopiedUrl(true);
+    copy(`${getBaseUrl()}/form/${slug}`);
     setShowFormMenu(false);
-    setTimeout(() => setCopiedUrl(false), 2000);
   }
 
   function handleTestimonialAdded(t: TestimonialWithTags) {
@@ -289,7 +287,7 @@ export default function DashboardClient({
 
       {/* Testimonial list */}
       {filtered.length === 0 && !search.trim() && filter === "all" ? (
-        <GuideCard formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl} />
+        <GuideCard formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-foreground/50">
           該当する口コミがありません
@@ -310,7 +308,7 @@ export default function DashboardClient({
               }}
               formSlug={forms.length > 0 ? forms[0].slug : undefined}
               onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined}
-              urlCopied={copiedUrl}
+              urlCopied={copiedUrl !== null}
             />
           ))}
         </div>

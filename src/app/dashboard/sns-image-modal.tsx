@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Download, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import {
   generateTestimonialImage,
   TemplateSize,
 } from "@/lib/canvas-image-generator";
 import { TestimonialWithTags } from "@/types/database";
+import Modal from "@/app/components/modal";
 
 const TEMPLATE_OPTIONS: { key: TemplateSize; label: string }[] = [
   { key: "instagram-story", label: "Instagram ストーリー" },
@@ -77,60 +78,46 @@ export default function SnsImageModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-sm w-full max-w-lg mx-4 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-foreground">
-            SNS画像を作成
-          </h3>
+    <Modal title="SNS画像を作成" onClose={onClose}>
+      {/* Template selector */}
+      <div className="flex gap-2 mb-4">
+        {TEMPLATE_OPTIONS.map((opt) => (
           <button
-            onClick={onClose}
-            className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"
+            key={opt.key}
+            onClick={() => setSelectedTemplate(opt.key)}
+            className={`flex-1 px-3 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${
+              selectedTemplate === opt.key
+                ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
+                : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
+            }`}
           >
-            <X size={20} />
+            {opt.label}
           </button>
-        </div>
-
-        {/* Template selector */}
-        <div className="flex gap-2 mb-4">
-          {TEMPLATE_OPTIONS.map((opt) => (
-            <button
-              key={opt.key}
-              onClick={() => setSelectedTemplate(opt.key)}
-              className={`flex-1 px-3 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${
-                selectedTemplate === opt.key
-                  ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
-                  : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Preview area */}
-        <div className="flex items-center justify-center bg-foreground/5 rounded-lg mb-4 max-h-[400px] min-h-[200px] overflow-hidden">
-          {generating ? (
-            <Loader2 size={32} className="animate-spin text-foreground/30" />
-          ) : previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="SNS画像プレビュー"
-              className="object-contain max-h-[400px] w-full"
-            />
-          ) : null}
-        </div>
-
-        {/* Download button */}
-        <button
-          onClick={handleDownload}
-          disabled={generating || !previewUrl}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-        >
-          <Download size={16} />
-          ダウンロード
-        </button>
+        ))}
       </div>
-    </div>
+
+      {/* Preview area */}
+      <div className="flex items-center justify-center bg-foreground/5 rounded-lg mb-4 max-h-[400px] min-h-[200px] overflow-hidden">
+        {generating ? (
+          <Loader2 size={32} className="animate-spin text-foreground/30" />
+        ) : previewUrl ? (
+          <img
+            src={previewUrl}
+            alt="SNS画像プレビュー"
+            className="object-contain max-h-[400px] w-full"
+          />
+        ) : null}
+      </div>
+
+      {/* Download button */}
+      <button
+        onClick={handleDownload}
+        disabled={generating || !previewUrl}
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+      >
+        <Download size={16} />
+        ダウンロード
+      </button>
+    </Modal>
   );
 }

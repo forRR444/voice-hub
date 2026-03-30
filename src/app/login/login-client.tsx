@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { validateEmail, validatePassword } from "@/lib/validation";
-import { preserveTemplate, translateOAuthError } from "@/lib/auth-utils";
+import { preserveTemplate } from "@/lib/auth-utils";
+import { useGoogleOAuth } from "@/hooks/use-google-oauth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -18,6 +19,7 @@ export default function LoginClient() {
   const router = useRouter();
 
   const supabase = createClient();
+  const { handleGoogleLogin } = useGoogleOAuth({ setLoading, setError });
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -36,26 +38,6 @@ export default function LoginClient() {
       setLoading(null);
     } else {
       router.push("/dashboard");
-    }
-  }
-
-  async function handleGoogleLogin() {
-    setLoading("google");
-    setError(null);
-    preserveTemplate();
-
-    const callbackUrl = new URL("/api/auth/callback", window.location.origin);
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: callbackUrl.toString(),
-      },
-    });
-
-    if (error) {
-      setError(translateOAuthError(error.message));
-      setLoading(null);
     }
   }
 
