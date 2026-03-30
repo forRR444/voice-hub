@@ -18,11 +18,13 @@ export default function GoogleReviewsModal({
   const supabase = createClient();
   const [importing, setImporting] = useState(false);
   const [importError, setImportError] = useState("");
+  const [importResult, setImportResult] = useState<{ added: number; skipped: number } | null>(null);
 
   async function handleImport(selectedReviews: PickedReview[]) {
     if (selectedReviews.length === 0) return;
     setImporting(true);
     setImportError("");
+    setImportResult(null);
 
     const rows = selectedReviews.map((r) => ({
       workspace_id: workspaceId,
@@ -33,6 +35,7 @@ export default function GoogleReviewsModal({
       avatar_url: null,
       status: "pending" as const,
       source: "google",
+      source_id: r.googleId,
       is_featured: false,
       permission_granted: true,
       submitted_at: r.publishTime,
@@ -40,7 +43,7 @@ export default function GoogleReviewsModal({
 
     const { data, error: insertError } = await supabase
       .from("testimonials")
-      .insert(rows)
+      .upsert(rows, { onConflict: "workspace_id,source_id", ignoreDuplicates: true })
       .select();
 
     setImporting(false);
@@ -50,7 +53,11 @@ export default function GoogleReviewsModal({
       return;
     }
 
-    if (data) {
+    const added = data?.length ?? 0;
+    const skipped = selectedReviews.length - added;
+    setImportResult({ added, skipped });
+
+    if (data && data.length > 0) {
       onImported(data.map((t) => ({ ...t, tags: [] })));
     }
   }
@@ -75,6 +82,13 @@ export default function GoogleReviewsModal({
           </div>
         )}
 
+        {importResult && (
+          <div className="mb-4 text-sm bg-green-50 text-green-700 p-3 rounded-lg shrink-0">
+            {importResult.added}件を追加しました
+            {importResult.skipped > 0 && `（${importResult.skipped}件はすでにインポート済みのためスキップ）`}
+          </div>
+        )}
+
         <GoogleReviewsPicker
           scrollable
           footer={(selectedReviews) => (
@@ -84,15 +98,17 @@ export default function GoogleReviewsModal({
                 onClick={onClose}
                 className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
               >
-                キャンセル
+                {importResult ? "閉じる" : "キャンセル"}
               </button>
-              <button
-                onClick={() => handleImport(selectedReviews)}
-                disabled={selectedReviews.length === 0 || importing}
-                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-              >
-                {importing ? "インポート中..." : `${selectedReviews.length}件をインポート`}
-              </button>
+              {!importResult && (
+                <button
+                  onClick={() => handleImport(selectedReviews)}
+                  disabled={selectedReviews.length === 0 || importing}
+                  className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+                >
+                  {importing ? "インポート中..." : `${selectedReviews.length}件をインポート`}
+                </button>
+              )}
             </div>
           )}
         />

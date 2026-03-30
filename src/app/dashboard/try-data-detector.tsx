@@ -3,17 +3,22 @@
 import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+type TryReview = {
+  content: string;
+  rating: number;
+  publishTime: string;
+  sourceId?: string;
+};
+
 type TryData = {
   workspaceName?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  googleReviews?: any[];
+  googleReviews?: TryReview[];
 };
 
 export default function TryDataDetector({
   workspaceId,
 }: {
   workspaceId: string;
-  existingForm?: { id: string; brand_color: string; questions: unknown[] };
 }) {
   useEffect(() => {
     const raw = localStorage.getItem("voicehub_try_data");
@@ -25,23 +30,28 @@ export default function TryDataDetector({
       if (!parsed.googleReviews?.length) return;
 
       const supabase = createClient();
-      supabase.from("testimonials").insert(
-        parsed.googleReviews.map((r) => ({
-          workspace_id: workspaceId,
-          form_id: null,
-          name: "Googleユーザー",
-          content: r.content,
-          rating: r.rating,
-          avatar_url: null,
-          status: "approved",
-          source: "google",
-          is_featured: false,
-          permission_granted: true,
-          submitted_at: r.publishTime,
-        }))
-      ).then(() => {
-        window.location.reload();
-      });
+      supabase
+        .from("testimonials")
+        .upsert(
+          parsed.googleReviews.map((r) => ({
+            workspace_id: workspaceId,
+            form_id: null,
+            name: "Googleユーザー",
+            content: r.content,
+            rating: r.rating,
+            avatar_url: null,
+            status: "approved",
+            source: "google",
+            source_id: r.sourceId ?? null,
+            is_featured: false,
+            permission_granted: true,
+            submitted_at: r.publishTime,
+          })),
+          { onConflict: "workspace_id,source_id", ignoreDuplicates: true }
+        )
+        .then(() => {
+          window.location.reload();
+        });
     } catch {
       // invalid JSON
     }

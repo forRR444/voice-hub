@@ -17,6 +17,7 @@ type ImportedReview = {
   rating: number;
   content: string;
   publishTime: string;
+  sourceId?: string;
 };
 
 const SAMPLE_TESTIMONIALS: ImportedReview[] = [
@@ -78,6 +79,7 @@ export default function TryClient() {
         id: `google-${i}`,
         name: "Googleユーザー",
         title: r.relativePublishTimeDescription,
+        sourceId: r.googleId,
         rating: r.rating,
         content: r.content,
         publishTime: r.publishTime,
