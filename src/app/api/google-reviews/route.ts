@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress",
       },
-      body: JSON.stringify({ textQuery: query }),
+      body: JSON.stringify({ textQuery: query, languageCode: "ja" }),
     });
 
     const data = await res.json();
