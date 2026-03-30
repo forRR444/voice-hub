@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function TryPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-xl">
         <TryClient />
       </div>
     </div>
