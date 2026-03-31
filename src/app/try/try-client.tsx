@@ -6,7 +6,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import type { FormQuestion } from "@/types/database";
-import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
+import GoogleImportStep, { type PickedReview } from "@/app/components/google-import-step";
 
 const TRY_STORAGE_KEY = "voicehub_try_data";
 
@@ -107,39 +107,28 @@ export default function TryClient() {
 
         {/* Step 1: Google口コミ取り込み */}
         {step === 1 && (
-          <div className="flex flex-col gap-4">
-            <div className="text-center mb-2">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                Google口コミを取り込む
-              </h2>
-              <p className="text-sm text-gray-500">
-                ビジネス名で検索して口コミを選んでください
-              </p>
-            </div>
-
-            <GoogleReviewsPicker
-              footer={(selectedReviews) => (
-                <div className="flex justify-end gap-2 mt-2">
-                  <button
-                    onClick={() => setStep(2)}
-                    className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                  >
-                    スキップして次へ
-                  </button>
-                  <button
-                    onClick={() => handleImport(selectedReviews)}
-                    disabled={selectedReviews.length === 0}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-                  >
-                    {selectedReviews.length > 0
-                      ? `${selectedReviews.length}件を取り込む`
-                      : "取り込む"}
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
-              )}
-            />
-          </div>
+          <GoogleImportStep
+            footer={(selectedReviews) => (
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
+                >
+                  スキップして次へ
+                </button>
+                <button
+                  onClick={() => handleImport(selectedReviews)}
+                  disabled={selectedReviews.length === 0}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+                >
+                  {selectedReviews.length > 0
+                    ? `${selectedReviews.length}件を取り込む`
+                    : "取り込む"}
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+          />
         )}
 
         {/* Step 2: 登録へ誘導 */}

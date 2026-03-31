@@ -8,14 +8,13 @@ import { generateSlug, getBaseUrl } from "@/lib/utils";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow, FormQuestion } from "@/types/database";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
-import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
+import GoogleImportStep, { type PickedReview } from "@/app/components/google-import-step";
 
 export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();
   const supabase = createClient();
 
   const [step, setStep] = useState(1);
-  const [workspaceName, setWorkspaceName] = useState(workspace.name);
   const [questions] = useState<FormQuestion[]>(FORM_TEMPLATES[0].questions);
   const [creating, setCreating] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -149,8 +148,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
     setCreating(true);
     setError(null);
     try {
-      await supabase.from("workspaces").update({ name: workspaceName }).eq("id", workspace.id);
-
       const slug = generateSlug();
       const { error: formError } = await supabase
         .from("forms")
@@ -259,47 +256,29 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
       {/* Step 1: Google口コミ取り込み */}
       {step === 1 && (
-        <div className="flex flex-col gap-4">
-          <div className="text-center mb-2">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Google口コミを取り込む</h2>
-            <p className="text-sm text-gray-500">ビジネス名で検索して口コミを選んでください</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">サービス名</label>
-            <input
-              type="text"
-              value={workspaceName}
-              onChange={(e) => setWorkspaceName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="例：山田歯科クリニック"
-            />
-          </div>
-
-          <GoogleReviewsPicker
-            footer={(selectedReviews) => (
-              <div className="flex justify-end gap-2 mt-2">
-                <button
-                  onClick={() => handleSetupAndNext([])}
-                  disabled={creating}
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                >
-                  スキップして次へ
-                </button>
-                <button
-                  onClick={() => handleSetupAndNext(selectedReviews)}
-                  disabled={selectedReviews.length === 0 || creating}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-                >
-                  {selectedReviews.length > 0
-                    ? `${selectedReviews.length}件を取り込む`
-                    : "取り込む"}
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-            )}
-          />
-        </div>
+        <GoogleImportStep
+          footer={(selectedReviews) => (
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                onClick={() => handleSetupAndNext([])}
+                disabled={creating}
+                className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 cursor-pointer"
+              >
+                スキップして次へ
+              </button>
+              <button
+                onClick={() => handleSetupAndNext(selectedReviews)}
+                disabled={selectedReviews.length === 0 || creating}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+              >
+                {selectedReviews.length > 0
+                  ? `${selectedReviews.length}件を取り込む`
+                  : "取り込む"}
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
+        />
       )}
 
       {/* Step 2: 埋め込みコード */}
