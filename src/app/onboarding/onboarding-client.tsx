@@ -9,6 +9,7 @@ import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow, FormQuestion } from "@/types/database";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import GoogleImportStep, { type PickedReview } from "@/app/components/google-import-step";
+import StepCard from "@/app/components/step-card";
 
 export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();
@@ -223,36 +224,32 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
   if (checking || creating) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+      <StepCard step={1}>
         <div className="py-12 text-center">
           <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-sm text-gray-500">準備中...</p>
         </div>
-      </div>
+      </StepCard>
     );
   }
 
-  return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
-      {/* Early adopter banner */}
+  const header = (
+    <>
       {betaUserCount <= 10 && (
         <div className="bg-indigo-50 text-indigo-700 text-sm rounded-lg px-4 py-3 mb-6 text-center">
           先着10名限定：正式リリース後もずっと無料でご利用いただけます（現在 {betaUserCount}/10名）
         </div>
       )}
-
       {error && (
         <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-6 text-center">
           {error}
         </div>
       )}
+    </>
+  );
 
-      {/* Progress bar */}
-      <div className="flex gap-2 mb-8">
-        {[1, 2].map((i) => (
-          <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= step ? "bg-indigo-500" : "bg-gray-200"}`} />
-        ))}
-      </div>
+  return (
+    <StepCard step={step} header={header}>
 
       {/* Step 1: Google口コミ取り込み */}
       {step === 1 && (
@@ -336,6 +333,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
           </div>
         </div>
       )}
-    </div>
+    </StepCard>
   );
 }

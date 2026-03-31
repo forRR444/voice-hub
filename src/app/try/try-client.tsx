@@ -7,6 +7,7 @@ import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import type { FormQuestion } from "@/types/database";
 import GoogleImportStep, { type PickedReview } from "@/app/components/google-import-step";
+import StepCard from "@/app/components/step-card";
 
 const TRY_STORAGE_KEY = "voicehub_try_data";
 
@@ -92,19 +93,7 @@ export default function TryClient() {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
-        {/* Progress */}
-        <div className="flex gap-2 mb-8">
-          {[1, 2].map((i) => (
-            <div
-              key={i}
-              className={`h-1 flex-1 rounded-full transition-colors ${
-                i <= step ? "bg-indigo-500" : "bg-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-
+      <StepCard step={step}>
         {/* Step 1: Google口コミ取り込み */}
         {step === 1 && (
           <GoogleImportStep
@@ -265,7 +254,7 @@ export default function TryClient() {
             </div>
           </div>
         )}
-      </div>
+      </StepCard>
 
       <p className="text-center mt-4">
         <Link href="/" className="text-xs text-gray-400 hover:text-gray-600">
