@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeft, Copy, Check } from "lucide-react";
+import { useCopy } from "@/hooks/use-copy";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug, getBaseUrl } from "@/lib/utils";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
@@ -21,7 +22,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [widgetId, setWidgetId] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const { copiedKey, copy } = useCopy();
 
   useEffect(() => {
     // Try flow: user built a form without logging in
@@ -212,15 +213,12 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
   }
 
   const baseUrl = getBaseUrl();
-  const embedCode = widgetId
+  const scriptCode = widgetId
     ? `<script src="${baseUrl}/widget/v1/embed.js" defer></script>\n<div data-testimonial-widget="${widgetId}" data-theme="light"></div>`
     : "";
-
-  function copyEmbed() {
-    navigator.clipboard.writeText(embedCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
+  const iframeCode = widgetId
+    ? `<iframe src="${baseUrl}/preview/${widgetId}" width="100%" height="400" frameborder="0"></iframe>`
+    : "";
 
   if (checking || creating) {
     return (
@@ -296,19 +294,44 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             </p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-500">埋め込みコード（スクリプト）</span>
-              <button
-                onClick={copyEmbed}
-                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
-              >
-                {copied ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
-              </button>
+          <div className="flex flex-col gap-4 mb-4">
+            {/* Script embed */}
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-gray-500">
+                  スクリプト埋め込み
+                  <span className="font-normal text-gray-400 ml-2">おすすめ・デザインが自然に馴染む</span>
+                </span>
+                <button
+                  onClick={() => copy(scriptCode, "script")}
+                  className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                >
+                  {copiedKey === "script" ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
+                </button>
+              </div>
+              <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
+                {scriptCode}
+              </pre>
             </div>
-            <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
-              {embedCode}
-            </pre>
+
+            {/* iFrame embed */}
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-gray-500">
+                  iFrame埋め込み
+                  <span className="font-normal text-gray-400 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
+                </span>
+                <button
+                  onClick={() => copy(iframeCode, "iframe")}
+                  className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                >
+                  {copiedKey === "iframe" ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
+                </button>
+              </div>
+              <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
+                {iframeCode}
+              </pre>
+            </div>
           </div>
 
           <p className="text-xs text-gray-400 text-center mb-6">
