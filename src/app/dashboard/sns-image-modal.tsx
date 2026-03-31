@@ -47,7 +47,8 @@ export default function SnsImageModal({
             company: testimonial.company ?? null,
             brandColor,
           },
-          selectedTemplate
+          selectedTemplate,
+          "warm"
         );
 
         if (revoked) return;
