@@ -136,7 +136,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
           setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
           setCreating(false);
           setChecking(false);
-          setStep(0);
+          setStep(1);
         }
       })();
       return;
