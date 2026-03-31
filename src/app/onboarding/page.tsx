@@ -7,13 +7,7 @@ import OnboardingClient from "./onboarding-client";
 export const dynamic = "force-dynamic";
 
 function OnboardingLayout({ workspace, betaUserCount }: { workspace: WorkspaceRow; betaUserCount: number }) {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-xl">
-        <OnboardingClient workspace={workspace} betaUserCount={betaUserCount} />
-      </div>
-    </div>
-  );
+  return <OnboardingClient workspace={workspace} betaUserCount={betaUserCount} />;
 }
 
 async function getBetaUserCount() {
