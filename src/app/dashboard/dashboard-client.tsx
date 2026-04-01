@@ -280,7 +280,7 @@ export default function DashboardClient({
 
       {/* Guide + Testimonial list */}
       <div className="flex flex-col gap-3">
-        <GuideCards formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
+        <GuideCards hasReviews={hasReal} onCreateSnsImage={hasReal ? () => setSnsImageTarget(real[0]) : undefined} />
 
         {filtered.length === 0 && (search.trim() || filter !== "all") ? (
           <div className="text-center py-16 text-foreground/50">
@@ -390,7 +390,7 @@ function Stars({ rating }: { rating: number | null }) {
   );
 }
 
-function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
+function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onCreateSnsImage?: () => void }) {
   const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
     if (typeof window === "undefined") return {};
     try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
@@ -402,7 +402,7 @@ function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onC
     localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
   };
 
-  if (hidden.welcome && hidden.widget) return null;
+  if (hidden.welcome && hidden.widget && hidden.sns) return null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -410,7 +410,7 @@ function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onC
         <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
           <button
             onClick={() => dismiss("welcome")}
-            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
+            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
           >
             <XCircle size={16} />
           </button>
@@ -430,7 +430,7 @@ function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onC
         <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
           <button
             onClick={() => dismiss("widget")}
-            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
+            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
           >
             <XCircle size={16} />
           </button>
@@ -444,6 +444,36 @@ function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onC
           <Link href="/dashboard/widgets" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
             ウィジェット設定へ →
           </Link>
+        </div>
+      )}
+      {!hidden.sns && (
+        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
+          <button
+            onClick={() => dismiss("sns")}
+            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
+          >
+            <XCircle size={16} />
+          </button>
+          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
+            <StatusBadge status="guide" />
+          </div>
+          {hasReviews ? (
+            <>
+              <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
+                口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。
+              </p>
+              {onCreateSnsImage && (
+                <button onClick={onCreateSnsImage} className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 cursor-pointer">
+                  SNS画像を作成する →
+                </button>
+              )}
+            </>
+          ) : (
+            <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
+              口コミが届くと、InstagramやSNS用の画像を自動生成できるようになります。各口コミの <ImageIcon size={13} className="inline -mt-0.5 text-foreground/40" /> ボタンからSNS画像を作成できます。
+            </p>
+          )}
         </div>
       )}
     </div>
