@@ -151,7 +151,7 @@ type Layout = {
 
 function getLayout(t: TemplateSize): Layout {
   if (t === "instagram-story") return {
-    paddingX: 100, topY: 420, starSize: 36, lineHeight: 72,
+    paddingX: 100, topY: 220, starSize: 36, lineHeight: 72,
     dividerGap: 56, nameGap: 44, subtitleGap: 40, footerSize: 24, footerBottom: 80,
     cardMargin: 56, cardPadding: 64, cardRadius: 28,
   };
