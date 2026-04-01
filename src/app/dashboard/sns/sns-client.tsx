@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Star, ImageIcon, Download, Loader2, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Star, ImageIcon, Download, Loader2, Check, X, Eye } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
-import SnsImageModal from "../sns-image-modal";
 import { formatDate } from "@/lib/utils";
 import JSZip from "jszip";
 
@@ -184,9 +183,9 @@ export default function SnsClient({
                     <button
                       onClick={(e) => { e.stopPropagation(); setSingleTarget(t); }}
                       className="shrink-0 p-2 rounded-lg text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
-                      title="個別に画像を作成"
+                      title="プレビュー"
                     >
-                      <ImageIcon size={16} />
+                      <Eye size={16} />
                     </button>
                   </div>
                 </div>
@@ -196,14 +195,61 @@ export default function SnsClient({
         </>
       )}
 
-      {/* Single image modal */}
+      {/* Preview modal */}
       {singleTarget && (
-        <SnsImageModal
+        <PreviewModal
           testimonial={singleTarget}
           brandColor={brandColor}
+          template={template}
           onClose={() => setSingleTarget(null)}
         />
       )}
+    </div>
+  );
+}
+
+function PreviewModal({ testimonial, brandColor, template, onClose }: {
+  testimonial: TestimonialWithTags;
+  brandColor: string;
+  template: TemplateSize;
+  onClose: () => void;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let revoked = false;
+    generateTestimonialImage(
+      {
+        rating: testimonial.rating,
+        content: testimonial.content,
+        name: testimonial.name || "お客様",
+        title: testimonial.title,
+        company: testimonial.company ?? null,
+        brandColor,
+      },
+      template,
+      "warm"
+    ).then((blob) => {
+      if (revoked) return;
+      setPreviewUrl(URL.createObjectURL(blob));
+    });
+    return () => { revoked = true; };
+  }, [testimonial, brandColor, template]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+      <div className="relative max-w-sm mx-4" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg text-foreground/60 hover:text-foreground cursor-pointer z-10">
+          <X size={16} />
+        </button>
+        {previewUrl ? (
+          <img src={previewUrl} alt="プレビュー" className="rounded-lg shadow-xl max-h-[80vh] w-auto" />
+        ) : (
+          <div className="bg-white rounded-lg p-16 flex items-center justify-center">
+            <Loader2 size={24} className="animate-spin text-foreground/30" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
