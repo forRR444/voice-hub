@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
-import { TestimonialWithTags } from "@/types/database";
+import { TestimonialRow, TestimonialWithTags } from "@/types/database";
 import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
 
 export default function GoogleReviewsModal({
@@ -54,7 +54,7 @@ export default function GoogleReviewsModal({
     const existingIds = new Set((existing ?? []).map((e: { source_id: string }) => e.source_id));
     const newRows = rows.filter((r) => !r.source_id || !existingIds.has(r.source_id));
 
-    let data: typeof rows = [];
+    let data: TestimonialRow[] = [];
     if (newRows.length > 0) {
       const { data: inserted, error: insertError } = await supabase
         .from("testimonials")
@@ -66,7 +66,7 @@ export default function GoogleReviewsModal({
         setImportError(insertError.message);
         return;
       }
-      data = inserted ?? [];
+      data = (inserted ?? []) as TestimonialRow[];
     }
 
     setImporting(false);
