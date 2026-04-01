@@ -200,7 +200,7 @@ export default function SnsClient({
         <PreviewModal
           testimonial={singleTarget}
           brandColor={brandColor}
-          template={template}
+          initialTemplate={template}
           onClose={() => setSingleTarget(null)}
         />
       )}
@@ -208,16 +208,18 @@ export default function SnsClient({
   );
 }
 
-function PreviewModal({ testimonial, brandColor, template, onClose }: {
+function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
   testimonial: TestimonialWithTags;
   brandColor: string;
-  template: TemplateSize;
+  initialTemplate: TemplateSize;
   onClose: () => void;
 }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [currentTemplate, setCurrentTemplate] = useState<TemplateSize>(initialTemplate);
 
   useEffect(() => {
     let revoked = false;
+    setPreviewUrl(null);
     generateTestimonialImage(
       {
         rating: testimonial.rating,
@@ -227,28 +229,43 @@ function PreviewModal({ testimonial, brandColor, template, onClose }: {
         company: testimonial.company ?? null,
         brandColor,
       },
-      template,
+      currentTemplate,
       "warm"
     ).then((blob) => {
       if (revoked) return;
       setPreviewUrl(URL.createObjectURL(blob));
     });
     return () => { revoked = true; };
-  }, [testimonial, brandColor, template]);
+  }, [testimonial, brandColor, currentTemplate]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="relative max-w-sm mx-4" onClick={(e) => e.stopPropagation()}>
+      <div className="relative max-w-sm mx-4 flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg text-foreground/60 hover:text-foreground cursor-pointer z-10">
           <X size={16} />
         </button>
         {previewUrl ? (
-          <img src={previewUrl} alt="プレビュー" className="rounded-lg shadow-xl max-h-[80vh] w-auto" />
+          <img src={previewUrl} alt="プレビュー" className="rounded-lg shadow-xl max-h-[70vh] w-auto" />
         ) : (
           <div className="bg-white rounded-lg p-16 flex items-center justify-center">
             <Loader2 size={24} className="animate-spin text-foreground/30" />
           </div>
         )}
+        <div className="flex gap-1 bg-white/90 backdrop-blur rounded-lg p-1">
+          {TEMPLATE_OPTIONS.map((o) => (
+            <button
+              key={o.key}
+              onClick={() => setCurrentTemplate(o.key)}
+              className={`px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer ${
+                currentTemplate === o.key
+                  ? "bg-indigo-600 text-white"
+                  : "text-foreground/60 hover:bg-foreground/5"
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
