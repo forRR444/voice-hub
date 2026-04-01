@@ -13,7 +13,6 @@ import {
   Bookmark,
   MessageSquare,
   ImageIcon,
-  Crown,
   ChevronDown,
   MoreVertical,
 } from "lucide-react";
@@ -279,14 +278,15 @@ export default function DashboardClient({
         </div>
       </div>}
 
+      {/* Guide card */}
+      <GuideCards formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
+
       {/* Testimonial list */}
-      {filtered.length === 0 && !search.trim() && filter === "all" ? (
-        <GuideCard formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 && (search.trim() || filter !== "all") ? (
         <div className="text-center py-16 text-foreground/50">
           該当する口コミがありません
         </div>
-      ) : (
+      ) : filtered.length > 0 ? (
         <div className="flex flex-col gap-3">
           {filtered.map((t) => (
             <TestimonialCard
@@ -299,7 +299,7 @@ export default function DashboardClient({
             />
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Try data: Google口コミをサイレントインポート */}
       <TryDataDetector workspaceId={workspace.id} />
@@ -388,43 +388,97 @@ function Stars({ rating }: { rating: number | null }) {
   );
 }
 
-function GuideCard({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
+function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
+  const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
+    if (typeof window === "undefined") return {};
+    try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
+  });
+
+  const dismiss = (key: string) => {
+    const next = { ...hidden, [key]: true };
+    setHidden(next);
+    localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
+  };
+
+  const closeBtn = (key: string) => (
+    <button
+      onClick={() => dismiss(key)}
+      className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
+    >
+      <XCircle size={16} />
+    </button>
+  );
+
+  const card = "bg-white rounded-lg border border-indigo-100 shadow-sm p-5 relative";
+
   return (
-    <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5">
-      <div className="flex items-center gap-3 mb-1">
-        <span className="text-lg font-bold text-foreground">ご登録ありがとうございます</span>
-        <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
-          <Crown size={12} />
-          初期サポーター
-        </span>
-      </div>
-      <div className="flex items-center gap-2 mb-3">
-        <span className="font-medium text-foreground">VoiceHub ガイド</span>
-        <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
-      </div>
-      <p className="text-sm text-foreground/60 leading-relaxed">
-        まずはフォームを設定して、お客様に送るURLを準備しましょう。
-      </p>
-      <Link
-        href="/dashboard/forms"
-        className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-      >
-        フォームを設定する →
-      </Link>
-      {formSlug && onCopyUrl && (
-        <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
-          <code className="flex-1 text-xs text-foreground/60 truncate">
-            {getBaseUrl()}/form/{formSlug}
-          </code>
-          <button
-            onClick={onCopyUrl}
-            className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+    <div className="flex flex-col gap-3">
+      {/* カード1: ウェルカム + フォーム設定 */}
+      {!hidden.form && (
+        <div className={card}>
+          {closeBtn("form")}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm sm:text-base font-semibold text-foreground">ご登録ありがとうございます</span>
+            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+          </div>
+          <p className="text-sm text-foreground/60 leading-relaxed">
+            まずはフォームを設定して、お客様に送るURLを準備しましょう。
+          </p>
+          <Link
+            href="/dashboard/forms"
+            className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
           >
-            {urlCopied ? "✓ コピー済み" : "URLをコピー"}
-          </button>
+            フォームを設定する →
+          </Link>
         </div>
       )}
-      <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
+
+      {/* カード2: URLをコピーして共有 */}
+      {!hidden.url && (
+        <div className={card}>
+          {closeBtn("url")}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm sm:text-base font-semibold text-foreground">お客様にフォームを送る</span>
+            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+          </div>
+          <p className="text-sm text-foreground/60 leading-relaxed">
+            下のURLをコピーして、お客様にLINEやメールで送りましょう。
+          </p>
+          {formSlug && onCopyUrl && (
+            <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-3">
+              <code className="flex-1 text-xs text-foreground/60 truncate">
+                {getBaseUrl()}/form/{formSlug}
+              </code>
+              <button
+                onClick={onCopyUrl}
+                className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+              >
+                {urlCopied ? "✓ コピー済み" : "URLをコピー"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* カード3: ウィジェット埋め込み */}
+      {!hidden.widget && (
+        <div className={card}>
+          {closeBtn("widget")}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm sm:text-base font-semibold text-foreground">HPやSNSに埋め込む</span>
+            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+          </div>
+          <p className="text-sm text-foreground/60 leading-relaxed">
+            お客様の声をホームページやSNSに表示して、信頼度をアップさせましょう。
+          </p>
+          <Link
+            href="/dashboard/widgets"
+            className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            ウィジェット設定へ →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
