@@ -44,7 +44,8 @@ export default function DashboardClient({
   const supabase = createClient();
   const [testimonials, setTestimonials] =
     useState<TestimonialWithTags[]>(initialTestimonials);
-  const hasReal = useMemo(() => testimonials.some((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
+  const real = useMemo(() => testimonials.filter((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
+  const hasReal = real.length > 0;
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
   const [showFormMenu, setShowFormMenu] = useState(false);
@@ -54,7 +55,7 @@ export default function DashboardClient({
   const { copiedKey: copiedUrl, copy } = useCopy();
   const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
   const filtered = useMemo(() => {
-    let list = testimonials;
+    let list = real;
     if (filter !== "all") {
       list = list.filter((t) => t.status === filter);
     }
@@ -67,10 +68,9 @@ export default function DashboardClient({
       );
     }
     return list;
-  }, [testimonials, filter, search]);
+  }, [real, filter, search]);
 
   const stats = useMemo(() => {
-    const real = testimonials.filter((t) => t.source !== "guide" && t.source !== "sample");
     const total = real.length;
     const approved = real.filter((t) => t.status === "approved").length;
     const pending = real.filter((t) => t.status === "pending").length;
@@ -80,7 +80,7 @@ export default function DashboardClient({
         ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length
         : 0;
     return { total, approved, pending, avg };
-  }, [testimonials]);
+  }, [real]);
 
   async function updateStatus(id: string, status: "approved" | "rejected") {
     const { error } = await supabase
@@ -139,13 +139,7 @@ export default function DashboardClient({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">{hasReal ? "お客様の声" : "ご登録ありがとうございます"}</h2>
-          {!hasReal && (
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
-              <Crown size={12} />
-              初期サポーター
-            </span>
-          )}
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">ホーム</h2>
         </div>
         <div className="flex gap-2 justify-end">
           {forms.length > 0 && hasReal && (
@@ -302,13 +296,6 @@ export default function DashboardClient({
               onReject={() => updateStatus(t.id, "rejected")}
               onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
               onCreateSnsImage={() => setSnsImageTarget(t)}
-              onDeleteGuide={async (id) => {
-                await supabase.from("testimonials").delete().eq("id", id);
-                setTestimonials((prev) => prev.filter((item) => item.id !== id));
-              }}
-              formSlug={forms.length > 0 ? forms[0].slug : undefined}
-              onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined}
-              urlCopied={copiedUrl !== null}
             />
           ))}
         </div>
@@ -404,13 +391,26 @@ function Stars({ rating }: { rating: number | null }) {
 function GuideCard({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
   return (
     <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5">
+      <div className="flex items-center gap-3 mb-1">
+        <span className="text-lg font-bold text-foreground">ご登録ありがとうございます</span>
+        <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
+          <Crown size={12} />
+          初期サポーター
+        </span>
+      </div>
       <div className="flex items-center gap-2 mb-3">
         <span className="font-medium text-foreground">VoiceHub ガイド</span>
         <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
       </div>
       <p className="text-sm text-foreground/60 leading-relaxed">
-        下のURLをコピーして、お客様にLINEやメールで送ってください。お客様の回答がここに届きます。
+        まずはフォームを設定して、お客様に送るURLを準備しましょう。
       </p>
+      <Link
+        href="/dashboard/forms"
+        className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+      >
+        フォームを設定する →
+      </Link>
       {formSlug && onCopyUrl && (
         <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
           <code className="flex-1 text-xs text-foreground/60 truncate">
@@ -435,70 +435,13 @@ function TestimonialCard({
   onReject,
   onToggleFeatured,
   onCreateSnsImage,
-  formSlug,
-  onCopyUrl,
-  urlCopied,
-  onDeleteGuide,
 }: {
   testimonial: TestimonialWithTags;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
   onCreateSnsImage: () => void;
-  formSlug?: string;
-  onCopyUrl?: () => void;
-  urlCopied?: boolean;
-  onDeleteGuide?: (id: string) => void;
 }) {
-  if (t.source === "guide") {
-    return (
-      <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5 relative">
-        {onDeleteGuide && (
-          <button
-            onClick={() => onDeleteGuide(t.id)}
-            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
-          >
-            <XCircle size={16} />
-          </button>
-        )}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="font-medium text-foreground">{t.name || "お客様"}</span>
-          <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
-        </div>
-        <p className="text-sm text-foreground/60 leading-relaxed">
-          {t.content.includes("[[") ? (
-            <>
-              {t.content.split("[[").map((part, i) => {
-                if (i === 0) return part;
-                const [linkText, rest] = part.split("]]");
-                return (
-                  <span key={i}>
-                    <Link href="/dashboard/widgets" className="text-indigo-600 hover:underline">{linkText}</Link>
-                    {rest}
-                  </span>
-                );
-              })}
-            </>
-          ) : t.content}
-        </p>
-        {formSlug && onCopyUrl && t.content.includes("URLをコピー") && (
-          <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
-            <code className="flex-1 text-xs text-foreground/60 truncate">
-              {getBaseUrl()}/form/{formSlug}
-            </code>
-            <button
-              onClick={onCopyUrl}
-              className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
-            >
-              {urlCopied ? "✓ コピー済み" : "URLをコピー"}
-            </button>
-          </div>
-        )}
-        <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 hover:border-foreground/20 transition-colors">
       <div className="flex items-start justify-between">
