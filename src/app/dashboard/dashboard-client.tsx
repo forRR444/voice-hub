@@ -12,7 +12,6 @@ import {
   MagnifyingGlass,
   BookmarkSimple,
   ChatTeardrop,
-  Image,
   CaretDown,
   DotsThreeVertical,
 } from "@phosphor-icons/react";
@@ -22,7 +21,6 @@ import TryDataDetector from "./try-data-detector";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
-import SnsImageModal from "./sns-image-modal";
 import { useCopy } from "@/hooks/use-copy";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
@@ -52,7 +50,6 @@ export default function DashboardClient({
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const { copiedKey: copiedUrl, copy } = useCopy();
-  const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
   const filtered = useMemo(() => {
     let list = real;
     if (filter !== "all") {
@@ -280,7 +277,7 @@ export default function DashboardClient({
 
       {/* Guide + Testimonial list */}
       <div className="flex flex-col gap-3">
-        <GuideCards hasReviews={hasReal} onCreateSnsImage={hasReal ? () => setSnsImageTarget(real[0]) : undefined} />
+        <GuideCards />
 
         {filtered.length === 0 && (search.trim() || filter !== "all") ? (
           <div className="text-center py-16 text-foreground/50">
@@ -295,7 +292,6 @@ export default function DashboardClient({
                 onApprove={() => updateStatus(t.id, "approved")}
                 onReject={() => updateStatus(t.id, "rejected")}
                 onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
-                onCreateSnsImage={() => setSnsImageTarget(t)}
               />
             ))}
           </>
@@ -323,14 +319,6 @@ export default function DashboardClient({
         />
       )}
 
-      {/* SNS Image modal */}
-      {snsImageTarget && (
-        <SnsImageModal
-          testimonial={snsImageTarget}
-          brandColor={brandColor}
-          onClose={() => setSnsImageTarget(null)}
-        />
-      )}
     </div>
   );
 }
@@ -391,7 +379,7 @@ function Stars({ rating }: { rating: number | null }) {
   );
 }
 
-function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onCreateSnsImage?: () => void }) {
+function GuideCards() {
   const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
     if (typeof window === "undefined") return {};
     try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
@@ -403,7 +391,7 @@ function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onC
     localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
   };
 
-  if (hidden.welcome && hidden.widget && hidden.sns) return null;
+  if (hidden.welcome && hidden.widget) return null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -447,36 +435,6 @@ function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onC
           </Link>
         </div>
       )}
-      {!hidden.sns && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("sns")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          {hasReviews ? (
-            <>
-              <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-                口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。
-              </p>
-              {onCreateSnsImage && (
-                <button onClick={onCreateSnsImage} className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 cursor-pointer">
-                  SNS画像を作成する →
-                </button>
-              )}
-            </>
-          ) : (
-            <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-              口コミが届くと、InstagramやSNS用の画像を自動生成できるようになります。各口コミの <Image size={13} className="inline -mt-0.5 text-foreground/40" /> ボタンからSNS画像を作成できます。
-            </p>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -486,13 +444,11 @@ function TestimonialCard({
   onApprove,
   onReject,
   onToggleFeatured,
-  onCreateSnsImage,
 }: {
   testimonial: TestimonialWithTags;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
-  onCreateSnsImage: () => void;
 }) {
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 hover:border-foreground/20 transition-colors">
@@ -573,13 +529,6 @@ function TestimonialCard({
           >
             <BookmarkSimple size={16} weight={t.is_featured ? "fill" : "regular"} className={t.is_featured ? "text-violet-500" : ""} />
           </button>
-          <button
-            onClick={onCreateSnsImage}
-            className="p-1.5 rounded text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer"
-            title="SNS画像を作成"
-          >
-            <Image size={16} />
-          </button>
         </div>
         {/* Mobile: overflow menu */}
         <CardOverflowMenu
@@ -588,7 +537,6 @@ function TestimonialCard({
           onApprove={onApprove}
           onReject={onReject}
           onToggleFeatured={onToggleFeatured}
-          onCreateSnsImage={onCreateSnsImage}
         />
       </div>
     </div>
@@ -601,14 +549,12 @@ function CardOverflowMenu({
   onApprove,
   onReject,
   onToggleFeatured,
-  onCreateSnsImage,
 }: {
   status: string;
   isFeatured: boolean;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
-  onCreateSnsImage: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -648,13 +594,6 @@ function CardOverflowMenu({
             >
               <BookmarkSimple size={14} weight={isFeatured ? "fill" : "regular"} className={isFeatured ? "text-violet-500" : ""} />
               {isFeatured ? "注目を解除" : "注目に設定"}
-            </button>
-            <button
-              onClick={() => { onCreateSnsImage(); setOpen(false); }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
-            >
-              <Image size={14} />
-              SNS画像を作成
             </button>
           </div>
         </>
