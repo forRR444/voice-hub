@@ -278,28 +278,29 @@ export default function DashboardClient({
         </div>
       </div>}
 
-      {/* Guide card */}
-      <GuideCards formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
+      {/* Guide + Testimonial list */}
+      <div className="flex flex-col gap-3">
+        <GuideCards formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
 
-      {/* Testimonial list */}
-      {filtered.length === 0 && (search.trim() || filter !== "all") ? (
-        <div className="text-center py-16 text-foreground/50">
-          該当する口コミがありません
-        </div>
-      ) : filtered.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {filtered.map((t) => (
-            <TestimonialCard
-              key={t.id}
-              testimonial={t}
-              onApprove={() => updateStatus(t.id, "approved")}
-              onReject={() => updateStatus(t.id, "rejected")}
-              onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
-              onCreateSnsImage={() => setSnsImageTarget(t)}
-            />
-          ))}
-        </div>
-      ) : null}
+        {filtered.length === 0 && (search.trim() || filter !== "all") ? (
+          <div className="text-center py-16 text-foreground/50">
+            該当する口コミがありません
+          </div>
+        ) : filtered.length > 0 ? (
+          <>
+            {filtered.map((t) => (
+              <TestimonialCard
+                key={t.id}
+                testimonial={t}
+                onApprove={() => updateStatus(t.id, "approved")}
+                onReject={() => updateStatus(t.id, "rejected")}
+                onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
+                onCreateSnsImage={() => setSnsImageTarget(t)}
+              />
+            ))}
+          </>
+        ) : null}
+      </div>
 
       {/* Try data: Google口コミをサイレントインポート */}
       <TryDataDetector workspaceId={workspace.id} />
@@ -359,6 +360,7 @@ function StatusBadge({ status }: { status: string }) {
     pending: { dot: "bg-amber-400", label: "未承認" },
     approved: { dot: "bg-emerald-500", label: "承認済み" },
     rejected: { dot: "bg-red-400", label: "非承認" },
+    guide: { dot: "bg-indigo-400", label: "ご案内" },
   };
   const c = config[status] ?? config.pending;
   return (
@@ -400,81 +402,46 @@ function GuideCards({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onC
     localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
   };
 
-  const closeBtn = (key: string) => (
-    <button
-      onClick={() => dismiss(key)}
-      className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
-    >
-      <XCircle size={16} />
-    </button>
-  );
-
-  const card = "bg-white rounded-lg border border-indigo-100 shadow-sm p-5 relative";
+  if (hidden.welcome && hidden.widget) return null;
 
   return (
     <div className="flex flex-col gap-3">
-      {/* カード1: ウェルカム + フォーム設定 */}
-      {!hidden.form && (
-        <div className={card}>
-          {closeBtn("form")}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm sm:text-base font-semibold text-foreground">ご登録ありがとうございます</span>
-            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
-          </div>
-          <p className="text-sm text-foreground/60 leading-relaxed">
-            まずはフォームを設定して、お客様に送るURLを準備しましょう。
-          </p>
-          <Link
-            href="/dashboard/forms"
-            className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+      {!hidden.welcome && (
+        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
+          <button
+            onClick={() => dismiss("welcome")}
+            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
           >
+            <XCircle size={16} />
+          </button>
+          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
+            <StatusBadge status="guide" />
+          </div>
+          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
+            ご登録ありがとうございます！まずはフォームを設定して、お客様にLINEやメールでURLを送りましょう。回答がここに届きます。
+          </p>
+          <Link href="/dashboard/forms" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
             フォームを設定する →
           </Link>
         </div>
       )}
-
-      {/* カード2: URLをコピーして共有 */}
-      {!hidden.url && (
-        <div className={card}>
-          {closeBtn("url")}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm sm:text-base font-semibold text-foreground">お客様にフォームを送る</span>
-            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
-          </div>
-          <p className="text-sm text-foreground/60 leading-relaxed">
-            下のURLをコピーして、お客様にLINEやメールで送りましょう。
-          </p>
-          {formSlug && onCopyUrl && (
-            <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-3">
-              <code className="flex-1 text-xs text-foreground/60 truncate">
-                {getBaseUrl()}/form/{formSlug}
-              </code>
-              <button
-                onClick={onCopyUrl}
-                className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
-              >
-                {urlCopied ? "✓ コピー済み" : "URLをコピー"}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* カード3: ウィジェット埋め込み */}
       {!hidden.widget && (
-        <div className={card}>
-          {closeBtn("widget")}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm sm:text-base font-semibold text-foreground">HPやSNSに埋め込む</span>
-            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
-          </div>
-          <p className="text-sm text-foreground/60 leading-relaxed">
-            お客様の声をホームページやSNSに表示して、信頼度をアップさせましょう。
-          </p>
-          <Link
-            href="/dashboard/widgets"
-            className="inline-block mt-3 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
+          <button
+            onClick={() => dismiss("widget")}
+            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
           >
+            <XCircle size={16} />
+          </button>
+          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
+            <StatusBadge status="guide" />
+          </div>
+          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
+            お客様の声をホームページやSNSに表示して、信頼度をアップさせましょう。ウィジェットから簡単に埋め込めます。
+          </p>
+          <Link href="/dashboard/widgets" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
             ウィジェット設定へ →
           </Link>
         </div>
