@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, Loader2 } from "lucide-react";
+import { DownloadSimple, SpinnerGap } from "@phosphor-icons/react";
 import {
   generateTestimonialImage,
   TemplateSize,
@@ -100,7 +100,7 @@ export default function SnsImageModal({
       {/* Preview area */}
       <div className="flex items-center justify-center bg-foreground/5 rounded-lg mb-4 max-h-[400px] min-h-[200px] overflow-hidden">
         {generating ? (
-          <Loader2 size={32} className="animate-spin text-foreground/30" />
+          <SpinnerGap size={32} className="animate-spin text-foreground/30" />
         ) : previewUrl ? (
           <img
             src={previewUrl}
@@ -116,7 +116,7 @@ export default function SnsImageModal({
         disabled={generating || !previewUrl}
         className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
       >
-        <Download size={16} />
+        <DownloadSimple size={16} />
         ダウンロード
       </button>
     </Modal>

@@ -9,13 +9,13 @@ import {
   Clock,
   Copy,
   Plus,
-  Search,
-  Bookmark,
-  MessageSquare,
-  ImageIcon,
-  ChevronDown,
-  MoreVertical,
-} from "lucide-react";
+  MagnifyingGlass,
+  BookmarkSimple,
+  ChatTeardrop,
+  Image,
+  CaretDown,
+  DotsThreeVertical,
+} from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags, FormQuestion } from "@/types/database";
 import TryDataDetector from "./try-data-detector";
@@ -196,7 +196,7 @@ export default function DashboardClient({
 
       {/* Stats */}
       {stats.total > 0 && <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8">
-        <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
+        <StatCard icon={<ChatTeardrop size={18} className="text-slate-400" />} label="合計" value={stats.total} />
         <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
         <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
         <StatCard
@@ -211,7 +211,7 @@ export default function DashboardClient({
         {/* Mobile: search + dropdown in one row */}
         <div className="flex gap-2 items-center sm:hidden">
           <div className="relative flex-1">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
+            <MagnifyingGlass size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
             <input
               type="text"
               placeholder="検索..."
@@ -226,7 +226,7 @@ export default function DashboardClient({
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-foreground/10 rounded-lg bg-white cursor-pointer"
             >
               {tabs.find((t) => t.key === filter)?.label}
-              <ChevronDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
+              <CaretDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
             </button>
             {filterOpen && (
               <>
@@ -267,7 +267,7 @@ export default function DashboardClient({
           ))}
         </div>
         <div className="relative hidden sm:block">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+          <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
           <input
             type="text"
             placeholder="検索..."
@@ -379,9 +379,10 @@ function Stars({ rating }: { rating: number | null }) {
         <Star
           key={i}
           size={14}
+          weight={i < rating ? "fill" : "regular"}
           className={
             i < rating
-              ? "fill-amber-400 text-amber-400"
+              ? "text-amber-400"
               : "text-foreground/20"
           }
         />
@@ -471,7 +472,7 @@ function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onC
             </>
           ) : (
             <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-              口コミが届くと、InstagramやSNS用の画像を自動生成できるようになります。各口コミの <ImageIcon size={13} className="inline -mt-0.5 text-foreground/40" /> ボタンからSNS画像を作成できます。
+              口コミが届くと、InstagramやSNS用の画像を自動生成できるようになります。各口コミの <Image size={13} className="inline -mt-0.5 text-foreground/40" /> ボタンからSNS画像を作成できます。
             </p>
           )}
         </div>
@@ -570,14 +571,14 @@ function TestimonialCard({
             }`}
             title={t.is_featured ? "注目を解除" : "注目に設定"}
           >
-            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
+            <BookmarkSimple size={16} weight={t.is_featured ? "fill" : "regular"} className={t.is_featured ? "text-violet-500" : ""} />
           </button>
           <button
             onClick={onCreateSnsImage}
             className="p-1.5 rounded text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer"
             title="SNS画像を作成"
           >
-            <ImageIcon size={16} />
+            <Image size={16} />
           </button>
         </div>
         {/* Mobile: overflow menu */}
@@ -617,7 +618,7 @@ function CardOverflowMenu({
         onClick={() => setOpen(!open)}
         className="p-1.5 rounded text-foreground/40 hover:text-foreground/60 cursor-pointer"
       >
-        <MoreVertical size={16} />
+        <DotsThreeVertical size={16} />
       </button>
       {open && (
         <>
@@ -645,14 +646,14 @@ function CardOverflowMenu({
               onClick={() => { onToggleFeatured(); setOpen(false); }}
               className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
             >
-              <Bookmark size={14} className={isFeatured ? "fill-violet-500 text-violet-500" : ""} />
+              <BookmarkSimple size={14} weight={isFeatured ? "fill" : "regular"} className={isFeatured ? "text-violet-500" : ""} />
               {isFeatured ? "注目を解除" : "注目に設定"}
             </button>
             <button
               onClick={() => { onCreateSnsImage(); setOpen(false); }}
               className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
             >
-              <ImageIcon size={14} />
+              <Image size={14} />
               SNS画像を作成
             </button>
           </div>

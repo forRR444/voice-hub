@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Check,
   Crown,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";

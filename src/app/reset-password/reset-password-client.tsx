@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { validateEmail } from "@/lib/validation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { SpinnerGap } from "@phosphor-icons/react";
 import Link from "next/link";
 import AuthInput from "@/app/components/auth-input";
 
@@ -81,7 +81,7 @@ export default function ResetPasswordClient() {
               disabled={loading}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {loading ? <SpinnerGap className="h-4 w-4 animate-spin" /> : null}
               リセットメールを送信
             </button>
           </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 
 export default function TestimonialToast() {
   const [dismissed, setDismissed] = useState(false);

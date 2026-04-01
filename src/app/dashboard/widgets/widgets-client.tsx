@@ -6,13 +6,13 @@ import {
   Plus,
   Copy,
   Code,
-  ExternalLink,
+  ArrowSquareOut,
   Check,
   X,
   Pencil,
-  Trash2,
-  MoreHorizontal,
-} from "lucide-react";
+  Trash,
+  DotsThree,
+} from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import {
   WorkspaceRow,
@@ -309,7 +309,7 @@ export default function WidgetsClient({
                     onClick={() => setOpenMenuId(openMenuId === w.id ? null : w.id)}
                     className="p-2 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5 rounded-lg cursor-pointer"
                   >
-                    <MoreHorizontal size={18} />
+                    <DotsThree size={18} />
                   </button>
                   {openMenuId === w.id && (
                     <>
@@ -325,7 +325,7 @@ export default function WidgetsClient({
                           className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5"
                           onClick={() => setOpenMenuId(null)}
                         >
-                          <ExternalLink size={14} />
+                          <ArrowSquareOut size={14} />
                           プレビュー
                         </a>
                         <button
@@ -340,7 +340,7 @@ export default function WidgetsClient({
                           onClick={() => { setDeletingId(w.id); setOpenMenuId(null); }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-50 cursor-pointer"
                         >
-                          <Trash2 size={14} />
+                          <Trash size={14} />
                           削除
                         </button>
                       </div>

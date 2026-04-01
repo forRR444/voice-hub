@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Check, X } from "lucide-react";
+import { Plus, Check, X } from "@phosphor-icons/react";
 import {
   DndContext,
   closestCenter,

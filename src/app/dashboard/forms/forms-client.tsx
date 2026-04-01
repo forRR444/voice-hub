@@ -7,10 +7,10 @@ import {
   Pencil,
   Check,
   X,
-  Trash2,
+  Trash,
   QrCode,
-  Download,
-} from "lucide-react";
+  DownloadSimple,
+} from "@phosphor-icons/react";
 import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
@@ -364,7 +364,7 @@ export default function FormsClient({
                         className="p-2 text-foreground/40 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
                         title="削除"
                       >
-                        <Trash2 size={16} />
+                        <Trash size={16} />
                       </button>
                     </div>
                   </div>
@@ -479,7 +479,7 @@ export default function FormsClient({
                 onClick={downloadQr}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
               >
-                <Download size={14} />
+                <DownloadSimple size={14} />
                 PNG保存
               </button>
               <button

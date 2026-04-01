@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { CaretDown } from "@phosphor-icons/react";
 
 export default function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -13,7 +13,7 @@ export default function FaqItem({ q, a }: { q: string; a: string }) {
     >
       <div className="flex items-center justify-between gap-4">
         <h3 className="font-bold text-gray-900">{q}</h3>
-        <ChevronDown
+        <CaretDown
           size={18}
           className={`shrink-0 text-gray-400 transition-transform duration-200 ${
             open ? "rotate-180" : ""

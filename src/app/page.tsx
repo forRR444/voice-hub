@@ -1,24 +1,26 @@
+"use client";
+
 import Link from "next/link";
 import PublicHeader from "./components/public-header";
 import TestimonialToast from "./components/testimonial-toast";
 import FaqItem from "./components/faq-item";
 import {
-  MessageSquareText,
-  LayoutDashboard,
-  Code2,
-  PenLine,
-  Smartphone,
-  Zap,
+  ChatText,
+  SquaresFour,
+  Code,
+  PenNib,
+  DeviceMobile,
+  Lightning,
   ArrowRight,
   Star,
-  CheckCircle2,
+  CheckCircle,
   Users,
   GraduationCap,
   Heart,
-  Dumbbell,
+  Barbell,
   Briefcase,
-  Store,
-} from "lucide-react";
+  Storefront,
+} from "@phosphor-icons/react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
 
@@ -47,22 +49,22 @@ export default function Home() {
         <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <MessageSquareText size={18} className="text-indigo-600 sm:hidden" />
-              <MessageSquareText size={22} className="text-indigo-600 hidden sm:block" />
+              <ChatText size={18} className="text-indigo-600 sm:hidden" />
+              <ChatText size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">フォームで収集</span>
           </div>
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <LayoutDashboard size={18} className="text-indigo-600 sm:hidden" />
-              <LayoutDashboard size={22} className="text-indigo-600 hidden sm:block" />
+              <SquaresFour size={18} className="text-indigo-600 sm:hidden" />
+              <SquaresFour size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">一元管理</span>
           </div>
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <Code2 size={18} className="text-indigo-600 sm:hidden" />
-              <Code2 size={22} className="text-indigo-600 hidden sm:block" />
+              <Code size={18} className="text-indigo-600 sm:hidden" />
+              <Code size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">HPに自動表示</span>
           </div>
@@ -135,8 +137,8 @@ export default function Home() {
                 お客様にURLを送るだけ。LINEでもメールでもOK。ステップ形式で、お客様も迷わず回答できます。
               </p>
               <div className="mt-3 sm:mt-4 inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
-                <CheckCircle2 size={10} className="sm:hidden" />
-                <CheckCircle2 size={12} className="hidden sm:block" />
+                <CheckCircle size={10} className="sm:hidden" />
+                <CheckCircle size={12} className="hidden sm:block" />
                 コピペで送るだけ
               </div>
             </div>
@@ -149,8 +151,8 @@ export default function Home() {
                 ダッシュボードに届いた声を確認。「承認」ボタンを押すだけ。内容を見て選べるので安心です。
               </p>
               <div className="mt-3 sm:mt-4 inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
-                <CheckCircle2 size={10} className="sm:hidden" />
-                <CheckCircle2 size={12} className="hidden sm:block" />
+                <CheckCircle size={10} className="sm:hidden" />
+                <CheckCircle size={12} className="hidden sm:block" />
                 ワンクリック
               </div>
             </div>
@@ -266,7 +268,7 @@ export default function Home() {
           <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-6 mt-10 sm:mt-14">
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <MessageSquareText size={20} />
+                <ChatText size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">お客様の声 収集フォーム</h3>
@@ -275,7 +277,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <LayoutDashboard size={20} />
+                <SquaresFour size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">管理ダッシュボード</h3>
@@ -284,7 +286,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <Code2 size={20} />
+                <Code size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
@@ -293,7 +295,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <PenLine size={20} />
+                <PenNib size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">手動追加もOK</h3>
@@ -302,7 +304,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <Smartphone size={20} />
+                <DeviceMobile size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">どのデバイスでも綺麗</h3>
@@ -311,7 +313,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <Zap size={20} />
+                <Lightning size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">5分でセットアップ完了</h3>
@@ -354,7 +356,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <Dumbbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Barbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900"><span className="sm:hidden">ヨガ<br />フィットネス</span><span className="hidden sm:inline">ヨガ・フィットネス</span></p>
                 <p className="text-xs sm:text-sm text-gray-500">生徒さんの声を集めたい</p>
@@ -368,7 +370,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <Store size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Storefront size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネス</p>
                 <p className="text-xs sm:text-sm text-gray-500">お客様の声をHPに載せたい</p>
@@ -406,7 +408,7 @@ export default function Home() {
                 "ペライチ・WordPress対応",
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
-                  <CheckCircle2 size={16} className="text-indigo-600 shrink-0" />
+                  <CheckCircle size={16} className="text-indigo-600 shrink-0" />
                   {item}
                 </li>
               ))}

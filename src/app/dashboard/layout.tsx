@@ -6,62 +6,10 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
-import { LayoutDashboard, FileText, Code, ImageIcon, Settings, MessageSquare, ExternalLink } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
 import { PostHogIdentify } from "./posthog-identify";
-
-const navItems = [
-  { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
-  { href: "/dashboard/forms", label: "フォーム設定", icon: FileText },
-  { href: "/dashboard/widgets", label: "ウィジェット", icon: Code },
-  { href: "/dashboard/sns", label: "SNS画像", icon: ImageIcon },
-];
-
-function SidebarContent({ workspaceName }: { workspaceName?: string }) {
-  return (
-    <>
-      <div className="px-5 py-4 border-b border-foreground/10">
-        <Link href="/dashboard" className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
-        {workspaceName && (
-          <p className="text-xs text-foreground/50 mt-0.5 truncate">
-            {workspaceName}
-          </p>
-        )}
-      </div>
-
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
-          >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </Link>
-        ))}
-        <a
-          href="https://forms.gle/XA7EA9CNGr67WeSk7"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
-        >
-          <MessageSquare className="h-4 w-4" />
-          お問い合わせ
-          <ExternalLink className="h-3 w-3" />
-        </a>
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-foreground transition-colors"
-        >
-          <Settings className="h-4 w-4" />
-          設定
-        </Link>
-      </nav>
-    </>
-  );
-}
+import { SidebarContent } from "./sidebar-content";
 
 export default async function DashboardLayout({
   children,

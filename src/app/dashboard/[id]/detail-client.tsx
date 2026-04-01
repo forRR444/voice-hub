@@ -6,13 +6,13 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Star,
-  Trash2,
-  Bookmark,
+  Trash,
+  BookmarkSimple,
   Tag,
   X,
   Plus,
-  ImageIcon,
-} from "lucide-react";
+  Image,
+} from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
@@ -124,8 +124,8 @@ export default function TestimonialDetailClient({
             className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
             title="削除"
           >
-            <Trash2 size={16} className="sm:hidden" />
-            <Trash2 size={18} className="hidden sm:block" />
+            <Trash size={16} className="sm:hidden" />
+            <Trash size={18} className="hidden sm:block" />
           </button>
         </div>
 
@@ -137,9 +137,10 @@ export default function TestimonialDetailClient({
                 <Star
                   key={i}
                   size={16}
+                  weight={i < (t.rating ?? 0) ? "fill" : "regular"}
                   className={
                     i < (t.rating ?? 0)
-                      ? "fill-amber-400 text-amber-400"
+                      ? "text-amber-400"
                       : "text-foreground/20"
                   }
                 />
@@ -207,14 +208,14 @@ export default function TestimonialDetailClient({
                   : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
               }`}
             >
-              <Bookmark size={14} className={t.is_featured ? "fill-violet-500" : ""} />
+              <BookmarkSimple size={14} weight={t.is_featured ? "fill" : "regular"} className={t.is_featured ? "text-violet-500" : ""} />
               {t.is_featured ? "注目から解除" : "注目に設定"}
             </button>
             <button
               onClick={() => setShowSnsModal(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
             >
-              <ImageIcon size={14} />
+              <Image size={14} />
               SNS画像
             </button>
           </div>

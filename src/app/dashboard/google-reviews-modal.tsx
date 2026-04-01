@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
