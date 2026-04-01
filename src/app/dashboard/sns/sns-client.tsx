@@ -143,20 +143,20 @@ export default function SnsClient({
               return (
                 <div
                   key={t.id}
-                  className={`bg-white rounded-lg border shadow-sm p-4 sm:p-5 transition-colors ${
+                  onClick={() => toggleSelect(t.id)}
+                  className={`bg-white rounded-lg border shadow-sm p-4 sm:p-5 transition-colors cursor-pointer ${
                     isSelected ? "border-indigo-300 bg-indigo-50/30" : "border-foreground/10 hover:border-foreground/20"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Checkbox */}
-                    <button
-                      onClick={() => toggleSelect(t.id)}
-                      className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${
-                        isSelected ? "bg-indigo-600 border-indigo-600" : "border-foreground/20 hover:border-indigo-400"
+                    <div
+                      className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected ? "bg-indigo-600 border-indigo-600" : "border-foreground/20"
                       }`}
                     >
                       {isSelected && <Check size={12} className="text-white" />}
-                    </button>
+                    </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
@@ -182,7 +182,7 @@ export default function SnsClient({
 
                     {/* Individual button */}
                     <button
-                      onClick={() => setSingleTarget(t)}
+                      onClick={(e) => { e.stopPropagation(); setSingleTarget(t); }}
                       className="shrink-0 p-2 rounded-lg text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
                       title="個別に画像を作成"
                     >
