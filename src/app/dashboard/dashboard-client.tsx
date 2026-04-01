@@ -9,18 +9,21 @@ import {
   Clock,
   Copy,
   Plus,
-  MagnifyingGlass,
-  BookmarkSimple,
-  ChatTeardrop,
-  CaretDown,
-  DotsThreeVertical,
-} from "@phosphor-icons/react";
+  Search,
+  Bookmark,
+  MessageSquare,
+  ImageIcon,
+  Crown,
+  ChevronDown,
+  MoreVertical,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags, FormQuestion } from "@/types/database";
 import TryDataDetector from "./try-data-detector";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
+import SnsImageModal from "./sns-image-modal";
 import { useCopy } from "@/hooks/use-copy";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
@@ -41,8 +44,7 @@ export default function DashboardClient({
   const supabase = createClient();
   const [testimonials, setTestimonials] =
     useState<TestimonialWithTags[]>(initialTestimonials);
-  const real = useMemo(() => testimonials.filter((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
-  const hasReal = real.length > 0;
+  const hasReal = useMemo(() => testimonials.some((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
   const [showFormMenu, setShowFormMenu] = useState(false);
@@ -50,8 +52,9 @@ export default function DashboardClient({
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const { copiedKey: copiedUrl, copy } = useCopy();
+  const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
   const filtered = useMemo(() => {
-    let list = real;
+    let list = testimonials;
     if (filter !== "all") {
       list = list.filter((t) => t.status === filter);
     }
@@ -64,9 +67,10 @@ export default function DashboardClient({
       );
     }
     return list;
-  }, [real, filter, search]);
+  }, [testimonials, filter, search]);
 
   const stats = useMemo(() => {
+    const real = testimonials.filter((t) => t.source !== "guide" && t.source !== "sample");
     const total = real.length;
     const approved = real.filter((t) => t.status === "approved").length;
     const pending = real.filter((t) => t.status === "pending").length;
@@ -76,7 +80,7 @@ export default function DashboardClient({
         ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length
         : 0;
     return { total, approved, pending, avg };
-  }, [real]);
+  }, [testimonials]);
 
   async function updateStatus(id: string, status: "approved" | "rejected") {
     const { error } = await supabase
@@ -135,7 +139,13 @@ export default function DashboardClient({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">ホーム</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">{hasReal ? "お客様の声" : "ご登録ありがとうございます"}</h2>
+          {!hasReal && (
+            <span className="px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
+              <Crown size={12} />
+              初期サポーター
+            </span>
+          )}
         </div>
         <div className="flex gap-2 justify-end">
           {forms.length > 0 && hasReal && (
@@ -193,7 +203,7 @@ export default function DashboardClient({
 
       {/* Stats */}
       {stats.total > 0 && <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8">
-        <StatCard icon={<ChatTeardrop size={18} className="text-slate-400" />} label="合計" value={stats.total} />
+        <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
         <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
         <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
         <StatCard
@@ -208,7 +218,7 @@ export default function DashboardClient({
         {/* Mobile: search + dropdown in one row */}
         <div className="flex gap-2 items-center sm:hidden">
           <div className="relative flex-1">
-            <MagnifyingGlass size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
             <input
               type="text"
               placeholder="検索..."
@@ -223,7 +233,7 @@ export default function DashboardClient({
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-foreground/10 rounded-lg bg-white cursor-pointer"
             >
               {tabs.find((t) => t.key === filter)?.label}
-              <CaretDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
             </button>
             {filterOpen && (
               <>
@@ -264,7 +274,7 @@ export default function DashboardClient({
           ))}
         </div>
         <div className="relative hidden sm:block">
-          <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
           <input
             type="text"
             placeholder="検索..."
@@ -275,28 +285,34 @@ export default function DashboardClient({
         </div>
       </div>}
 
-      {/* Guide + Testimonial list */}
-      <div className="flex flex-col gap-3">
-        <GuideCards />
-
-        {filtered.length === 0 && (search.trim() || filter !== "all") ? (
-          <div className="text-center py-16 text-foreground/50">
-            該当する口コミがありません
-          </div>
-        ) : filtered.length > 0 ? (
-          <>
-            {filtered.map((t) => (
-              <TestimonialCard
-                key={t.id}
-                testimonial={t}
-                onApprove={() => updateStatus(t.id, "approved")}
-                onReject={() => updateStatus(t.id, "rejected")}
-                onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
-              />
-            ))}
-          </>
-        ) : null}
-      </div>
+      {/* Testimonial list */}
+      {filtered.length === 0 && !search.trim() && filter === "all" ? (
+        <GuideCard formSlug={forms.length > 0 ? forms[0].slug : undefined} onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined} urlCopied={copiedUrl !== null} />
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16 text-foreground/50">
+          該当する口コミがありません
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {filtered.map((t) => (
+            <TestimonialCard
+              key={t.id}
+              testimonial={t}
+              onApprove={() => updateStatus(t.id, "approved")}
+              onReject={() => updateStatus(t.id, "rejected")}
+              onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
+              onCreateSnsImage={() => setSnsImageTarget(t)}
+              onDeleteGuide={async (id) => {
+                await supabase.from("testimonials").delete().eq("id", id);
+                setTestimonials((prev) => prev.filter((item) => item.id !== id));
+              }}
+              formSlug={forms.length > 0 ? forms[0].slug : undefined}
+              onCopyUrl={forms.length > 0 ? () => copyFormUrl(forms[0].slug) : undefined}
+              urlCopied={copiedUrl !== null}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Try data: Google口コミをサイレントインポート */}
       <TryDataDetector workspaceId={workspace.id} />
@@ -319,6 +335,14 @@ export default function DashboardClient({
         />
       )}
 
+      {/* SNS Image modal */}
+      {snsImageTarget && (
+        <SnsImageModal
+          testimonial={snsImageTarget}
+          brandColor={brandColor}
+          onClose={() => setSnsImageTarget(null)}
+        />
+      )}
     </div>
   );
 }
@@ -348,7 +372,6 @@ function StatusBadge({ status }: { status: string }) {
     pending: { dot: "bg-amber-400", label: "未承認" },
     approved: { dot: "bg-emerald-500", label: "承認済み" },
     rejected: { dot: "bg-red-400", label: "非承認" },
-    guide: { dot: "bg-indigo-400", label: "ご案内" },
   };
   const c = config[status] ?? config.pending;
   return (
@@ -367,10 +390,9 @@ function Stars({ rating }: { rating: number | null }) {
         <Star
           key={i}
           size={14}
-          weight={i < rating ? "fill" : "regular"}
           className={
             i < rating
-              ? "text-amber-400"
+              ? "fill-amber-400 text-amber-400"
               : "text-foreground/20"
           }
         />
@@ -379,82 +401,30 @@ function Stars({ rating }: { rating: number | null }) {
   );
 }
 
-function GuideCards() {
-  const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
-    if (typeof window === "undefined") return {};
-    try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
-  });
-
-  const dismiss = (key: string) => {
-    const next = { ...hidden, [key]: true };
-    setHidden(next);
-    localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
-  };
-
-  if (hidden.welcome && hidden.widget && hidden.sns) return null;
-
+function GuideCard({ formSlug, onCopyUrl, urlCopied }: { formSlug?: string; onCopyUrl?: () => void; urlCopied?: boolean }) {
   return (
-    <div className="flex flex-col gap-3">
-      {!hidden.welcome && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
+    <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="font-medium text-foreground">VoiceHub ガイド</span>
+        <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+      </div>
+      <p className="text-sm text-foreground/60 leading-relaxed">
+        下のURLをコピーして、お客様にLINEやメールで送ってください。お客様の回答がここに届きます。
+      </p>
+      {formSlug && onCopyUrl && (
+        <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
+          <code className="flex-1 text-xs text-foreground/60 truncate">
+            {getBaseUrl()}/form/{formSlug}
+          </code>
           <button
-            onClick={() => dismiss("welcome")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
+            onClick={onCopyUrl}
+            className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
           >
-            <XCircle size={16} />
+            {urlCopied ? "✓ コピー済み" : "URLをコピー"}
           </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-            ご登録ありがとうございます！まずはフォームを設定して、お客様にLINEやメールでURLを送りましょう。回答がここに届きます。
-          </p>
-          <Link href="/dashboard/forms" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
-            フォームを設定する →
-          </Link>
         </div>
       )}
-      {!hidden.widget && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("widget")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-            お客様の声をホームページやSNSに表示して、信頼度をアップさせましょう。ウィジェットから簡単に埋め込めます。
-          </p>
-          <Link href="/dashboard/widgets" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
-            ウィジェット設定へ →
-          </Link>
-        </div>
-      )}
-      {!hidden.sns && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("sns")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-            口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。
-          </p>
-          <Link href="/dashboard/sns" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
-            SNS画像を作成する →
-          </Link>
-        </div>
-      )}
+      <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
     </div>
   );
 }
@@ -464,12 +434,71 @@ function TestimonialCard({
   onApprove,
   onReject,
   onToggleFeatured,
+  onCreateSnsImage,
+  formSlug,
+  onCopyUrl,
+  urlCopied,
+  onDeleteGuide,
 }: {
   testimonial: TestimonialWithTags;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
+  onCreateSnsImage: () => void;
+  formSlug?: string;
+  onCopyUrl?: () => void;
+  urlCopied?: boolean;
+  onDeleteGuide?: (id: string) => void;
 }) {
+  if (t.source === "guide") {
+    return (
+      <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-5 relative">
+        {onDeleteGuide && (
+          <button
+            onClick={() => onDeleteGuide(t.id)}
+            className="absolute top-4 right-4 text-foreground/20 hover:text-foreground/50 cursor-pointer"
+          >
+            <XCircle size={16} />
+          </button>
+        )}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="font-medium text-foreground">{t.name || "お客様"}</span>
+          <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
+        </div>
+        <p className="text-sm text-foreground/60 leading-relaxed">
+          {t.content.includes("[[") ? (
+            <>
+              {t.content.split("[[").map((part, i) => {
+                if (i === 0) return part;
+                const [linkText, rest] = part.split("]]");
+                return (
+                  <span key={i}>
+                    <Link href="/dashboard/widgets" className="text-indigo-600 hover:underline">{linkText}</Link>
+                    {rest}
+                  </span>
+                );
+              })}
+            </>
+          ) : t.content}
+        </p>
+        {formSlug && onCopyUrl && t.content.includes("URLをコピー") && (
+          <div className="flex items-center gap-2 bg-foreground/5 rounded-lg p-2.5 mt-4">
+            <code className="flex-1 text-xs text-foreground/60 truncate">
+              {getBaseUrl()}/form/{formSlug}
+            </code>
+            <button
+              onClick={onCopyUrl}
+              className="shrink-0 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+            >
+              {urlCopied ? "✓ コピー済み" : "URLをコピー"}
+            </button>
+          </div>
+        )}
+        <p className="text-xs text-foreground/30 mt-3 italic">VoiceHubからのご案内です</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 hover:border-foreground/20 transition-colors">
       <div className="flex items-start justify-between">
@@ -547,7 +576,14 @@ function TestimonialCard({
             }`}
             title={t.is_featured ? "注目を解除" : "注目に設定"}
           >
-            <BookmarkSimple size={16} weight={t.is_featured ? "fill" : "regular"} className={t.is_featured ? "text-violet-500" : ""} />
+            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
+          </button>
+          <button
+            onClick={onCreateSnsImage}
+            className="p-1.5 rounded text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer"
+            title="SNS画像を作成"
+          >
+            <ImageIcon size={16} />
           </button>
         </div>
         {/* Mobile: overflow menu */}
@@ -557,6 +593,7 @@ function TestimonialCard({
           onApprove={onApprove}
           onReject={onReject}
           onToggleFeatured={onToggleFeatured}
+          onCreateSnsImage={onCreateSnsImage}
         />
       </div>
     </div>
@@ -569,12 +606,14 @@ function CardOverflowMenu({
   onApprove,
   onReject,
   onToggleFeatured,
+  onCreateSnsImage,
 }: {
   status: string;
   isFeatured: boolean;
   onApprove: () => void;
   onReject: () => void;
   onToggleFeatured: () => void;
+  onCreateSnsImage: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -584,7 +623,7 @@ function CardOverflowMenu({
         onClick={() => setOpen(!open)}
         className="p-1.5 rounded text-foreground/40 hover:text-foreground/60 cursor-pointer"
       >
-        <DotsThreeVertical size={16} />
+        <MoreVertical size={16} />
       </button>
       {open && (
         <>
@@ -612,8 +651,15 @@ function CardOverflowMenu({
               onClick={() => { onToggleFeatured(); setOpen(false); }}
               className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
             >
-              <BookmarkSimple size={14} weight={isFeatured ? "fill" : "regular"} className={isFeatured ? "text-violet-500" : ""} />
+              <Bookmark size={14} className={isFeatured ? "fill-violet-500 text-violet-500" : ""} />
               {isFeatured ? "注目を解除" : "注目に設定"}
+            </button>
+            <button
+              onClick={() => { onCreateSnsImage(); setOpen(false); }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
+            >
+              <ImageIcon size={14} />
+              SNS画像を作成
             </button>
           </div>
         </>
