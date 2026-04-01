@@ -283,7 +283,7 @@ function renderGlass(
   // Name
   ctx.fillStyle = "#FFFFFF";
   ctx.font = `bold ${fonts.nameSize}px ${FONT_FAMILY}`;
-  ctx.fillText(data.name, innerX, y);
+  ctx.fillText(data.name || "お客様", innerX, y);
   y += Math.round(fonts.nameSize * 1.5);
 
   // Subtitle
@@ -365,7 +365,7 @@ function renderWarm(
   ctx.font = `600 ${fonts.nameSize}px ${FONT_FAMILY}`;
   ctx.textBaseline = "top";
   ctx.textAlign = "right";
-  ctx.fillText(data.name, rightX, y);
+  ctx.fillText(data.name || "お客様", rightX, y);
   ctx.textAlign = "start";
   y += Math.round(fonts.nameSize * 1.5);
 

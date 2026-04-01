@@ -117,7 +117,7 @@ function TestimonialCard({
               fontSize: 12,
             }}
           >
-            {t.name}
+            {t.name || "お客様"}
           </div>
           {(t.title || t.company) && (
             <div
@@ -535,7 +535,7 @@ export default async function WidgetPreviewPage({
                     )
                   )}
                   <div>
-                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 14 }}>{t.name}</div>
+                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 14 }}>{t.name || "お客様"}</div>
                     {(t.title || t.company) && (
                       <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13 }}>
                         {[t.title, t.company].filter(Boolean).join(" / ")}
@@ -569,12 +569,12 @@ export default async function WidgetPreviewPage({
                       <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} className="single-avatar" />
                     ) : (
                       <div className="single-initials" style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28 }}>
-                        {(items[0].name || "?").charAt(0).toUpperCase()}
+                        {(items[0].name || "お客様").charAt(0).toUpperCase()}
                       </div>
                     )
                   )}
                   <div style={{ textAlign: "center" }}>
-                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name}</div>
+                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name || "お客様"}</div>
                     <div className="single-subtitle" style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 14, marginTop: 2 }}>
                       {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
                     </div>
@@ -604,12 +604,12 @@ export default async function WidgetPreviewPage({
                       <img src={t.avatar_url} alt={t.name} width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: 36, height: 36, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
-                        {(t.name || "?").charAt(0).toUpperCase()}
+                        {(t.name || "お客様").charAt(0).toUpperCase()}
                       </div>
                     )
                   )}
                   <div>
-                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 13 }}>{t.name}</div>
+                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 13 }}>{t.name || "お客様"}</div>
                     {(t.title || t.company) && (
                       <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 12 }}>
                         {[t.title, t.company].filter(Boolean).join(" / ")}
@@ -812,11 +812,11 @@ export default async function WidgetPreviewPage({
                       if (t.avatar_url) {
                         html += '<img src="'+esc(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
                       } else {
-                        html += '<div style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;">'+esc((t.name||'?').charAt(0).toUpperCase())+'</div>';
+                        html += '<div style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;">'+esc((t.name||'お客様').charAt(0).toUpperCase())+'</div>';
                       }
                     }
                     html += '<div style="text-align:center;">';
-                    html += '<div style="font-weight:700;color:'+(isDark?'#f0f0f0':'#111827')+';font-size:18px;">'+esc(t.name)+'</div>';
+                    html += '<div style="font-weight:700;color:'+(isDark?'#f0f0f0':'#111827')+';font-size:18px;">'+esc(t.name||'お客様')+'</div>';
                     var sub = [t.title, t.company].filter(Boolean).join(' / ');
                     if (sub) html += '<div style="color:'+(isDark?'#9ca3af':'#6b7280')+';font-size:14px;margin-top:2px;">'+esc(sub)+'</div>';
                     if (showDate) html += '<div style="color:'+(isDark?'#6b7280':'#9ca3af')+';font-size:13px;margin-top:4px;">'+new Date(t.submitted_at).toLocaleDateString('ja-JP')+'</div>';

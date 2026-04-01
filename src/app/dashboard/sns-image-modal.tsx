@@ -42,7 +42,7 @@ export default function SnsImageModal({
           {
             rating: testimonial.rating,
             content: testimonial.content,
-            name: testimonial.name,
+            name: testimonial.name || "お客様",
             title: testimonial.title,
             company: testimonial.company ?? null,
             brandColor,

@@ -462,7 +462,7 @@ function TestimonialCard({
           </button>
         )}
         <div className="flex items-center gap-2 mb-3">
-          <span className="font-medium text-foreground">{t.name}</span>
+          <span className="font-medium text-foreground">{t.name || "お客様"}</span>
           <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">ご案内</span>
         </div>
         <p className="text-sm text-foreground/60 leading-relaxed">
@@ -508,7 +508,7 @@ function TestimonialCard({
               href={`/dashboard/${t.id}`}
               className="text-sm sm:text-base font-semibold text-foreground hover:text-indigo-600"
             >
-              {t.name}
+              {t.name || "お客様"}
             </Link>
             <StatusBadge status={t.status} />
           </div>
