@@ -41,19 +41,37 @@ export default function GoogleReviewsModal({
       submitted_at: r.publishTime,
     }));
 
-    const { data, error: insertError } = await supabase
-      .from("testimonials")
-      .upsert(rows, { onConflict: "workspace_id,source_id", ignoreDuplicates: true })
-      .select();
+    // 既存のsource_idを取得して重複を除外
+    const sourceIds = rows.map((r) => r.source_id).filter(Boolean);
+    const { data: existing } = sourceIds.length > 0
+      ? await supabase
+          .from("testimonials")
+          .select("source_id")
+          .eq("workspace_id", workspaceId)
+          .in("source_id", sourceIds)
+      : { data: [] };
+
+    const existingIds = new Set((existing ?? []).map((e: { source_id: string }) => e.source_id));
+    const newRows = rows.filter((r) => !r.source_id || !existingIds.has(r.source_id));
+
+    let data: typeof rows = [];
+    if (newRows.length > 0) {
+      const { data: inserted, error: insertError } = await supabase
+        .from("testimonials")
+        .insert(newRows)
+        .select();
+
+      if (insertError) {
+        setImporting(false);
+        setImportError(insertError.message);
+        return;
+      }
+      data = inserted ?? [];
+    }
 
     setImporting(false);
 
-    if (insertError) {
-      setImportError(insertError.message);
-      return;
-    }
-
-    const added = data?.length ?? 0;
+    const added = data.length;
     const skipped = selectedReviews.length - added;
     setImportResult({ added, skipped });
 
