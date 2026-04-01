@@ -391,7 +391,7 @@ function GuideCards() {
     localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
   };
 
-  if (hidden.welcome && hidden.widget) return null;
+  if (hidden.welcome && hidden.widget && hidden.sns) return null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -432,6 +432,26 @@ function GuideCards() {
           </p>
           <Link href="/dashboard/widgets" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
             ウィジェット設定へ →
+          </Link>
+        </div>
+      )}
+      {!hidden.sns && (
+        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
+          <button
+            onClick={() => dismiss("sns")}
+            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
+          >
+            <XCircle size={16} />
+          </button>
+          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
+            <StatusBadge status="guide" />
+          </div>
+          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
+            口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。
+          </p>
+          <Link href="/dashboard/sns" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
+            SNS画像を作成する →
           </Link>
         </div>
       )}
