@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
-import { LayoutDashboard, FileText, Code, Settings, MessageSquare, ExternalLink } from "lucide-react";
+import { LayoutDashboard, FileText, Code, ImageIcon, Settings, MessageSquare, ExternalLink } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
 import { PostHogIdentify } from "./posthog-identify";
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
   { href: "/dashboard/forms", label: "フォーム設定", icon: FileText },
   { href: "/dashboard/widgets", label: "ウィジェット", icon: Code },
+  { href: "/dashboard/sns", label: "SNS画像", icon: ImageIcon },
 ];
 
 function SidebarContent({ workspaceName }: { workspaceName?: string }) {
