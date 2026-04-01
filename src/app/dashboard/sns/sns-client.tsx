@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, ImageIcon, Download, Loader2, Check, X, Eye } from "lucide-react";
+import { Star, ImageIcon, Download, Loader2, Check, Eye } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
+import Modal from "@/app/components/modal";
 import { formatDate } from "@/lib/utils";
 import JSZip from "jszip";
 
@@ -214,59 +215,66 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
   initialTemplate: TemplateSize;
   onClose: () => void;
 }) {
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateSize>(initialTemplate);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [currentTemplate, setCurrentTemplate] = useState<TemplateSize>(initialTemplate);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     let revoked = false;
-    setPreviewUrl(null);
-    generateTestimonialImage(
-      {
-        rating: testimonial.rating,
-        content: testimonial.content,
-        name: testimonial.name || "お客様",
-        title: testimonial.title,
-        company: testimonial.company ?? null,
-        brandColor,
-      },
-      currentTemplate,
-      "warm"
-    ).then((blob) => {
-      if (revoked) return;
-      setPreviewUrl(URL.createObjectURL(blob));
-    });
-    return () => { revoked = true; };
-  }, [testimonial, brandColor, currentTemplate]);
+    let objectUrl: string | null = null;
+
+    async function generate() {
+      setGenerating(true);
+      setPreviewUrl(null);
+      try {
+        const blob = await generateTestimonialImage(
+          {
+            rating: testimonial.rating,
+            content: testimonial.content,
+            name: testimonial.name || "お客様",
+            title: testimonial.title,
+            company: testimonial.company ?? null,
+            brandColor,
+          },
+          selectedTemplate,
+          "warm"
+        );
+        if (revoked) return;
+        objectUrl = URL.createObjectURL(blob);
+        setPreviewUrl(objectUrl);
+      } finally {
+        if (!revoked) setGenerating(false);
+      }
+    }
+
+    generate();
+    return () => { revoked = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [selectedTemplate, testimonial, brandColor]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="relative max-w-sm mx-4 flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg text-foreground/60 hover:text-foreground cursor-pointer z-10">
-          <X size={16} />
-        </button>
-        {previewUrl ? (
-          <img src={previewUrl} alt="プレビュー" className="rounded-lg shadow-xl max-h-[70vh] w-auto" />
-        ) : (
-          <div className="bg-white rounded-lg p-16 flex items-center justify-center">
-            <Loader2 size={24} className="animate-spin text-foreground/30" />
-          </div>
-        )}
-        <div className="flex gap-1 bg-white/90 backdrop-blur rounded-lg p-1">
-          {TEMPLATE_OPTIONS.map((o) => (
-            <button
-              key={o.key}
-              onClick={() => setCurrentTemplate(o.key)}
-              className={`px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer ${
-                currentTemplate === o.key
-                  ? "bg-indigo-600 text-white"
-                  : "text-foreground/60 hover:bg-foreground/5"
-              }`}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
+    <Modal title="プレビュー" onClose={onClose}>
+      <div className="flex gap-2 mb-4">
+        {TEMPLATE_OPTIONS.map((opt) => (
+          <button
+            key={opt.key}
+            onClick={() => setSelectedTemplate(opt.key)}
+            className={`flex-1 px-3 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${
+              selectedTemplate === opt.key
+                ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
+                : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
-    </div>
+      <div className="flex items-center justify-center bg-foreground/5 rounded-lg max-h-[400px] min-h-[200px] overflow-hidden">
+        {generating ? (
+          <Loader2 size={32} className="animate-spin text-foreground/30" />
+        ) : previewUrl ? (
+          <img src={previewUrl} alt="プレビュー" className="object-contain max-h-[400px] w-full" />
+        ) : null}
+      </div>
+    </Modal>
   );
 }
