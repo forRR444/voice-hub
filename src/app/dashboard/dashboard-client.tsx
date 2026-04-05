@@ -93,8 +93,8 @@ export default function DashboardClient({
   const tabs: { key: FilterTab; label: string }[] = [
     { key: "all", label: "すべて" },
     { key: "approved", label: "承認済み" },
-    { key: "pending", label: "未承認" },
     { key: "rejected", label: "非承認" },
+    { key: "pending", label: "未承認" },
   ];
 
   return (
@@ -154,9 +154,9 @@ export default function DashboardClient({
             { label: "未承認", value: stats.pending },
             { label: "平均評価", value: stats.avg > 0 ? stats.avg.toFixed(1) : "-" },
           ].map((s) => (
-            <div key={s.label} className="flex-1 py-2.5 text-center">
-              <span className="block text-[9px] font-medium uppercase mb-0.5" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
-              <span className="block text-base font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</span>
+            <div key={s.label} className="flex-1 py-3.5 text-center">
+              <span className="block text-[11px] font-medium uppercase mb-1" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
+              <span className="block text-xl font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -346,7 +346,7 @@ function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "appro
       </button>
       {open && (
         <div className="absolute right-0 top-7 z-30 w-36 rounded-lg py-1 shadow-lg" style={{ background: white, border: `1px solid ${rule}` }}>
-          {(["approved", "pending", "rejected"] as const).map((key) => {
+          {(["approved", "rejected", "pending"] as const).map((key) => {
             const o = statusConfig[key];
             return (
               <button

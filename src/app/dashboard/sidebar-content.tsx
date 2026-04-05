@@ -43,7 +43,7 @@ export function SidebarContent({ workspaceName }: { workspaceName?: string }) {
               style={{
                 color: active ? brand : slate,
                 background: active ? "rgba(99,91,255,0.06)" : "transparent",
-                fontWeight: active ? 600 : 400,
+                fontWeight: active ? 500 : 400,
                 letterSpacing: "-0.011em",
               }}
             >
@@ -72,7 +72,7 @@ export function SidebarContent({ workspaceName }: { workspaceName?: string }) {
           style={{
             color: isActive("/dashboard/settings") ? brand : slate,
             background: isActive("/dashboard/settings") ? "rgba(99,91,255,0.06)" : "transparent",
-            fontWeight: isActive("/dashboard/settings") ? 600 : 400,
+            fontWeight: isActive("/dashboard/settings") ? 500 : 400,
             letterSpacing: "-0.011em",
           }}
         >
