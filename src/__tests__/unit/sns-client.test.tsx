@@ -11,6 +11,7 @@ vi.mock("lucide-react", () => ({
   Loader2: ({ size, className }: any) => <span data-testid="spinner" className={className}>{size}</span>,
   Check: ({ size, className }: any) => <span data-testid="check-icon" className={className}>{size}</span>,
   Maximize2: ({ size }: any) => <span data-testid="arrows-out">{size}</span>,
+  ChevronDown: ({ size, className }: any) => <span data-testid="chevron-down" className={className}>{size}</span>,
 }));
 
 // Canvas image generator
@@ -132,7 +133,7 @@ describe("SnsClient — 口コミ一覧", () => {
 
   it("テンプレート選択が表示される", () => {
     render(<SnsClient testimonials={testimonials} brandColor="#6366F1" />);
-    expect(screen.getByDisplayValue("Instagram ストーリー")).toBeInTheDocument();
+    expect(screen.getByText("Instagram ストーリー")).toBeInTheDocument();
   });
 });
 
@@ -223,8 +224,9 @@ describe("SnsClient — 一括ダウンロード", () => {
   it("選択したテンプレートで画像が生成される", async () => {
     render(<SnsClient testimonials={testimonials} brandColor="#6366F1" />);
 
-    // テンプレートをX投稿に変更
-    fireEvent.change(screen.getByDisplayValue("Instagram ストーリー"), { target: { value: "x-post" } });
+    // テンプレートをX投稿に変更（カスタムドロップダウン）
+    fireEvent.click(screen.getByText("Instagram ストーリー"));
+    fireEvent.click(screen.getByText("X 投稿"));
 
     // 1件選択してダウンロード
     fireEvent.click(screen.getByText("田中太郎").closest("[class*=cursor-pointer]")!);
