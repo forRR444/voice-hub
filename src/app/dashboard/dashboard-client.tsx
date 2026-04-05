@@ -314,7 +314,7 @@ function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
               </div>
             </div>
           </div>
-          <p className="text-[13px] leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>&ldquo;{t.content}&rdquo;</p>
+          <p className="text-[13px] leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>{t.content}</p>
           {t.tags.length > 0 && <div className="flex gap-1.5 mt-2.5">{t.tags.map((tag) => <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: canvas, color: slate }}>{tag}</span>)}</div>}
         </div>
         <MobileMenu status={t.status} onApprove={onApprove} onReject={onReject} />
