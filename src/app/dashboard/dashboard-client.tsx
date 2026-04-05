@@ -251,14 +251,14 @@ function GuideCards() {
         <div key={g.key} className="py-5" style={{ borderBottom: `1px solid ${rule}` }}>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3 flex-1">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white" style={{ background: gradient }}>V</div>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white" style={{ background: gradient }}>V</div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm font-semibold" style={{ color: ink }}>VoiceHubチーム</span>
-                  <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-full" style={{ color: brand, background: `${brand}10`, letterSpacing: "0.04em" }}>ご案内</span>
+                  <span className="text-[11px] font-medium uppercase px-2 py-0.5 rounded-full" style={{ color: brand, background: `${brand}10`, letterSpacing: "0.04em" }}>ご案内</span>
                 </div>
                 <p className="text-sm leading-[1.6]" style={{ color: slate }}>{g.text}</p>
-                <Link href={g.link} className="inline-block mt-2 text-xs font-medium transition-opacity duration-150 hover:opacity-70" style={{ color: brandD }}>{g.cta}</Link>
+                <Link href={g.link} className="inline-block mt-2 text-sm font-medium transition-opacity duration-150 hover:opacity-70" style={{ color: brandD }}>{g.cta}</Link>
               </div>
             </div>
             <button onClick={() => dismiss(g.key)} className="transition-opacity duration-150 hover:opacity-50 cursor-pointer mt-1" style={{ color: muted }}>
@@ -279,29 +279,29 @@ function TestimonialRow({ testimonial: t, isLast, onStatusChange }: {
   return (
     <div className="group py-5" style={{ borderBottom: isLast ? "none" : `1px solid ${rule}` }}>
       <div className="flex items-start gap-3.5">
-        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white mt-0.5" style={{ background: `linear-gradient(135deg, ${brand} 0%, ${brandD} 100%)` }}>{initials}</div>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white mt-0.5" style={{ background: `linear-gradient(135deg, ${brand} 0%, ${brandD} 100%)` }}>{initials}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Link href={`/dashboard/${t.id}`} className="text-[13px] font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: ink, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
-                {(t.title || t.company) && <span className="hidden sm:inline text-[11px]" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
+                <Link href={`/dashboard/${t.id}`} className="text-sm font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: ink, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
+                {(t.title || t.company) && <span className="hidden sm:inline text-xs" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
               </div>
               {t.rating != null && (
                 <span className="flex items-center gap-0.5 mt-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={11} fill={i < t.rating! ? "#F5A623" : "none"} style={{ color: i < t.rating! ? "#F5A623" : rule }} />
+                    <Star key={i} size={13} fill={i < t.rating! ? "#F5A623" : "none"} style={{ color: i < t.rating! ? "#F5A623" : rule }} />
                   ))}
                 </span>
               )}
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[10px] font-medium uppercase" style={{ color: muted, letterSpacing: "0.04em" }}>{formatDate(t.submitted_at)}</span>
+              <span className="text-[11px] font-medium uppercase" style={{ color: muted, letterSpacing: "0.04em" }}>{formatDate(t.submitted_at)}</span>
               <StatusPill status={t.status} onSelect={onStatusChange} />
             </div>
           </div>
-          <p className="text-[13px] leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>{t.content}</p>
-          {t.tags.length > 0 && <div className="flex gap-1.5 mt-2.5">{t.tags.map((tag) => <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: canvas, color: slate }}>{tag}</span>)}</div>}
+          <p className="text-sm leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>{t.content}</p>
+          {t.tags.length > 0 && <div className="flex gap-1.5 mt-2.5">{t.tags.map((tag) => <span key={tag} className="text-[11px] px-1.5 py-0.5 rounded-full" style={{ background: canvas, color: slate }}>{tag}</span>)}</div>}
         </div>
       </div>
     </div>
@@ -333,33 +333,33 @@ function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "appro
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full cursor-pointer transition-opacity hover:opacity-70"
+        className="inline-flex items-center gap-1 px-2 py-1 rounded-full cursor-pointer transition-opacity hover:opacity-70"
         style={{
           background: status === "approved" ? "rgba(99,91,255,0.08)" : status === "rejected" ? plate : "transparent",
           color: status === "approved" ? brand : muted,
         }}
       >
-        {status === "approved" && <Check size={13} strokeWidth={2.5} />}
-        {status === "rejected" && <X size={13} strokeWidth={2} />}
-        {status === "pending" && <span className="w-[5px] h-[5px] rounded-full" style={{ background: muted }} />}
-        <ChevronDown size={10} />
+        {status === "approved" && <Check size={15} strokeWidth={2.5} />}
+        {status === "rejected" && <X size={15} strokeWidth={2} />}
+        {status === "pending" && <span className="w-[6px] h-[6px] rounded-full" style={{ background: muted }} />}
+        <ChevronDown size={12} />
       </button>
       {open && (
-        <div className="absolute right-0 top-7 z-30 w-36 rounded-lg py-1 shadow-lg" style={{ background: white, border: `1px solid ${rule}` }}>
+        <div className="absolute right-0 top-9 z-30 w-40 sm:w-48 rounded-lg py-1.5 shadow-lg" style={{ background: white, border: `1px solid ${rule}` }}>
           {(["approved", "rejected", "pending"] as const).map((key) => {
             const o = statusConfig[key];
             return (
               <button
                 key={key}
                 onClick={() => { onSelect(key); setOpen(false); }}
-                className="flex items-center gap-2 w-full px-3 py-1.5 text-xs cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base cursor-pointer transition-colors"
                 onMouseEnter={(e) => { e.currentTarget.style.background = canvas; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               >
-                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: o.bg, color: o.text }}>
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-medium" style={{ background: o.bg, color: o.text }}>
                   {o.label}
                 </span>
-                {status === key && <Check size={12} className="ml-auto" style={{ color: brand }} />}
+                {status === key && <Check size={14} className="ml-auto" style={{ color: brand }} />}
               </button>
             );
           })}
