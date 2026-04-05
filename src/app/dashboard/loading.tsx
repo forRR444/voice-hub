@@ -8,14 +8,11 @@ export default function DashboardLoading() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <Skeleton className="h-8 w-40" />
-        <div className="flex gap-2">
-          <Skeleton className="h-10 w-44 rounded-lg" />
-          <Skeleton className="h-10 w-32 rounded-lg" />
-        </div>
+        <Skeleton className="h-10 w-24 sm:w-32 rounded-lg" />
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-2 sm:gap-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4">
             <Skeleton className="h-4 w-16 mb-2" />
@@ -25,9 +22,9 @@ export default function DashboardLoading() {
       </div>
 
       {/* Filter tabs + search */}
-      <div className="flex items-center justify-between mb-4">
-        <Skeleton className="h-10 w-64 rounded-lg" />
-        <Skeleton className="h-10 w-40 rounded-lg" />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <Skeleton className="h-10 w-full sm:w-64 rounded-lg" />
+        <Skeleton className="h-10 w-full sm:w-40 rounded-lg" />
       </div>
 
       {/* Cards */}

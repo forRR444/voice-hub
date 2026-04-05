@@ -169,8 +169,8 @@ export default function WidgetsClient({
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-foreground">ウィジェット管理</h2>
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">ウィジェット管理</h2>
         <button
           onClick={() => setShowCreate(true)}
           disabled={!canCreate}
@@ -231,7 +231,7 @@ export default function WidgetsClient({
           {widgets.map((w) => (
             <div
               key={w.id}
-              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6"
+              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6"
             >
               {editingId === w.id ? (
                 /* Edit mode */
@@ -365,9 +365,9 @@ export default function WidgetsClient({
                   <div className="mt-4 flex flex-col gap-4">
                     {/* Script embed */}
                     <div>
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1">
                         <span className="text-xs font-medium text-foreground/50">
-                          スクリプト埋め込み<span className="font-normal text-foreground/30 ml-2">おすすめ・デザインが自然に馴染む</span>
+                          スクリプト埋め込み<span className="hidden sm:inline font-normal text-foreground/30 ml-2">おすすめ・デザインが自然に馴染む</span>
                         </span>
                         <button
                           onClick={() =>
@@ -395,9 +395,9 @@ export default function WidgetsClient({
 
                     {/* iFrame embed */}
                     <div>
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1">
                         <span className="text-xs font-medium text-foreground/50">
-                          iFrame埋め込み<span className="font-normal text-foreground/30 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
+                          iFrame埋め込み<span className="hidden sm:inline font-normal text-foreground/30 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
                         </span>
                         <button
                           onClick={() =>
@@ -433,9 +433,9 @@ export default function WidgetsClient({
 
       {/* Delete confirmation */}
       {deletingId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-sm p-6 max-w-sm mx-4">
-            <h3 className="text-lg font-bold text-foreground mb-2">
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
+          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-sm sm:mx-4">
+            <h3 className="text-base sm:text-lg font-bold text-foreground mb-2">
               削除の確認
             </h3>
             <p className="text-sm text-foreground/60 mb-6">

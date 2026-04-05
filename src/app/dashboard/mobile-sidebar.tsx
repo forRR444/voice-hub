@@ -28,7 +28,7 @@ export function MobileSidebar({
       <div className="md:hidden fixed top-0 left-0 z-50 p-3">
         <button
           onClick={() => setOpen(true)}
-          className="p-2 text-foreground/60 hover:text-foreground bg-white rounded-lg shadow-sm border border-foreground/10 cursor-pointer"
+          className="p-2 text-foreground/60 hover:text-foreground cursor-pointer"
           aria-label="メニューを開く"
         >
           <Menu size={20} />

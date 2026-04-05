@@ -81,12 +81,12 @@ export default function SnsImageModal({
   return (
     <Modal title="SNS画像を作成" onClose={onClose}>
       {/* Template selector */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-2 mb-4">
         {TEMPLATE_OPTIONS.map((opt) => (
           <button
             key={opt.key}
             onClick={() => setSelectedTemplate(opt.key)}
-            className={`flex-1 px-3 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${
+            className={`flex-1 px-3 py-2 text-xs sm:text-sm rounded-lg border cursor-pointer transition-colors ${
               selectedTemplate === opt.key
                 ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
                 : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
@@ -98,14 +98,14 @@ export default function SnsImageModal({
       </div>
 
       {/* Preview area */}
-      <div className="flex items-center justify-center bg-foreground/5 rounded-lg mb-4 max-h-[400px] min-h-[200px] overflow-hidden">
+      <div className="flex items-center justify-center bg-foreground/5 rounded-lg mb-4 max-h-[250px] sm:max-h-[400px] min-h-[150px] sm:min-h-[200px] overflow-hidden">
         {generating ? (
           <Loader2 size={32} className="animate-spin text-foreground/30" />
         ) : previewUrl ? (
           <img
             src={previewUrl}
             alt="SNS画像プレビュー"
-            className="object-contain max-h-[400px] w-full"
+            className="object-contain max-h-[250px] sm:max-h-[400px] w-full"
           />
         ) : null}
       </div>

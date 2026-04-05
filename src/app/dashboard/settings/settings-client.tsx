@@ -51,18 +51,18 @@ export default function SettingsClient({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-foreground mb-8">設定</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8">設定</h2>
 
       {/* Workspace name */}
-      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">
+      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
           ワークスペース
         </h3>
         <div>
           <label className="block text-sm font-medium text-foreground/70 mb-1">
             ワークスペース名
           </label>
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <input
               type="text"
               value={name}
@@ -90,19 +90,19 @@ export default function SettingsClient({
       </section>
 
       {/* Plan info */}
-      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-foreground">利用状況</h3>
+      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground">利用状況</h3>
           <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
             <Crown size={14} />
             初期サポーター
           </span>
         </div>
-        <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-3 mb-4">
-          <p className="text-sm font-medium text-indigo-700">
-            先着10名の初期サポーター特典が適用されています
+        <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 mb-3 sm:mb-4">
+          <p className="text-xs sm:text-sm font-medium text-indigo-700">
+            初期サポーター特典が適用されています
           </p>
-          <p className="text-xs text-indigo-500 mt-1">
+          <p className="text-[10px] sm:text-xs text-indigo-500 mt-1">
             正式リリース後も、すべての機能をずっと無料でご利用いただけます。
           </p>
         </div>
@@ -129,8 +129,8 @@ export default function SettingsClient({
 
       {/* Password change (email users only) */}
       {hasPassword && (
-        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
+        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
             パスワード変更
           </h3>
           <form
@@ -215,9 +215,9 @@ export default function SettingsClient({
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
               アカウントの削除
             </h3>
             <p className="text-sm text-foreground/60 mb-4">

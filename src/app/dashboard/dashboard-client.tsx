@@ -143,33 +143,49 @@ export default function DashboardClient({
 
       {/* ─── Stats ─── */}
       {stats.total > 0 && (
-        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 md:mb-8 animate-fade-in-delay-1">
+        <>
+        {/* Mobile: 1 card with inline stats / Desktop: 4 separate cards */}
+        <div className="sm:hidden rounded-[4px] flex mb-6 animate-fade-in-delay-1" style={{ background: plate }}>
+          {[
+            { label: "合計", value: stats.total },
+            { label: "承認済み", value: stats.approved },
+            { label: "未承認", value: stats.pending },
+            { label: "平均評価", value: stats.avg > 0 ? stats.avg.toFixed(1) : "-" },
+          ].map((s) => (
+            <div key={s.label} className="flex-1 py-2.5 text-center">
+              <span className="block text-[9px] font-medium uppercase mb-0.5" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
+              <span className="block text-base font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</span>
+            </div>
+          ))}
+        </div>
+        <div className="hidden sm:grid grid-cols-4 gap-3 mb-8 animate-fade-in-delay-1">
           {[
             { label: "合計", value: stats.total, icon: <MessageSquare size={14} style={{ color: slate }} /> },
             { label: "承認済み", value: stats.approved, icon: <CheckCircle size={14} style={{ color: slate }} /> },
             { label: "未承認", value: stats.pending, icon: <CircleDot size={14} style={{ color: slate }} /> },
             { label: "平均評価", value: stats.avg > 0 ? stats.avg.toFixed(1) : "-", icon: <Star size={14} style={{ color: slate }} /> },
           ].map((s) => (
-            <div key={s.label} className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
-              <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
-                <span className="hidden sm:block" style={{ color: muted }}>{s.icon}</span>
-                <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
+            <div key={s.label} className="rounded-[4px] p-4" style={{ background: plate }}>
+              <div className="flex items-center gap-1.5 mb-2">
+                <span style={{ color: muted }}>{s.icon}</span>
+                <span className="text-xs font-medium uppercase" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
               </div>
-              <p className="text-lg sm:text-2xl font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</p>
+              <p className="text-2xl font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</p>
             </div>
           ))}
         </div>
+        </>
       )}
 
       {/* ─── Filter tabs + search ─── */}
       {stats.total > 0 && (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-0 animate-fade-in-delay-2" style={{ borderBottom: `1px solid ${rule}` }}>
-          <div className="flex gap-0">
+          <div className="flex gap-0 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setFilter(tab.key)}
-                className="px-4 py-3 text-sm transition-opacity duration-150 cursor-pointer relative"
+                className="px-3 sm:px-4 py-3 text-xs sm:text-sm transition-opacity duration-150 cursor-pointer relative whitespace-nowrap"
                 style={{ color: filter === tab.key ? ink : slate, fontWeight: filter === tab.key ? 600 : 400, letterSpacing: "-0.011em" }}
               >
                 {tab.label}
@@ -177,11 +193,11 @@ export default function DashboardClient({
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-3 pb-2 sm:pb-0">
-            <div className="relative">
+          <div className="flex items-center gap-3 pb-2 sm:pb-0 w-full sm:w-auto">
+            <div className="relative w-full sm:w-auto">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: muted }} />
               <input type="text" placeholder="検索..." value={search} onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none"
+                className="w-full sm:w-auto pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none"
                 style={{ background: plate, color: ink, border: ghostBorder, letterSpacing: "-0.011em" }}
               />
             </div>

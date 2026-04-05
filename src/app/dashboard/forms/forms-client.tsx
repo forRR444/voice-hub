@@ -154,8 +154,8 @@ export default function FormsClient({
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-foreground">フォーム管理</h2>
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">フォーム管理</h2>
         <button
           onClick={() => {
             setSelectedTemplate("coaching");
@@ -171,9 +171,9 @@ export default function FormsClient({
 
       {/* Template picker modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-lg sm:mx-4 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">
               テンプレートを選択
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
@@ -230,7 +230,7 @@ export default function FormsClient({
           {forms.map((form) => (
             <div
               key={form.id}
-              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-6"
+              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6"
             >
               {editingId === form.id ? (
                 /* Edit mode */
@@ -368,7 +368,7 @@ export default function FormsClient({
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-6 mt-4 text-sm text-foreground/50">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 mt-3 sm:mt-4 text-xs sm:text-sm text-foreground/50">
                     <span>回答数: {submissionCounts[form.id] ?? 0}件</span>
                     <span>作成日: {formatDate(form.created_at)}</span>
                     <div
@@ -377,25 +377,25 @@ export default function FormsClient({
                       title={form.brand_color}
                     />
                   </div>
-                  <div className="mt-4 flex items-center gap-3">
+                  <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
                     <button
                       onClick={() => startEdit(form)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
                     >
                       質問内容を確認
                     </button>
                     <button
                       onClick={() => copyUrl(form.slug, form.id)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
                     >
                       <Copy size={14} />
                       {copiedId === form.id
                         ? "コピーしました"
-                        : "フォームURLをコピー"}
+                        : "URLをコピー"}
                     </button>
                     <button
                       onClick={() => setQrForm({ slug: form.slug, title: form.title })}
-                      className="flex items-center gap-2 px-3 py-2 text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
+                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
                     >
                       <QrCode size={14} />
                       QRコード
@@ -410,9 +410,9 @@ export default function FormsClient({
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && deleteFormId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
               フォームの削除
             </h3>
             <p className="text-sm text-foreground/60 mb-4">
@@ -453,10 +453,10 @@ export default function FormsClient({
 
       {/* QR Code modal */}
       {qrForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">QRコード</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">QRコード</h3>
               <button
                 onClick={() => setQrForm(null)}
                 className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"

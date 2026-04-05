@@ -81,11 +81,11 @@ export default function GoogleReviewsModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-sm w-full max-w-lg mx-4 p-6 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
+      <div className="bg-white rounded-t-xl sm:rounded-xl shadow-sm w-full max-w-lg sm:mx-4 p-4 sm:p-6 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 shrink-0">
-          <h3 className="text-lg font-bold text-gray-900">Google口コミをインポート</h3>
+        <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900">Google口コミをインポート</h3>
           <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"

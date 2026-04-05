@@ -268,9 +268,9 @@ export default function TestimonialDetailClient({
 
       {/* Delete confirmation */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-sm p-6 max-w-sm mx-4">
-            <h3 className="text-lg font-bold text-foreground mb-2">
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
+          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-sm sm:mx-4">
+            <h3 className="text-base sm:text-lg font-bold text-foreground mb-2">
               削除の確認
             </h3>
             <p className="text-sm text-foreground/60 mb-6">
