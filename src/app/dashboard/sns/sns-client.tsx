@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, Image, DownloadSimple, SpinnerGap, Check, ArrowsOut } from "@phosphor-icons/react";
+import { Star, ImageIcon, Download, Loader2, Check, Maximize2 } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import Modal from "@/app/components/modal";
@@ -93,7 +93,7 @@ export default function SnsClient({
 
       {testimonials.length === 0 ? (
         <div className="bg-white rounded-lg border border-foreground/10 shadow-sm text-center py-16">
-          <Image size={32} className="mx-auto text-foreground/20 mb-3" />
+          <ImageIcon size={32} className="mx-auto text-foreground/20 mb-3" />
           <p className="text-sm text-foreground/50">承認済みの口コミがありません</p>
           <p className="text-xs text-foreground/30 mt-1">口コミが届いて承認すると、ここからSNS画像を作成できます</p>
         </div>
@@ -128,9 +128,9 @@ export default function SnsClient({
                 className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {generating ? (
-                  <><SpinnerGap size={14} className="animate-spin" />生成中...</>
+                  <><Loader2 size={14} className="animate-spin" />生成中...</>
                 ) : (
-                  <><DownloadSimple size={14} />一括ダウンロード</>
+                  <><Download size={14} />一括ダウンロード</>
                 )}
               </button>
             </div>
@@ -170,7 +170,7 @@ export default function SnsClient({
                             <Star
                               key={i}
                               size={14}
-                              weight={i < t.rating! ? "fill" : "regular"}
+                              fill={i < t.rating! ? "currentColor" : "none"}
                               className={i < t.rating! ? "text-amber-400" : "text-foreground/20"}
                             />
                           ))}
@@ -187,7 +187,7 @@ export default function SnsClient({
                       className="shrink-0 p-2 rounded-lg text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
                       title="プレビュー"
                     >
-                      <ArrowsOut size={16} />
+                      <Maximize2 size={16} />
                     </button>
                   </div>
                 </div>
@@ -271,7 +271,7 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
       </div>
       <div className="flex items-center justify-center bg-foreground/5 rounded-lg max-h-[400px] min-h-[200px] overflow-hidden">
         {generating ? (
-          <SpinnerGap size={32} className="animate-spin text-foreground/30" />
+          <Loader2 size={32} className="animate-spin text-foreground/30" />
         ) : previewUrl ? (
           <img src={previewUrl} alt="プレビュー" className="object-contain max-h-[400px] w-full" />
         ) : null}

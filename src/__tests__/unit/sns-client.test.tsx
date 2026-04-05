@@ -3,14 +3,14 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 // ─── Mocks ───────────────────────────────────────────────────
 
-// Phosphor Icons
-vi.mock("@phosphor-icons/react", () => ({
-  Star: ({ size, className, weight }: any) => <span data-testid="star" data-weight={weight} className={className}>{size}</span>,
-  Image: ({ size, className }: any) => <span data-testid="image-icon" className={className}>{size}</span>,
-  DownloadSimple: ({ size }: any) => <span data-testid="download-icon">{size}</span>,
-  SpinnerGap: ({ size, className }: any) => <span data-testid="spinner" className={className}>{size}</span>,
+// Lucide Icons
+vi.mock("lucide-react", () => ({
+  Star: ({ size, className, fill }: any) => <span data-testid="star" data-fill={fill} className={className}>{size}</span>,
+  ImageIcon: ({ size, className }: any) => <span data-testid="image-icon" className={className}>{size}</span>,
+  Download: ({ size }: any) => <span data-testid="download-icon">{size}</span>,
+  Loader2: ({ size, className }: any) => <span data-testid="spinner" className={className}>{size}</span>,
   Check: ({ size, className }: any) => <span data-testid="check-icon" className={className}>{size}</span>,
-  ArrowsOut: ({ size }: any) => <span data-testid="arrows-out">{size}</span>,
+  Maximize2: ({ size }: any) => <span data-testid="arrows-out">{size}</span>,
 }));
 
 // Canvas image generator

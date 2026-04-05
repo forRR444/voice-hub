@@ -5,24 +5,24 @@ import PublicHeader from "./components/public-header";
 import TestimonialToast from "./components/testimonial-toast";
 import FaqItem from "./components/faq-item";
 import {
-  ChatText,
-  SquaresFour,
+  MessageSquareText,
+  LayoutDashboard,
   Code,
-  PenNib,
-  DeviceMobile,
-  Lightning,
+  PenLine,
+  Smartphone,
+  Zap,
   ArrowRight,
   Star,
   CheckCircle,
   Users,
   GraduationCap,
   Heart,
-  Barbell,
+  Dumbbell,
   Briefcase,
-  Storefront,
-  InstagramLogo,
-  ImageSquare,
-} from "@phosphor-icons/react";
+  Store,
+  Instagram,
+  ImageIcon,
+} from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
 
@@ -51,15 +51,15 @@ export default function Home() {
         <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <ChatText size={18} className="text-indigo-600 sm:hidden" />
-              <ChatText size={22} className="text-indigo-600 hidden sm:block" />
+              <MessageSquareText size={18} className="text-indigo-600 sm:hidden" />
+              <MessageSquareText size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">フォームで収集</span>
           </div>
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <SquaresFour size={18} className="text-indigo-600 sm:hidden" />
-              <SquaresFour size={22} className="text-indigo-600 hidden sm:block" />
+              <LayoutDashboard size={18} className="text-indigo-600 sm:hidden" />
+              <LayoutDashboard size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">一元管理</span>
           </div>
@@ -72,8 +72,8 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
-              <InstagramLogo size={18} className="text-indigo-600 sm:hidden" />
-              <InstagramLogo size={22} className="text-indigo-600 hidden sm:block" />
+              <Instagram size={18} className="text-indigo-600 sm:hidden" />
+              <Instagram size={22} className="text-indigo-600 hidden sm:block" />
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">SNS投稿画像を作成</span>
           </div>
@@ -301,7 +301,7 @@ export default function Home() {
             </div>
             <div className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
-                <InstagramLogo size={22} />
+                <Instagram size={22} />
               </div>
               <h3 className="text-base sm:text-lg font-bold text-gray-900">SNS投稿画像を作成</h3>
               <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -329,7 +329,7 @@ export default function Home() {
           <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-6 mt-10 sm:mt-14">
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <ChatText size={20} />
+                <MessageSquareText size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">お客様の声 収集フォーム</h3>
@@ -338,7 +338,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <SquaresFour size={20} />
+                <LayoutDashboard size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">管理ダッシュボード</h3>
@@ -356,7 +356,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <ImageSquare size={20} />
+                <ImageIcon size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">SNS投稿画像を作成</h3>
@@ -365,7 +365,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <PenNib size={20} />
+                <PenLine size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">手動追加もOK</h3>
@@ -374,7 +374,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <DeviceMobile size={20} />
+                <Smartphone size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">どのデバイスでも綺麗</h3>
@@ -383,7 +383,7 @@ export default function Home() {
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
-                <Lightning size={20} />
+                <Zap size={20} />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">5分でセットアップ完了</h3>
@@ -426,7 +426,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <Barbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Dumbbell size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900"><span className="sm:hidden">ヨガ<br />フィットネス</span><span className="hidden sm:inline">ヨガ・フィットネス</span></p>
                 <p className="text-xs sm:text-sm text-gray-500">生徒さんの声を集めたい</p>
@@ -440,7 +440,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-gray-200 bg-white">
-              <Storefront size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Store size={16} className="text-indigo-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm sm:text-base font-semibold text-gray-900">スモールビジネス</p>
                 <p className="text-xs sm:text-sm text-gray-500">お客様の声をHPに載せたい</p>

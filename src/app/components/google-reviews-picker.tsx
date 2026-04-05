@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MagnifyingGlass, Star, MapPin, CaretLeft } from "@phosphor-icons/react";
+import { Search, Star, MapPin, ChevronLeft } from "lucide-react";
 
 type Place = {
   id: string;
@@ -158,7 +158,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
               disabled={searchLoading || !query.trim()}
               className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer flex items-center gap-1.5 shrink-0"
             >
-              <MagnifyingGlass size={15} />
+              <Search size={15} />
               検索
             </button>
           </form>
@@ -196,7 +196,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
               onClick={() => { setStep("search"); setError(""); }}
               className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
             >
-              <CaretLeft size={16} />
+              <ChevronLeft size={16} />
             </button>
             <span className="text-sm font-medium text-gray-700 truncate">
               {selectedPlace?.displayName.text}
@@ -259,7 +259,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
                           <Star
                             key={i}
                             size={12}
-                            weight={i < review.rating ? "fill" : "regular"}
+                            fill={i < review.rating ? "currentColor" : "none"}
                             className={
                               i < review.rating
                                 ? "text-amber-400"

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ArrowLeft, Copy, Check } from "@phosphor-icons/react";
+import { ArrowRight, ArrowLeft, Copy, Check } from "lucide-react";
 import { useCopy } from "@/hooks/use-copy";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug, getBaseUrl } from "@/lib/utils";

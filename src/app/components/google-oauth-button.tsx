@@ -1,6 +1,6 @@
 "use client";
 
-import { SpinnerGap } from "@phosphor-icons/react";
+import { Loader2 } from "lucide-react";
 
 interface GoogleOAuthButtonProps {
   onClick: () => void;
@@ -16,7 +16,7 @@ export default function GoogleOAuthButton({ onClick, loading, label }: GoogleOAu
       className="flex w-full items-center justify-center gap-3 rounded-lg border border-foreground/10 bg-white px-4 py-2.5 text-sm font-medium text-foreground hover:bg-foreground/5 transition-colors cursor-pointer disabled:opacity-50"
     >
       {loading ? (
-        <SpinnerGap className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
         <svg className="h-4 w-4" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />

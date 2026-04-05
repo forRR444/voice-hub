@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft } from "@phosphor-icons/react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import type { FormQuestion } from "@/types/database";

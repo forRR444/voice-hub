@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { List, X } from "@phosphor-icons/react";
+import { Menu, X } from "lucide-react";
 
 export function MobileMenuButton({ onClick }: { onClick: () => void }) {
   return (
@@ -10,7 +10,7 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
       className="md:hidden p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 rounded-lg cursor-pointer"
       aria-label="メニューを開く"
     >
-      <List size={20} />
+      <Menu size={20} />
     </button>
   );
 }
@@ -31,7 +31,7 @@ export function MobileSidebar({
           className="p-2 text-foreground/60 hover:text-foreground bg-white rounded-lg shadow-sm border border-foreground/10 cursor-pointer"
           aria-label="メニューを開く"
         >
-          <List size={20} />
+          <Menu size={20} />
         </button>
       </div>
 

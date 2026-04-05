@@ -1,32 +1,40 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   Star,
   CheckCircle,
   XCircle,
-  Clock,
-  Copy,
   Plus,
   Search,
-  Bookmark,
-  MessageSquare,
-  ImageIcon,
-  ChevronDown,
   MoreVertical,
+  ChevronDown,
+  MessageSquare,
+  CircleDot,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags, FormQuestion } from "@/types/database";
 import TryDataDetector from "./try-data-detector";
-import { getBaseUrl, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
-import SnsImageModal from "./sns-image-modal";
-import { useCopy } from "@/hooks/use-copy";
+
+/* ─── Design Tokens ─── */
+const ink    = "#1A1F36";
+const slate  = "#4F566B";
+const muted  = "#A3ACB9";
+const canvas = "#F7F8F9";
+const white  = "#FFFFFF";
+const plate  = "#F0F1F3";
+const brand  = "#635BFF";
+const brandD = "#493EE5";
+const rule   = "#E3E8EE";
+const gradient = `linear-gradient(180deg, ${brand} 0%, ${brandD} 100%)`;
+const ghostBorder = "1px solid rgba(199,196,216,0.2)";
+const floatShadow = "0px 2px 4px rgba(26,31,54,0.04), 0px 12px 32px rgba(26,31,54,0.08)";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
-
 type FormInfo = { id: string; slug: string; title: string; brand_color: string; questions: FormQuestion[] };
 
 export default function DashboardClient({
@@ -41,30 +49,21 @@ export default function DashboardClient({
   brandColor: string;
 }) {
   const supabase = createClient();
-  const [testimonials, setTestimonials] =
-    useState<TestimonialWithTags[]>(initialTestimonials);
+  const [testimonials, setTestimonials] = useState<TestimonialWithTags[]>(initialTestimonials);
   const real = useMemo(() => testimonials.filter((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
   const hasReal = real.length > 0;
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
-  const [showFormMenu, setShowFormMenu] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const { copiedKey: copiedUrl, copy } = useCopy();
-  const [snsImageTarget, setSnsImageTarget] = useState<TestimonialWithTags | null>(null);
+
   const filtered = useMemo(() => {
     let list = real;
-    if (filter !== "all") {
-      list = list.filter((t) => t.status === filter);
-    }
+    if (filter !== "all") list = list.filter((t) => t.status === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter(
-        (t) =>
-          t.name.toLowerCase().includes(q) ||
-          t.content.toLowerCase().includes(q)
-      );
+      list = list.filter((t) => t.name.toLowerCase().includes(q) || t.content.toLowerCase().includes(q));
     }
     return list;
   }, [real, filter, search]);
@@ -74,587 +73,287 @@ export default function DashboardClient({
     const approved = real.filter((t) => t.status === "approved").length;
     const pending = real.filter((t) => t.status === "pending").length;
     const rated = real.filter((t) => t.rating != null);
-    const avg =
-      rated.length > 0
-        ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length
-        : 0;
-    return { total, approved, pending, avg };
+    const avg = rated.length > 0 ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length : 0;
+    const approvedPct = total > 0 ? Math.round((approved / total) * 100) : 0;
+    return { total, approved, pending, avg, approvedPct };
   }, [real]);
 
   async function updateStatus(id: string, status: "approved" | "rejected") {
-    const { error } = await supabase
-      .from("testimonials")
-      .update({ status })
-      .eq("id", id);
-    if (error) {
-      window.alert("ステータスの更新に失敗しました");
-      return;
-    }
-    setTestimonials((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status } : t))
-    );
+    const { error } = await supabase.from("testimonials").update({ status }).eq("id", id);
+    if (error) { window.alert("ステータスの更新に失敗しました"); return; }
+    setTestimonials((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
   }
 
-  async function toggleFeatured(id: string, current: boolean) {
-    const { error } = await supabase
-      .from("testimonials")
-      .update({ is_featured: !current })
-      .eq("id", id);
-    if (error) {
-      window.alert("おすすめ設定の更新に失敗しました");
-      return;
-    }
-    setTestimonials((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, is_featured: !current } : t
-      )
-    );
-  }
 
-  function copyFormUrl(slug: string) {
-    copy(`${getBaseUrl()}/form/${slug}`);
-    setShowFormMenu(false);
-  }
-
-  function handleTestimonialAdded(t: TestimonialWithTags) {
-    setTestimonials((prev) => [t, ...prev]);
-    setShowAddModal(false);
-  }
-
-  function handleGoogleImported(imported: TestimonialWithTags[]) {
-    setTestimonials((prev) => [...imported, ...prev]);
-    setShowGoogleModal(false);
-  }
+  function handleTestimonialAdded(t: TestimonialWithTags) { setTestimonials((prev) => [t, ...prev]); setShowAddModal(false); }
+  function handleGoogleImported(imported: TestimonialWithTags[]) { setTestimonials((prev) => [...imported, ...prev]); setShowGoogleModal(false); }
 
   const tabs: { key: FilterTab; label: string }[] = [
-    { key: "all", label: "全て" },
-    { key: "pending", label: "未承認" },
+    { key: "all", label: "すべて" },
     { key: "approved", label: "承認済み" },
+    { key: "pending", label: "未承認" },
     { key: "rejected", label: "非承認" },
   ];
 
   return (
     <div className="max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">ホーム</h2>
-        </div>
-        <div className="flex gap-2 justify-end">
-          {forms.length > 0 && hasReal && (
-            <div className="relative">
-              <button
-                onClick={() => forms.length === 1 ? copyFormUrl(forms[0].slug) : setShowFormMenu(!showFormMenu)}
-                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
-              >
-                <Copy size={16} />
-                {copiedUrl ? "コピーしました" : "フォームURLをコピー"}
-              </button>
-              {showFormMenu && forms.length > 1 && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowFormMenu(false)}
-                  />
-                  <div className="absolute right-0 top-11 z-20 w-56 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
-                    {forms.map((f) => (
-                      <button
-                        key={f.id}
-                        onClick={() => copyFormUrl(f.slug)}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
-                      >
-                        <Copy size={14} />
-                        {f.title}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+      {/* ─── Header ─── */}
+      <div className="flex items-center justify-between mb-8 sm:mb-10 animate-fade-in relative z-30">
+        <h2 className="text-xl sm:text-2xl font-semibold" style={{ color: ink, letterSpacing: "-0.022em" }}>ダッシュボード</h2>
+        <div className="relative">
+          <button
+            onClick={() => setShowAddMenu(!showAddMenu)}
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-opacity duration-150 hover:opacity-90 cursor-pointer"
+            style={{ background: gradient }}
+          >
+            <Plus size={15} />
+            追加
+            <ChevronDown size={12} className="ml-0.5" />
+          </button>
+          {showAddMenu && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowAddMenu(false)} />
+              <div className="absolute right-0 top-12 z-50 w-60 rounded-[4px] py-1.5" style={{ background: white, boxShadow: floatShadow }}>
+                <button
+                  onClick={() => { setShowAddModal(true); setShowAddMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm cursor-pointer transition-opacity duration-150 hover:opacity-70"
+                  style={{ color: ink }}
+                >
+                  <Plus size={14} style={{ color: brand }} />
+                  手動で追加
+                </button>
+                <button
+                  onClick={() => { setShowGoogleModal(true); setShowAddMenu(false); }}
+                  className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm cursor-pointer transition-opacity duration-150 hover:opacity-70"
+                  style={{ color: ink }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  Google口コミをインポート
+                </button>
+              </div>
+            </>
           )}
-          <button
-            onClick={() => setShowGoogleModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm border border-foreground/10 bg-white rounded-lg hover:bg-foreground/5 cursor-pointer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            Google口コミを取り込む
-          </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
-          >
-            <Plus size={16} />
-            手動で追加
-          </button>
         </div>
       </div>
 
-      {/* Stats */}
-      {stats.total > 0 && <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8">
-        <StatCard icon={<MessageSquare size={18} className="text-slate-400" />} label="合計" value={stats.total} />
-        <StatCard icon={<CheckCircle size={18} className="text-emerald-600" />} label="承認済み" value={stats.approved} />
-        <StatCard icon={<Clock size={18} className="text-amber-500" />} label="未承認" value={stats.pending} />
-        <StatCard
-          icon={<Star size={18} className="text-yellow-500" />}
-          label="平均評価"
-          value={stats.avg > 0 ? stats.avg.toFixed(1) : "-"}
-        />
-      </div>}
-
-      {/* Filter tabs + search */}
-      {stats.total > 0 && <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
-        {/* Mobile: search + dropdown in one row */}
-        <div className="flex gap-2 items-center sm:hidden">
-          <div className="relative flex-1">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
-            <input
-              type="text"
-              placeholder="検索..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-7 pr-3 py-1.5 text-xs border border-foreground/10 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+      {/* ─── Stats ─── */}
+      {stats.total > 0 && (
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8 animate-fade-in-delay-1">
+          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
+            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+              <span className="hidden sm:block"><MessageSquare size={18} style={{ color: slate }} /></span>
+              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>合計</span>
+            </div>
+            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.total}</p>
           </div>
-          <div className="relative shrink-0">
-            <button
-              onClick={() => setFilterOpen(!filterOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-foreground/10 rounded-lg bg-white cursor-pointer"
-            >
-              {tabs.find((t) => t.key === filter)?.label}
-              <ChevronDown size={12} className={`text-foreground/40 transition-transform ${filterOpen ? "rotate-180" : ""}`} />
-            </button>
-            {filterOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setFilterOpen(false)} />
-                <div className="absolute right-0 top-9 z-20 w-32 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.key}
-                      onClick={() => { setFilter(tab.key); setFilterOpen(false); }}
-                      className={`w-full text-left px-3 py-2 text-xs cursor-pointer ${
-                        filter === tab.key
-                          ? "text-indigo-600 font-medium bg-indigo-50"
-                          : "text-foreground/60 hover:bg-foreground/5"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
+            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+              <span className="hidden sm:block"><CheckCircle size={18} style={{ color: "#24B47E" }} /></span>
+              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>承認済み</span>
+            </div>
+            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.approved}</p>
+          </div>
+          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
+            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+              <span className="hidden sm:block"><CircleDot size={18} style={{ color: "#F5A623" }} /></span>
+              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>未承認</span>
+            </div>
+            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.pending}</p>
+          </div>
+          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
+            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+              <span className="hidden sm:block"><Star size={18} fill="#F5A623" style={{ color: "#F5A623" }} /></span>
+              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>平均評価</span>
+            </div>
+            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.avg > 0 ? stats.avg.toFixed(1) : "-"}</p>
           </div>
         </div>
-        {/* Desktop: tabs */}
-        <div className="hidden sm:flex gap-1 bg-foreground/[0.03] rounded-lg border border-foreground/10 p-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
-              className={`px-4 py-1.5 text-sm rounded-md transition-colors cursor-pointer ${
-                filter === tab.key
-                  ? "bg-white text-foreground font-medium shadow-sm"
-                  : "text-foreground/50 hover:text-foreground/70"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="relative hidden sm:block">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
-          <input
-            type="text"
-            placeholder="検索..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 text-sm border border-foreground/10 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-      </div>}
+      )}
 
-      {/* Guide + Testimonial list */}
-      <div className="flex flex-col gap-3">
-        <GuideCards hasReviews={hasReal} onCreateSnsImage={hasReal ? () => setSnsImageTarget(real[0]) : undefined} />
+      {/* ─── Filter tabs + search ─── */}
+      {stats.total > 0 && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-0 animate-fade-in-delay-2" style={{ borderBottom: `1px solid ${rule}` }}>
+          <div className="flex gap-0">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setFilter(tab.key)}
+                className="px-4 py-3 text-sm transition-opacity duration-150 cursor-pointer relative"
+                style={{ color: filter === tab.key ? ink : muted, fontWeight: filter === tab.key ? 600 : 400, letterSpacing: "-0.011em" }}
+              >
+                {tab.label}
+                {filter === tab.key && <span className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full" style={{ background: brand }} />}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-3 pb-2 sm:pb-0">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: muted }} />
+              <input type="text" placeholder="検索..." value={search} onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none"
+                style={{ background: plate, color: ink, border: ghostBorder, letterSpacing: "-0.011em" }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Guide + List (same stream) ─── */}
+      <div className="animate-fade-in-delay-3">
+        {filter === "all" && <GuideCards />}
 
         {filtered.length === 0 && (search.trim() || filter !== "all") ? (
-          <div className="text-center py-16 text-foreground/50">
-            該当する口コミがありません
-          </div>
+          <div className="text-center py-20"><p className="text-sm" style={{ color: muted }}>該当する口コミがありません</p></div>
         ) : filtered.length > 0 ? (
-          <>
-            {filtered.map((t) => (
-              <TestimonialCard
-                key={t.id}
-                testimonial={t}
-                onApprove={() => updateStatus(t.id, "approved")}
-                onReject={() => updateStatus(t.id, "rejected")}
-                onToggleFeatured={() => toggleFeatured(t.id, t.is_featured)}
-                onCreateSnsImage={() => setSnsImageTarget(t)}
+          <div>
+            {filtered.map((t, i) => (
+              <TestimonialRow key={t.id} testimonial={t} isLast={i === filtered.length - 1}
+                onApprove={() => updateStatus(t.id, "approved")} onReject={() => updateStatus(t.id, "rejected")}
               />
             ))}
-          </>
+          </div>
         ) : null}
       </div>
 
-      {/* Try data: Google口コミをサイレントインポート */}
       <TryDataDetector workspaceId={workspace.id} />
-
-      {/* Add modal */}
-      {showAddModal && (
-        <AddTestimonialModal
-          workspaceId={workspace.id}
-          onClose={() => setShowAddModal(false)}
-          onAdded={handleTestimonialAdded}
-        />
-      )}
-
-      {/* Google Reviews modal */}
-      {showGoogleModal && (
-        <GoogleReviewsModal
-          workspaceId={workspace.id}
-          onClose={() => setShowGoogleModal(false)}
-          onImported={handleGoogleImported}
-        />
-      )}
-
-      {/* SNS Image modal */}
-      {snsImageTarget && (
-        <SnsImageModal
-          testimonial={snsImageTarget}
-          brandColor={brandColor}
-          onClose={() => setSnsImageTarget(null)}
-        />
-      )}
+      {showAddModal && <AddTestimonialModal workspaceId={workspace.id} onClose={() => setShowAddModal(false)} onAdded={handleTestimonialAdded} />}
+      {showGoogleModal && <GoogleReviewsModal workspaceId={workspace.id} onClose={() => setShowGoogleModal(false)} onImported={handleGoogleImported} />}
     </div>
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number | string;
-}) {
-  return (
-    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-2.5 sm:p-4">
-      <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-        <span className="hidden sm:block">{icon}</span>
-        <span className="text-[10px] sm:text-xs text-foreground/40 font-medium uppercase tracking-wide">{label}</span>
-      </div>
-      <p className="text-xl sm:text-3xl font-bold text-foreground">{value}</p>
-    </div>
-  );
-}
+/* ─── Guide Cards ─── */
+function GuideCards() {
+  const [hidden, setHidden] = useState<Record<string, boolean>>({});
+  useEffect(() => { try { setHidden(JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}")); } catch { /* noop */ } }, []);
+  const dismiss = (key: string) => { const next = { ...hidden, [key]: true }; setHidden(next); localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next)); };
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { dot: string; label: string }> = {
-    pending: { dot: "bg-amber-400", label: "未承認" },
-    approved: { dot: "bg-emerald-500", label: "承認済み" },
-    rejected: { dot: "bg-red-400", label: "非承認" },
-    guide: { dot: "bg-indigo-400", label: "ご案内" },
-  };
-  const c = config[status] ?? config.pending;
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-foreground/50">
-      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
-      {c.label}
-    </span>
-  );
-}
+  if (hidden.welcome && hidden.widget && hidden.sns) return null;
 
-function Stars({ rating }: { rating: number | null }) {
-  if (rating == null) return null;
+  const items = [
+    { key: "welcome", text: "ご登録ありがとうございます！まずはフォームを設定して、お客様にLINEやメールでURLを送りましょう。回答がここに届きます。", link: "/dashboard/forms", cta: "フォームを設定する →" },
+    { key: "widget", text: "お客様の声をホームページに表示して、信頼度をアップさせましょう。ウィジェットから簡単に埋め込めます。", link: "/dashboard/widgets", cta: "ウィジェット設定へ →" },
+    { key: "sns", text: "口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。", link: "/dashboard/sns", cta: "SNS画像を作成する →" },
+  ];
+
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          size={14}
-          className={
-            i < rating
-              ? "fill-amber-400 text-amber-400"
-              : "text-foreground/20"
-          }
-        />
+    <div>
+      {items.filter((g) => !hidden[g.key]).map((g) => (
+        <div key={g.key} className="py-5" style={{ borderBottom: `1px solid ${rule}` }}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 flex-1">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white" style={{ background: gradient }}>V</div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-semibold" style={{ color: ink }}>VoiceHubチーム</span>
+                  <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-full" style={{ color: brand, background: `${brand}10`, letterSpacing: "0.04em" }}>ご案内</span>
+                </div>
+                <p className="text-sm leading-[1.6]" style={{ color: slate }}>{g.text}</p>
+                <Link href={g.link} className="inline-block mt-2 text-xs font-medium transition-opacity duration-150 hover:opacity-70" style={{ color: brandD }}>{g.cta}</Link>
+              </div>
+            </div>
+            <button onClick={() => dismiss(g.key)} className="transition-opacity duration-150 hover:opacity-50 cursor-pointer mt-1" style={{ color: muted }}>
+              <XCircle size={16} />
+            </button>
+          </div>
+        </div>
       ))}
     </div>
   );
 }
 
-function GuideCards({ hasReviews, onCreateSnsImage }: { hasReviews: boolean; onCreateSnsImage?: () => void }) {
-  const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
-    if (typeof window === "undefined") return {};
-    try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
-  });
-
-  const dismiss = (key: string) => {
-    const next = { ...hidden, [key]: true };
-    setHidden(next);
-    localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next));
-  };
-
-  if (hidden.welcome && hidden.widget && hidden.sns) return null;
-
-  return (
-    <div className="flex flex-col gap-3">
-      {!hidden.welcome && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("welcome")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-            ご登録ありがとうございます！まずはフォームを設定して、お客様にLINEやメールでURLを送りましょう。回答がここに届きます。
-          </p>
-          <Link href="/dashboard/forms" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
-            フォームを設定する →
-          </Link>
-        </div>
-      )}
-      {!hidden.widget && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("widget")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-            お客様の声をホームページやSNSに表示して、信頼度をアップさせましょう。ウィジェットから簡単に埋め込めます。
-          </p>
-          <Link href="/dashboard/widgets" className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700">
-            ウィジェット設定へ →
-          </Link>
-        </div>
-      )}
-      {!hidden.sns && (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 relative">
-          <button
-            onClick={() => dismiss("sns")}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-red-500 cursor-pointer transition-colors"
-          >
-            <XCircle size={16} />
-          </button>
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <span className="text-sm sm:text-base font-semibold text-foreground">VoiceHubチーム</span>
-            <StatusBadge status="guide" />
-          </div>
-          {hasReviews ? (
-            <>
-              <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-                口コミからInstagramやSNS用の画像を自動生成できます。お客様の声を投稿してフォロワーに信頼を伝えましょう。
-              </p>
-              {onCreateSnsImage && (
-                <button onClick={onCreateSnsImage} className="inline-block mt-1.5 text-xs text-indigo-500 hover:text-indigo-700 cursor-pointer">
-                  SNS画像を作成する →
-                </button>
-              )}
-            </>
-          ) : (
-            <p className="text-xs sm:text-sm text-foreground/50 mt-2 leading-relaxed">
-              口コミが届くと、InstagramやSNS用の画像を自動生成できるようになります。各口コミの <ImageIcon size={13} className="inline -mt-0.5 text-foreground/40" /> ボタンからSNS画像を作成できます。
-            </p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function TestimonialCard({
-  testimonial: t,
-  onApprove,
-  onReject,
-  onToggleFeatured,
-  onCreateSnsImage,
-}: {
-  testimonial: TestimonialWithTags;
-  onApprove: () => void;
-  onReject: () => void;
-  onToggleFeatured: () => void;
-  onCreateSnsImage: () => void;
+/* ─── Testimonial Row ─── */
+function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
+  testimonial: TestimonialWithTags; isLast: boolean; onApprove: () => void; onReject: () => void;
 }) {
+  const initials = (t.name || "お客様").charAt(0).toUpperCase();
   return (
-    <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-5 hover:border-foreground/20 transition-colors">
-      <div className="flex items-start justify-between">
+    <div className="group py-5" style={{ borderBottom: isLast ? "none" : `1px solid ${rule}` }}>
+      <div className="flex items-start gap-3.5">
+        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white mt-0.5" style={{ background: `linear-gradient(135deg, ${brand} 0%, ${brandD} 100%)` }}>{initials}</div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-            <Link
-              href={`/dashboard/${t.id}`}
-              className="text-sm sm:text-base font-semibold text-foreground hover:text-indigo-600"
-            >
-              {t.name || "お客様"}
-            </Link>
-            <StatusBadge status={t.status} />
-          </div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <Stars rating={t.rating} />
-            <span className="text-[10px] text-foreground/25">{formatDate(t.submitted_at)}</span>
-          </div>
-          <p className="text-xs sm:text-sm text-foreground/50 mt-2 line-clamp-2 leading-relaxed">
-            {t.content}
-          </p>
-          {([t.before_story, t.title, t.company].some(Boolean) || (t.custom_fields && Object.keys(t.custom_fields).length > 0)) && (
-            <Link
-              href={`/dashboard/${t.id}`}
-              className="inline-block mt-1.5 text-[10px] sm:text-xs text-indigo-500 hover:text-indigo-700"
-            >
-              詳細を見る →
-            </Link>
-          )}
-          {t.tags.length > 0 && (
-            <div className="flex gap-1 mt-2">
-              {t.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs bg-foreground/5 text-foreground/60 px-2 py-0.5 rounded"
-                >
-                  {tag}
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-[6px] h-[6px] rounded-full shrink-0" style={{ background: t.status === "approved" ? "#24B47E" : t.status === "rejected" ? "#E25950" : "#F5A623" }} />
+                <Link href={`/dashboard/${t.id}`} className="text-[13px] font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: ink, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
+                {(t.title || t.company) && <span className="text-[11px]" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
+              </div>
+              {t.rating != null && (
+                <span className="flex items-center gap-0.5 mt-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={11} fill={i < t.rating! ? "#F5A623" : "none"} style={{ color: i < t.rating! ? "#F5A623" : rule }} />
+                  ))}
                 </span>
-              ))}
+              )}
             </div>
-          )}
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="text-[10px] font-medium uppercase" style={{ color: muted, letterSpacing: "0.04em" }}>{formatDate(t.submitted_at)}</span>
+              {/* Actions — visible on hover */}
+              <div className="hidden sm:flex items-center gap-1.5 ml-3">
+                <button
+                  onClick={onReject}
+                  disabled={t.status === "rejected"}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] transition-all duration-150 cursor-pointer"
+                  style={{
+                    color: t.status === "rejected" ? muted : slate,
+                    opacity: t.status === "rejected" ? 0.5 : 1,
+                  }}
+                  onMouseEnter={(e) => { if (t.status !== "rejected") { e.currentTarget.style.color = ink; e.currentTarget.style.background = canvas; } }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = t.status === "rejected" ? muted : slate; e.currentTarget.style.background = "transparent"; }}
+                >
+                  <XCircle size={13} /> 却下
+                </button>
+                <button
+                  onClick={onApprove}
+                  disabled={t.status === "approved"}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] font-semibold text-white cursor-pointer"
+                  style={{
+                    background: t.status === "approved" ? muted : gradient,
+                    opacity: t.status === "approved" ? 0.4 : 1,
+                    transition: "opacity 150ms",
+                  }}
+                  onMouseEnter={(e) => { if (t.status !== "approved") e.currentTarget.style.opacity = "0.85"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = t.status === "approved" ? "0.4" : "1"; }}
+                >
+                  <CheckCircle size={13} /> 承認
+                </button>
+              </div>
+            </div>
+          </div>
+          <p className="text-[13px] leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>&ldquo;{t.content}&rdquo;</p>
+          {t.tags.length > 0 && <div className="flex gap-1.5 mt-2.5">{t.tags.map((tag) => <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: canvas, color: slate }}>{tag}</span>)}</div>}
         </div>
-
-        {/* Desktop: inline buttons */}
-        <div className="hidden sm:flex items-center gap-2 ml-4 shrink-0">
-          <button
-            onClick={onApprove}
-            disabled={t.status === "approved"}
-            className={`p-2 rounded ${
-              t.status === "approved"
-                ? "text-foreground/15 cursor-default"
-                : "text-foreground/60 hover:text-emerald-600 cursor-pointer"
-            }`}
-            title="承認"
-          >
-            <CheckCircle size={18} />
-          </button>
-          <button
-            onClick={onReject}
-            disabled={t.status === "rejected"}
-            className={`p-2 rounded ${
-              t.status === "rejected"
-                ? "text-foreground/15 cursor-default"
-                : "text-foreground/60 hover:text-red-500 cursor-pointer"
-            }`}
-            title="却下"
-          >
-            <XCircle size={18} />
-          </button>
-          <button
-            onClick={onToggleFeatured}
-            className={`p-1.5 rounded cursor-pointer ${
-              t.is_featured
-                ? "text-violet-500 hover:bg-violet-50"
-                : "text-foreground/60 hover:text-foreground/80 hover:bg-foreground/5"
-            }`}
-            title={t.is_featured ? "注目を解除" : "注目に設定"}
-          >
-            <Bookmark size={16} className={t.is_featured ? "fill-violet-500" : ""} />
-          </button>
-          <button
-            onClick={onCreateSnsImage}
-            className="p-1.5 rounded text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer"
-            title="SNS画像を作成"
-          >
-            <ImageIcon size={16} />
-          </button>
-        </div>
-        {/* Mobile: overflow menu */}
-        <CardOverflowMenu
-          status={t.status}
-          isFeatured={t.is_featured}
-          onApprove={onApprove}
-          onReject={onReject}
-          onToggleFeatured={onToggleFeatured}
-          onCreateSnsImage={onCreateSnsImage}
-        />
+        <MobileMenu status={t.status} onApprove={onApprove} onReject={onReject} />
       </div>
     </div>
   );
 }
 
-function CardOverflowMenu({
-  status,
-  isFeatured,
-  onApprove,
-  onReject,
-  onToggleFeatured,
-  onCreateSnsImage,
-}: {
-  status: string;
-  isFeatured: boolean;
-  onApprove: () => void;
-  onReject: () => void;
-  onToggleFeatured: () => void;
-  onCreateSnsImage: () => void;
+function StatusBadge({ status }: { status: string }) {
+  const config: Record<string, { color: string; label: string }> = { pending: { color: "#F5A623", label: "未承認" }, approved: { color: "#24B47E", label: "承認済み" }, rejected: { color: "#E25950", label: "非承認" } };
+  const c = config[status] ?? config.pending;
+  return <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: slate }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: c.color }} />{c.label}</span>;
+}
+
+function MobileMenu({ status, onApprove, onReject }: {
+  status: string; onApprove: () => void; onReject: () => void;
 }) {
   const [open, setOpen] = useState(false);
-
   return (
-    <div className="relative sm:hidden ml-2 shrink-0">
-      <button
-        onClick={() => setOpen(!open)}
-        className="p-1.5 rounded text-foreground/40 hover:text-foreground/60 cursor-pointer"
-      >
-        <MoreVertical size={16} />
-      </button>
+    <div className="relative sm:hidden shrink-0">
+      <button onClick={() => setOpen(!open)} className="p-1.5 cursor-pointer" style={{ color: muted }}><MoreVertical size={16} /></button>
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-8 z-20 w-36 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
-            {status !== "approved" && (
-              <button
-                onClick={() => { onApprove(); setOpen(false); }}
-                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-emerald-600 hover:bg-foreground/5 cursor-pointer"
-              >
-                <CheckCircle size={14} />
-                承認
-              </button>
-            )}
-            {status !== "rejected" && (
-              <button
-                onClick={() => { onReject(); setOpen(false); }}
-                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-500 hover:bg-foreground/5 cursor-pointer"
-              >
-                <XCircle size={14} />
-                却下
-              </button>
-            )}
-            <button
-              onClick={() => { onToggleFeatured(); setOpen(false); }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
-            >
-              <Bookmark size={14} className={isFeatured ? "fill-violet-500 text-violet-500" : ""} />
-              {isFeatured ? "注目を解除" : "注目に設定"}
-            </button>
-            <button
-              onClick={() => { onCreateSnsImage(); setOpen(false); }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60 hover:bg-foreground/5 cursor-pointer"
-            >
-              <ImageIcon size={14} />
-              SNS画像を作成
-            </button>
+          <div className="absolute right-0 top-8 z-20 w-36 rounded-lg py-1" style={{ background: white, boxShadow: floatShadow }}>
+            {status !== "approved" && <button onClick={() => { onApprove(); setOpen(false); }} className="flex items-center gap-2 w-full px-3 py-2.5 text-xs cursor-pointer transition-opacity duration-150 hover:opacity-70" style={{ color: "#24B47E" }}><CheckCircle size={14} /> 承認</button>}
+            {status !== "rejected" && <button onClick={() => { onReject(); setOpen(false); }} className="flex items-center gap-2 w-full px-3 py-2.5 text-xs cursor-pointer transition-opacity duration-150 hover:opacity-70" style={{ color: "#E25950" }}><XCircle size={14} /> 却下</button>}
           </div>
         </>
       )}

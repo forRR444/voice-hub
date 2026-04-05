@@ -7,12 +7,12 @@ import {
   ArrowLeft,
   Star,
   Trash,
-  BookmarkSimple,
+  Bookmark,
   Tag,
   X,
   Plus,
-  Image,
-} from "@phosphor-icons/react";
+  ImageIcon,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
@@ -137,7 +137,7 @@ export default function TestimonialDetailClient({
                 <Star
                   key={i}
                   size={16}
-                  weight={i < (t.rating ?? 0) ? "fill" : "regular"}
+                  fill={i < (t.rating ?? 0) ? "currentColor" : "none"}
                   className={
                     i < (t.rating ?? 0)
                       ? "text-amber-400"
@@ -208,14 +208,14 @@ export default function TestimonialDetailClient({
                   : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
               }`}
             >
-              <BookmarkSimple size={14} weight={t.is_featured ? "fill" : "regular"} className={t.is_featured ? "text-violet-500" : ""} />
+              <Bookmark size={14} fill={t.is_featured ? "currentColor" : "none"} className={t.is_featured ? "text-violet-500" : ""} />
               {t.is_featured ? "注目から解除" : "注目に設定"}
             </button>
             <button
               onClick={() => setShowSnsModal(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
             >
-              <Image size={14} />
+              <ImageIcon size={14} />
               SNS画像
             </button>
           </div>

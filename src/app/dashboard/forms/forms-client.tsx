@@ -9,8 +9,8 @@ import {
   X,
   Trash,
   QrCode,
-  DownloadSimple,
-} from "@phosphor-icons/react";
+  Download,
+} from "lucide-react";
 import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
@@ -479,7 +479,7 @@ export default function FormsClient({
                 onClick={downloadQr}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
               >
-                <DownloadSimple size={14} />
+                <Download size={14} />
                 PNG保存
               </button>
               <button

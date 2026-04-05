@@ -6,13 +6,13 @@ import {
   Plus,
   Copy,
   Code,
-  ArrowSquareOut,
+  ExternalLink,
   Check,
   X,
   Pencil,
   Trash,
-  DotsThree,
-} from "@phosphor-icons/react";
+  MoreHorizontal,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   WorkspaceRow,
@@ -309,7 +309,7 @@ export default function WidgetsClient({
                     onClick={() => setOpenMenuId(openMenuId === w.id ? null : w.id)}
                     className="p-2 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5 rounded-lg cursor-pointer"
                   >
-                    <DotsThree size={18} />
+                    <MoreHorizontal size={18} />
                   </button>
                   {openMenuId === w.id && (
                     <>
@@ -325,7 +325,7 @@ export default function WidgetsClient({
                           className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5"
                           onClick={() => setOpenMenuId(null)}
                         >
-                          <ArrowSquareOut size={14} />
+                          <ExternalLink size={14} />
                           プレビュー
                         </a>
                         <button

@@ -6,7 +6,7 @@ import { preserveTemplate } from "@/lib/auth-utils";
 import { useGoogleOAuth } from "@/hooks/use-google-oauth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SpinnerGap } from "@phosphor-icons/react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import GoogleOAuthButton from "@/app/components/google-oauth-button";
 import AuthInput from "@/app/components/auth-input";
@@ -80,7 +80,7 @@ export default function LoginClient() {
               disabled={!!loading}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50"
             >
-              {loading === "email" ? <SpinnerGap className="h-4 w-4 animate-spin" /> : null}
+              {loading === "email" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               ログイン
             </button>
           </form>

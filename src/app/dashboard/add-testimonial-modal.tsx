@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Star } from "@phosphor-icons/react";
+import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import Modal from "@/app/components/modal";
@@ -100,7 +100,7 @@ export default function AddTestimonialModal({
               >
                 <Star
                   size={24}
-                  weight={n <= form.rating ? "fill" : "regular"}
+                  fill={n <= form.rating ? "currentColor" : "none"}
                   className={
                     n <= form.rating
                       ? "text-amber-400"
