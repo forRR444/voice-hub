@@ -150,7 +150,7 @@ export default function DashboardClient({
             { label: "未承認", value: stats.pending, icon: <CircleDot size={14} style={{ color: slate }} /> },
             { label: "平均評価", value: stats.avg > 0 ? stats.avg.toFixed(1) : "-", icon: <Star size={14} style={{ color: slate }} /> },
           ].map((s) => (
-            <div key={s.label} className="rounded-[4px] p-2.5 sm:p-4" style={{ background: white }}>
+            <div key={s.label} className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
               <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
                 <span className="hidden sm:block" style={{ color: muted }}>{s.icon}</span>
                 <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
