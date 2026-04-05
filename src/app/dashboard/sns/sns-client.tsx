@@ -6,6 +6,7 @@ import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import Modal from "@/app/components/modal";
 import { formatDate } from "@/lib/utils";
+import PageTitle from "@/app/components/page-title";
 import JSZip from "jszip";
 
 const TEMPLATE_OPTIONS: { key: TemplateSize; label: string }[] = [
@@ -86,7 +87,7 @@ export default function SnsClient({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">SNS画像を作成</h2>
+          <PageTitle>SNS画像を作成</PageTitle>
           <p className="text-sm text-foreground/50 mt-1">口コミを選んでInstagramやX用の画像を生成できます</p>
         </div>
       </div>

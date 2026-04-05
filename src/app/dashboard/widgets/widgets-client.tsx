@@ -25,6 +25,7 @@ import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
 import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
+import PageTitle from "@/app/components/page-title";
 import { useCopy } from "@/hooks/use-copy";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
@@ -171,7 +172,7 @@ export default function WidgetsClient({
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6 sm:mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-foreground">ウィジェット管理</h2>
+        <PageTitle>ウィジェット管理</PageTitle>
         <button
           onClick={() => setShowCreate(true)}
           disabled={!canCreate}

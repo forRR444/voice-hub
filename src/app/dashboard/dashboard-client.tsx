@@ -20,6 +20,7 @@ import TryDataDetector from "./try-data-detector";
 import { formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
+import PageTitle from "@/app/components/page-title";
 
 /* ─── Design Tokens ─── */
 const ink    = "#1A1F36";
@@ -100,7 +101,7 @@ export default function DashboardClient({
     <div className="max-w-5xl mx-auto">
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between mb-8 sm:mb-10 animate-fade-in relative z-30">
-        <h2 className="text-xl sm:text-2xl font-semibold" style={{ color: ink, letterSpacing: "-0.022em" }}>ダッシュボード</h2>
+        <PageTitle>ダッシュボード</PageTitle>
         <div className="relative">
           <button
             onClick={() => setShowAddMenu(!showAddMenu)}

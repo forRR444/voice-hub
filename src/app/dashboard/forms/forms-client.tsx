@@ -19,6 +19,7 @@ import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import QuestionEditor from "@/app/components/question-editor";
+import PageTitle from "@/app/components/page-title";
 
 export default function FormsClient({
   workspace,
@@ -155,7 +156,7 @@ export default function FormsClient({
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6 sm:mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-foreground">フォーム管理</h2>
+        <PageTitle>フォーム管理</PageTitle>
         <button
           onClick={() => {
             setSelectedTemplate("coaching");

@@ -6,6 +6,7 @@ import { Check, Crown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
+import PageTitle from "@/app/components/page-title";
 
 export default function SettingsClient({
   workspace,
@@ -51,7 +52,7 @@ export default function SettingsClient({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8">設定</h2>
+      <div className="mb-6 sm:mb-8"><PageTitle>設定</PageTitle></div>
 
       {/* Workspace name */}
       <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
