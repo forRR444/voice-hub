@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Star, ImageIcon, Download, Loader2, Check, Maximize2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Star, ImageIcon, Download, Loader2, Check, Maximize2, ChevronDown } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import Modal from "@/app/components/modal";
@@ -100,37 +100,29 @@ export default function SnsClient({
       ) : (
         <>
           {/* Toolbar */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={toggleAll}
-                className="text-xs text-foreground/50 hover:text-foreground/80 cursor-pointer"
+                className="text-xs text-foreground/50 hover:text-foreground/80 cursor-pointer whitespace-nowrap"
               >
                 {selectedIds.size === testimonials.length ? "選択を解除" : "すべて選択"}
               </button>
               {selectedIds.size > 0 && (
-                <span className="text-xs text-indigo-600 font-medium">{selectedIds.size}件選択中</span>
+                <span className="text-xs text-indigo-600 font-medium whitespace-nowrap">{selectedIds.size}件選択中</span>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <select
-                value={template}
-                onChange={(e) => setTemplate(e.target.value as TemplateSize)}
-                className="text-sm border border-foreground/10 rounded-lg px-3 py-1.5 bg-white cursor-pointer"
-              >
-                {TEMPLATE_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.key}>{o.label}</option>
-                ))}
-              </select>
+              <TemplateSelect value={template} onChange={setTemplate} />
               <button
                 onClick={handleBulkDownload}
                 disabled={selectedIds.size === 0 || generating}
-                className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-1.5 px-2.5 sm:px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {generating ? (
-                  <><Loader2 size={14} className="animate-spin" />生成中...</>
+                  <><Loader2 size={14} className="animate-spin" /><span className="hidden sm:inline">生成中...</span></>
                 ) : (
-                  <><Download size={14} />一括ダウンロード</>
+                  <><Download size={14} /><span className="hidden sm:inline">一括ダウンロード</span></>
                 )}
               </button>
             </div>
@@ -259,7 +251,7 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
           <button
             key={opt.key}
             onClick={() => setSelectedTemplate(opt.key)}
-            className={`flex-1 px-3 py-2 text-xs sm:text-sm rounded-lg border cursor-pointer transition-colors ${
+            className={`flex-1 px-4 py-3 text-base rounded-lg border cursor-pointer transition-colors ${
               selectedTemplate === opt.key
                 ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
                 : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
@@ -277,5 +269,47 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
         ) : null}
       </div>
     </Modal>
+  );
+}
+
+/* ─── Custom Template Select ─── */
+function TemplateSelect({ value, onChange }: { value: TemplateSize; onChange: (v: TemplateSize) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const current = TEMPLATE_OPTIONS.find((o) => o.key === value) ?? TEMPLATE_OPTIONS[0];
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-1.5 text-sm border border-foreground/10 rounded-lg bg-white cursor-pointer hover:bg-foreground/5 transition-colors"
+      >
+        {current.label}
+        <ChevronDown size={14} className="text-foreground/40" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-10 z-30 w-52 rounded-lg py-1 shadow-lg bg-white border border-foreground/10">
+          {TEMPLATE_OPTIONS.map((o) => (
+            <button
+              key={o.key}
+              onClick={() => { onChange(o.key); setOpen(false); }}
+              className={`flex items-center gap-2 w-full px-4 py-3 text-sm cursor-pointer transition-colors hover:bg-foreground/5 ${
+                value === o.key ? "text-indigo-600 font-medium" : "text-foreground/70"
+              }`}
+            >
+              {o.label}
+              {value === o.key && <Check size={14} className="ml-auto text-indigo-600" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

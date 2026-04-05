@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Star,
+  Check,
+  X,
   CheckCircle,
   XCircle,
   Plus,
   Search,
-  MoreVertical,
   ChevronDown,
   MessageSquare,
   CircleDot,
@@ -78,7 +79,7 @@ export default function DashboardClient({
     return { total, approved, pending, avg, approvedPct };
   }, [real]);
 
-  async function updateStatus(id: string, status: "approved" | "rejected") {
+  async function updateStatus(id: string, status: "approved" | "rejected" | "pending") {
     const { error } = await supabase.from("testimonials").update({ status }).eq("id", id);
     if (error) { window.alert("ステータスの更新に失敗しました"); return; }
     setTestimonials((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
@@ -215,7 +216,7 @@ export default function DashboardClient({
           <div>
             {filtered.map((t, i) => (
               <TestimonialRow key={t.id} testimonial={t} isLast={i === filtered.length - 1}
-                onApprove={() => updateStatus(t.id, "approved")} onReject={() => updateStatus(t.id, "rejected")}
+                onStatusChange={(status) => updateStatus(t.id, status)}
               />
             ))}
           </div>
@@ -270,8 +271,8 @@ function GuideCards() {
 }
 
 /* ─── Testimonial Row ─── */
-function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
-  testimonial: TestimonialWithTags; isLast: boolean; onApprove: () => void; onReject: () => void;
+function TestimonialRow({ testimonial: t, isLast, onStatusChange }: {
+  testimonial: TestimonialWithTags; isLast: boolean; onStatusChange: (status: "approved" | "rejected" | "pending") => void;
 }) {
   const initials = (t.name || "お客様").charAt(0).toUpperCase();
   return (
@@ -282,9 +283,8 @@ function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-[6px] h-[6px] rounded-full shrink-0" style={{ background: t.status === "approved" ? "#24B47E" : t.status === "rejected" ? "#E25950" : "#F5A623" }} />
                 <Link href={`/dashboard/${t.id}`} className="text-[13px] font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: ink, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
-                {(t.title || t.company) && <span className="text-[11px]" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
+                {(t.title || t.company) && <span className="hidden sm:inline text-[11px]" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
               </div>
               {t.rating != null && (
                 <span className="flex items-center gap-0.5 mt-1">
@@ -294,73 +294,77 @@ function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-[10px] font-medium uppercase" style={{ color: muted, letterSpacing: "0.04em" }}>{formatDate(t.submitted_at)}</span>
-              {/* Actions — visible on hover */}
-              <div className="hidden sm:flex items-center gap-1.5 ml-3">
-                <button
-                  onClick={onReject}
-                  disabled={t.status === "rejected"}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] font-medium cursor-pointer"
-                  style={{
-                    color: t.status === "rejected" ? muted : slate,
-                    background: t.status === "rejected" ? "transparent" : plate,
-                    opacity: t.status === "rejected" ? 0.5 : 1,
-                    transition: "all 150ms",
-                  }}
-                  onMouseEnter={(e) => { if (t.status !== "rejected") { e.currentTarget.style.color = ink; e.currentTarget.style.background = "#E8E9EB"; } }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = t.status === "rejected" ? muted : slate; e.currentTarget.style.background = t.status === "rejected" ? "transparent" : plate; }}
-                >
-                  <XCircle size={13} /> 却下
-                </button>
-                <button
-                  onClick={onApprove}
-                  disabled={t.status === "approved"}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] font-semibold text-white cursor-pointer"
-                  style={{
-                    background: t.status === "approved" ? muted : gradient,
-                    opacity: t.status === "approved" ? 0.4 : 1,
-                    transition: "opacity 150ms",
-                  }}
-                  onMouseEnter={(e) => { if (t.status !== "approved") e.currentTarget.style.opacity = "0.85"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.opacity = t.status === "approved" ? "0.4" : "1"; }}
-                >
-                  <CheckCircle size={13} /> 承認
-                </button>
-              </div>
+              <StatusPill status={t.status} onSelect={onStatusChange} />
             </div>
           </div>
           <p className="text-[13px] leading-[1.6] mt-1.5 line-clamp-3" style={{ color: slate, letterSpacing: "-0.011em" }}>{t.content}</p>
           {t.tags.length > 0 && <div className="flex gap-1.5 mt-2.5">{t.tags.map((tag) => <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: canvas, color: slate }}>{tag}</span>)}</div>}
         </div>
-        <MobileMenu status={t.status} onApprove={onApprove} onReject={onReject} />
       </div>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { color: string; label: string }> = { pending: { color: "#F5A623", label: "未承認" }, approved: { color: "#24B47E", label: "承認済み" }, rejected: { color: "#E25950", label: "非承認" } };
-  const c = config[status] ?? config.pending;
-  return <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: slate }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: c.color }} />{c.label}</span>;
-}
+/* ─── Status Pill (Notion-style) ─── */
+const statusConfig: Record<string, { label: string; bg: string; text: string; strike?: boolean }> = {
+  approved: { label: "承認済み", bg: "rgba(99,91,255,0.08)", text: brand },
+  pending:  { label: "未承認",   bg: plate, text: slate },
+  rejected: { label: "非承認",   bg: "transparent", text: muted, strike: true },
+};
 
-function MobileMenu({ status, onApprove, onReject }: {
-  status: string; onApprove: () => void; onReject: () => void;
-}) {
+function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "approved" | "rejected" | "pending") => void }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const c = statusConfig[status] ?? statusConfig.pending;
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const isPending = status === "pending";
+
   return (
-    <div className="relative sm:hidden shrink-0">
-      <button onClick={() => setOpen(!open)} className="p-1.5 cursor-pointer" style={{ color: muted }}><MoreVertical size={16} /></button>
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full cursor-pointer transition-opacity hover:opacity-70"
+        style={{
+          background: status === "approved" ? "rgba(99,91,255,0.08)" : status === "rejected" ? plate : "transparent",
+          color: status === "approved" ? brand : muted,
+        }}
+      >
+        {status === "approved" && <Check size={13} strokeWidth={2.5} />}
+        {status === "rejected" && <X size={13} strokeWidth={2} />}
+        {status === "pending" && <span className="w-[5px] h-[5px] rounded-full" style={{ background: muted }} />}
+        <ChevronDown size={10} />
+      </button>
       {open && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-8 z-20 w-36 rounded-lg py-1" style={{ background: white, boxShadow: floatShadow }}>
-            {status !== "approved" && <button onClick={() => { onApprove(); setOpen(false); }} className="flex items-center gap-2 w-full px-3 py-2.5 text-xs cursor-pointer transition-opacity duration-150 hover:opacity-70" style={{ color: "#24B47E" }}><CheckCircle size={14} /> 承認</button>}
-            {status !== "rejected" && <button onClick={() => { onReject(); setOpen(false); }} className="flex items-center gap-2 w-full px-3 py-2.5 text-xs cursor-pointer transition-opacity duration-150 hover:opacity-70" style={{ color: "#E25950" }}><XCircle size={14} /> 却下</button>}
-          </div>
-        </>
+        <div className="absolute right-0 top-7 z-30 w-36 rounded-lg py-1 shadow-lg" style={{ background: white, border: `1px solid ${rule}` }}>
+          {(["approved", "pending", "rejected"] as const).map((key) => {
+            const o = statusConfig[key];
+            return (
+              <button
+                key={key}
+                onClick={() => { onSelect(key); setOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-1.5 text-xs cursor-pointer transition-colors"
+                onMouseEnter={(e) => { e.currentTarget.style.background = canvas; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+              >
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: o.bg, color: o.text }}>
+                  {o.label}
+                </span>
+                {status === key && <Check size={12} className="ml-auto" style={{ color: brand }} />}
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 }
+

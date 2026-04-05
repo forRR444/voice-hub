@@ -86,7 +86,7 @@ export default function SnsImageModal({
           <button
             key={opt.key}
             onClick={() => setSelectedTemplate(opt.key)}
-            className={`flex-1 px-3 py-2 text-xs sm:text-sm rounded-lg border cursor-pointer transition-colors ${
+            className={`flex-1 px-4 py-3 text-base rounded-lg border cursor-pointer transition-colors ${
               selectedTemplate === opt.key
                 ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
                 : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
