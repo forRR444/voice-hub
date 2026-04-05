@@ -10,6 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Brand color: #635BFF ベースのindigo上書き */
+  --color-indigo-50: #eeedff;
+  --color-indigo-100: #d9d7ff;
+  --color-indigo-200: #b3afff;
+  --color-indigo-300: #8d87ff;
+  --color-indigo-400: #7a73ff;
+  --color-indigo-500: #635BFF;
+  --color-indigo-600: #635BFF;
+  --color-indigo-700: #4f48db;
+  --color-indigo-800: #3b36b7;
+  --color-indigo-900: #282593;
 }
 
 
