@@ -284,7 +284,7 @@ function TestimonialRow({ testimonial: t, isLast, onStatusChange }: {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Link href={`/dashboard/${t.id}`} className="text-sm font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: ink, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
+                <Link href={`/dashboard/${t.id}`} className="text-sm font-semibold transition-opacity duration-150 hover:opacity-70" style={{ color: brand, letterSpacing: "-0.011em" }}>{t.name || "お客様"}</Link>
                 {(t.title || t.company) && <span className="hidden sm:inline text-xs" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
               </div>
               {t.rating != null && (
