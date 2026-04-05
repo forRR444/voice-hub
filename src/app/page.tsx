@@ -20,6 +20,8 @@ import {
   Barbell,
   Briefcase,
   Storefront,
+  InstagramLogo,
+  ImageSquare,
 } from "@phosphor-icons/react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
@@ -44,7 +46,7 @@ export default function Home() {
         <h1 className="text-[1.65rem] sm:text-5xl md:text-6xl font-bold text-gray-900 leading-[1.15] tracking-tight">
           お客様の声を集めて、
           <br />
-          ホームページに<span className="text-indigo-600">自動で表示。</span>
+          <span className="text-indigo-600">HPにもSNSにも。</span>
         </h1>
         <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
           <div className="flex flex-col items-center gap-1.5 sm:gap-2">
@@ -68,11 +70,18 @@ export default function Home() {
             </div>
             <span className="text-[10px] sm:text-xs text-gray-600">HPに自動表示</span>
           </div>
+          <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 bg-indigo-50 rounded-full flex items-center justify-center">
+              <InstagramLogo size={18} className="text-indigo-600 sm:hidden" />
+              <InstagramLogo size={22} className="text-indigo-600 hidden sm:block" />
+            </div>
+            <span className="text-[10px] sm:text-xs text-gray-600">SNS投稿画像を作成</span>
+          </div>
         </div>
         <p className="mt-6 sm:mt-8 text-base sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
           お客様にフォームURLを送って、届いた声を承認するだけ。
           <br className="hidden md:block" />
-          あとはホームページに自動反映。
+          ホームページに自動反映。SNS用の投稿画像もワンクリックで。
         </p>
         <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
           <Link
@@ -125,7 +134,7 @@ export default function Home() {
             <span className="text-indigo-600">2ステップ</span>で完了
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-14">
-            あとは自動でホームページに反映されます。
+            あとはホームページに自動反映。SNS投稿画像もすぐ作れます。
           </p>
           <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
             <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
@@ -182,6 +191,10 @@ export default function Home() {
               {
                 before: "HP更新のたびにコピペ → 画像配置 → 公開",
                 after: (<><span className="text-indigo-600 font-semibold">承認ボタンを押すだけ</span>で自動反映</>),
+              },
+              {
+                before: "SNSに口コミを載せたいけど画像作成が面倒",
+                after: (<>ワンクリックで<span className="text-indigo-600 font-semibold">投稿用画像を自動生成</span></>),
               },
               {
                 before: "声を集めるのが申し訳なくて頼めない",
@@ -259,8 +272,56 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Use cases: HP & SNS */}
+      <section className="bg-gray-50 py-14 sm:py-20">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
+            集めた声を、<span className="text-indigo-600">2つの方法</span>で活用。
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14">
+            ホームページに載せるだけじゃもったいない。SNSでも使えます。
+          </p>
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                <Code size={22} />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-gray-900">ホームページに埋め込み</h3>
+              <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
+                埋め込みコードをコピペするだけ。承認した声がホームページに自動で表示されます。{WIDGET_TYPES.length}種類のデザインから選べます。
+              </p>
+              <ul className="mt-4 space-y-2">
+                {["ペライチ・WordPress・Wix対応", "コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                    <CheckCircle size={14} className="text-indigo-600 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                <InstagramLogo size={22} />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-gray-900">SNS投稿画像を作成</h3>
+              <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
+                お客様の声から、そのままInstagramやストーリーズに使える画像をワンクリックで生成。デザインの手間ゼロ。
+              </p>
+              <ul className="mt-4 space-y-2">
+                {["ストーリーズ・フィード対応", "ワンクリックで画像生成", "そのままSNSに投稿できる"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                    <CheckCircle size={14} className="text-indigo-600 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
-      <section id="features" className="bg-gray-50 py-14 sm:py-20 scroll-mt-20">
+      <section id="features" className="py-14 sm:py-20 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-4">
             できること
@@ -291,6 +352,15 @@ export default function Home() {
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">埋め込みウィジェット</h3>
                 <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{`${WIDGET_TYPES.length}種類の表示方法。埋め込みコードをコピペするだけ。`}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 sm:mb-4">
+                <ImageSquare size={20} />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">SNS投稿画像を作成</h3>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">お客様の声からストーリーズ・フィード用の画像をワンクリックで。</p>
               </div>
             </div>
             <div className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-200 sm:block sm:p-6">
@@ -470,7 +540,7 @@ export default function Home() {
             24時間、営業してくれます。
           </h2>
           <p className="mt-4 sm:mt-6 text-base sm:text-lg text-indigo-100">
-            集めて、管理して、ホームページに載せる。
+            集めて、管理して、ホームページにもSNSにも。
             <br />
             VoiceHubならこれが全部まとまります。
           </p>
