@@ -108,7 +108,7 @@ export default function SettingsClient({
         </div>
 
         {/* Usage stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <UsageCard
             label="お客様の声"
             used={usage.testimonials}
@@ -285,11 +285,11 @@ function UsageCard({
   const isNearLimit = !isUnlimited && percentage >= 80;
 
   return (
-    <div className="bg-foreground/5 rounded-lg p-4">
-      <p className="text-sm text-foreground/50 mb-1">{label}</p>
-      <p className="text-xl font-bold text-foreground">
+    <div className="bg-foreground/5 rounded-lg p-3 sm:p-4">
+      <p className="text-xs sm:text-sm text-foreground/50 mb-1">{label}</p>
+      <p className="text-base sm:text-xl font-bold text-foreground">
         {used}
-        <span className="text-sm font-normal text-foreground/40">
+        <span className="text-[10px] sm:text-sm font-normal text-foreground/40">
           {" "}
           / {isUnlimited ? "無制限" : limit}
         </span>

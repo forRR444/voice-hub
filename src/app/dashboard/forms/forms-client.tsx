@@ -162,10 +162,11 @@ export default function FormsClient({
             setShowCreateModal(true);
           }}
           disabled={!canCreate || creating}
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+          className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
         >
           <Plus size={16} />
-          {creating ? "作成中..." : "新しいフォーム"}
+          <span className="sm:hidden">{creating ? "..." : "追加"}</span>
+          <span className="hidden sm:inline">{creating ? "作成中..." : "新しいフォーム"}</span>
         </button>
       </div>
 

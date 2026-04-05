@@ -137,7 +137,7 @@ export default function SnsClient({
                   key={t.id}
                   onClick={() => toggleSelect(t.id)}
                   className={`bg-white rounded-lg border shadow-sm p-4 sm:p-5 transition-colors cursor-pointer ${
-                    isSelected ? "border-indigo-300 bg-indigo-50/30" : "border-foreground/10 hover:border-foreground/20"
+                    isSelected ? "border-foreground/20 bg-foreground/[0.02]" : "border-foreground/10 hover:border-foreground/20"
                   }`}
                 >
                   <div className="flex items-start gap-3">
