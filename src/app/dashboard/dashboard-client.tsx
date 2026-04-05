@@ -143,35 +143,21 @@ export default function DashboardClient({
 
       {/* ─── Stats ─── */}
       {stats.total > 0 && (
-        <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 md:mb-8 animate-fade-in-delay-1">
-          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
-            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-              <span className="hidden sm:block"><MessageSquare size={18} style={{ color: slate }} /></span>
-              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>合計</span>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 md:mb-8 animate-fade-in-delay-1">
+          {[
+            { label: "合計", value: stats.total, icon: <MessageSquare size={14} style={{ color: slate }} /> },
+            { label: "承認済み", value: stats.approved, icon: <CheckCircle size={14} style={{ color: slate }} /> },
+            { label: "未承認", value: stats.pending, icon: <CircleDot size={14} style={{ color: slate }} /> },
+            { label: "平均評価", value: stats.avg > 0 ? stats.avg.toFixed(1) : "-", icon: <Star size={14} style={{ color: slate }} /> },
+          ].map((s) => (
+            <div key={s.label} className="rounded-[4px] p-2.5 sm:p-4" style={{ background: white }}>
+              <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
+                <span className="hidden sm:block" style={{ color: muted }}>{s.icon}</span>
+                <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: slate, letterSpacing: "0.04em" }}>{s.label}</span>
+              </div>
+              <p className="text-lg sm:text-2xl font-semibold tabular-nums" style={{ color: ink, letterSpacing: "-0.022em" }}>{s.value}</p>
             </div>
-            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.total}</p>
-          </div>
-          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
-            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-              <span className="hidden sm:block"><CheckCircle size={18} style={{ color: "#24B47E" }} /></span>
-              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>承認済み</span>
-            </div>
-            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.approved}</p>
-          </div>
-          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
-            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-              <span className="hidden sm:block"><CircleDot size={18} style={{ color: "#F5A623" }} /></span>
-              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>未承認</span>
-            </div>
-            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.pending}</p>
-          </div>
-          <div className="rounded-[4px] p-2.5 sm:p-4" style={{ background: plate }}>
-            <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-              <span className="hidden sm:block"><Star size={18} fill="#F5A623" style={{ color: "#F5A623" }} /></span>
-              <span className="text-[10px] sm:text-xs font-medium uppercase" style={{ color: muted, letterSpacing: "0.02em" }}>平均評価</span>
-            </div>
-            <p className="text-xl sm:text-3xl font-bold tabular-nums" style={{ color: ink }}>{stats.avg > 0 ? stats.avg.toFixed(1) : "-"}</p>
-          </div>
+          ))}
         </div>
       )}
 
@@ -184,7 +170,7 @@ export default function DashboardClient({
                 key={tab.key}
                 onClick={() => setFilter(tab.key)}
                 className="px-4 py-3 text-sm transition-opacity duration-150 cursor-pointer relative"
-                style={{ color: filter === tab.key ? ink : muted, fontWeight: filter === tab.key ? 600 : 400, letterSpacing: "-0.011em" }}
+                style={{ color: filter === tab.key ? ink : slate, fontWeight: filter === tab.key ? 600 : 400, letterSpacing: "-0.011em" }}
               >
                 {tab.label}
                 {filter === tab.key && <span className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full" style={{ background: brand }} />}
@@ -299,13 +285,15 @@ function TestimonialRow({ testimonial: t, isLast, onApprove, onReject }: {
                 <button
                   onClick={onReject}
                   disabled={t.status === "rejected"}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] transition-all duration-150 cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-[11px] font-medium cursor-pointer"
                   style={{
                     color: t.status === "rejected" ? muted : slate,
+                    background: t.status === "rejected" ? "transparent" : plate,
                     opacity: t.status === "rejected" ? 0.5 : 1,
+                    transition: "all 150ms",
                   }}
-                  onMouseEnter={(e) => { if (t.status !== "rejected") { e.currentTarget.style.color = ink; e.currentTarget.style.background = canvas; } }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = t.status === "rejected" ? muted : slate; e.currentTarget.style.background = "transparent"; }}
+                  onMouseEnter={(e) => { if (t.status !== "rejected") { e.currentTarget.style.color = ink; e.currentTarget.style.background = "#E8E9EB"; } }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = t.status === "rejected" ? muted : slate; e.currentTarget.style.background = t.status === "rejected" ? "transparent" : plate; }}
                 >
                   <XCircle size={13} /> 却下
                 </button>

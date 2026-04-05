@@ -27,12 +27,8 @@ export function SidebarContent({ workspaceName }: { workspaceName?: string }) {
   return (
     <div className="flex flex-col h-full" style={{ background: "#F7F8F9" }}>
       <div className="px-4 py-3.5" style={{ borderBottom: "1px solid rgba(227,232,238,0.5)" }}>
-        <Link href="/dashboard" className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80">
-          <div className="w-7 h-7 rounded-[4px] flex items-center justify-center text-white text-xs font-bold" style={{ background: brand }}>V</div>
-          <div>
-            <span className="text-sm font-semibold" style={{ color: ink, letterSpacing: "-0.022em" }}>VoiceHub</span>
-            {workspaceName && <p className="text-[10px] truncate -mt-0.5" style={{ color: muted }}>{workspaceName}</p>}
-          </div>
+        <Link href="/dashboard" className="transition-opacity duration-150 hover:opacity-80">
+          <span className="text-2xl font-bold" style={{ color: ink, letterSpacing: "-0.022em" }}>VoiceHub</span>
         </Link>
       </div>
 
