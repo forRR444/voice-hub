@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import Modal from "@/app/components/modal";
+import CustomSelect from "@/app/components/custom-select";
 
 export default function AddTestimonialModal({
   workspaceId,
@@ -156,20 +157,15 @@ export default function AddTestimonialModal({
           <label className="block text-sm font-medium text-foreground/70 mb-1">
             ステータス
           </label>
-          <select
+          <CustomSelect
             value={form.status}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                status: e.target.value as "pending" | "approved" | "rejected",
-              })
-            }
-            className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="approved">承認済み</option>
-            <option value="pending">未承認</option>
-            <option value="rejected">非承認</option>
-          </select>
+            onChange={(v) => setForm({ ...form, status: v as "pending" | "approved" | "rejected" })}
+            options={[
+              { value: "approved", label: "承認済み" },
+              { value: "pending", label: "未承認" },
+              { value: "rejected", label: "非承認" },
+            ]}
+          />
         </div>
 
         <div className="flex justify-end gap-3 mt-2">

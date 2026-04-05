@@ -24,6 +24,7 @@ import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
 import Modal from "@/app/components/modal";
+import CustomSelect from "@/app/components/custom-select";
 import { useCopy } from "@/hooks/use-copy";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
@@ -265,10 +266,10 @@ export default function WidgetsClient({
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-foreground/50">
                     <span className="flex items-center gap-1">
                       タイプ:
-                      <select
+                      <CustomSelect
                         value={w.type}
-                        onChange={async (e) => {
-                          const newType = e.target.value as WidgetType;
+                        onChange={async (val) => {
+                          const newType = val as WidgetType;
                           const previousType = w.type;
                           setWidgets((prev) =>
                             prev.map((widget) =>
@@ -288,12 +289,9 @@ export default function WidgetsClient({
                             alert("タイプの変更に失敗しました。もう一度お試しください。");
                           }
                         }}
-                        className="text-sm text-indigo-600 bg-transparent border-none cursor-pointer focus:outline-none font-medium"
-                      >
-                        {WIDGET_TYPES.map((wt) => (
-                          <option key={wt.id} value={wt.id}>{wt.label}</option>
-                        ))}
-                      </select>
+                        options={WIDGET_TYPES.map((wt) => ({ value: wt.id, label: wt.label }))}
+                        className="inline-block w-auto"
+                      />
                     </span>
                     <span>
                       モード:{" "}

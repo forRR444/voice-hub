@@ -3,6 +3,7 @@
 import type { WidgetTheme } from "@/types/database";
 import { WIDGET_TYPES } from "@/lib/constants";
 import { WidgetPreviewIcon } from "./widget-preview-icon";
+import CustomSelect from "@/app/components/custom-select";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 
@@ -80,22 +81,14 @@ export function WidgetThemeForm({
             <label className="block text-xs text-foreground/50 mb-1">
               モード
             </label>
-            <select
+            <CustomSelect
               value={form.theme.mode}
-              onChange={(e) =>
-                onChange({
-                  ...form,
-                  theme: {
-                    ...form.theme,
-                    mode: e.target.value as "light" | "dark",
-                  },
-                })
-              }
-              className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white"
-            >
-              <option value="light">ライト</option>
-              <option value="dark">ダーク</option>
-            </select>
+              onChange={(v) => onChange({ ...form, theme: { ...form.theme, mode: v as "light" | "dark" } })}
+              options={[
+                { value: "light", label: "ライト" },
+                { value: "dark", label: "ダーク" },
+              ]}
+            />
           </div>
           <div>
             <label className="block text-xs text-foreground/50 mb-1">
