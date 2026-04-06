@@ -6,7 +6,7 @@ import { preserveTemplate } from "@/lib/auth-utils";
 import { useGoogleOAuth } from "@/hooks/use-google-oauth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft, Mail } from "lucide-react";
 import Link from "next/link";
 import GoogleOAuthButton from "@/app/components/google-oauth-button";
 import AuthInput from "@/app/components/auth-input";
@@ -16,6 +16,7 @@ export default function LoginClient() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState<"email" | "google" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const router = useRouter();
 
   const supabase = createClient();
@@ -57,53 +58,62 @@ export default function LoginClient() {
         </div>
 
         <div className="space-y-4">
-          {/* Email/Password form */}
-          <form onSubmit={handleEmailLogin} className="space-y-3">
-            <div>
-              <AuthInput
-                type="email"
-                placeholder="メールアドレス"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+          {showEmailForm ? (
+            <>
+              <button
+                onClick={() => { setShowEmailForm(false); setError(null); }}
+                className="flex items-center gap-1.5 text-sm text-foreground/50 hover:text-foreground/70 transition-colors cursor-pointer"
+              >
+                <ArrowLeft size={14} />
+                戻る
+              </button>
+
+              <form onSubmit={handleEmailLogin} className="space-y-3">
+                <AuthInput
+                  type="email"
+                  placeholder="メールアドレス"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <AuthInput
+                  type="password"
+                  placeholder="パスワード"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  disabled={!!loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {loading === "email" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  ログイン
+                </button>
+              </form>
+
+              <div className="text-right">
+                <Link href="/reset-password" className="text-xs text-indigo-600 hover:underline">
+                  パスワードを忘れた方
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <GoogleOAuthButton
+                onClick={handleGoogleLogin}
+                loading={loading === "google"}
+                label="Googleでログイン"
               />
-            </div>
-            <div>
-              <AuthInput
-                type="password"
-                placeholder="パスワード"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={!!loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50"
-            >
-              {loading === "email" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              ログイン
-            </button>
-          </form>
 
-          <div className="text-right">
-            <Link href="/reset-password" className="text-xs text-indigo-600 hover:underline">
-              パスワードを忘れた方
-            </Link>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 border-t border-foreground/10" />
-            <span className="text-xs text-foreground/30">または</span>
-            <div className="flex-1 border-t border-foreground/10" />
-          </div>
-
-          {/* Google login */}
-          <GoogleOAuthButton
-            onClick={handleGoogleLogin}
-            loading={loading === "google"}
-            label="Googleでログイン"
-          />
+              <button
+                onClick={() => setShowEmailForm(true)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-foreground/10 bg-white px-4 py-2.5 text-sm font-medium text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+              >
+                <Mail size={16} />
+                メールアドレスでログイン
+              </button>
+            </>
+          )}
 
           <p className="text-center text-xs text-foreground/40">
             クレジットカード不要
