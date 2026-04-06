@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:screenshots": "playwright test screenshots"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
