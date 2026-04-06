@@ -306,8 +306,6 @@ function PatternE() {
   const update = (id: string, s: Status) => setItems(prev => prev.map(i => i.id === id ? { ...i, status: s } : i));
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const statusLabel = (s: Status) => s === "approved" ? "承認済み" : s === "rejected" ? "非承認" : "未承認";
-
   return (
     <Section title="パターンE" desc="Linear風 — ステータスドットをクリックでドロップダウン切替">
       {items.map((t, i) => (

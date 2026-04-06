@@ -42,8 +42,8 @@ type FormInfo = { id: string; slug: string; title: string; brand_color: string; 
 export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
-  forms,
-  brandColor,
+  forms: _forms,
+  brandColor: _brandColor,
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
@@ -53,7 +53,6 @@ export default function DashboardClient({
   const supabase = createClient();
   const [testimonials, setTestimonials] = useState<TestimonialWithTags[]>(initialTestimonials);
   const real = useMemo(() => testimonials.filter((t) => t.source !== "sample" && t.source !== "guide"), [testimonials]);
-  const hasReal = real.length > 0;
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -233,8 +232,9 @@ export default function DashboardClient({
 
 /* ─── Guide Cards ─── */
 function GuideCards() {
-  const [hidden, setHidden] = useState<Record<string, boolean>>({});
-  useEffect(() => { try { setHidden(JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}")); } catch { /* noop */ } }, []);
+  const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
+  });
   const dismiss = (key: string) => { const next = { ...hidden, [key]: true }; setHidden(next); localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next)); };
 
   if (hidden.welcome && hidden.widget && hidden.sns) return null;
@@ -318,16 +318,12 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; st
 function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "approved" | "rejected" | "pending") => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const c = statusConfig[status] ?? statusConfig.pending;
-
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
-
-  const isPending = status === "pending";
 
   return (
     <div className="relative" ref={ref}>

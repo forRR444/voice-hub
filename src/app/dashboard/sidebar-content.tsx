@@ -16,7 +16,7 @@ const navItems = [
   { href: "/dashboard/sns", label: "SNS画像", icon: ImageIcon },
 ];
 
-export function SidebarContent({ workspaceName }: { workspaceName?: string }) {
+export function SidebarContent({ workspaceName: _workspaceName }: { workspaceName?: string }) {
   const pathname = usePathname();
 
   function isActive(href: string, exact?: boolean) {
