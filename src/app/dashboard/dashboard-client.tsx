@@ -15,7 +15,7 @@ import {
   CircleDot,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { WorkspaceRow, TestimonialWithTags, FormQuestion } from "@/types/database";
+import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
 import TryDataDetector from "./try-data-detector";
 import { formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
@@ -29,18 +29,12 @@ const ghostBorder = "1px solid rgba(199,196,216,0.2)";
 const floatShadow = "0px 2px 4px rgba(26,31,54,0.04), 0px 12px 32px rgba(26,31,54,0.08)";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
-type FormInfo = { id: string; slug: string; title: string; brand_color: string; questions: FormQuestion[] };
-
 export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
-  forms: _forms,
-  brandColor: _brandColor,
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
-  forms: FormInfo[];
-  brandColor: string;
 }) {
   const supabase = createClient();
   const [testimonials, setTestimonials] = useState<TestimonialWithTags[]>(initialTestimonials);

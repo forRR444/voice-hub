@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
-import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
@@ -31,22 +30,11 @@ export default async function DashboardPage() {
     );
   }
 
-  // Run queries in parallel
-  const [
-    { data: testimonials },
-    { data: forms },
-  ] = await Promise.all([
-    supabase
-      .from("testimonials")
-      .select("*")
-      .eq("workspace_id", workspace.id)
-      .order("submitted_at", { ascending: false }),
-    supabase
-      .from("forms")
-      .select("id, slug, title, brand_color, questions")
-      .eq("workspace_id", workspace.id)
-      .order("created_at", { ascending: false }),
-  ]);
+  const { data: testimonials } = await supabase
+    .from("testimonials")
+    .select("*")
+    .eq("workspace_id", workspace.id)
+    .order("submitted_at", { ascending: false });
 
   const testimonialList = (testimonials ?? []) as TestimonialRow[];
 
@@ -71,14 +59,10 @@ export default async function DashboardPage() {
     })
   );
 
-  const brandColor = (forms ?? [])[0]?.brand_color || DEFAULT_BRAND_COLOR;
-
   return (
     <DashboardClient
       workspace={workspace}
       testimonials={testimonialsWithTags}
-      forms={(forms ?? []) as { id: string; slug: string; title: string; brand_color: string; questions: import("@/types/database").FormQuestion[] }[]}
-      brandColor={brandColor}
     />
   );
 }

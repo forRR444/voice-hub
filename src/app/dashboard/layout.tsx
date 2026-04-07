@@ -39,7 +39,7 @@ export default async function DashboardLayout({
     <div className="flex h-screen" style={{ background: "#F7F8F9" }}>
       {/* Sidebar (desktop: always visible, mobile: hamburger overlay) */}
       <MobileSidebar>
-        <SidebarContent workspaceName={workspace?.name} />
+        <SidebarContent />
       </MobileSidebar>
 
       {/* Main content */}
