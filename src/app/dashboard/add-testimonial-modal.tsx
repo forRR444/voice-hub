@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
+import Button from "@/app/components/ui/button";
+import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 export default function AddTestimonialModal({
   workspaceId,
@@ -74,23 +76,17 @@ export default function AddTestimonialModal({
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground/70 mb-1">
-            お名前 *
-          </label>
+        <FormField label="お名前" required>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className={inputClass}
             placeholder="山田 太郎"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-sm font-medium text-foreground/70 mb-1">
-            評価
-          </label>
+        <FormField label="評価">
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -102,61 +98,45 @@ export default function AddTestimonialModal({
                 <Star
                   size={24}
                   fill={n <= form.rating ? "currentColor" : "none"}
-                  className={
-                    n <= form.rating
-                      ? "text-amber-400"
-                      : "text-foreground/20"
-                  }
+                  className={n <= form.rating ? "text-amber-400" : "text-foreground/20"}
                 />
               </button>
             ))}
           </div>
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-sm font-medium text-foreground/70 mb-1">
-            内容 *
-          </label>
+        <FormField label="内容" required>
           <textarea
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
             rows={4}
-            className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className={inputClass}
             placeholder="お客様の声の内容を入力してください"
           />
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground/70 mb-1">
-              肩書き
-            </label>
+          <FormField label="肩書き">
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="CEO"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-foreground/70 mb-1">
-              会社名
-            </label>
+          </FormField>
+          <FormField label="会社名">
             <input
               type="text"
               value={form.company}
               onChange={(e) => setForm({ ...form, company: e.target.value })}
-              className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="株式会社〇〇"
             />
-          </div>
+          </FormField>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-foreground/70 mb-1">
-            ステータス
-          </label>
+        <FormField label="ステータス">
           <CustomSelect
             value={form.status}
             onChange={(v) => setForm({ ...form, status: v as "pending" | "approved" | "rejected" })}
@@ -166,23 +146,15 @@ export default function AddTestimonialModal({
               { value: "rejected", label: "非承認" },
             ]}
           />
-        </div>
+        </FormField>
 
         <div className="flex justify-end gap-3 mt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-          >
+          <Button variant="secondary" type="button" onClick={onClose}>
             キャンセル
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-          >
+          </Button>
+          <Button type="submit" disabled={loading}>
             {loading ? "追加中..." : "追加する"}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

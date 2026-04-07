@@ -21,18 +21,10 @@ import { formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
 import GoogleReviewsModal from "./google-reviews-modal";
 import PageTitle from "@/app/components/page-title";
+import { useOutsideClick } from "@/hooks/use-outside-click";
 
-/* ─── Design Tokens ─── */
-const ink    = "#1A1F36";
-const slate  = "#4F566B";
-const muted  = "#A3ACB9";
-const canvas = "#F7F8F9";
-const white  = "#FFFFFF";
-const plate  = "#F0F1F3";
-const brand  = "#635BFF";
-const brandD = "#493EE5";
-const rule   = "#E3E8EE";
-const gradient = `linear-gradient(180deg, ${brand} 0%, ${brandD} 100%)`;
+import { ink, slate, muted, canvas, white, plate, brand, brandD, rule, gradient } from "@/lib/theme-tokens";
+
 const ghostBorder = "1px solid rgba(199,196,216,0.2)";
 const floatShadow = "0px 2px 4px rgba(26,31,54,0.04), 0px 12px 32px rgba(26,31,54,0.08)";
 
@@ -323,12 +315,7 @@ const statusConfig: Record<string, { label: string; bg: string; text: string; st
 function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "approved" | "rejected" | "pending") => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
+  useOutsideClick(ref, () => setOpen(false), open);
 
   return (
     <div className="relative" ref={ref}>

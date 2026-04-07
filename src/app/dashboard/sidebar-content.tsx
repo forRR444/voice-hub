@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, FileText, Code, ImageIcon, Settings, MessageSquare, ExternalLink } from "lucide-react";
-
-const ink = "#1A1F36";
-const slate = "#4F566B";
-const muted = "#A3ACB9";
-const brand = "#635BFF";
+import { ink, slate, muted, brand } from "@/lib/theme-tokens";
 
 const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard, exact: true },

@@ -8,6 +8,9 @@ import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
 import PageTitle from "@/app/components/page-title";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
+import Button from "@/app/components/ui/button";
+import Card from "@/app/components/ui/card";
+import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 export default function SettingsClient({
   workspace,
@@ -55,43 +58,27 @@ export default function SettingsClient({
       <div className="mb-6 sm:mb-8"><PageTitle>設定</PageTitle></div>
 
       {/* Workspace name */}
-      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+      <Card className="mb-4 sm:mb-6">
         <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
           ワークスペース
         </h3>
-        <div>
-          <label className="block text-sm font-medium text-foreground/70 mb-1">
-            ワークスペース名
-          </label>
+        <FormField label="ワークスペース名">
           <div className="flex gap-2 sm:gap-3">
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="flex-1 px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`flex-1 ${inputClass}`}
             />
-            <button
-              onClick={saveName}
-              disabled={saving || !name.trim()}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-            >
-              {saved ? (
-                <>
-                  <Check size={14} />
-                  保存しました
-                </>
-              ) : saving ? (
-                "保存中..."
-              ) : (
-                "保存"
-              )}
-            </button>
+            <Button onClick={saveName} disabled={saving || !name.trim()}>
+              {saved ? (<><Check size={14} />保存しました</>) : saving ? "保存中..." : "保存"}
+            </Button>
           </div>
-        </div>
-      </section>
+        </FormField>
+      </Card>
 
       {/* Plan info */}
-      <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+      <Card className="mb-4 sm:mb-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-foreground">利用状況</h3>
           <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
@@ -126,11 +113,11 @@ export default function SettingsClient({
             limit={limits.widgets}
           />
         </div>
-      </section>
+      </Card>
 
       {/* Password change (email users only) */}
       {hasPassword && (
-        <section className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+        <Card className="mb-4 sm:mb-6">
           <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
             パスワード変更
           </h3>
@@ -157,51 +144,18 @@ export default function SettingsClient({
             }}
             className="space-y-3"
           >
-            <div>
-              <label className="block text-sm font-medium text-foreground/70 mb-1">
-                新しいパスワード
-              </label>
-              <input
-                type="password"
-                placeholder="8文字以上"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground/70 mb-1">
-                新しいパスワード（確認）
-              </label>
-              <input
-                type="password"
-                placeholder="もう一度入力"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            {passwordError && (
-              <p className="text-xs text-red-500">{passwordError}</p>
-            )}
-            <button
-              type="submit"
-              disabled={passwordSaving || !newPassword}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-            >
-              {passwordSaved ? (
-                <>
-                  <Check size={14} />
-                  変更しました
-                </>
-              ) : passwordSaving ? (
-                "変更中..."
-              ) : (
-                "パスワードを変更"
-              )}
-            </button>
+            <FormField label="新しいパスワード">
+              <input type="password" placeholder="8文字以上" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputClass} />
+            </FormField>
+            <FormField label="新しいパスワード（確認）">
+              <input type="password" placeholder="もう一度入力" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} className={inputClass} />
+            </FormField>
+            {passwordError && <p className="text-xs text-red-500">{passwordError}</p>}
+            <Button type="submit" disabled={passwordSaving || !newPassword}>
+              {passwordSaved ? (<><Check size={14} />変更しました</>) : passwordSaving ? "変更中..." : "パスワードを変更"}
+            </Button>
           </form>
-        </section>
+        </Card>
       )}
 
       {/* Delete account */}

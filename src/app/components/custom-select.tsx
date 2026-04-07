@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { useOutsideClick } from "@/hooks/use-outside-click";
 
 type Option = { value: string; label: string };
 
@@ -22,14 +23,7 @@ export default function CustomSelect({
   const ref = useRef<HTMLDivElement>(null);
   const current = options.find((o) => o.value === value);
 
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
+  useOutsideClick(ref, () => setOpen(false), open);
 
   return (
     <div className={`relative ${className}`} ref={ref}>
