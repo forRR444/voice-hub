@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import path from "path";
 import fs from "fs";
 
@@ -244,14 +244,8 @@ test.describe("Screenshots – dashboard modals", () => {
     }
   });
 
-  test("widgets-menu", async ({ page }, testInfo) => {
+  test("widgets-page", async ({ page }, testInfo) => {
     await page.goto("/dashboard/widgets", { waitUntil: "networkidle" });
-    const menuBtn = page.locator("button").filter({ has: page.locator("[data-lucide='more-horizontal']") }).first();
-    // fallback: find by MoreHorizontal icon area
-    const moreBtn = page.locator("button svg").first();
-    if (await moreBtn.isVisible()) {
-      // Click the parent button of the first SVG in the widget card actions area
-    }
     await page.screenshot({ path: shot(testInfo, "widgets-page"), fullPage: true });
   });
 

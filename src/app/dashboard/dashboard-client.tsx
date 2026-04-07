@@ -235,6 +235,7 @@ function GuideCards() {
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe localStorage read on mount
     try { setHidden(JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}")); } catch { /* noop */ }
     setMounted(true);
   }, []);
