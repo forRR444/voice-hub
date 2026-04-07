@@ -232,11 +232,15 @@ export default function DashboardClient({
 
 /* ─── Guide Cards ─── */
 function GuideCards() {
-  const [hidden, setHidden] = useState<Record<string, boolean>>(() => {
-    try { return JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}"); } catch { return {}; }
-  });
+  const [hidden, setHidden] = useState<Record<string, boolean>>({});
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    try { setHidden(JSON.parse(localStorage.getItem("voicehub_guide_hidden") || "{}")); } catch { /* noop */ }
+    setMounted(true);
+  }, []);
   const dismiss = (key: string) => { const next = { ...hidden, [key]: true }; setHidden(next); localStorage.setItem("voicehub_guide_hidden", JSON.stringify(next)); };
 
+  if (!mounted) return null;
   if (hidden.welcome && hidden.widget && hidden.sns) return null;
 
   const items = [
