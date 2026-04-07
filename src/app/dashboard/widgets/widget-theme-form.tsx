@@ -4,6 +4,7 @@ import type { WidgetTheme } from "@/types/database";
 import { WIDGET_TYPES } from "@/lib/constants";
 import { WidgetPreviewIcon } from "./widget-preview-icon";
 import CustomSelect from "@/app/components/custom-select";
+import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 
@@ -27,23 +28,17 @@ export function WidgetThemeForm({
 }) {
   return (
     <>
-      <div>
-        <label className="block text-sm font-medium text-foreground/70 mb-1">
-          ウィジェット名 *
-        </label>
+      <FormField label="ウィジェット名" required>
         <input
           type="text"
           value={form.name}
           onChange={(e) => onChange({ ...form, name: e.target.value })}
-          className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className={inputClass}
           placeholder="メインページ用"
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label className="block text-sm font-medium text-foreground/70 mb-1">
-          タイプ
-        </label>
+      <FormField label="タイプ">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {WIDGET_TYPES.map((wt) => (
             <button
@@ -70,7 +65,7 @@ export function WidgetThemeForm({
             </button>
           ))}
         </div>
-      </div>
+      </FormField>
 
       <div className="border-t border-foreground/10 pt-4">
         <h4 className="text-sm font-medium text-foreground/70 mb-3">

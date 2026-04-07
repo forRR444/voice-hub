@@ -22,6 +22,9 @@ import QuestionEditor from "@/app/components/question-editor";
 import PageTitle from "@/app/components/page-title";
 import Modal from "@/app/components/modal";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
+import Button from "@/app/components/ui/button";
+import Card from "@/app/components/ui/card";
+import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 export default function FormsClient({
   workspace,
@@ -159,18 +162,18 @@ export default function FormsClient({
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <PageTitle>フォーム管理</PageTitle>
-        <button
+        <Button
           onClick={() => {
             setSelectedTemplate("coaching");
             setShowCreateModal(true);
           }}
           disabled={!canCreate || creating}
-          className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+          className="p-2 sm:px-4 sm:py-2"
         >
           <Plus size={16} />
           <span className="sm:hidden">{creating ? "..." : "追加"}</span>
           <span className="hidden sm:inline">{creating ? "作成中..." : "新しいフォーム"}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Template picker modal */}
@@ -193,12 +196,12 @@ export default function FormsClient({
             ))}
           </div>
           <div className="flex justify-end gap-2">
-            <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer">
+            <Button variant="secondary" onClick={() => setShowCreateModal(false)}>
               キャンセル
-            </button>
-            <button onClick={createForm} disabled={creating} className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer">
+            </Button>
+            <Button onClick={createForm} disabled={creating}>
               {creating ? "作成中..." : "作成"}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}
@@ -216,30 +219,21 @@ export default function FormsClient({
       ) : (
         <div className="flex flex-col gap-4">
           {forms.map((form) => (
-            <div
-              key={form.id}
-              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6"
-            >
+            <Card key={form.id}>
               {editingId === form.id ? (
                 /* Edit mode */
                 <div className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground/70 mb-1">
-                      タイトル
-                    </label>
+                  <FormField label="タイトル">
                     <input
                       type="text"
                       value={editForm.title}
                       onChange={(e) =>
                         setEditForm({ ...editForm, title: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className={inputClass}
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground/70 mb-1">
-                      説明
-                    </label>
+                  </FormField>
+                  <FormField label="説明">
                     <textarea
                       value={editForm.description}
                       onChange={(e) =>
@@ -249,14 +243,11 @@ export default function FormsClient({
                         })
                       }
                       rows={2}
-                      className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className={inputClass}
                     />
-                  </div>
+                  </FormField>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
-                        ブランドカラー
-                      </label>
+                    <FormField label="ブランドカラー">
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
@@ -273,11 +264,8 @@ export default function FormsClient({
                           {editForm.brand_color}
                         </span>
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
-                        サンクスメッセージ
-                      </label>
+                    </FormField>
+                    <FormField label="サンクスメッセージ">
                       <input
                         type="text"
                         value={editForm.thank_you_message}
@@ -287,9 +275,9 @@ export default function FormsClient({
                             thank_you_message: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className={inputClass}
                       />
-                    </div>
+                    </FormField>
                   </div>
                   {/* Question Editor - Toggle Style */}
                   <div className="border-t border-foreground/10 pt-4">
@@ -306,20 +294,14 @@ export default function FormsClient({
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="flex items-center gap-1 px-3 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-                    >
+                    <Button variant="secondary" size="sm" onClick={() => setEditingId(null)} className="px-3 py-2">
                       <X size={14} />
                       キャンセル
-                    </button>
-                    <button
-                      onClick={() => saveEdit(form.id)}
-                      className="flex items-center gap-1 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
-                    >
+                    </Button>
+                    <Button size="sm" onClick={() => saveEdit(form.id)} className="px-3 py-2">
                       <Check size={14} />
                       保存
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -366,32 +348,23 @@ export default function FormsClient({
                     />
                   </div>
                   <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
-                    <button
-                      onClick={() => startEdit(form)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
-                    >
+                    <Button variant="secondary" size="sm" onClick={() => startEdit(form)} className="px-3 py-2 text-xs sm:text-sm">
                       質問内容を確認
-                    </button>
-                    <button
-                      onClick={() => copyUrl(form.slug, form.id)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
-                    >
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={() => copyUrl(form.slug, form.id)} className="px-3 py-2 text-xs sm:text-sm">
                       <Copy size={14} />
                       {copiedId === form.id
                         ? "コピーしました"
                         : "URLをコピー"}
-                    </button>
-                    <button
-                      onClick={() => setQrForm({ slug: form.slug, title: form.title })}
-                      className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
-                    >
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={() => setQrForm({ slug: form.slug, title: form.title })} className="px-3 py-2 text-xs sm:text-sm">
                       <QrCode size={14} />
                       QRコード
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
-            </div>
+            </Card>
           ))}
         </div>
       )}
@@ -426,17 +399,16 @@ export default function FormsClient({
             {getBaseUrl()}/form/{qrForm.slug}
           </p>
           <div className="flex gap-2 mt-4">
-            <button onClick={downloadQr} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer">
+            <Button onClick={downloadQr} className="flex-1">
               <Download size={14} />
               PNG保存
-            </button>
-            <button onClick={() => setQrForm(null)} className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer">
+            </Button>
+            <Button variant="secondary" onClick={() => setQrForm(null)}>
               閉じる
-            </button>
+            </Button>
           </div>
         </Modal>
       )}
     </div>
   );
 }
-

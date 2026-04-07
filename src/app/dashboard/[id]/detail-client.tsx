@@ -19,6 +19,8 @@ import { formatDate } from "@/lib/utils";
 import { useTestimonialOperations } from "@/hooks/use-testimonial-operations";
 import SnsImageModal from "../sns-image-modal";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
+import Button from "@/app/components/ui/button";
+import Card from "@/app/components/ui/card";
 
 export default function TestimonialDetailClient({
   testimonial: initial,
@@ -94,7 +96,7 @@ export default function TestimonialDetailClient({
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6 md:p-8">
+      <Card padding="p-4 sm:p-6 md:p-8">
         {/* Header */}
         <div className="flex items-start justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3 sm:gap-4">
@@ -212,13 +214,14 @@ export default function TestimonialDetailClient({
               <Bookmark size={14} fill={t.is_featured ? "currentColor" : "none"} className={t.is_featured ? "text-violet-500" : ""} />
               {t.is_featured ? "注目から解除" : "注目に設定"}
             </button>
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setShowSnsModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-foreground/10 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
             >
               <ImageIcon size={14} />
               SNS画像
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -255,17 +258,14 @@ export default function TestimonialDetailClient({
               placeholder="新しいタグ..."
               className="px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-            <button
-              onClick={addTag}
-              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
-            >
+            <Button onClick={addTag} size="sm">
               <Plus size={12} className="sm:hidden" />
               <Plus size={14} className="hidden sm:block" />
               追加
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Delete confirmation */}
       {showDeleteConfirm && (

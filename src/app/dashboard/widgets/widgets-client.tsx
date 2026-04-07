@@ -27,6 +27,8 @@ import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 import PageTitle from "@/app/components/page-title";
+import Button from "@/app/components/ui/button";
+import Card from "@/app/components/ui/card";
 import { useCopy } from "@/hooks/use-copy";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
@@ -174,15 +176,15 @@ export default function WidgetsClient({
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <PageTitle>ウィジェット管理</PageTitle>
-        <button
+        <Button
           onClick={() => setShowCreate(true)}
           disabled={!canCreate}
-          className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
+          className="p-2 sm:px-4 sm:py-2"
         >
           <Plus size={16} />
           <span className="sm:hidden">追加</span>
           <span className="hidden sm:inline">新しいウィジェット</span>
-        </button>
+        </Button>
       </div>
 
       {!canCreate && (
@@ -207,19 +209,18 @@ export default function WidgetsClient({
             <WidgetThemeForm form={newWidget} onChange={setNewWidget} />
 
             <div className="flex justify-end gap-3 mt-2">
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => setShowCreate(false)}
-                className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
               >
                 キャンセル
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleCreate}
                 disabled={creating || !newWidget.name.trim()}
-                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
               >
                 {creating ? "作成中..." : "作成する"}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -233,29 +234,27 @@ export default function WidgetsClient({
       ) : (
         <div className="flex flex-col gap-4">
           {widgets.map((w) => (
-            <div
-              key={w.id}
-              className="bg-white rounded-lg border border-foreground/10 shadow-sm p-4 sm:p-6"
-            >
+            <Card key={w.id}>
               {editingId === w.id ? (
                 /* Edit mode */
                 <div className="flex flex-col gap-4">
                   <WidgetThemeForm form={editForm} onChange={setEditForm} />
                   <div className="flex justify-end gap-2">
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setEditingId(null)}
-                      className="flex items-center gap-1 px-3 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
                     >
                       <X size={14} />
                       キャンセル
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      size="sm"
                       onClick={() => saveEdit(w.id)}
-                      className="flex items-center gap-1 px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
                     >
                       <Check size={14} />
                       保存
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -427,7 +426,7 @@ export default function WidgetsClient({
                 )}
                 </>
               )}
-            </div>
+            </Card>
           ))}
         </div>
       )}
