@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
 import PageTitle from "@/app/components/page-title";
+import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 
 export default function SettingsClient({
   workspace,
@@ -25,7 +26,6 @@ export default function SettingsClient({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -216,57 +216,28 @@ export default function SettingsClient({
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
-          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
-              アカウントの削除
-            </h3>
-            <p className="text-sm text-foreground/60 mb-4">
-              すべてのデータが完全に削除されます。この操作は取り消せません。
-            </p>
-            <label className="flex items-center gap-2 mb-4 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={deleteConfirmed}
-                onChange={(e) => setDeleteConfirmed(e.target.checked)}
-                className="w-4 h-4 accent-red-500 cursor-pointer"
-              />
-              <span className="text-sm text-foreground/70">理解した上で削除します</span>
-            </label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeleteConfirmed(false);
-                }}
-                className="flex-1 px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={async () => {
-                  setDeleting(true);
-                  try {
-                    const res = await fetch("/api/account", { method: "DELETE" });
-                    if (res.ok) {
-                      router.push("/");
-                    } else {
-                      alert("削除に失敗しました。もう一度お試しください。");
-                      setDeleting(false);
-                    }
-                  } catch {
-                    alert("ネットワークエラーが発生しました。もう一度お試しください。");
-                    setDeleting(false);
-                  }
-                }}
-                disabled={!deleteConfirmed || deleting}
-                className="flex-1 px-4 py-2 text-sm text-red-500 border border-foreground/10 rounded-lg hover:bg-foreground/5 disabled:opacity-30 cursor-pointer"
-              >
-                {deleting ? "削除中..." : "削除する"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmModal
+          title="アカウントの削除"
+          message="すべてのデータが完全に削除されます。この操作は取り消せません。"
+          isDeleting={deleting}
+          requiresCheckbox
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={async () => {
+            setDeleting(true);
+            try {
+              const res = await fetch("/api/account", { method: "DELETE" });
+              if (res.ok) {
+                router.push("/");
+              } else {
+                alert("削除に失敗しました。もう一度お試しください。");
+                setDeleting(false);
+              }
+            } catch {
+              alert("ネットワークエラーが発生しました。もう一度お試しください。");
+              setDeleting(false);
+            }
+          }}
+        />
       )}
     </div>
   );

@@ -25,6 +25,7 @@ import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
 import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
+import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 import PageTitle from "@/app/components/page-title";
 import { useCopy } from "@/hooks/use-copy";
 
@@ -433,30 +434,13 @@ export default function WidgetsClient({
 
       {/* Delete confirmation */}
       {deletingId && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
-          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-sm sm:mx-4">
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-2">
-              削除の確認
-            </h3>
-            <p className="text-sm text-foreground/60 mb-6">
-              このウィジェットを削除しますか？埋め込み先でも表示されなくなります。
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeletingId(null)}
-                className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={() => handleDelete(deletingId)}
-                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer"
-              >
-                削除する
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmModal
+          title="削除の確認"
+          message="このウィジェットを削除しますか？埋め込み先でも表示されなくなります。"
+          isDeleting={false}
+          onCancel={() => setDeletingId(null)}
+          onConfirm={() => handleDelete(deletingId)}
+        />
       )}
     </div>
   );

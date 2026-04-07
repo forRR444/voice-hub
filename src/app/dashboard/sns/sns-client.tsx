@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Star, ImageIcon, Download, Loader2, Check, Maximize2, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Star, ImageIcon, Download, Loader2, Check, Maximize2 } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import Modal from "@/app/components/modal";
 import { formatDate } from "@/lib/utils";
 import PageTitle from "@/app/components/page-title";
+import CustomSelect from "@/app/components/custom-select";
 import JSZip from "jszip";
 
 const TEMPLATE_OPTIONS: { key: TemplateSize; label: string }[] = [
@@ -114,7 +115,11 @@ export default function SnsClient({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <TemplateSelect value={template} onChange={setTemplate} />
+              <CustomSelect
+                value={template}
+                onChange={(v) => setTemplate(v as TemplateSize)}
+                options={TEMPLATE_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
+              />
               <button
                 onClick={handleBulkDownload}
                 disabled={selectedIds.size === 0 || generating}
@@ -273,44 +278,3 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
   );
 }
 
-/* ─── Custom Template Select ─── */
-function TemplateSelect({ value, onChange }: { value: TemplateSize; onChange: (v: TemplateSize) => void }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const current = TEMPLATE_OPTIONS.find((o) => o.key === value) ?? TEMPLATE_OPTIONS[0];
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm border border-foreground/10 rounded-lg bg-white cursor-pointer hover:bg-foreground/5 transition-colors"
-      >
-        {current.label}
-        <ChevronDown size={14} className="text-foreground/40" />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-10 z-30 w-52 rounded-lg py-1 shadow-lg bg-white border border-foreground/10">
-          {TEMPLATE_OPTIONS.map((o) => (
-            <button
-              key={o.key}
-              onClick={() => { onChange(o.key); setOpen(false); }}
-              className={`flex items-center gap-2 w-full px-4 py-3 text-sm cursor-pointer transition-colors hover:bg-foreground/5 ${
-                value === o.key ? "text-indigo-600 font-medium" : "text-foreground/70"
-              }`}
-            >
-              {o.label}
-              {value === o.key && <Check size={14} className="ml-auto text-indigo-600" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}

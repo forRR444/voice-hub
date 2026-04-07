@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
 import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
+import Modal from "@/app/components/modal";
 
 export default function GoogleReviewsModal({
   workspaceId,
@@ -81,56 +81,43 @@ export default function GoogleReviewsModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
-      <div className="bg-white rounded-t-xl sm:rounded-xl shadow-sm w-full max-w-lg sm:mx-4 p-4 sm:p-6 max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
-          <h3 className="text-base sm:text-lg font-bold text-gray-900">Google口コミをインポート</h3>
-          <button
-            onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
-          >
-            <X size={20} />
-          </button>
+    <Modal title="Google口コミをインポート" onClose={onClose} className="max-h-[90vh] flex flex-col">
+      {importError && (
+        <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg shrink-0">
+          {importError}
         </div>
+      )}
 
-        {importError && (
-          <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg shrink-0">
-            {importError}
-          </div>
-        )}
+      {importResult && (
+        <div className="mb-4 text-sm bg-green-50 text-green-700 p-3 rounded-lg shrink-0">
+          {importResult.added}件を追加しました
+          {importResult.skipped > 0 && `（${importResult.skipped}件はすでにインポート済みのためスキップ）`}
+        </div>
+      )}
 
-        {importResult && (
-          <div className="mb-4 text-sm bg-green-50 text-green-700 p-3 rounded-lg shrink-0">
-            {importResult.added}件を追加しました
-            {importResult.skipped > 0 && `（${importResult.skipped}件はすでにインポート済みのためスキップ）`}
-          </div>
-        )}
-
-        <GoogleReviewsPicker
-          scrollable
-          footer={(selectedReviews) => (
-            <div className="flex justify-end gap-3 shrink-0 pt-3 border-t border-gray-100">
+      <GoogleReviewsPicker
+        scrollable
+        footer={(selectedReviews) => (
+          <div className="flex justify-end gap-3 shrink-0 pt-3 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+            >
+              {importResult ? "閉じる" : "キャンセル"}
+            </button>
+            {!importResult && (
               <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleImport(selectedReviews)}
+                disabled={selectedReviews.length === 0 || importing}
+                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
               >
-                {importResult ? "閉じる" : "キャンセル"}
+                {importing ? "インポート中..." : `${selectedReviews.length}件をインポート`}
               </button>
-              {!importResult && (
-                <button
-                  onClick={() => handleImport(selectedReviews)}
-                  disabled={selectedReviews.length === 0 || importing}
-                  className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-                >
-                  {importing ? "インポート中..." : `${selectedReviews.length}件をインポート`}
-                </button>
-              )}
-            </div>
-          )}
-        />
-      </div>
-    </div>
+            )}
+          </div>
+        )}
+      />
+    </Modal>
   );
 }

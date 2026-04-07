@@ -799,7 +799,8 @@ export default async function WidgetPreviewPage({
                     return s;
                   }
 
-                  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+                  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+                  function safeUrl(s) { var u=(s||'').trim(); return /^https?:\/\//i.test(u) ? esc(u) : ''; }
 
                   function renderItem(t) {
                     var html = '';
@@ -810,7 +811,7 @@ export default async function WidgetPreviewPage({
                     html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">';
                     if (showAvatar) {
                       if (t.avatar_url) {
-                        html += '<img src="'+esc(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
+                        html += '<img src="'+safeUrl(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
                       } else {
                         html += '<div style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;">'+esc((t.name||'お客様').charAt(0).toUpperCase())+'</div>';
                       }

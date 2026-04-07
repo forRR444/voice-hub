@@ -20,6 +20,8 @@ import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 import QuestionEditor from "@/app/components/question-editor";
 import PageTitle from "@/app/components/page-title";
+import Modal from "@/app/components/modal";
+import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 
 export default function FormsClient({
   workspace,
@@ -173,48 +175,32 @@ export default function FormsClient({
 
       {/* Template picker modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
-          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-lg sm:mx-4 p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-              テンプレートを選択
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              {FORM_TEMPLATES.map((tpl) => (
-                <button
-                  key={tpl.id}
-                  onClick={() => setSelectedTemplate(tpl.id)}
-                  className={`text-left p-4 rounded-lg border-2 transition-colors cursor-pointer ${
-                    selectedTemplate === tpl.id
-                      ? "border-indigo-600 bg-indigo-50"
-                      : "border-foreground/10 bg-white hover:border-foreground/30"
-                  }`}
-                >
-                  <span className="block text-sm font-bold text-foreground">
-                    {tpl.label}
-                  </span>
-                  <span className="block text-xs text-foreground/50 mt-1">
-                    {tpl.description}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <div className="flex justify-end gap-2">
+        <Modal title="テンプレートを選択" onClose={() => setShowCreateModal(false)}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+            {FORM_TEMPLATES.map((tpl) => (
               <button
-                onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
+                key={tpl.id}
+                onClick={() => setSelectedTemplate(tpl.id)}
+                className={`text-left p-4 rounded-lg border-2 transition-colors cursor-pointer ${
+                  selectedTemplate === tpl.id
+                    ? "border-indigo-600 bg-indigo-50"
+                    : "border-foreground/10 bg-white hover:border-foreground/30"
+                }`}
               >
-                キャンセル
+                <span className="block text-sm font-bold text-foreground">{tpl.label}</span>
+                <span className="block text-xs text-foreground/50 mt-1">{tpl.description}</span>
               </button>
-              <button
-                onClick={createForm}
-                disabled={creating}
-                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
-              >
-                {creating ? "作成中..." : "作成"}
-              </button>
-            </div>
+            ))}
           </div>
-        </div>
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-sm text-foreground/60 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer">
+              キャンセル
+            </button>
+            <button onClick={createForm} disabled={creating} className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer">
+              {creating ? "作成中..." : "作成"}
+            </button>
+          </div>
+        </Modal>
       )}
 
       {!canCreate && (
@@ -412,87 +398,43 @@ export default function FormsClient({
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && deleteFormId && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
-          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
-              フォームの削除
-            </h3>
-            <p className="text-sm text-foreground/60 mb-4">
-              このフォームを削除しますか？関連する回答は残ります。
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeleteFormId(null);
-                }}
-                className="flex-1 px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={async () => {
-                  setDeleting(true);
-                  const { error } = await supabase.from("forms").delete().eq("id", deleteFormId);
-                  setDeleting(false);
-                  if (error) {
-                    alert("削除に失敗しました");
-                    return;
-                  }
-                  setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
-                  setShowDeleteConfirm(false);
-                  setDeleteFormId(null);
-                }}
-                disabled={deleting}
-                className="flex-1 px-4 py-2 text-sm text-red-500 border border-foreground/10 rounded-lg hover:bg-foreground/5 disabled:opacity-30 cursor-pointer"
-              >
-                {deleting ? "削除中..." : "削除する"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmModal
+          title="フォームの削除"
+          message="このフォームを削除しますか？関連する回答は残ります。"
+          isDeleting={deleting}
+          onCancel={() => { setShowDeleteConfirm(false); setDeleteFormId(null); }}
+          onConfirm={async () => {
+            setDeleting(true);
+            const { error } = await supabase.from("forms").delete().eq("id", deleteFormId);
+            setDeleting(false);
+            if (error) { alert("削除に失敗しました"); return; }
+            setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
+            setShowDeleteConfirm(false);
+            setDeleteFormId(null);
+          }}
+        />
       )}
 
       {/* QR Code modal */}
       {qrForm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
-          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-sm sm:mx-4 p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground">QRコード</h3>
-              <button
-                onClick={() => setQrForm(null)}
-                className="p-1 text-foreground/40 hover:text-foreground/60 cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <p className="text-sm text-foreground/50 mb-4 truncate">{qrForm.title}</p>
-            <div ref={qrRef} className="flex justify-center p-4 bg-white border border-foreground/10 rounded-lg">
-              <QRCode
-                value={`${getBaseUrl()}/form/${qrForm.slug}`}
-                size={200}
-              />
-            </div>
-            <p className="text-xs text-foreground/40 text-center mt-3 break-all">
-              {getBaseUrl()}/form/{qrForm.slug}
-            </p>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={downloadQr}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
-              >
-                <Download size={14} />
-                PNG保存
-              </button>
-              <button
-                onClick={() => setQrForm(null)}
-                className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                閉じる
-              </button>
-            </div>
+        <Modal title="QRコード" onClose={() => setQrForm(null)} maxWidth="max-w-sm">
+          <p className="text-sm text-foreground/50 mb-4 truncate">{qrForm.title}</p>
+          <div ref={qrRef} className="flex justify-center p-4 bg-white border border-foreground/10 rounded-lg">
+            <QRCode value={`${getBaseUrl()}/form/${qrForm.slug}`} size={200} />
           </div>
-        </div>
+          <p className="text-xs text-foreground/40 text-center mt-3 break-all">
+            {getBaseUrl()}/form/{qrForm.slug}
+          </p>
+          <div className="flex gap-2 mt-4">
+            <button onClick={downloadQr} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer">
+              <Download size={14} />
+              PNG保存
+            </button>
+            <button onClick={() => setQrForm(null)} className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer">
+              閉じる
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

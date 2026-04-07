@@ -18,6 +18,7 @@ import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
 import { useTestimonialOperations } from "@/hooks/use-testimonial-operations";
 import SnsImageModal from "../sns-image-modal";
+import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 
 export default function TestimonialDetailClient({
   testimonial: initial,
@@ -268,31 +269,13 @@ export default function TestimonialDetailClient({
 
       {/* Delete confirmation */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
-          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-sm sm:mx-4">
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-2">
-              削除の確認
-            </h3>
-            <p className="text-sm text-foreground/60 mb-6">
-              このお客様の声を削除しますか？この操作は取り消せません。
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-sm text-foreground/70 border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 cursor-pointer"
-              >
-                {deleting ? "削除中..." : "削除する"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmModal
+          title="削除の確認"
+          message="このお客様の声を削除しますか？この操作は取り消せません。"
+          isDeleting={deleting}
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+        />
       )}
 
       {/* SNS Image modal */}
