@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import { PostHogProvider } from "./posthog-provider";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -60,7 +60,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${geistSans.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <PostHogProvider>{children}</PostHogProvider>
       </body>
     </html>

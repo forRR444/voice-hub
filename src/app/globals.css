@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  /* Precision Editorial — Design Tokens */
+  --canvas: #F7F8F9;
+  --plate: #FFFFFF;
+  --ink: #1A1F36;
+  --slate: #4F566B;
+  --brand: #635BFF;
+  --ghost-border: rgba(227, 232, 238, 0.5);
+  --shadow-ambient: 0 2px 4px rgba(26, 31, 54, 0.04), 0 12px 24px rgba(26, 31, 54, 0.08);
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 
   /* Brand color: #635BFF ベースのindigo上書き */
@@ -50,10 +59,15 @@ html {
 .animate-fade-in-delay-3 { animation: fade-in-up 0.4s ease-out 0.15s both; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.011em;
 }
+
+/* Precision Editorial — Utility Classes */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.text-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; }
 
 /* ─────────────────────────────────────────
    Testimonial Form — Premium Redesign
