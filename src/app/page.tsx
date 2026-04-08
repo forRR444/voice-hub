@@ -344,6 +344,8 @@ export default function Home() {
                 "お客様の声の登録数 無制限",
                 "埋め込みウィジェット 無制限",
                 `${WIDGET_TYPES.length}種類のウィジェットデザイン`,
+                "SNS投稿画像をワンクリック生成",
+                "Google口コミ 最新5件を取り込み",
                 "手動追加OK",
                 "ペライチ・WordPress対応",
               ].map((item, i) => (
