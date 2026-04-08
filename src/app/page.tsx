@@ -161,44 +161,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Before / After ── */}
+      {/* ── Pain → Solution ── */}
       <section className="bg-[var(--plate)] py-16 sm:py-24">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="max-w-2xl mx-auto px-6">
           <h2 className="text-2xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-14 sm:mb-16">
             こんな面倒から解放されます。
           </h2>
-          <div className="space-y-10 sm:space-y-12">
+          <div className="space-y-5 sm:space-y-6">
             {[
               {
-                before: "LINEで個別にお願い → スクショ保存 → トリミング",
-                after: (<><span className="text-[var(--brand)] font-semibold">URL1つ</span>送るだけ。自動で収集・整理される</>),
+                icon: <MessageSquareText size={18} className="text-[var(--brand)]" />,
+                pain: "LINEで個別にお願い",
+                solution: (<><span className="text-[var(--brand)] font-semibold">URL1つ</span>で自動収集</>),
               },
               {
-                before: "感想がLINE・メール・DMにバラバラ",
-                after: (<>すべて<span className="text-[var(--brand)] font-semibold">ダッシュボードに集約</span>。検索もタグ付けもできる</>),
+                icon: <LayoutDashboard size={18} className="text-[var(--brand)]" />,
+                pain: "感想がバラバラに散らばる",
+                solution: (<><span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約</>),
               },
               {
-                before: "HP更新のたびにコピペ → 画像配置 → 公開",
-                after: (<><span className="text-[var(--brand)] font-semibold">承認ボタンを押すだけ</span>で自動反映</>),
+                icon: <Code size={18} className="text-[var(--brand)]" />,
+                pain: "HPを手動で更新",
+                solution: (<><span className="text-[var(--brand)] font-semibold">承認だけ</span>で自動反映</>),
               },
               {
-                before: "SNSに口コミを載せたいけど画像作成が面倒",
-                after: (<>ワンクリックで<span className="text-[var(--brand)] font-semibold">投稿用画像を自動生成</span></>),
+                icon: <ImageIcon size={18} className="text-[var(--brand)]" />,
+                pain: "SNS画像を毎回作成",
+                solution: (<><span className="text-[var(--brand)] font-semibold">ワンクリック</span>で自動生成</>),
               },
               {
-                before: "声を集めるのが申し訳なくて頼めない",
-                after: "フォームURLを送るだけなので、気軽にお願いできる",
+                icon: <MessageCircle size={18} className="text-[var(--brand)]" />,
+                pain: "口コミを頼みづらい",
+                solution: "フォームURLを送るだけ",
               },
             ].map((item, i) => (
-              <div key={i} className="grid md:grid-cols-2 gap-4 sm:gap-10 items-start">
-                <div>
-                  <p className="text-label text-[var(--slate)] mb-2">Before</p>
-                  <p className="text-sm sm:text-base text-[var(--slate)]">{item.before}</p>
-                </div>
-                <div>
-                  <p className="text-label text-[var(--brand)] mb-2">After</p>
-                  <p className="text-sm sm:text-base text-[var(--ink)] font-medium">{item.after}</p>
-                </div>
+              <div key={i} className="flex items-center gap-3 text-base sm:text-lg leading-relaxed">
+                <span className="shrink-0">{item.icon}</span>
+                <p>
+                  <span className="text-[var(--slate)] line-through decoration-[var(--slate)]/30">{item.pain}</span>
+                  <span className="mx-2 text-[var(--slate)]">→</span>
+                  <span className="text-[var(--ink)] font-medium">{item.solution}</span>
+                </p>
               </div>
             ))}
           </div>
