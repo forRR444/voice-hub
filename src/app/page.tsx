@@ -149,7 +149,12 @@ export default function Home() {
               </p>
             </div>
             <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
-              <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
+                </div>
+              </div>
               <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">届いた声を承認する</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
                 ダッシュボードに届いた声を確認。「承認」ボタンを押すだけ。内容を見て選べるので安心です。
