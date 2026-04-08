@@ -18,6 +18,7 @@ import {
   QrCode,
   Instagram,
   ImageIcon,
+  MapPin,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
@@ -47,17 +48,17 @@ export default function Home() {
           <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
               <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
+                <MapPin size={22} className="text-[var(--brand)] sm:hidden" />
+                <MapPin size={28} className="text-[var(--brand)] hidden sm:block" />
+              </div>
+              <span className="text-[10px] sm:text-xs text-[var(--slate)]">Google口コミ取込</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
                 <MessageSquareText size={22} className="text-[var(--brand)] sm:hidden" />
                 <MessageSquareText size={28} className="text-[var(--brand)] hidden sm:block" />
               </div>
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">フォームで収集</span>
-            </div>
-            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
-                <LayoutDashboard size={22} className="text-[var(--brand)] sm:hidden" />
-                <LayoutDashboard size={28} className="text-[var(--brand)] hidden sm:block" />
-              </div>
-              <span className="text-[10px] sm:text-xs text-[var(--slate)]">一元管理</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
               <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
