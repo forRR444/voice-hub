@@ -246,13 +246,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 2 Hero Features — alternating layout */}
-          <div className="grid md:grid-cols-2 gap-10 sm:gap-16 items-center mb-16 sm:mb-24">
+          {/* Feature 1: HP埋め込み — テキスト左、ビジュアル右 */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
             <div>
               <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                 <Code size={20} className="text-[var(--brand)]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 ホームページに埋め込み
               </h3>
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
@@ -267,11 +267,29 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div>
+            <div className="bg-[var(--canvas)] rounded-lg p-6 sm:p-8">
+              <img
+                src="/Dashboard.png"
+                alt="ウィジェットが表示されたホームページのイメージ"
+                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              />
+            </div>
+          </div>
+
+          {/* Feature 2: SNS画像 — ビジュアル左、テキスト右（交互） */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+            <div className="order-2 md:order-1 flex justify-center">
+              <img
+                src="/sns-story-sample.png"
+                alt="VoiceHubで生成したInstagramストーリー用画像"
+                className="w-48 sm:w-56 rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              />
+            </div>
+            <div className="order-1 md:order-2">
               <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                 <Instagram size={20} className="text-[var(--brand)]" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 SNS投稿画像を作成
               </h3>
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
