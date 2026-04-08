@@ -27,16 +27,46 @@ export default function Home() {
       <TestimonialToast />
 
       {/* ── Hero ── */}
-      <section className="pt-20 pb-16 sm:pt-28 sm:pb-24">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-label text-[var(--brand)] mb-6">
+      <section className="pt-14 pb-16 sm:pt-20 sm:pb-24">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 text-center">
+          <p className="text-label text-[var(--brand)] mb-6 sm:mb-8">
             先着10名は正式リリース後もずっと無料
           </p>
-          <h1 className="text-[1.75rem] sm:text-[3.5rem] font-bold text-[var(--ink)] leading-[1.1] tracking-[-0.022em]">
+          <h1 className="text-[1.65rem] sm:text-5xl md:text-6xl font-bold text-[var(--ink)] leading-[1.15] tracking-[-0.022em]">
             お客様の声を集めて、
             <br />
             <span className="text-[var(--brand)]">HPにもSNSにも。</span>
           </h1>
+          <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
+                <MessageSquareText size={18} className="text-[var(--brand)] sm:hidden" />
+                <MessageSquareText size={22} className="text-[var(--brand)] hidden sm:block" />
+              </div>
+              <span className="text-[10px] sm:text-xs text-[var(--slate)]">フォームで収集</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
+                <LayoutDashboard size={18} className="text-[var(--brand)] sm:hidden" />
+                <LayoutDashboard size={22} className="text-[var(--brand)] hidden sm:block" />
+              </div>
+              <span className="text-[10px] sm:text-xs text-[var(--slate)]">一元管理</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
+                <Code size={18} className="text-[var(--brand)] sm:hidden" />
+                <Code size={22} className="text-[var(--brand)] hidden sm:block" />
+              </div>
+              <span className="text-[10px] sm:text-xs text-[var(--slate)]">HPに自動表示</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
+                <Instagram size={18} className="text-[var(--brand)] sm:hidden" />
+                <Instagram size={22} className="text-[var(--brand)] hidden sm:block" />
+              </div>
+              <span className="text-[10px] sm:text-xs text-[var(--slate)]">SNS投稿画像を作成</span>
+            </div>
+          </div>
           <p className="mt-6 sm:mt-8 text-base sm:text-xl text-[var(--slate)] max-w-2xl mx-auto leading-relaxed">
             お客様にフォームURLを送って、届いた声を承認するだけ。
             <br className="hidden md:block" />
@@ -45,14 +75,14 @@ export default function Home() {
           <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
             <Link
               href="/try"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
             >
               無料で試してみる
               <ArrowRight size={16} />
             </Link>
             <span className="text-xs text-[var(--slate)]">登録不要・30秒で体験</span>
           </div>
-          <div className="mt-12 sm:mt-16 max-w-3xl mx-auto">
+          <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
             <img
               src="/Dashboard.png"
               alt="VoiceHub ダッシュボード画面"
