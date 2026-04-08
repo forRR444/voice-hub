@@ -19,6 +19,7 @@ import {
   Instagram,
   ImageIcon,
   MapPin,
+  Circle,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
@@ -264,10 +265,10 @@ export default function Home() {
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
                 埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。承認した声がホームページに自動で表示されます。{WIDGET_TYPES.length}種類のデザインから選べます。
               </p>
-              <ul className="mt-5 space-y-2.5">
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
                 {["ペライチ・WordPress・Wix対応", "コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
-                    <CheckCircle size={14} className="text-[var(--brand)] shrink-0" />
+                  <li key={i} className="flex items-center gap-2.5">
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
                     {item}
                   </li>
                 ))}
@@ -301,10 +302,10 @@ export default function Home() {
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
                 お客様の声から、そのままInstagramやストーリーズに使える画像を<span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。デザインの手間ゼロ。
               </p>
-              <ul className="mt-5 space-y-2.5">
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
                 {["ストーリーズ・フィード対応", "ワンクリックで画像生成", "そのままSNSに投稿できる"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
-                    <CheckCircle size={14} className="text-[var(--brand)] shrink-0" />
+                  <li key={i} className="flex items-center gap-2.5">
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
                     {item}
                   </li>
                 ))}
@@ -324,10 +325,10 @@ export default function Home() {
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
                 届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。承認・タグ付け・検索もワンクリック。
               </p>
-              <ul className="mt-5 space-y-2.5">
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
                 {["承認・非承認をワンクリック", "タグ付け・検索で整理", "お気に入り機能で優先表示"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
-                    <CheckCircle size={14} className="text-[var(--brand)] shrink-0" />
+                  <li key={i} className="flex items-center gap-2.5">
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
                     {item}
                   </li>
                 ))}
