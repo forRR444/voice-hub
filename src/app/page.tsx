@@ -145,7 +145,7 @@ export default function Home() {
               </div>
               <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
-                お客様にURLを送るだけ。LINEでもメールでもOK。QRコードも作れるので、店頭やレジ横に置くこともできます。
+                お客様に<span className="text-[var(--brand)] font-semibold">URL</span>を送るだけ。LINEでもメールでもOK。<span className="text-[var(--brand)] font-semibold">QRコード</span>も作れるので、店頭やレジ横に置くこともできます。
               </p>
             </div>
             <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
@@ -262,7 +262,7 @@ export default function Home() {
                 ホームページに埋め込み
               </h3>
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                埋め込みコードをコピペするだけ。承認した声がホームページに自動で表示されます。{WIDGET_TYPES.length}種類のデザインから選べます。
+                埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。承認した声がホームページに自動で表示されます。{WIDGET_TYPES.length}種類のデザインから選べます。
               </p>
               <ul className="mt-5 space-y-2.5">
                 {["ペライチ・WordPress・Wix対応", "コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
@@ -299,7 +299,7 @@ export default function Home() {
                 SNS投稿画像を作成
               </h3>
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                お客様の声から、そのままInstagramやストーリーズに使える画像をワンクリックで生成。デザインの手間ゼロ。
+                お客様の声から、そのままInstagramやストーリーズに使える画像を<span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。デザインの手間ゼロ。
               </p>
               <ul className="mt-5 space-y-2.5">
                 {["ストーリーズ・フィード対応", "ワンクリックで画像生成", "そのままSNSに投稿できる"].map((item, i) => (
@@ -322,7 +322,7 @@ export default function Home() {
                 管理ダッシュボード
               </h3>
               <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                届いた声をひとつの画面で管理。承認・タグ付け・検索もワンクリック。
+                届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。承認・タグ付け・検索もワンクリック。
               </p>
               <ul className="mt-5 space-y-2.5">
                 {["承認・非承認をワンクリック", "タグ付け・検索で整理", "お気に入り機能で優先表示"].map((item, i) => (
@@ -345,10 +345,10 @@ export default function Home() {
           {/* Compact feature list */}
           <div className="grid sm:grid-cols-2 gap-x-16 gap-y-8 sm:gap-y-10">
             {[
-              { icon: <MessageSquareText size={20} />, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
-              { icon: <MapPin size={20} />, title: "Google口コミを取り込み", desc: "Googleマップの口コミをワンクリックでそのまま取り込み。" },
+              { icon: <MessageSquareText size={20} />, title: "お客様の声 収集フォーム", desc: (<>星評価・写真付き。<span className="text-[var(--brand)] font-semibold">ステップ形式</span>で回答率アップ。</>) },
+              { icon: <MapPin size={20} />, title: "Google口コミを取り込み", desc: (<>Googleマップの口コミを<span className="text-[var(--brand)] font-semibold">ワンクリック</span>でそのまま取り込み。</>) },
               { icon: <PenLine size={20} />, title: "手動追加もOK", desc: "LINEやメールでもらった声もまとめて登録。" },
-              { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: "ログイン → フォーム作成 → URL送信。" },
+              { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: (<><span className="text-[var(--brand)] font-semibold">5分</span>あれば始められます。</>) },
             ].map((f, i) => (
               <div key={i} className="flex items-start gap-4">
                 <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 text-[var(--brand)]">
