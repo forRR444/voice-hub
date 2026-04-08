@@ -267,10 +267,10 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="bg-[var(--canvas)] rounded-lg p-6 sm:p-8">
+            <div>
               <img
-                src="/Dashboard.png"
-                alt="ウィジェットが表示されたホームページのイメージ"
+                src="/widget-demo-screenshot.png"
+                alt="ピアノ教室のホームページにVoiceHubウィジェットを埋め込んだ例"
                 className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
               />
             </div>
