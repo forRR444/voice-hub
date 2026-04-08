@@ -12,6 +12,7 @@ import {
   Smartphone,
   Zap,
   ArrowRight,
+  Star,
   CheckCircle,
   Instagram,
   ImageIcon,
@@ -27,11 +28,15 @@ export default function Home() {
       <TestimonialToast />
 
       {/* ── Hero ── */}
-      <section className="pt-14 pb-16 sm:pt-20 sm:pb-24">
-        <div className="max-w-4xl mx-auto px-5 sm:px-6 text-center">
-          <p className="text-label text-[var(--brand)] mb-6 sm:mb-8">
+      <section className="relative overflow-hidden pt-14 pb-16 sm:pt-20 sm:pb-24">
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-indigo-200 rounded-full opacity-40 blur-[100px] sm:blur-[128px] pointer-events-none" />
+        <div className="absolute top-1/3 -left-10 sm:-left-20 w-[200px] sm:w-[350px] h-[200px] sm:h-[350px] bg-violet-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
+        <div className="absolute top-1/4 -right-10 sm:-right-20 w-[180px] sm:w-[300px] h-[180px] sm:h-[300px] bg-sky-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
+          <a href="#pricing" className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
+            <Star size={14} />
             先着10名は正式リリース後もずっと無料
-          </p>
+          </a>
           <h1 className="text-[1.65rem] sm:text-5xl md:text-6xl font-bold text-[var(--ink)] leading-[1.15] tracking-[-0.022em]">
             お客様の声を集めて、
             <br />
@@ -39,30 +44,30 @@ export default function Home() {
           </h1>
           <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
-                <MessageSquareText size={18} className="text-[var(--brand)] sm:hidden" />
-                <MessageSquareText size={22} className="text-[var(--brand)] hidden sm:block" />
+              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
+                <MessageSquareText size={22} className="text-[var(--brand)] sm:hidden" />
+                <MessageSquareText size={28} className="text-[var(--brand)] hidden sm:block" />
               </div>
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">フォームで収集</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
-                <LayoutDashboard size={18} className="text-[var(--brand)] sm:hidden" />
-                <LayoutDashboard size={22} className="text-[var(--brand)] hidden sm:block" />
+              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
+                <LayoutDashboard size={22} className="text-[var(--brand)] sm:hidden" />
+                <LayoutDashboard size={28} className="text-[var(--brand)] hidden sm:block" />
               </div>
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">一元管理</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
-                <Code size={18} className="text-[var(--brand)] sm:hidden" />
-                <Code size={22} className="text-[var(--brand)] hidden sm:block" />
+              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
+                <Code size={22} className="text-[var(--brand)] sm:hidden" />
+                <Code size={28} className="text-[var(--brand)] hidden sm:block" />
               </div>
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">HPに自動表示</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[var(--canvas)] rounded-lg flex items-center justify-center">
-                <Instagram size={18} className="text-[var(--brand)] sm:hidden" />
-                <Instagram size={22} className="text-[var(--brand)] hidden sm:block" />
+              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
+                <Instagram size={22} className="text-[var(--brand)] sm:hidden" />
+                <Instagram size={28} className="text-[var(--brand)] hidden sm:block" />
               </div>
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">SNS投稿画像を作成</span>
             </div>
@@ -97,15 +102,15 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-6">
           <div className="grid grid-cols-3 gap-6 sm:gap-16">
             <div className="text-center">
-              <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">97%</p>
+              <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">97%</p>
               <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">の消費者がレビューを参考にする</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">+34%</p>
+              <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">+34%</p>
               <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">お客様の声で成約率が向上</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">5分</p>
+              <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">5分</p>
               <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">でセットアップ完了</p>
             </div>
           </div>
@@ -232,7 +237,7 @@ export default function Home() {
           {/* 2 Hero Features — alternating layout */}
           <div className="grid md:grid-cols-2 gap-10 sm:gap-16 items-center mb-16 sm:mb-24">
             <div>
-              <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center mb-4">
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                 <Code size={20} className="text-[var(--brand)]" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
@@ -251,7 +256,7 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center mb-4">
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                 <Instagram size={20} className="text-[var(--brand)]" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
@@ -282,7 +287,7 @@ export default function Home() {
               { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: "ログイン → フォーム作成 → URL送信。" },
             ].map((f, i) => (
               <div key={i} className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center shrink-0 text-[var(--brand)]">
+                <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 text-[var(--brand)]">
                   {f.icon}
                 </div>
                 <div>

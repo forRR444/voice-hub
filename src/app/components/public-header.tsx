@@ -4,11 +4,11 @@ export default function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-[20px]">
       <div className="flex items-center justify-between max-w-5xl mx-auto px-6 py-3">
-        <Link href="/" className="text-xl font-bold text-[var(--ink)] tracking-[-0.022em]">
+        <Link href="/" className="text-2xl font-bold text-[var(--ink)] tracking-[-0.022em]">
           VoiceHub
         </Link>
         <div className="flex items-center gap-6">
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-[var(--slate)]">
+          <nav className="hidden sm:flex items-center gap-6 text-base text-[var(--slate)]">
             <a href="#features" className="hover:text-[var(--ink)] transition-colors">
               機能
             </a>
@@ -21,7 +21,7 @@ export default function PublicHeader() {
           </nav>
           <Link
             href="/login"
-            className="px-4 py-2 text-sm font-medium text-[var(--slate)] rounded-lg hover:text-[var(--ink)] hover:bg-[var(--canvas)] transition-colors"
+            className="px-4 py-2 text-base font-medium text-[var(--slate)] rounded-lg hover:text-[var(--ink)] hover:bg-[var(--canvas)] transition-colors"
           >
             ログイン
           </Link>
