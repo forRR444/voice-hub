@@ -9,7 +9,7 @@ export default function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <button
       onClick={() => setOpen(!open)}
-      className="w-full bg-[var(--plate)] rounded-[4px] p-6 text-left cursor-pointer hover:shadow-[0_2px_4px_rgba(26,31,54,0.04)] transition-shadow"
+      className="w-full bg-[var(--plate)] rounded-lg p-6 text-left cursor-pointer hover:shadow-[0_2px_4px_rgba(26,31,54,0.04)] transition-shadow"
     >
       <div className="flex items-center justify-between gap-4">
         <h3 className="font-semibold text-[var(--ink)] tracking-[-0.011em]">{q}</h3>

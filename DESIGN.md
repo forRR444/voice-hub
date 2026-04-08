@@ -70,7 +70,7 @@ If a divider is required for extreme density, use a "Ghost Border": a 1px hairli
 ## 5. Components
 
 ### Buttons: High-Precision Tools
-- **Radius:** `ROUND_FOUR` (4px).
+- **Radius:** `ROUND_LG` (8px / rounded-lg).
 - **Primary:** Background `brand`, text `on_primary`. 
 - **The Signature Detail:** A 1px inset top-border highlight (`rgba(255,255,255,0.2)`) to give the button a tactile, machined edge.
 - **Tertiary:** No background, `slate` text. On hover, shift to `ink` with a subtle `canvas` background.
@@ -95,11 +95,11 @@ A specific layout pattern where a `title-sm` label sits atop a `tabular-nums` va
 ### Do
 - **Do** prioritize white space over lines. If a layout feels cluttered, increase the padding, don't add a divider.
 - **Do** align all numerical data vertically using tabular-nums.
-- **Do** use the 4px corner radius consistently to maintain the "Architectural" feel.
+- **Do** use the 8px corner radius (rounded-lg) consistently to maintain the "Architectural" feel.
 - **Do** use `ink` for titles to maintain an authoritative hierarchy.
 
 ### Don't
 - **Don't** use pure black for shadows. Always tint shadows with the `ink` token.
 - **Don't** use standard 1px borders for cards. If it doesn't stand out, adjust the background color of the section.
 - **Don't** use default tracking. The negative micro-tracking is what gives the typography its "published" premium feel.
-- **Don't** use rounded-full buttons (pills). We are building architecture, not playthings. Use `ROUND_FOUR`.
+- **Don't** use rounded-full buttons (pills). We are building architecture, not playthings. Use `ROUND_LG` (rounded-lg).

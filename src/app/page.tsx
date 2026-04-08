@@ -45,7 +45,7 @@ export default function Home() {
           <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
             <Link
               href="/try"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-[4px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
             >
               無料で試してみる
               <ArrowRight size={16} />
@@ -56,7 +56,7 @@ export default function Home() {
             <img
               src="/Dashboard.png"
               alt="VoiceHub ダッシュボード画面"
-              className="w-full rounded-[4px] shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
             />
           </div>
         </div>
@@ -96,14 +96,14 @@ export default function Home() {
             あとはホームページに自動反映。SNS投稿画像もすぐ作れます。
           </p>
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
-            <div className="bg-[var(--plate)] rounded-[4px] p-6 sm:p-8">
+            <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
               <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
               <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
                 お客様にURLを送るだけ。LINEでもメールでもOK。ステップ形式で、お客様も迷わず回答できます。
               </p>
             </div>
-            <div className="bg-[var(--plate)] rounded-[4px] p-6 sm:p-8">
+            <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
               <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
               <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">届いた声を承認する</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
@@ -177,7 +177,7 @@ export default function Home() {
               <img
                 src="/Form.png"
                 alt="お客様が回答する収集フォーム"
-                className="w-full rounded-[4px] shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
               />
               <p className="mt-4 text-sm text-[var(--slate)] text-center">お客様が回答するフォーム画面</p>
               <div className="mt-3 text-center">
@@ -193,7 +193,7 @@ export default function Home() {
               <img
                 src="/Dashboard.png"
                 alt="届いた声を管理するダッシュボード"
-                className="w-full rounded-[4px] shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
               />
               <p className="mt-4 text-sm text-[var(--slate)] text-center">届いた声を管理するダッシュボード</p>
             </div>
@@ -202,7 +202,7 @@ export default function Home() {
           {/* 2 Hero Features — alternating layout */}
           <div className="grid md:grid-cols-2 gap-10 sm:gap-16 items-center mb-16 sm:mb-24">
             <div>
-              <div className="w-10 h-10 bg-[var(--canvas)] rounded-[4px] flex items-center justify-center mb-4">
+              <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center mb-4">
                 <Code size={20} className="text-[var(--brand)]" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
@@ -221,7 +221,7 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <div className="w-10 h-10 bg-[var(--canvas)] rounded-[4px] flex items-center justify-center mb-4">
+              <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center mb-4">
                 <Instagram size={20} className="text-[var(--brand)]" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
@@ -252,7 +252,7 @@ export default function Home() {
               { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: "ログイン → フォーム作成 → URL送信。" },
             ].map((f, i) => (
               <div key={i} className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-[var(--canvas)] rounded-[4px] flex items-center justify-center shrink-0 text-[var(--brand)]">
+                <div className="w-10 h-10 bg-[var(--canvas)] rounded-lg flex items-center justify-center shrink-0 text-[var(--brand)]">
                   {f.icon}
                 </div>
                 <div>
@@ -287,7 +287,7 @@ export default function Home() {
             <br />
             <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
           </p>
-          <div className="bg-[var(--canvas)] rounded-[4px] p-6 sm:p-8 max-w-sm mx-auto shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+          <div className="bg-[var(--canvas)] rounded-lg p-6 sm:p-8 max-w-sm mx-auto shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
             <p className="text-label text-[var(--brand)] mb-4">ベータ限定</p>
             <p className="text-3xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">¥0</p>
             <p className="text-sm text-[var(--slate)] mt-1">全機能が無料で使い放題</p>
@@ -308,7 +308,7 @@ export default function Home() {
             </ul>
             <Link
               href="/try"
-              className="block mt-8 w-full px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-[4px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition text-center"
+              className="block mt-8 w-full px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition text-center"
             >
               まずは試してみる
             </Link>
@@ -370,7 +370,7 @@ export default function Home() {
           <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
             <Link
               href="/try"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-[var(--brand)] text-white rounded-[4px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
             >
               無料で試してみる
               <ArrowRight size={18} />

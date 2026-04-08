@@ -21,7 +21,7 @@ export default function PublicHeader() {
           </nav>
           <Link
             href="/login"
-            className="px-4 py-2 text-sm font-medium text-[var(--slate)] rounded-[4px] hover:text-[var(--ink)] hover:bg-[var(--canvas)] transition-colors"
+            className="px-4 py-2 text-sm font-medium text-[var(--slate)] rounded-lg hover:text-[var(--ink)] hover:bg-[var(--canvas)] transition-colors"
           >
             ログイン
           </Link>
