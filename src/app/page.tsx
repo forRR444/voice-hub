@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Star,
   CheckCircle,
+  MessageCircle,
+  QrCode,
   Instagram,
   ImageIcon,
 } from "lucide-react";
@@ -132,10 +134,17 @@ export default function Home() {
           </p>
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
-              <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
+                <div className="flex items-center gap-2">
+                  <MessageCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  <QrCode size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
+                </div>
+              </div>
               <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
-                お客様にURLを送るだけ。LINEでもメールでもOK。ステップ形式で、お客様も迷わず回答できます。
+                お客様にURLを送るだけ。LINEでもメールでもOK。QRコードも作れるので、店頭やレジ横に置くこともできます。
               </p>
             </div>
             <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
