@@ -318,7 +318,7 @@ export default function Home() {
               { icon: <MessageSquareText size={20} />, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
               { icon: <LayoutDashboard size={20} />, title: "管理ダッシュボード", desc: "承認・タグ付け・検索をひとつの画面で。" },
               { icon: <ImageIcon size={20} />, title: "SNS投稿画像を作成", desc: "お客様の声からストーリーズ・フィード用の画像をワンクリックで。" },
-              { icon: <PenLine size={20} />, title: "手動追加もOK", desc: "LINEやメールでもらった声もまとめて登録。" },
+              { icon: <MapPin size={20} />, title: "Google口コミを取り込み", desc: "Googleマップの口コミをワンクリックでそのまま取り込み。" },
               { icon: <Smartphone size={20} />, title: "どのデバイスでも綺麗", desc: "ペライチ・WordPress・Wixなど主要ツールに対応。" },
               { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: "ログイン → フォーム作成 → URL送信。" },
             ].map((f, i) => (
