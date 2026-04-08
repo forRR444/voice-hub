@@ -312,14 +312,42 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Feature 3: 管理ダッシュボード — テキスト左、スクショ右 */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+            <div>
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
+                <LayoutDashboard size={20} className="text-[var(--brand)]" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+                管理ダッシュボード
+              </h3>
+              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
+                届いた声をひとつの画面で管理。承認・タグ付け・検索もワンクリック。
+              </p>
+              <ul className="mt-5 space-y-2.5">
+                {["承認・非承認をワンクリック", "タグ付け・検索で整理", "お気に入り機能で優先表示"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
+                    <CheckCircle size={14} className="text-[var(--brand)] shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <img
+                src="/Dashboard.png"
+                alt="VoiceHub管理ダッシュボード"
+                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              />
+            </div>
+          </div>
+
           {/* Compact feature list */}
           <div className="grid sm:grid-cols-2 gap-x-16 gap-y-8 sm:gap-y-10">
             {[
               { icon: <MessageSquareText size={20} />, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
-              { icon: <LayoutDashboard size={20} />, title: "管理ダッシュボード", desc: "承認・タグ付け・検索をひとつの画面で。" },
-              { icon: <ImageIcon size={20} />, title: "SNS投稿画像を作成", desc: "お客様の声からストーリーズ・フィード用の画像をワンクリックで。" },
               { icon: <MapPin size={20} />, title: "Google口コミを取り込み", desc: "Googleマップの口コミをワンクリックでそのまま取り込み。" },
-              { icon: <Smartphone size={20} />, title: "どのデバイスでも綺麗", desc: "ペライチ・WordPress・Wixなど主要ツールに対応。" },
+              { icon: <PenLine size={20} />, title: "手動追加もOK", desc: "LINEやメールでもらった声もまとめて登録。" },
               { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: "ログイン → フォーム作成 → URL送信。" },
             ].map((f, i) => (
               <div key={i} className="flex items-start gap-4">
