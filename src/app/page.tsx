@@ -456,7 +456,7 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="bg-[#1A1F36] py-20 sm:py-28">
+      <section className="bg-[#2A3050] py-20 sm:py-28">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-2xl sm:text-[2.5rem] font-bold text-white leading-tight tracking-[-0.022em]">
             お客様の声は、
@@ -476,7 +476,7 @@ export default function Home() {
               無料で試してみる
               <ArrowRight size={18} />
             </Link>
-            <span className="text-xs text-white/40">登録不要・30秒で体験</span>
+            <span className="text-xs text-white">登録不要・30秒で体験</span>
           </div>
         </div>
       </section>
