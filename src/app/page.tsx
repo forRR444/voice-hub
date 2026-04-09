@@ -403,7 +403,7 @@ export default function Home() {
                 "ペライチ・WordPress対応",
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
-                  <CheckCircle size={15} className="text-[var(--brand)] shrink-0" />
+                  <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
                   {item}
                 </li>
               ))}
