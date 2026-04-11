@@ -121,7 +121,6 @@ function MarqueeDemo() {
           <Card key={i} item={item} compact />
         ))}
       </div>
-      <style>{`@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
     </div>
   );
 }
@@ -141,10 +140,6 @@ function DualMarqueeDemo() {
           {[...rowB, ...rowB].map((item, i) => <Card key={i} item={item} compact />)}
         </div>
       </div>
-      <style>{`
-        @keyframes dual-marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        @keyframes dual-marquee-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-      `}</style>
     </div>
   );
 }
@@ -239,38 +234,6 @@ export default function WidgetDemo() {
 
   return (
     <div>
-      <style>{`
-        .demo-card-compact { min-width: min(140px, 38vw); max-width: 160px; padding: 10px; }
-        @media (min-width: 640px) { .demo-card-compact { min-width: 220px; max-width: 260px; padding: 14px; } }
-        .demo-card-compact .demo-text { font-size: 11px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .demo-card-compact .demo-text.demo-expanded { -webkit-line-clamp: unset; display: block; }
-        @media (min-width: 640px) { .demo-card-compact .demo-text { font-size: 13px; } }
-        .demo-read-more { background: none; border: none; padding: 0; margin-top: 2px; font-size: 10px; color: ${BRAND}; cursor: pointer; }
-        .demo-read-more:hover { text-decoration: underline; }
-        @media (min-width: 640px) { .demo-read-more { font-size: 12px; } }
-        .demo-card-compact .demo-name { font-size: 10px; }
-        @media (min-width: 640px) { .demo-card-compact .demo-name { font-size: 12px; } }
-        .demo-card-compact .demo-title { font-size: 9px; }
-        @media (min-width: 640px) { .demo-card-compact .demo-title { font-size: 11px; } }
-        .demo-list-wrap { gap: 8px; padding: 12px; }
-        @media (min-width: 640px) { .demo-list-wrap { gap: 12px; padding: 20px; } }
-        .demo-list-item { gap: 4px; padding: 10px; }
-        @media (min-width: 640px) { .demo-list-item { gap: 8px; padding: 16px; } }
-        .demo-text-full { font-size: 12px; }
-        @media (min-width: 640px) { .demo-text-full { font-size: 13px; } }
-        .demo-name-full { font-size: 11px; }
-        @media (min-width: 640px) { .demo-name-full { font-size: 12px; } }
-        .demo-title-full { font-size: 10px; }
-        @media (min-width: 640px) { .demo-title-full { font-size: 11px; } }
-        .demo-stars { font-size: 12px; }
-        @media (min-width: 640px) { .demo-stars { font-size: 14px; } }
-        .demo-single-wrap { padding: 12px; }
-        @media (min-width: 640px) { .demo-single-wrap { padding: 20px; } }
-        .demo-single-card { padding: 14px; }
-        @media (min-width: 640px) { .demo-single-card { padding: 20px; } }
-        .demo-single-text { font-size: 12px; line-height: 1.6; margin: 10px 0; }
-        @media (min-width: 640px) { .demo-single-text { font-size: 18px; line-height: 1.8; margin: 16px 0; } }
-      `}</style>
       <div className="flex items-center justify-center gap-4 mb-4">
         <button
           onClick={prev}

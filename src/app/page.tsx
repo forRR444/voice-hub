@@ -5,12 +5,14 @@ import Link from "next/link";
 import PublicHeader from "./components/public-header";
 import TestimonialToast from "./components/testimonial-toast";
 import FaqItem from "./components/faq-item";
+import IconCircle from "./components/ui/icon-circle";
+import BulletItem from "./components/ui/bullet-item";
+import CTAButton from "./components/ui/cta-button";
 import {
   MessageSquareText,
   LayoutDashboard,
   Code,
   PenLine,
-  Smartphone,
   Zap,
   ArrowRight,
   Star,
@@ -20,7 +22,6 @@ import {
   Instagram,
   ImageIcon,
   MapPin,
-  Circle,
   Store,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
@@ -76,6 +77,42 @@ const FEATURE_CARDS = [
     ),
     bullets: null,
   },
+];
+
+const PAIN_SOLUTIONS = [
+  {
+    icon: <MessageSquareText size={18} className="text-[var(--brand)]" />,
+    pain: "LINEで個別にお願い",
+    solution: (<><span className="text-[var(--brand)] font-semibold">URL1つ</span>で自動収集</>),
+  },
+  {
+    icon: <LayoutDashboard size={18} className="text-[var(--brand)]" />,
+    pain: "口コミがバラバラ",
+    solution: (<><span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約</>),
+  },
+  {
+    icon: <Code size={18} className="text-[var(--brand)]" />,
+    pain: "HPを手動で更新",
+    solution: (<><span className="text-[var(--brand)] font-semibold">承認だけ</span>で自動反映</>),
+  },
+  {
+    icon: <ImageIcon size={18} className="text-[var(--brand)]" />,
+    pain: "SNS画像を毎回作成",
+    solution: (<><span className="text-[var(--brand)] font-semibold">ワンクリック</span>で自動生成</>),
+  },
+  {
+    icon: <MessageCircle size={18} className="text-[var(--brand)]" />,
+    pain: "口コミを頼みづらい",
+    solution: "フォームURLを送るだけ",
+  },
+];
+
+const PRICING_FEATURES = [
+  "登録数・ウィジェット 無制限",
+  "承認するだけでHPに自動反映",
+  "SNS投稿画像をワンクリック生成",
+  "お客様の声つきサロンページ",
+  "Google口コミ取り込み",
 ];
 
 export default function Home() {
@@ -155,31 +192,19 @@ export default function Home() {
           </h1>
           <div className="mt-6 sm:mt-8 flex justify-center gap-6 sm:gap-12">
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
-                <MapPin size={22} className="text-[var(--brand)] sm:hidden" />
-                <MapPin size={28} className="text-[var(--brand)] hidden sm:block" />
-              </div>
+              <IconCircle icon={MapPin} size="md" />
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">Google口コミ取込</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
-                <MessageSquareText size={22} className="text-[var(--brand)] sm:hidden" />
-                <MessageSquareText size={28} className="text-[var(--brand)] hidden sm:block" />
-              </div>
+              <IconCircle icon={MessageSquareText} size="md" />
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">フォームで収集</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
-                <Code size={22} className="text-[var(--brand)] sm:hidden" />
-                <Code size={28} className="text-[var(--brand)] hidden sm:block" />
-              </div>
+              <IconCircle icon={Code} size="md" />
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">HPに自動表示</span>
             </div>
             <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 bg-indigo-50 rounded-full flex items-center justify-center">
-                <Instagram size={22} className="text-[var(--brand)] sm:hidden" />
-                <Instagram size={28} className="text-[var(--brand)] hidden sm:block" />
-              </div>
+              <IconCircle icon={Instagram} size="md" />
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">SNS投稿画像を作成</span>
             </div>
           </div>
@@ -189,20 +214,17 @@ export default function Home() {
             ホームページに自動反映。SNS用の投稿画像もワンクリックで。
           </p>
           <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
-            <Link
-              href="/try"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
-            >
+            <CTAButton href="/try">
               無料で試してみる
               <ArrowRight size={16} />
-            </Link>
+            </CTAButton>
             <span className="text-xs text-[var(--slate)]">登録不要・30秒で体験</span>
           </div>
           <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
             <img
               src="/Dashboard.png"
               alt="VoiceHub ダッシュボード画面"
-              className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              className="w-full rounded-lg shadow-ambient"
             />
           </div>
         </div>
@@ -235,7 +257,7 @@ export default function Home() {
       {/* ── How it works ── */}
       <section className="py-16 sm:py-24">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
+          <h2 className="section-heading text-center mb-4">
             <span className="text-[var(--brand)]">2ステップ</span>で完了
           </h2>
           <p className="text-center text-sm sm:text-base text-[var(--slate)] mb-12 sm:mb-16">
@@ -278,37 +300,11 @@ export default function Home() {
       {/* ── Pain → Solution ── */}
       <section className="bg-[var(--plate)] py-12 sm:py-24">
         <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-8 sm:mb-16">
+          <h2 className="section-heading text-center mb-8 sm:mb-16">
             こんな面倒から解放されます。
           </h2>
           <div className="space-y-3.5 sm:space-y-6">
-            {[
-              {
-                icon: <MessageSquareText size={18} className="text-[var(--brand)]" />,
-                pain: "LINEで個別にお願い",
-                solution: (<><span className="text-[var(--brand)] font-semibold">URL1つ</span>で自動収集</>),
-              },
-              {
-                icon: <LayoutDashboard size={18} className="text-[var(--brand)]" />,
-                pain: "口コミがバラバラ",
-                solution: (<><span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約</>),
-              },
-              {
-                icon: <Code size={18} className="text-[var(--brand)]" />,
-                pain: "HPを手動で更新",
-                solution: (<><span className="text-[var(--brand)] font-semibold">承認だけ</span>で自動反映</>),
-              },
-              {
-                icon: <ImageIcon size={18} className="text-[var(--brand)]" />,
-                pain: "SNS画像を毎回作成",
-                solution: (<><span className="text-[var(--brand)] font-semibold">ワンクリック</span>で自動生成</>),
-              },
-              {
-                icon: <MessageCircle size={18} className="text-[var(--brand)]" />,
-                pain: "口コミを頼みづらい",
-                solution: "フォームURLを送るだけ",
-              },
-            ].map((item, i) => (
+            {PAIN_SOLUTIONS.map((item, i) => (
               <div key={i} className="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg leading-relaxed">
                 <span className="shrink-0">{item.icon}</span>
                 <p>
@@ -326,7 +322,7 @@ export default function Home() {
       <div ref={pinRef} id="features" className="relative scroll-mt-20" style={{ height: `${FEATURE_CARDS.length * 100}vh` }}>
         <div className="sticky top-0 h-screen flex flex-col pt-20 sm:pt-0 sm:justify-center overflow-hidden">
           <div className="max-w-4xl mx-auto px-6 w-full">
-            <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4 sm:mb-8">
+            <h2 className="section-heading text-center mb-4 sm:mb-8">
               できること
             </h2>
 
@@ -361,10 +357,7 @@ export default function Home() {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-10 items-start">
                     <div>
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                        <feature.icon size={16} className="text-[var(--brand)] sm:hidden" />
-                        <feature.icon size={20} className="text-[var(--brand)] hidden sm:block" />
-                      </div>
+                      <IconCircle icon={feature.icon} size="sm" className="mb-3 sm:mb-4" />
                       <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                         {feature.title}
                       </h3>
@@ -374,44 +367,37 @@ export default function Home() {
                       {feature.bullets && (
                         <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
                           {feature.bullets.map((item, j) => (
-                            <li key={j} className="flex items-center gap-2">
-                              <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
-                              <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
-                              {item}
-                            </li>
+                            <BulletItem key={j}>{item}</BulletItem>
                           ))}
                         </ul>
                       )}
                     </div>
                     <div className="flex items-center justify-center">
                       {i === 0 && (
-                        <div className="w-full max-h-[280px] sm:max-h-[340px] overflow-hidden rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+                        <div className="w-full max-h-[280px] sm:max-h-[340px] overflow-hidden rounded-lg shadow-ambient">
                           <img src="/widget-demo-screenshot.png" alt="HPウィジェット埋め込み例" className="w-full object-cover object-top" />
                         </div>
                       )}
                       {i === 1 && (
-                        <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                        <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-ambient" />
                       )}
                       {i === 2 && (
-                        <img src="/Dashboard.png" alt="サロンページ" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                        <img src="/Dashboard.png" alt="サロンページ" className="w-full rounded-lg shadow-ambient" />
                       )}
                       {i === 3 && (
-                        <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                        <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-ambient" />
                       )}
                     </div>
                     {/* Compact features */}
                     <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-x-4 sm:gap-x-16 gap-y-2 sm:gap-y-6 mt-4 sm:mt-8 pt-4 sm:pt-8 border-t border-[var(--ghost-border)]">
                       {[
-                        { icon: <MessageSquareText size={14} className="sm:hidden" />, iconLg: <MessageSquareText size={20} className="hidden sm:block" />, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
-                        { icon: <MapPin size={14} className="sm:hidden" />, iconLg: <MapPin size={20} className="hidden sm:block" />, title: "Google口コミを取り込み", desc: "ワンクリックでそのまま取り込み。" },
-                        { icon: <PenLine size={14} className="sm:hidden" />, iconLg: <PenLine size={20} className="hidden sm:block" />, title: "手動追加もOK", desc: "LINEやメールの声もまとめて登録。" },
-                        { icon: <Zap size={14} className="sm:hidden" />, iconLg: <Zap size={20} className="hidden sm:block" />, title: "5分でセットアップ完了", desc: "5分あれば始められます。" },
+                        { icon: MessageSquareText, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
+                        { icon: MapPin, title: "Google口コミを取り込み", desc: "ワンクリックでそのまま取り込み。" },
+                        { icon: PenLine, title: "手動追加もOK", desc: "LINEやメールの声もまとめて登録。" },
+                        { icon: Zap, title: "5分でセットアップ完了", desc: "5分あれば始められます。" },
                       ].map((f, fi) => (
                         <div key={fi} className="flex items-start gap-2 sm:gap-3">
-                          <div className="w-5 h-5 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 text-[var(--brand)] mt-0.5">
-                            {f.icon}
-                            {f.iconLg}
-                          </div>
+                          <IconCircle icon={f.icon} size="xs" className="mt-0.5 shrink-0" />
                           <div>
                             <h4 className="text-[10px] sm:text-sm font-semibold text-[var(--ink)]">{f.title}</h4>
                             <p className="text-[10px] sm:text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
@@ -445,7 +431,7 @@ export default function Home() {
       {/* ── Pricing ── */}
       <section id="pricing" className="bg-[var(--plate)] py-12 sm:py-24 scroll-mt-20">
         <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-xl sm:text-[2rem] font-bold text-[var(--ink)] tracking-[-0.022em] mb-4">
+          <h2 className="section-heading text-center mb-4">
             今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span>
           </h2>
           <p className="text-xs sm:text-lg text-[var(--slate)] mb-8 sm:mb-12 leading-relaxed">
@@ -453,31 +439,18 @@ export default function Home() {
             <br />
             <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
           </p>
-          <div className="bg-[var(--canvas)] rounded-lg p-4 sm:p-8 max-w-sm mx-auto shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+          <div className="bg-[var(--canvas)] rounded-lg p-4 sm:p-8 max-w-sm mx-auto shadow-ambient">
             <p className="text-sm font-semibold tracking-wide uppercase text-[var(--brand)] mb-3 sm:mb-4">ベータ限定</p>
             <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">¥0</p>
             <p className="text-xs sm:text-sm text-[var(--slate)] mt-1">全機能が無料で使い放題</p>
             <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-left">
-              {[
-                "登録数・ウィジェット 無制限",
-                "承認するだけでHPに自動反映",
-                "SNS投稿画像をワンクリック生成",
-                "お客様の声つきサロンページ",
-                "Google口コミ取り込み",
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-[var(--ink)]">
-                  <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
-                  <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
-                  {item}
-                </li>
+              {PRICING_FEATURES.map((item, i) => (
+                <BulletItem key={i} className="text-xs sm:text-sm text-[var(--ink)]">{item}</BulletItem>
               ))}
             </ul>
-            <Link
-              href="/try"
-              className="block mt-6 sm:mt-8 w-full px-6 py-3 sm:py-3.5 text-xs sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition text-center"
-            >
+            <CTAButton href="/try" size="lg" block className="mt-6 sm:mt-8">
               まずは試してみる
-            </Link>
+            </CTAButton>
             <p className="mt-3 text-xs text-[var(--slate)]">
               クレジットカード不要
             </p>
@@ -488,7 +461,7 @@ export default function Home() {
       {/* ── FAQ ── */}
       <section id="faq" className="py-16 sm:py-24 scroll-mt-20">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-8 sm:mb-14">
+          <h2 className="section-heading text-center mb-8 sm:mb-14">
             よくある質問
           </h2>
           <div className="space-y-3">
@@ -534,14 +507,11 @@ export default function Home() {
             口コミを活かしたいすべての方に。
           </p>
           <div className="mt-6 sm:mt-10 flex flex-col items-center gap-2 sm:gap-3">
-            <Link
-              href="/try"
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-10 sm:py-4 text-xs sm:text-lg font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
-            >
+            <CTAButton href="/try" size="sm">
               無料で試してみる
               <ArrowRight size={14} className="sm:hidden" />
               <ArrowRight size={18} className="hidden sm:block" />
-            </Link>
+            </CTAButton>
             <span className="text-xs text-white">登録不要・30秒で体験</span>
           </div>
         </div>
