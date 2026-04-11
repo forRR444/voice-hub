@@ -382,7 +382,37 @@ export default function Home() {
                         <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-ambient" />
                       )}
                       {i === 2 && (
-                        <img src="/Dashboard.png" alt="サロンページ" className="w-full rounded-lg shadow-ambient" />
+                        <div className="bg-[var(--canvas)] rounded-lg overflow-hidden shadow-ambient w-full">
+                          <img
+                            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=640&h=200&fit=crop&crop=center"
+                            alt=""
+                            className="w-full h-24 sm:h-28 object-cover"
+                          />
+                          <div className="p-4 sm:p-6">
+                            <div className="text-center">
+                              <img
+                                src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=100&h=100&fit=crop&crop=face"
+                                alt=""
+                                className="w-14 h-14 rounded-full object-cover mx-auto border-2 border-white shadow-sm -mt-10"
+                              />
+                              <p className="mt-2 font-semibold text-[var(--ink)] text-sm">Sample Salon</p>
+                              <p className="text-xs text-[var(--slate)]">爪に優しいジェルネイル専門</p>
+                            </div>
+                            <div className="flex items-center justify-center gap-1.5 mt-3 text-sm">
+                              <span className="text-[var(--slate)]">★★★★★</span>
+                              <span className="font-bold text-[var(--ink)]">4.8</span>
+                              <span className="text-[var(--slate)] text-xs">（12件）</span>
+                            </div>
+                            <div className="mt-3 space-y-2">
+                              {["とても丁寧な施術で大満足です。また通いたいです！", "雰囲気がよくリラックスできました。"].map((text, ti) => (
+                                <div key={ti} className="bg-white rounded-lg p-2.5">
+                                  <span className="text-[var(--slate)] text-xs">★★★★★</span>
+                                  <p className="text-xs text-[var(--slate)] mt-1 leading-relaxed">{text}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
                       )}
                       {i === 3 && (
                         <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-ambient" />
