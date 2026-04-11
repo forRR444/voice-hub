@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import PublicHeader from "./components/public-header";
 import TestimonialToast from "./components/testimonial-toast";
@@ -26,7 +27,112 @@ import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
 
 
+const FEATURE_CARDS = [
+  {
+    icon: Code,
+    title: "ホームページに埋め込み",
+    description: (
+      <>
+        埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。
+        <br />
+        承認した声がホームページに自動で表示されます。
+      </>
+    ),
+    bullets: ["コード1行で設置完了", "スマホでも綺麗に表示"],
+  },
+  {
+    icon: Instagram,
+    title: "SNS投稿画像を作成",
+    description: (
+      <>
+        お客様の声から、そのままInstagramやXに使える画像を
+        <br />
+        <span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。
+      </>
+    ),
+    bullets: null,
+  },
+  {
+    icon: Store,
+    title: "お客様の声ページが持てる",
+    description: (
+      <>
+        インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。
+        <br />
+        お客様の声付きのサロン紹介ページが簡単に作れます。
+      </>
+    ),
+    bullets: ["LINE・予約リンクもまとめて設置", "HPの代わりとして使える"],
+  },
+  {
+    icon: LayoutDashboard,
+    title: "管理ダッシュボード",
+    description: (
+      <>
+        届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。
+        <br />
+        承認・タグ付け・検索もワンクリック。
+      </>
+    ),
+    bullets: null,
+  },
+];
+
 export default function Home() {
+  const pinRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const lastActiveRef = useRef(-1);
+
+  useEffect(() => {
+    const container = pinRef.current;
+    if (!container) return;
+
+    const update = () => {
+      const rect = container.getBoundingClientRect();
+      const scrollable = container.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+      const count = FEATURE_CARDS.length;
+      const active = Math.min(Math.floor(progress * count), count - 1);
+
+      // Update card transforms directly
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return;
+        const offset = i - active;
+        card.style.transform = `translateX(${offset * 110}%)`;
+        card.style.opacity = offset === 0 ? "1" : "0.15";
+      });
+
+      // Update dots
+      if (active !== lastActiveRef.current) {
+        dotsRef.current.forEach((dot, i) => {
+          if (!dot) return;
+          if (i === active) {
+            dot.style.background = "var(--brand)";
+            dot.style.transform = "scale(1.3)";
+          } else {
+            dot.style.background = "rgba(99,91,255,0.2)";
+            dot.style.transform = "scale(1)";
+          }
+        });
+        lastActiveRef.current = active;
+      }
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
+  const setCardRef = useCallback((el: HTMLDivElement | null, i: number) => {
+    cardsRef.current[i] = el;
+  }, []);
+  const setDotRef = useCallback((el: HTMLDivElement | null, i: number) => {
+    dotsRef.current[i] = el;
+  }, []);
+
   return (
     <div className="min-h-screen bg-[var(--canvas)]">
       <PublicHeader />
@@ -216,162 +322,91 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Product + Features (統合セクション) ── */}
-      <section id="features" className="py-12 sm:py-24 scroll-mt-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
-            できること
-          </h2>
+      {/* ── Product + Features (scroll-pinned horizontal) ── */}
+      <div ref={pinRef} id="features" className="relative scroll-mt-20" style={{ height: `${FEATURE_CARDS.length * 100}vh` }}>
+        <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+          <div className="max-w-4xl mx-auto px-6 w-full">
+            <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4 sm:mb-8">
+              できること
+            </h2>
 
-          {/* Feature 1: HP埋め込み — テキスト左、ビジュアル右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
-            <div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                <Code size={16} className="text-[var(--brand)] sm:hidden" />
-                <Code size={20} className="text-[var(--brand)] hidden sm:block" />
-              </div>
-              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
-                ホームページに埋め込み
-              </h3>
-              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
-                埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。
-                <br />
-                承認した声がホームページに自動で表示されます。
-              </p>
-              <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
-                {["コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <img
-                src="/widget-demo-screenshot.png"
-                alt="ピアノ教室のホームページにVoiceHubウィジェットを埋め込んだ例"
-                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
-            </div>
-          </div>
-
-          {/* Feature 2: SNS画像 — ビジュアル左、テキスト右（交互） */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
-            <div className="order-2 md:order-1 flex justify-center">
-              <img
-                src="/sns-story-sample.png"
-                alt="VoiceHubで生成したInstagramストーリー用画像"
-                className="w-48 sm:w-56 rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
-            </div>
-            <div className="order-1 md:order-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                <Instagram size={16} className="text-[var(--brand)] sm:hidden" />
-                <Instagram size={20} className="text-[var(--brand)] hidden sm:block" />
-              </div>
-              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
-                SNS投稿画像を作成
-              </h3>
-              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
-                お客様の声から、そのままInstagramやXに使える画像を
-                <br />
-                <span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。
-              </p>
-            </div>
-          </div>
-
-          {/* Feature: サロンページ — テキスト左、ビジュアル右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
-            <div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                <Store size={16} className="text-[var(--brand)] sm:hidden" />
-                <Store size={20} className="text-[var(--brand)] hidden sm:block" />
-              </div>
-              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
-                HPがなくても、<br className="hidden sm:inline" />お客様の声ページが持てる
-              </h3>
-              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
-                インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。
-                <br />
-                お客様の声付きのサロン紹介ページが簡単に作れます。
-              </p>
-              <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
-                {["LINE・予約リンクもまとめて設置", "HPの代わりとして使える"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="bg-[var(--canvas)] rounded-lg overflow-hidden shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
-                {/* サロンページモック */}
-                <img
-                  src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=640&h=200&fit=crop&crop=center"
-                  alt=""
-                  className="w-full h-24 sm:h-28 object-cover"
+            {/* Progress dots */}
+            <div className="flex justify-center gap-2.5 mb-6 sm:mb-8">
+              {FEATURE_CARDS.map((_, i) => (
+                <div
+                  key={i}
+                  ref={(el) => setDotRef(el, i)}
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{
+                    background: i === 0 ? "var(--brand)" : "rgba(99,91,255,0.2)",
+                    transform: i === 0 ? "scale(1.3)" : "scale(1)",
+                    transition: "all 0.3s",
+                  }}
                 />
-                <div className="p-4 sm:p-6">
-                  <div className="text-center">
-                    <img
-                      src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=100&h=100&fit=crop&crop=face"
-                      alt=""
-                      className="w-14 h-14 rounded-full object-cover mx-auto border-2 border-white shadow-sm -mt-10"
-                    />
-                    <p className="mt-2 font-semibold text-[var(--ink)] text-sm">Sample Salon</p>
-                    <p className="text-xs text-[var(--slate)]">爪に優しいジェルネイル専門</p>
-                    <div className="flex justify-center gap-3 mt-2 text-[var(--slate)]">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" opacity="0.5"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.5"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+              ))}
+            </div>
+
+            {/* Cards track */}
+            <div className="relative" style={{ height: "min(60vh, 420px)" }}>
+              {FEATURE_CARDS.map((feature, i) => (
+                <div
+                  key={i}
+                  ref={(el) => setCardRef(el, i)}
+                  className="absolute inset-0"
+                  style={{
+                    transform: `translateX(${i * 110}%)`,
+                    opacity: i === 0 ? 1 : 0.15,
+                    transition: "transform 0.4s ease-out, opacity 0.4s ease-out",
+                  }}
+                >
+                  <div className="h-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-10 items-center">
+                    <div>
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                        <feature.icon size={16} className="text-[var(--brand)] sm:hidden" />
+                        <feature.icon size={20} className="text-[var(--brand)] hidden sm:block" />
+                      </div>
+                      <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+                        {feature.title}
+                      </h3>
+                      <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
+                        {feature.description}
+                      </p>
+                      {feature.bullets && (
+                        <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
+                          {feature.bullets.map((item, j) => (
+                            <li key={j} className="flex items-center gap-2">
+                              <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
+                              <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-center">
+                      {i === 0 && (
+                        <img src="/widget-demo-screenshot.png" alt="HPウィジェット埋め込み例" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                      )}
+                      {i === 1 && (
+                        <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                      )}
+                      {i === 2 && (
+                        <img src="/Dashboard.png" alt="サロンページ" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                      )}
+                      {i === 3 && (
+                        <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-center gap-1.5 mt-4 text-sm">
-                    <span className="text-[var(--slate)]">★★★★★</span>
-                    <span className="font-bold text-[var(--ink)]">4.8</span>
-                    <span className="text-[var(--slate)] text-xs">（12件）</span>
-                  </div>
-                  <div className="mt-3 space-y-2">
-                    {["とても丁寧な施術で大満足です。また通いたいです！", "雰囲気がよくリラックスできました。"].map((text, i) => (
-                      <div key={i} className="bg-white rounded-lg p-3">
-                        <span className="text-[var(--slate)] text-xs">★★★★★</span>
-                        <p className="text-xs text-[var(--slate)] mt-1 leading-relaxed">{text}</p>
-                        <p className="text-[10px] text-[var(--slate)] opacity-60 mt-1">田中様</p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Feature 3: 管理ダッシュボード — ビジュアル左、テキスト右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
-            <div className="order-2 md:order-1">
-              <img
-                src="/Dashboard.png"
-                alt="VoiceHub管理ダッシュボード"
-                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
-            </div>
-            <div className="order-1 md:order-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                <LayoutDashboard size={16} className="text-[var(--brand)] sm:hidden" />
-                <LayoutDashboard size={20} className="text-[var(--brand)] hidden sm:block" />
-              </div>
-              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
-                管理ダッシュボード
-              </h3>
-              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
-                届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。
-                <br />
-                承認・タグ付け・検索もワンクリック。
-              </p>
-            </div>
-          </div>
+      <section className="py-12 sm:py-24">
+        <div className="max-w-4xl mx-auto px-6">
 
           {/* Compact feature list */}
           <div className="grid sm:grid-cols-2 gap-x-16 gap-y-8 sm:gap-y-10">
