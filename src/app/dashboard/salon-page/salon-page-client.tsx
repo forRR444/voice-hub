@@ -77,7 +77,8 @@ export default function SalonPageSettingsClient({
   const [error, setError] = useState<string | null>(null);
 
   const slug = initialSalonPage?.slug ?? null;
-  const pageUrl = slug ? `${getBaseUrl()}/salon/${slug}` : null;
+  const salonBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.jp";
+  const pageUrl = slug ? `${salonBaseUrl}/salon/${slug}` : null;
   const themeConfig = SALON_THEMES[theme];
 
   function handleLogoSelect(e: React.ChangeEvent<HTMLInputElement>) {
