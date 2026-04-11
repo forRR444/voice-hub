@@ -20,6 +20,7 @@ import {
   ImageIcon,
   MapPin,
   Circle,
+  Store,
 } from "lucide-react";
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
@@ -313,9 +314,78 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Feature 3: 管理ダッシュボード — テキスト左、スクショ右 */}
+          {/* Feature: サロンページ — テキスト左、ビジュアル右 */}
           <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
             <div>
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
+                <Store size={20} className="text-[var(--brand)]" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+                HPがなくても、<br className="hidden sm:inline" />お客様の声ページが持てる
+              </h3>
+              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
+                インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。お客様の声付きのサロン紹介ページが簡単に作れます。
+              </p>
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
+                {["インスタのプロフに貼るだけで使える", "LINE・予約リンクもまとめて設置", "HPの代わりとして使える"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2.5">
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <div className="bg-[var(--canvas)] rounded-lg overflow-hidden shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+                {/* サロンページモック */}
+                <img
+                  src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=640&h=200&fit=crop&crop=center"
+                  alt=""
+                  className="w-full h-24 sm:h-28 object-cover"
+                />
+                <div className="p-4 sm:p-6">
+                  <div className="text-center">
+                    <img
+                      src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=100&h=100&fit=crop&crop=face"
+                      alt=""
+                      className="w-14 h-14 rounded-full object-cover mx-auto border-2 border-white shadow-sm -mt-10"
+                    />
+                    <p className="mt-2 font-semibold text-[var(--ink)] text-sm">Sample Salon</p>
+                    <p className="text-xs text-[var(--slate)]">爪に優しいジェルネイル専門</p>
+                    <div className="flex justify-center gap-3 mt-2 text-[var(--slate)]">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" opacity="0.5"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.5"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 mt-4 text-sm">
+                    <span className="text-[var(--slate)]">★★★★★</span>
+                    <span className="font-bold text-[var(--ink)]">4.8</span>
+                    <span className="text-[var(--slate)] text-xs">（12件）</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {["とても丁寧な施術で大満足です。また通いたいです！", "雰囲気がよくリラックスできました。"].map((text, i) => (
+                      <div key={i} className="bg-white rounded-lg p-3">
+                        <span className="text-[var(--slate)] text-xs">★★★★★</span>
+                        <p className="text-xs text-[var(--slate)] mt-1 leading-relaxed">{text}</p>
+                        <p className="text-[10px] text-[var(--slate)] opacity-60 mt-1">田中様</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature 3: 管理ダッシュボード — ビジュアル左、テキスト右 */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+            <div className="order-2 md:order-1">
+              <img
+                src="/Dashboard.png"
+                alt="VoiceHub管理ダッシュボード"
+                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
+              />
+            </div>
+            <div className="order-1 md:order-2">
               <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                 <LayoutDashboard size={20} className="text-[var(--brand)]" />
               </div>
@@ -333,13 +403,6 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div>
-              <img
-                src="/Dashboard.png"
-                alt="VoiceHub管理ダッシュボード"
-                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
             </div>
           </div>
 
@@ -398,6 +461,7 @@ export default function Home() {
                 "埋め込みウィジェット 無制限",
                 `${WIDGET_TYPES.length}種類のウィジェットデザイン`,
                 "SNS投稿画像をワンクリック生成",
+                "お客様の声つきサロンページ",
                 "Google口コミ 最新5件を取り込み",
                 "手動追加OK",
                 "ペライチ・WordPress対応",
