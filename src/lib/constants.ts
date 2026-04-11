@@ -33,3 +33,8 @@ export const WIDGET_TYPES = [
 // テスティモニアル取得時の共通カラム
 export const TESTIMONIAL_SELECT_COLUMNS =
   "id, name, title, company, avatar_url, rating, content, before_story, is_featured, submitted_at";
+
+// サロンページ
+export const SALON_TAGLINE_MAX_LENGTH = 100;
+export const SALON_MAX_LINKS = 3;
+export const SALON_INITIAL_DISPLAY_COUNT = 10;

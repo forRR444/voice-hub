@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Code, ImageIcon, Settings, MessageSquare, ExternalLink } from "lucide-react";
+import { LayoutDashboard, FileText, Code, ImageIcon, Store, Settings, MessageSquare, ExternalLink } from "lucide-react";
 import { ink, slate, muted, brand } from "@/lib/theme-tokens";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/dashboard/forms", label: "フォーム", icon: FileText },
   { href: "/dashboard/widgets", label: "ウィジェット", icon: Code },
   { href: "/dashboard/sns", label: "SNS画像", icon: ImageIcon },
+  { href: "/dashboard/salon-page", label: "サロンページ", icon: Store },
 ];
 
 export function SidebarContent() {

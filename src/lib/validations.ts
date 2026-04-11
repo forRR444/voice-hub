@@ -75,3 +75,17 @@ export const formUpdateSchema = z.object({
   thank_you_message: z.string().max(500).optional(),
   questions: z.array(formQuestionSchema).min(1).max(20).optional(),
 });
+
+// サロンページ
+export const salonLinkSchema = z.object({
+  label: z.string().min(1, "ラベルを入力してください").max(30),
+  url: z.string().url("有効なURLを入力してください"),
+});
+
+export const salonPageSchema = z.object({
+  salon_name: z.string().min(1, "サロン名を入力してください").max(50),
+  tagline: z.string().max(100, "100文字以内で入力してください").optional(),
+  theme: z.enum(["natural", "modern", "elegant"]),
+  accent_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "有効なカラーコードを入力してください"),
+  links: z.array(salonLinkSchema).max(3),
+});

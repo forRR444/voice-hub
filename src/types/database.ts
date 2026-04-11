@@ -79,6 +79,45 @@ export type TestimonialTagRow = {
   tag: string;
 };
 
+export type SalonTheme = "natural" | "modern" | "elegant";
+export type SalonReviewLayout = "list" | "grid" | "card" | "wall";
+
+export type SalonPageRow = {
+  id: string;
+  workspace_id: string;
+  salon_name: string;
+  tagline: string | null;
+  logo_url: string | null;
+  theme: SalonTheme;
+  accent_color: string;
+  cover_image_url: string | null;
+  cover_image_position: number;
+  review_layout: SalonReviewLayout;
+  is_published: boolean;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SalonPageLinkIcon =
+  | "line"
+  | "instagram"
+  | "phone"
+  | "mail"
+  | "map"
+  | "web"
+  | "none";
+
+export type SalonPageLinkRow = {
+  id: string;
+  salon_page_id: string;
+  label: string;
+  url: string;
+  icon: SalonPageLinkIcon;
+  display_order: number;
+  created_at: string;
+};
+
 export type SubscriptionStatus = "free" | "pro" | "canceled";
 
 export type UserProfile = {
