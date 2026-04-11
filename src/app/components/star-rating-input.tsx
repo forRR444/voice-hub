@@ -45,10 +45,7 @@ export function StarRatingInput({
           aria-label={`${star}つ星`}
           className="transition-transform duration-100 hover:scale-110 active:scale-95 focus:outline-none"
           style={{
-            filter:
-              star <= active
-                ? `drop-shadow(0 2px 6px ${brandColor}60)`
-                : "none",
+            filter: "none",
           }}
           onMouseEnter={() => setHover(star)}
           onMouseLeave={() => setHover(0)}
