@@ -324,7 +324,7 @@ export default function Home() {
 
       {/* ── Product + Features (scroll-pinned horizontal) ── */}
       <div ref={pinRef} id="features" className="relative scroll-mt-20" style={{ height: `${FEATURE_CARDS.length * 100}vh` }}>
-        <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+        <div className="sticky top-0 h-screen flex flex-col pt-20 sm:pt-0 sm:justify-center overflow-hidden">
           <div className="max-w-4xl mx-auto px-6 w-full">
             <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4 sm:mb-8">
               できること
@@ -385,7 +385,9 @@ export default function Home() {
                     </div>
                     <div className="flex items-center justify-center">
                       {i === 0 && (
-                        <img src="/widget-demo-screenshot.png" alt="HPウィジェット埋め込み例" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
+                        <div className="w-full max-h-[280px] sm:max-h-[340px] overflow-hidden rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+                          <img src="/widget-demo-screenshot.png" alt="HPウィジェット埋め込み例" className="w-full object-cover object-top" />
+                        </div>
                       )}
                       {i === 1 && (
                         <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
