@@ -15,15 +15,15 @@ test.describe("ランディングページ", () => {
   test.describe("ヒーローセクション", () => {
     test("メインコピーが表示される", async ({ page }) => {
       await expect(page.getByText("お客様の声を集めて、")).toBeVisible();
-      await expect(page.getByText("自動で表示。")).toBeVisible();
+      await expect(page.getByText("HPにもSNSにも。")).toBeVisible();
     });
 
-    test("CTAボタン（無料で始める）が表示される", async ({ page }) => {
-      await expect(page.getByRole("link", { name: /無料で始める/ }).first()).toBeVisible();
+    test("CTAボタン（無料で試してみる）が表示される", async ({ page }) => {
+      await expect(page.getByRole("link", { name: /無料で試してみる/ }).first()).toBeVisible();
     });
 
-    test("ベータ版バッジが表示される", async ({ page }) => {
-      await expect(page.getByText(/ベータ版/).first()).toBeVisible();
+    test("先着10名バッジが表示される", async ({ page }) => {
+      await expect(page.getByText(/先着10名/).first()).toBeVisible();
     });
 
     test("クレジットカード不要の記載がある", async ({ page }) => {
@@ -35,20 +35,20 @@ test.describe("ランディングページ", () => {
   // セクションの存在確認
   // ============================
   test.describe("主要セクション", () => {
-    test("問題提起セクションが表示される", async ({ page }) => {
-      await expect(page.getByText("こんな経験、ありませんか？").or(page.getByText("導入するだけで、こう変わります。"))).toBeVisible();
+    test("Pain→Solutionセクションが表示される", async ({ page }) => {
+      await expect(page.getByText("こんな面倒から解放されます。")).toBeVisible();
     });
 
-    test("機能セクションが表示される", async ({ page }) => {
-      await expect(page.getByText("シンプルだけど、必要な機能は全部入り。")).toBeVisible();
+    test("できることセクションが表示される", async ({ page }) => {
+      await expect(page.getByRole("heading", { name: "できること" })).toBeVisible();
     });
 
-    test("対象ユーザーセクションが表示される", async ({ page }) => {
-      await expect(page.getByText("こんな方におすすめです。")).toBeVisible();
+    test("2ステップセクションが表示される", async ({ page }) => {
+      await expect(page.getByRole("heading", { name: /2ステップ/ })).toBeVisible();
     });
 
     test("料金セクションが表示される", async ({ page }) => {
-      await expect(page.getByText("¥0")).toBeVisible();
+      await expect(page.getByText("¥0").first()).toBeVisible();
     });
 
     test("FAQセクションが表示される", async ({ page }) => {
@@ -60,9 +60,9 @@ test.describe("ランディングページ", () => {
   // ナビゲーション
   // ============================
   test.describe("ナビゲーション", () => {
-    test("無料で始めるリンクが/loginに遷移する", async ({ page }) => {
-      const link = page.getByRole("link", { name: /無料で始める/ }).first();
-      await expect(link).toHaveAttribute("href", "/login");
+    test("無料で試してみるリンクが/tryに遷移する", async ({ page }) => {
+      const link = page.getByRole("link", { name: /無料で試してみる/ }).first();
+      await expect(link).toHaveAttribute("href", "/try");
     });
 
     test("フッターにcopyrightが表示される", async ({ page }) => {
