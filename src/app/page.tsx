@@ -359,7 +359,7 @@ export default function Home() {
                     transition: "transform 0.4s ease-out, opacity 0.4s ease-out",
                   }}
                 >
-                  <div className="h-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-10 items-center">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-10 items-start">
                     <div>
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                         <feature.icon size={16} className="text-[var(--brand)] sm:hidden" />
@@ -397,6 +397,26 @@ export default function Home() {
                         <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]" />
                       )}
                     </div>
+                    {/* Compact features */}
+                    <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-x-4 sm:gap-x-16 gap-y-2 sm:gap-y-6 mt-4 sm:mt-8 pt-4 sm:pt-8 border-t border-[var(--ghost-border)]">
+                      {[
+                        { icon: <MessageSquareText size={14} className="sm:hidden" />, iconLg: <MessageSquareText size={20} className="hidden sm:block" />, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
+                        { icon: <MapPin size={14} className="sm:hidden" />, iconLg: <MapPin size={20} className="hidden sm:block" />, title: "Google口コミを取り込み", desc: "ワンクリックでそのまま取り込み。" },
+                        { icon: <PenLine size={14} className="sm:hidden" />, iconLg: <PenLine size={20} className="hidden sm:block" />, title: "手動追加もOK", desc: "LINEやメールの声もまとめて登録。" },
+                        { icon: <Zap size={14} className="sm:hidden" />, iconLg: <Zap size={20} className="hidden sm:block" />, title: "5分でセットアップ完了", desc: "5分あれば始められます。" },
+                      ].map((f, fi) => (
+                        <div key={fi} className="flex items-start gap-2 sm:gap-3">
+                          <div className="w-5 h-5 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 text-[var(--brand)] mt-0.5">
+                            {f.icon}
+                            {f.iconLg}
+                          </div>
+                          <div>
+                            <h4 className="text-[10px] sm:text-sm font-semibold text-[var(--ink)]">{f.title}</h4>
+                            <p className="text-[10px] sm:text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -407,29 +427,8 @@ export default function Home() {
 
       <section className="py-12 sm:py-24">
         <div className="max-w-4xl mx-auto px-6">
-
-          {/* Compact feature list */}
-          <div className="grid sm:grid-cols-2 gap-x-16 gap-y-8 sm:gap-y-10">
-            {[
-              { icon: <MessageSquareText size={20} />, title: "お客様の声 収集フォーム", desc: (<>星評価・写真付き。<span className="text-[var(--brand)] font-semibold">ステップ形式</span>で回答率アップ。</>) },
-              { icon: <MapPin size={20} />, title: "Google口コミを取り込み", desc: (<>Googleマップの口コミを<span className="text-[var(--brand)] font-semibold">ワンクリック</span>でそのまま取り込み。</>) },
-              { icon: <PenLine size={20} />, title: "手動追加もOK", desc: "LINEやメールでもらった声もまとめて登録。" },
-              { icon: <Zap size={20} />, title: "5分でセットアップ完了", desc: (<><span className="text-[var(--brand)] font-semibold">5分</span>あれば始められます。</>) },
-            ].map((f, i) => (
-              <div key={i} className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 text-[var(--brand)]">
-                  {f.icon}
-                </div>
-                <div>
-                  <h4 className="text-sm sm:text-base font-semibold text-[var(--ink)] tracking-[-0.011em]">{f.title}</h4>
-                  <p className="mt-1 text-xs sm:text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
           {/* Widget demo */}
-          <div className="mt-16 sm:mt-24">
+          <div>
             <h3 className="text-lg sm:text-xl font-semibold text-center text-[var(--ink)] tracking-[-0.022em] mb-2">
               ホームページへの表示タイプ
             </h3>
