@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { toSubscriptionStatus } from "@/lib/plan";
 import WidgetsClient from "./widgets-client";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +36,7 @@ export default async function WidgetsPage() {
     .eq("workspace_id", workspace.id)
     .order("created_at", { ascending: false });
 
-  const subscriptionStatus = (workspace as Record<string, unknown>).subscription_status as string ?? "free";
+  const subscriptionStatus = toSubscriptionStatus(workspace.subscription_status);
 
   return (
     <WidgetsClient

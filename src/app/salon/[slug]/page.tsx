@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 import { getBaseUrl } from "@/lib/utils";
+import { getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
 import type { SalonPageRow, SalonPageLinkRow, TestimonialRow } from "@/types/database";
 import type { Metadata } from "next";
 import SalonPageClient from "./salon-page-client";
@@ -69,6 +70,16 @@ export default async function SalonPage({ params }: Props) {
     .eq("salon_page_id", salonPage.id)
     .order("display_order", { ascending: true });
 
+  // Fetch workspace subscription to apply display limit
+  const { data: workspace } = await supabase
+    .from("workspaces")
+    .select("subscription_status")
+    .eq("id", salonPage.workspace_id)
+    .single();
+
+  const subStatus = toSubscriptionStatus(workspace?.subscription_status);
+  const displayLimit = getTestimonialDisplayLimit(subStatus);
+
   const { data: testimonials } = await supabase
     .from("testimonials")
     .select(TESTIMONIAL_SELECT_COLUMNS)
@@ -76,7 +87,7 @@ export default async function SalonPage({ params }: Props) {
     .eq("status", "approved")
     .not("source", "in", '("sample","guide")')
     .order("submitted_at", { ascending: false })
-    .limit(50);
+    .limit(Math.min(50, displayLimit));
 
   const approvedTestimonials = (testimonials ?? []) as Pick<
     TestimonialRow,

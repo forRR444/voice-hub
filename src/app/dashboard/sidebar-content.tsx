@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Code, ImageIcon, Store, Settings, MessageSquare, ExternalLink } from "lucide-react";
+import { LayoutDashboard, FileText, Code, ImageIcon, Store, Settings, MessageSquare, ExternalLink, Crown } from "lucide-react";
 import { ink, slate, muted, brand } from "@/lib/theme-tokens";
+import { getEffectivePlan } from "@/lib/plan";
+import type { SubscriptionStatus } from "@/types/database";
 
 const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard, exact: true },
@@ -13,8 +15,9 @@ const navItems = [
   { href: "/dashboard/salon-page", label: "サロンページ", icon: Store },
 ];
 
-export function SidebarContent() {
+export function SidebarContent({ subscriptionStatus = "free" }: { subscriptionStatus?: SubscriptionStatus }) {
   const pathname = usePathname();
+  const plan = getEffectivePlan(subscriptionStatus);
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -76,6 +79,24 @@ export function SidebarContent() {
           <Settings size={16} />
           設定
         </Link>
+
+        {plan === "free" && (
+          <>
+            <div className="my-2" style={{ borderTop: "1px solid rgba(227,232,238,0.5)" }} />
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("open-upgrade-modal"))}
+              className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-150 hover:opacity-80"
+              style={{
+                background: "rgba(99,91,255,0.06)",
+                color: brand,
+                letterSpacing: "-0.011em",
+              }}
+            >
+              <Crown size={14} />
+              Proプラン
+            </button>
+          </>
+        )}
       </nav>
     </div>
   );

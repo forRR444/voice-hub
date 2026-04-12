@@ -544,10 +544,12 @@ describe("PLAN_LIMITS", () => {
     expect(PLAN_LIMITS.pro.widgets).toBe(Infinity);
   });
 
-  it("free プランのフォーム制限が1である", () => {
+  it("free プランの制限が正しい", () => {
     expect(PLAN_LIMITS.free.testimonials).toBe(Infinity);
-    expect(PLAN_LIMITS.free.forms).toBe(1);
+    expect(PLAN_LIMITS.free.forms).toBe(Infinity);
     expect(PLAN_LIMITS.free.widgets).toBe(Infinity);
+    expect(PLAN_LIMITS.free.dashboardTestimonials).toBe(10);
+    expect(PLAN_LIMITS.free.displayTestimonials).toBe(5);
   });
 
   it("バッジ表示がfreeとproで異なる", () => {

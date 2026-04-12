@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { toSubscriptionStatus } from "@/lib/plan";
 import FormsClient from "./forms-client";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ export default async function FormsPage() {
     });
   }
 
-  const subscriptionStatus = (workspace as Record<string, unknown>).subscription_status as string ?? "free";
+  const subscriptionStatus = toSubscriptionStatus(workspace.subscription_status);
 
   return (
     <FormsClient

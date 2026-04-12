@@ -15,7 +15,8 @@ import {
   CircleDot,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { WorkspaceRow, TestimonialWithTags } from "@/types/database";
+import { WorkspaceRow, TestimonialWithTags, SubscriptionStatus } from "@/types/database";
+import { getDashboardViewLimit, IS_BETA } from "@/lib/plan";
 import TryDataDetector from "./try-data-detector";
 import { formatDate } from "@/lib/utils";
 import AddTestimonialModal from "./add-testimonial-modal";
@@ -32,9 +33,11 @@ type FilterTab = "all" | "pending" | "approved" | "rejected";
 export default function DashboardClient({
   workspace,
   testimonials: initialTestimonials,
+  subscriptionStatus = "free",
 }: {
   workspace: WorkspaceRow;
   testimonials: TestimonialWithTags[];
+  subscriptionStatus?: SubscriptionStatus;
 }) {
   const supabase = createClient();
   const [testimonials, setTestimonials] = useState<TestimonialWithTags[]>(initialTestimonials);
@@ -199,13 +202,11 @@ export default function DashboardClient({
         {filtered.length === 0 && (search.trim() || filter !== "all") ? (
           <div className="text-center py-20"><p className="text-sm" style={{ color: muted }}>該当する口コミがありません</p></div>
         ) : filtered.length > 0 ? (
-          <div>
-            {filtered.map((t, i) => (
-              <TestimonialRow key={t.id} testimonial={t} isLast={i === filtered.length - 1}
-                onStatusChange={(status) => updateStatus(t.id, status)}
-              />
-            ))}
-          </div>
+          <TestimonialList
+            testimonials={filtered}
+            subscriptionStatus={subscriptionStatus}
+            onStatusChange={updateStatus}
+          />
         ) : null}
       </div>
 
@@ -345,6 +346,67 @@ function StatusPill({ status, onSelect }: { status: string; onSelect: (s: "appro
               </button>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Testimonial List with view limit ─── */
+function TestimonialList({
+  testimonials,
+  subscriptionStatus,
+  onStatusChange,
+}: {
+  testimonials: TestimonialWithTags[];
+  subscriptionStatus: SubscriptionStatus;
+  onStatusChange: (id: string, status: "approved" | "rejected" | "pending") => void;
+}) {
+  const viewLimit = getDashboardViewLimit(subscriptionStatus);
+  const visible = testimonials.slice(0, viewLimit);
+  const hiddenCount = testimonials.length > viewLimit ? testimonials.length - viewLimit : 0;
+
+  return (
+    <div>
+      {visible.map((t, i) => (
+        <TestimonialRow
+          key={t.id}
+          testimonial={t}
+          isLast={i === visible.length - 1 && hiddenCount === 0}
+          onStatusChange={(status) => onStatusChange(t.id, status)}
+        />
+      ))}
+      {hiddenCount > 0 && !IS_BETA && (
+        <div className="relative">
+          {/* Blurred preview of hidden testimonials */}
+          <div className="pointer-events-none select-none" style={{ filter: "blur(6px)", opacity: 0.4 }}>
+            {testimonials.slice(viewLimit, viewLimit + 3).map((t, i) => (
+              <TestimonialRow
+                key={t.id}
+                testimonial={t}
+                isLast={i === 2}
+                onStatusChange={() => {}}
+              />
+            ))}
+          </div>
+          {/* Upgrade overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-[#F7F8F9]/80 to-[#F7F8F9]">
+            <div className="text-center px-6 py-8">
+              <p className="text-lg font-bold mb-2" style={{ color: ink }}>
+                他に {hiddenCount}件 の口コミがあります
+              </p>
+              <p className="text-sm mb-4" style={{ color: slate }}>
+                Proプランにアップグレードすると、すべての口コミを閲覧・管理できます。
+              </p>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("open-upgrade-modal"))}
+                className="px-6 py-2.5 text-sm font-semibold text-white rounded-lg transition-opacity hover:opacity-90 cursor-pointer"
+                style={{ background: gradient }}
+              >
+                Proプランにアップグレード
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

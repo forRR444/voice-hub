@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { toSubscriptionStatus } from "@/lib/plan";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
@@ -63,6 +64,7 @@ export default async function DashboardPage() {
     <DashboardClient
       workspace={workspace}
       testimonials={testimonialsWithTags}
+      subscriptionStatus={toSubscriptionStatus(workspace.subscription_status)}
     />
   );
 }

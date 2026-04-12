@@ -9,6 +9,7 @@ import { LogoutButton } from "./logout-button";
 import { MobileSidebar } from "./mobile-sidebar";
 import { PostHogIdentify } from "./posthog-identify";
 import { SidebarContent } from "./sidebar-content";
+import UpgradeModal from "@/app/components/upgrade-modal";
 
 export default async function DashboardLayout({
   children,
@@ -35,11 +36,13 @@ export default async function DashboardLayout({
     redirect("/onboarding");
   }
 
+  const subscriptionStatus = workspace?.subscription_status ?? "free";
+
   return (
     <div className="flex h-screen" style={{ background: "#F7F8F9" }}>
       {/* Sidebar (desktop: always visible, mobile: hamburger overlay) */}
       <MobileSidebar>
-        <SidebarContent />
+        <SidebarContent subscriptionStatus={subscriptionStatus} />
       </MobileSidebar>
 
       {/* Main content */}
@@ -68,6 +71,8 @@ export default async function DashboardLayout({
         {/* Page content */}
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
+
+      <UpgradeModal />
     </div>
   );
 }

@@ -18,8 +18,9 @@ import {
   WorkspaceRow,
   WidgetRow,
   WidgetTheme,
-  PLAN_LIMITS,
+  SubscriptionStatus,
 } from "@/types/database";
+import { getPlanLimits } from "@/lib/plan";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
@@ -50,7 +51,7 @@ export default function WidgetsClient({
 }: {
   workspace: WorkspaceRow;
   widgets: WidgetRow[];
-  subscriptionStatus: string;
+  subscriptionStatus: SubscriptionStatus;
 }) {
   const supabase = createClient();
   const [widgets, setWidgets] = useState<WidgetRow[]>(initialWidgets);
@@ -77,40 +78,44 @@ export default function WidgetsClient({
     only_featured: false,
   });
 
-  const plan = subscriptionStatus === "pro" ? "pro" : "free";
-  const limit = PLAN_LIMITS[plan].widgets;
-  const canCreate = widgets.length < limit;
+  const limits = getPlanLimits(subscriptionStatus);
+  const canCreate = widgets.length < limits.widgets;
   const baseUrl = getBaseUrl();
 
   async function handleCreate() {
     if (!newWidget.name.trim()) return;
     setCreating(true);
 
-    const { data, error } = await supabase
-      .from("widgets")
-      .insert({
-        workspace_id: workspace.id,
-        name: newWidget.name,
-        type: newWidget.type,
-        theme: newWidget.theme,
-        filter_min_rating: newWidget.filter_min_rating,
-        only_featured: newWidget.only_featured,
-      })
-      .select()
-      .single();
+    try {
+      const res = await fetch("/api/widgets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newWidget.name,
+          type: newWidget.type,
+          theme: newWidget.theme,
+          filter_min_rating: newWidget.filter_min_rating,
+          only_featured: newWidget.only_featured,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setWidgets((prev) => [data, ...prev]);
+        setShowCreate(false);
+        setNewWidget({
+          name: "",
+          type: "carousel",
+          theme: { ...DEFAULT_THEME },
+          filter_min_rating: 1,
+          only_featured: false,
+        });
+      }
+    } catch {
+      // noop
+    }
 
     setCreating(false);
-    if (!error && data) {
-      setWidgets((prev) => [data, ...prev]);
-      setShowCreate(false);
-      setNewWidget({
-        name: "",
-        type: "carousel",
-        theme: { ...DEFAULT_THEME },
-        filter_min_rating: 1,
-        only_featured: false,
-      });
-    }
   }
 
   function getScriptEmbed(id: string) {
@@ -187,15 +192,6 @@ export default function WidgetsClient({
         </Button>
       </div>
 
-      {!canCreate && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-          フリープランではウィジェットは{limit}つまでです。
-          <Link href="/dashboard/settings" className="underline ml-1">
-            アップグレード
-          </Link>
-          して制限を解除しましょう。
-        </div>
-      )}
 
       {/* Create modal */}
       {showCreate && (

@@ -14,7 +14,8 @@ import {
 import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
 import { createClient } from "@/lib/supabase/client";
-import { WorkspaceRow, FormRow, FormQuestion, PLAN_LIMITS } from "@/types/database";
+import { WorkspaceRow, FormRow, FormQuestion, SubscriptionStatus } from "@/types/database";
+import { getPlanLimits } from "@/lib/plan";
 import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
@@ -35,7 +36,7 @@ export default function FormsClient({
   workspace: WorkspaceRow;
   forms: FormRow[];
   submissionCounts: Record<string, number>;
-  subscriptionStatus: string;
+  subscriptionStatus: SubscriptionStatus;
 }) {
   const supabase = createClient();
   const [forms, setForms] = useState<FormRow[]>(initialForms);
@@ -57,9 +58,8 @@ export default function FormsClient({
   const [deleting, setDeleting] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
-  const plan = subscriptionStatus === "pro" ? "pro" : "free";
-  const limit = PLAN_LIMITS[plan].forms;
-  const canCreate = forms.length < limit;
+  const limits = getPlanLimits(subscriptionStatus);
+  const canCreate = forms.length < limits.forms;
 
   async function createForm() {
     if (!canCreate) return;
@@ -67,25 +67,31 @@ export default function FormsClient({
 
     const template = FORM_TEMPLATES.find(t => t.id === selectedTemplate) || FORM_TEMPLATES[0];
     const slug = generateSlug();
-    const { data, error } = await supabase
-      .from("forms")
-      .insert({
-        workspace_id: workspace.id,
-        slug,
-        title: "お客様の声フォーム",
-        description: "ぜひご感想をお聞かせください",
-        questions: template.questions,
-        brand_color: DEFAULT_BRAND_COLOR,
-        thank_you_message: "ご回答いただきありがとうございます！",
-      })
-      .select()
-      .single();
+
+    try {
+      const res = await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug,
+          title: "お客様の声フォーム",
+          description: "ぜひご感想をお聞かせください",
+          questions: template.questions,
+          brand_color: DEFAULT_BRAND_COLOR,
+          thank_you_message: "ご回答いただきありがとうございます！",
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setForms((prev) => [data, ...prev]);
+      }
+    } catch {
+      // noop
+    }
 
     setCreating(false);
     setShowCreateModal(false);
-    if (!error && data) {
-      setForms((prev) => [data, ...prev]);
-    }
   }
 
   function startEdit(form: FormRow) {
@@ -206,11 +212,6 @@ export default function FormsClient({
         </Modal>
       )}
 
-      {!canCreate && (
-        <div className="mb-6 p-4 bg-foreground/5 border border-foreground/10 rounded-lg text-sm text-foreground/60">
-          ベータ版ではフォームは1つのみ登録できます。
-        </div>
-      )}
 
       {forms.length === 0 ? (
         <div className="text-center py-16 text-foreground/50">

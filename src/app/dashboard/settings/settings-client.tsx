@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Crown } from "lucide-react";
+import { Check, Crown, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword, validatePasswordMatch } from "@/lib/validation";
-import { WorkspaceRow, PLAN_LIMITS } from "@/types/database";
+import { WorkspaceRow, SubscriptionStatus } from "@/types/database";
+import { getPlanLimits, getEffectivePlan, IS_BETA } from "@/lib/plan";
+import { FREE_FEATURE_LIST, PRO_FEATURE_LIST } from "@/lib/plan-features";
+import PlanCard from "@/app/components/plan-card";
 import PageTitle from "@/app/components/page-title";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 import Button from "@/app/components/ui/button";
@@ -19,7 +22,7 @@ export default function SettingsClient({
   usage,
 }: {
   workspace: WorkspaceRow;
-  subscriptionStatus: string;
+  subscriptionStatus: SubscriptionStatus;
   hasPassword: boolean;
   usage: { testimonials: number; forms: number; widgets: number };
 }) {
@@ -36,8 +39,9 @@ export default function SettingsClient({
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  const plan = subscriptionStatus === "pro" ? "pro" : "free";
-  const limits = PLAN_LIMITS[plan];
+  const [portalLoading, setPortalLoading] = useState(false);
+  const plan = getEffectivePlan(subscriptionStatus);
+  const limits = getPlanLimits(subscriptionStatus);
 
   async function saveName() {
     if (!name.trim()) return;
@@ -81,19 +85,80 @@ export default function SettingsClient({
       <Card className="mb-4 sm:mb-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
           <h3 className="text-base sm:text-lg font-semibold text-foreground">利用状況</h3>
-          <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
-            <Crown size={14} />
-            初期サポーター
-          </span>
+          {IS_BETA ? (
+            <span className="px-3 py-1 text-sm font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 inline-flex items-center gap-1.5">
+              <Crown size={14} />
+              初期サポーター
+            </span>
+          ) : (
+            <span className={`px-3 py-1 text-sm font-medium rounded-full inline-flex items-center gap-1.5 ${
+              plan === "pro"
+                ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
+                : "bg-foreground/5 text-foreground/60 border border-foreground/10"
+            }`}>
+              {plan === "pro" && <Crown size={14} />}
+              {plan === "pro" ? "Proプラン" : "Freeプラン"}
+            </span>
+          )}
         </div>
-        <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 mb-3 sm:mb-4">
-          <p className="text-xs sm:text-sm font-medium text-indigo-700">
-            初期サポーター特典が適用されています
-          </p>
-          <p className="text-[10px] sm:text-xs text-indigo-500 mt-1">
-            正式リリース後も、すべての機能をずっと無料でご利用いただけます。
-          </p>
-        </div>
+
+        {IS_BETA ? (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm font-medium text-indigo-700">
+              初期サポーター特典が適用されています
+            </p>
+            <p className="text-[10px] sm:text-xs text-indigo-500 mt-1">
+              正式リリース後も特別価格でご利用いただけます。
+            </p>
+          </div>
+        ) : plan === "free" ? (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 mb-3 sm:mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs sm:text-sm font-medium text-indigo-700">
+                Proプランでもっと活用しましょう
+              </p>
+              <p className="text-[10px] sm:text-xs text-indigo-500 mt-1">
+                口コミの全件表示、ダッシュボード無制限閲覧、バッジ非表示
+              </p>
+            </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("open-upgrade-modal"))}
+              className="px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors cursor-pointer whitespace-nowrap ml-3"
+            >
+              アップグレード
+            </button>
+          </div>
+        ) : (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 mb-3 sm:mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-xs sm:text-sm font-medium text-indigo-700">
+                Proプランをご利用中です
+              </p>
+              <p className="text-[10px] sm:text-xs text-indigo-500 mt-1">
+                すべての機能を制限なくご利用いただけます。
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                setPortalLoading(true);
+                try {
+                  const res = await fetch("/api/stripe/portal", { method: "POST" });
+                  const data = await res.json();
+                  if (data.url) window.location.href = data.url;
+                  else { alert("エラーが発生しました。"); setPortalLoading(false); }
+                } catch {
+                  alert("ネットワークエラーが発生しました。");
+                  setPortalLoading(false);
+                }
+              }}
+              disabled={portalLoading}
+              className="px-4 py-2 text-xs sm:text-sm font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer whitespace-nowrap ml-3 inline-flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <ExternalLink size={14} />
+              {portalLoading ? "読み込み中..." : "プランを管理"}
+            </button>
+          </div>
+        )}
 
         {/* Usage stats */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
@@ -114,6 +179,26 @@ export default function SettingsClient({
           />
         </div>
       </Card>
+
+      {/* Pro plan preview (beta only) */}
+      {IS_BETA && (
+        <Card className="mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">
+            正式リリース後のプラン
+          </h3>
+          <p className="text-xs sm:text-sm text-foreground/60 mb-4 sm:mb-5">
+            現在ベータ版につき、全機能を無料でご利用いただけます。
+            正式リリース後は以下のプランをご用意しています。初期サポーターの方には特別価格が適用されます。
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-5">
+            <PlanCard plan="free" features={FREE_FEATURE_LIST} compact />
+            <PlanCard plan="pro" features={PRO_FEATURE_LIST} compact />
+          </div>
+          <Button disabled className="w-full sm:w-auto">
+            正式リリース後に利用可能
+          </Button>
+        </Card>
+      )}
 
       {/* Password change (email users only) */}
       {hasPassword && (

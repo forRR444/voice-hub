@@ -132,14 +132,18 @@ export type UserProfile = {
 export const PLAN_LIMITS = {
   free: {
     testimonials: Infinity,
-    forms: 1,
+    forms: Infinity,
     widgets: Infinity,
+    dashboardTestimonials: 10,
+    displayTestimonials: 5,
     showBadge: true,
   },
   pro: {
     testimonials: Infinity,
     forms: Infinity,
     widgets: Infinity,
+    dashboardTestimonials: Infinity,
+    displayTestimonials: Infinity,
     showBadge: false,
   },
 } as const;

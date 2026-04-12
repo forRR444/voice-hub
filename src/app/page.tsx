@@ -107,13 +107,9 @@ const PAIN_SOLUTIONS = [
   },
 ];
 
-const PRICING_FEATURES = [
-  "登録数・ウィジェット 無制限",
-  "承認するだけでHPに自動反映",
-  "SNS投稿画像をワンクリック生成",
-  "お客様の声つきサロンページ",
-  "Google口コミ取り込み",
-];
+import { FREE_FEATURE_LIST, PRO_FEATURE_LIST } from "@/lib/plan-features";
+import { IS_BETA } from "@/lib/plan";
+import PlanCard from "@/app/components/plan-card";
 
 export default function Home() {
   const pinRef = useRef<HTMLDivElement>(null);
@@ -460,30 +456,41 @@ export default function Home() {
 
       {/* ── Pricing ── */}
       <section id="pricing" className="bg-[var(--plate)] py-12 sm:py-24 scroll-mt-20">
-        <div className="max-w-2xl mx-auto px-6 text-center">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="section-heading text-center mb-4">
-            今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span>
+            {IS_BETA ? (
+              <>今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span></>
+            ) : (
+              <>シンプルな<span className="text-[var(--brand)]">料金プラン。</span></>
+            )}
           </h2>
           <p className="text-xs sm:text-lg text-[var(--slate)] mb-8 sm:mb-12 leading-relaxed">
-            現在ベータ版につき、全機能を無料で使えます。
-            <br />
-            <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
+            {IS_BETA ? (
+              <>
+                現在ベータ版につき、全機能を無料で使えます。
+                <br />
+                <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
+              </>
+            ) : (
+              <>あなたのビジネスに合ったプランをお選びください。</>
+            )}
           </p>
-          <div className="bg-[var(--canvas)] rounded-lg p-4 sm:p-8 max-w-sm mx-auto shadow-ambient">
-            <p className="text-sm font-semibold tracking-wide uppercase text-[var(--brand)] mb-3 sm:mb-4">ベータ限定</p>
-            <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">¥0</p>
-            <p className="text-xs sm:text-sm text-[var(--slate)] mt-1">全機能が無料で使い放題</p>
-            <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-left">
-              {PRICING_FEATURES.map((item, i) => (
-                <BulletItem key={i} className="text-xs sm:text-sm text-[var(--ink)]">{item}</BulletItem>
-              ))}
-            </ul>
-            <CTAButton href="/try" size="lg" block className="mt-6 sm:mt-8">
-              まずは試してみる
-            </CTAButton>
-            <p className="mt-3 text-xs text-[var(--slate)]">
-              クレジットカード不要
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
+            <PlanCard
+              plan="free"
+              features={FREE_FEATURE_LIST}
+              cta={{ label: "無料で始める", href: "/try" }}
+              note="クレジットカード不要"
+            />
+            <PlanCard
+              plan="pro"
+              features={PRO_FEATURE_LIST}
+              cta={IS_BETA
+                ? { label: "無料で始める", href: "/try" }
+                : { label: "Proプランを始める", href: "/signup" }
+              }
+              note={IS_BETA ? "ベータ中は全機能無料" : "いつでもキャンセル可能"}
+            />
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/api-utils";
 import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
+import { shouldShowBadge, getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,7 +46,9 @@ export async function GET(
       .eq("id", widget.workspace_id)
       .single();
 
-    const showBadge = workspace?.subscription_status === "free";
+    const status = toSubscriptionStatus(workspace?.subscription_status);
+    const showBadge = shouldShowBadge(status);
+    const displayLimit = getTestimonialDisplayLimit(status);
 
     // Build testimonials query
     let query = supabase
@@ -61,7 +64,8 @@ export async function GET(
       query = query.eq("is_featured", true);
     }
 
-    const maxItems = widget.theme?.maxItems ?? 10;
+    const themeMax = widget.theme?.maxItems ?? 10;
+    const maxItems = Math.min(themeMax, displayLimit);
     query = query.limit(maxItems);
 
     const { data: testimonials, error: testimonialsError } = await query;

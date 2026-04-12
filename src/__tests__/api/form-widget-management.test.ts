@@ -288,9 +288,9 @@ describe("プラン制限の適用", () => {
   });
 
   it("canCreateロジックがプラン制限に基づいて正しく評価される", () => {
-    // freeプランはフォーム1つまで（ベータ版制限）
+    // freeプランもフォーム・ウィジェットは無制限（表示制限のみ）
     expect(0 < PLAN_LIMITS.free.forms).toBe(true);
-    expect(1 < PLAN_LIMITS.free.forms).toBe(false);
+    expect(100 < PLAN_LIMITS.free.forms).toBe(true);
     // proプランは無制限
     expect(100 < PLAN_LIMITS.pro.forms).toBe(true);
   });
