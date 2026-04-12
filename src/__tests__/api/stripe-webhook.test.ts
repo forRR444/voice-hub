@@ -66,6 +66,7 @@ function makeStripeEvent(type: string, dataObject: Record<string, unknown>) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_test_secret");
   setupSupabaseMock();
 });
 

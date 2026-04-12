@@ -19,11 +19,20 @@ export async function POST(request: Request) {
 
     let event: Stripe.Event;
 
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      logError("STRIPE_WEBHOOK_SECRET is not configured");
+      return NextResponse.json(
+        { error: "Webhook not configured" },
+        { status: 500 }
+      );
+    }
+
     try {
       event = getStripe().webhooks.constructEvent(
         body,
         signature,
-        process.env.STRIPE_WEBHOOK_SECRET!
+        webhookSecret
       );
     } catch (err) {
       logError("Webhook signature verification failed:", err);
@@ -61,7 +70,12 @@ export async function POST(request: Request) {
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId = getStripeCustomerId(subscription.customer)!;
+        const customerId = getStripeCustomerId(subscription.customer);
+
+        if (!customerId) {
+          logError("No customer ID in subscription.updated event");
+          break;
+        }
 
         let subscriptionStatus: string;
         switch (subscription.status) {
@@ -95,7 +109,12 @@ export async function POST(request: Request) {
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId = getStripeCustomerId(subscription.customer)!;
+        const customerId = getStripeCustomerId(subscription.customer);
+
+        if (!customerId) {
+          logError("No customer ID in subscription.deleted event");
+          break;
+        }
 
         const { error } = await createAdminClient()
           .from("workspaces")

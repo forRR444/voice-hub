@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getPlanLimits, toSubscriptionStatus } from "@/lib/plan";
+import { widgetCreateSchema } from "@/lib/validations";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -39,7 +41,16 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, type, theme, filter_min_rating, only_featured } = body;
+  const parsed = widgetCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    logError("Widget validation error:", JSON.stringify(parsed.error.flatten()));
+    return NextResponse.json(
+      { error: "入力内容に不備があります", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const { name, type, theme, filter_min_rating, only_featured } = parsed.data;
 
   const { data, error } = await supabase
     .from("widgets")

@@ -67,6 +67,15 @@ const formQuestionSchema = z.object({
   enabled: z.boolean().optional(),
 });
 
+export const formCreateSchema = z.object({
+  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
+  title: z.string().min(1).max(200),
+  description: z.string().max(1000).optional(),
+  brand_color: z.string().min(1).max(20),
+  thank_you_message: z.string().max(500).optional(),
+  questions: z.array(formQuestionSchema).min(1).max(20),
+});
+
 export const formUpdateSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(1000).optional(),

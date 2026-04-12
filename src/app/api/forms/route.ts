@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getPlanLimits, toSubscriptionStatus } from "@/lib/plan";
+import { formCreateSchema } from "@/lib/validations";
+import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -39,7 +41,16 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { slug, title, description, questions, brand_color, thank_you_message } = body;
+  const parsed = formCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    logError("Form validation error:", JSON.stringify(parsed.error.flatten()));
+    return NextResponse.json(
+      { error: "入力内容に不備があります", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const { slug, title, description, questions, brand_color, thank_you_message } = parsed.data;
 
   const { data, error } = await supabase
     .from("forms")
