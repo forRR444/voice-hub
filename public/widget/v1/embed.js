@@ -141,7 +141,7 @@
     }
     html += '<div class="vh-author">';
 
-    if (theme.showAvatar !== false) {
+    if (theme.showAvatar === true) {
       if (t.avatar_url) {
         html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name) + '">';
       } else {
@@ -198,7 +198,7 @@
       }
       html += '<div class="vh-content">' + escapeHtml(t.content) + "</div>";
       html += '<div class="vh-author">';
-      if (theme.showAvatar !== false) {
+      if (theme.showAvatar === true) {
         if (t.avatar_url) {
           html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name) + '">';
         } else {

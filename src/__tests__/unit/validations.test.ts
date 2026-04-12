@@ -233,7 +233,7 @@ describe("widgetCreateSchema", () => {
         mode: "light",
         brandColor: "#635BFF",
         showRating: true,
-        showAvatar: true,
+        showAvatar: false,
         showDate: false,
         maxItems: 10,
         autoplay: true,

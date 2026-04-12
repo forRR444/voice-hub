@@ -154,3 +154,42 @@ body {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+
+/* ─────────────────────────────────────────
+   Salon Page — Rich Design
+   ───────────────────────────────────────── */
+
+.salon-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.salon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.salon-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 480px) {
+  .salon-grid-layout { grid-template-columns: repeat(2, 1fr); }
+}
+
+.salon-wall-layout {
+  column-count: 1;
+  column-gap: 10px;
+}
+@media (min-width: 480px) {
+  .salon-wall-layout { column-count: 2; }
+}
+
+.salon-scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.salon-scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

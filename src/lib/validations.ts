@@ -45,7 +45,7 @@ export const widgetCreateSchema = z.object({
       mode: z.enum(["light", "dark"]).default("light"),
       brandColor: z.string().default(DEFAULT_BRAND_COLOR),
       showRating: z.boolean().default(true),
-      showAvatar: z.boolean().default(true),
+      showAvatar: z.boolean().default(false),
       showDate: z.boolean().default(false),
       maxItems: z.number().min(1).max(50).default(10),
       autoplay: z.boolean().default(true),

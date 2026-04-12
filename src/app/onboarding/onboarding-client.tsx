@@ -77,7 +77,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                 workspace_id: workspace.id,
                 name: "カルーセル",
                 type: "carousel",
-                theme: { mode: "light", brandColor: tryData.brandColor || DEFAULT_BRAND_COLOR, showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
+                theme: { mode: "light", brandColor: tryData.brandColor || DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
                 filter_min_rating: 1,
                 only_featured: false,
               });
@@ -126,7 +126,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             workspace_id: workspace.id,
             name: "カルーセル",
             type: "carousel",
-            theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
+            theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
             filter_min_rating: 1,
             only_featured: false,
           });
@@ -189,7 +189,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
           workspace_id: workspace.id,
           name: "カルーセル",
           type: "carousel",
-          theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: true, showDate: false, maxItems: 10, autoplay: true },
+          theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
           filter_min_rating: 1,
           only_featured: false,
         })

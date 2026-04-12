@@ -38,7 +38,7 @@ const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
   brandColor: DEFAULT_BRAND_COLOR,
   showRating: true,
-  showAvatar: true,
+  showAvatar: false,
   showDate: false,
   maxItems: 10,
   autoplay: true,

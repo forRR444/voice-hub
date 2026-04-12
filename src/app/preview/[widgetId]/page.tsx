@@ -97,7 +97,7 @@ function TestimonialCard({
         <button className="read-more-btn">もっと見る</button>
       )}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
-        {theme.showAvatar !== false &&
+        {theme.showAvatar === true &&
           (t.avatar_url ? (
             <img
               src={t.avatar_url}
@@ -527,7 +527,7 @@ export default async function WidgetPreviewPage({
                   {t.content}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
-                  {theme.showAvatar !== false && (
+                  {theme.showAvatar === true && (
                     t.avatar_url ? (
                       <img src={t.avatar_url} alt={t.name} width={40} height={40} style={{ borderRadius: "50%", objectFit: "cover" }} />
                     ) : (
@@ -564,7 +564,7 @@ export default async function WidgetPreviewPage({
                   {items[0].content}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
-                  {theme.showAvatar !== false && (
+                  {theme.showAvatar === true && (
                     items[0].avatar_url ? (
                       <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} className="single-avatar" />
                     ) : (
@@ -599,7 +599,7 @@ export default async function WidgetPreviewPage({
                   {t.content}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
-                  {theme.showAvatar !== false && (
+                  {theme.showAvatar === true && (
                     t.avatar_url ? (
                       <img src={t.avatar_url} alt={t.name} width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
                     ) : (
@@ -787,7 +787,7 @@ export default async function WidgetPreviewPage({
                   var brand = '${brand}';
                   var isDark = ${isDark};
                   var showRating = ${theme.showRating !== false};
-                  var showAvatar = ${theme.showAvatar !== false};
+                  var showAvatar = ${theme.showAvatar === true};
                   var showDate = ${!!theme.showDate};
                   var current = 0;
                   var card = document.getElementById('single-card');

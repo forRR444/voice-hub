@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { SALON_THEMES } from "@/lib/salon-themes";
 import { SALON_INITIAL_DISPLAY_COUNT } from "@/lib/constants";
 import { SalonLinkIcon } from "@/lib/salon-link-icons";
@@ -49,123 +49,134 @@ export default function SalonPageClient({
         minHeight: "100vh",
         boxShadow: "0 0 40px rgba(0,0,0,0.06)",
       }}>
-        {/* カバー画像 */}
-        {hasCover && (
-          <img
-            src={salonPage.cover_image_url!}
-            alt=""
+        {/* カバー画像 + ロゴ重なり */}
+        <div style={{ position: "relative" }}>
+          {hasCover && (
+            <img
+              src={salonPage.cover_image_url!}
+              alt=""
+              style={{
+                width: "100%",
+                aspectRatio: "3.2 / 1",
+                objectFit: "cover",
+                objectPosition: `center ${salonPage.cover_image_position ?? 50}%`,
+                display: "block",
+              }}
+            />
+          )}
+
+          {/* プロフィール */}
+          <header
             style={{
-              width: "100%",
-              aspectRatio: "3.2 / 1",
-              objectFit: "cover",
-              objectPosition: `center ${salonPage.cover_image_position ?? 50}%`,
-              display: "block",
+              background: hasCover ? theme.bodyBg : theme.headerBg,
+              padding: "0 20px 24px",
+              textAlign: "center",
             }}
-          />
-        )}
-        {/* プロフィール */}
-        <header
-          style={{
-            background: hasCover ? theme.bodyBg : theme.headerBg,
-            padding: "0 20px 24px",
-            textAlign: "center",
-          }}
-        >
-          {/* ロゴ */}
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: 20,
-            marginBottom: 12,
-          }}>
-            {salonPage.logo_url ? (
-              <img
-                src={salonPage.logo_url}
-                alt={salonPage.salon_name}
-                className="w-20 h-20 sm:w-28 sm:h-28"
+          >
+            {/* ロゴ */}
+            <div
+              className={hasCover ? "-mt-10 sm:-mt-14" : "mt-5"}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 12,
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
+              {salonPage.logo_url ? (
+                <img
+                  src={salonPage.logo_url}
+                  alt={salonPage.salon_name}
+                  className="w-20 h-20 sm:w-28 sm:h-28"
+                  style={{
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: hasCover ? `3px solid ${theme.cardBg}` : `3px solid ${theme.cardBorder}`,
+                    boxShadow: hasCover ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
+                    background: theme.cardBg,
+                  }}
+                />
+              ) : (
+                <div
+                  className="w-20 h-20 sm:w-28 sm:h-28 text-3xl sm:text-5xl"
+                  style={{
+                    borderRadius: "50%",
+                    background: accent,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 700,
+                    border: hasCover ? `3px solid ${theme.cardBg}` : "none",
+                    boxShadow: hasCover ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
+                  }}
+                >
+                  {(salonPage.salon_name || "S").charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+
+            {/* サロン名 + リンクアイコン */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+              <h1
                 style={{
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  border: `3px solid ${theme.cardBorder}`,
-                }}
-              />
-            ) : (
-              <div
-                className="w-20 h-20 sm:w-28 sm:h-28 text-3xl sm:text-5xl"
-                style={{
-                  borderRadius: "50%",
-                  background: accent,
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  fontSize: 20,
                   fontWeight: 700,
+                  color: theme.textPrimary,
+                  margin: 0,
+                  letterSpacing: "-0.01em",
                 }}
               >
-                {(salonPage.salon_name || "S").charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
+                {salonPage.salon_name}
+              </h1>
+              {links.length > 0 && (
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {links.map((link) => (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={link.label}
+                      style={{
+                        color: theme.textSecondary,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textDecoration: "none",
+                        transition: "opacity 0.15s",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
+                      onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                    >
+                      <SalonLinkIcon icon={link.icon && link.icon !== "none" ? link.icon : "web"} size={22} color={theme.textSecondary} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          {/* サロン名 + リンクアイコン */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-            <h1
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: theme.textPrimary,
-                margin: 0,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {salonPage.salon_name}
-            </h1>
-            {links.length > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                {links.map((link) => (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={link.label}
-                    style={{
-                      color: theme.textSecondary,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textDecoration: "none",
-                      transition: "opacity 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-                  >
-                    <SalonLinkIcon icon={link.icon && link.icon !== "none" ? link.icon : "web"} size={22} color={theme.textSecondary} />
-                  </a>
-                ))}
-              </div>
+            {salonPage.tagline && (
+              <p
+                style={{
+                  fontSize: 14,
+                  color: theme.textSecondary,
+                  marginTop: 6,
+                  lineHeight: 1.5,
+                }}
+              >
+                {salonPage.tagline}
+              </p>
             )}
-          </div>
-
-          {salonPage.tagline && (
-            <p
-              style={{
-                fontSize: 14,
-                color: theme.textSecondary,
-                marginTop: 6,
-                lineHeight: 1.5,
-              }}
-            >
-              {salonPage.tagline}
-            </p>
-          )}
-        </header>
+          </header>
+        </div>
 
         {/* 評価サマリー */}
         {totalCount > 0 && (
           <section style={{ padding: "20px 20px 8px", textAlign: "center" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              <StarRating rating={avgRating} color={accent} size={20} />
+              <SvgStarRating rating={avgRating} color={accent} size={20} />
               <span
                 style={{
                   fontSize: 18,
@@ -188,38 +199,67 @@ export default function SalonPageClient({
           </section>
         )}
 
+        {/* セクションヘッダー */}
+        {totalCount > 0 && (
+          <div style={{
+            padding: "20px 16px 4px",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}>
+            <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
+            <span style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: theme.textSecondary,
+              letterSpacing: "0.04em",
+              whiteSpace: "nowrap",
+            }}>
+              お客様の声
+            </span>
+            <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
+          </div>
+        )}
+
         {/* レビュー一覧 */}
         <section style={{ padding: "12px 16px" }}>
           {salonPage.review_layout === "grid" ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
-              {visibleTestimonials.map((t) => (
-                <ReviewCard key={t.id} testimonial={t} theme={theme} accent={accent} compact onTap={() => setModalTestimonial(t)} />
+            <div className="salon-grid-layout">
+              {visibleTestimonials.map((t, i) => (
+                <ScrollRevealWrapper key={t.id} delay={i * 40}>
+                  <ReviewCard testimonial={t} theme={theme} accent={accent} compact onTap={() => setModalTestimonial(t)} />
+                </ScrollRevealWrapper>
               ))}
             </div>
           ) : salonPage.review_layout === "wall" ? (
-            <div style={{ columnCount: 2, columnGap: 10 }}>
-              {visibleTestimonials.map((t) => (
+            <div className="salon-wall-layout">
+              {visibleTestimonials.map((t, i) => (
                 <div key={t.id} style={{ breakInside: "avoid", marginBottom: 10 }}>
-                  <ReviewCard testimonial={t} theme={theme} accent={accent} />
+                  <ScrollRevealWrapper delay={i * 40}>
+                    <ReviewCard testimonial={t} theme={theme} accent={accent} />
+                  </ScrollRevealWrapper>
                 </div>
               ))}
             </div>
           ) : salonPage.review_layout === "list" ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {visibleTestimonials.map((t, i) => (
-                <ReviewListItem
-                  key={t.id}
-                  testimonial={t}
-                  theme={theme}
-                  accent={accent}
-                  isLast={i === visibleTestimonials.length - 1}
-                />
+                <ScrollRevealWrapper key={t.id} delay={i * 50}>
+                  <ReviewListItem
+                    testimonial={t}
+                    theme={theme}
+                    accent={accent}
+                    isLast={i === visibleTestimonials.length - 1}
+                  />
+                </ScrollRevealWrapper>
               ))}
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {visibleTestimonials.map((t) => (
-                <ReviewCard key={t.id} testimonial={t} theme={theme} accent={accent} />
+              {visibleTestimonials.map((t, i) => (
+                <ScrollRevealWrapper key={t.id} delay={i * 60}>
+                  <ReviewCard testimonial={t} theme={theme} accent={accent} />
+                </ScrollRevealWrapper>
               ))}
             </div>
           )}
@@ -261,20 +301,33 @@ export default function SalonPageClient({
         <footer
           style={{
             textAlign: "center",
-            padding: "32px 20px 24px",
-            fontSize: 11,
-            color: theme.textSecondary,
-            opacity: 0.6,
+            padding: "40px 20px 28px",
+            borderTop: `1px solid ${theme.cardBorder}`,
           }}
         >
-          Powered by{" "}
           <a
             href="https://voicehub.jp"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "inherit", textDecoration: "underline" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 11,
+              color: theme.textSecondary,
+              opacity: 0.5,
+              textDecoration: "none",
+              transition: "opacity 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}
           >
-            VoiceHub
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+            </svg>
+            Powered by VoiceHub
           </a>
         </footer>
       </div>
@@ -331,18 +384,73 @@ export default function SalonPageClient({
   );
 }
 
-function StarRating({ rating, color, size = 14 }: { rating: number; color: string; size?: number }) {
+/* ─── SVG Star Rating ─── */
+function SvgStarRating({ rating, color, size = 14 }: { rating: number; color: string; size?: number }) {
+  const prefix = useId();
   return (
-    <span style={{ color, fontSize: size, letterSpacing: "1px", lineHeight: 1 }}>
+    <span style={{ display: "inline-flex", gap: 1 }}>
       {Array.from({ length: 5 }, (_, i) => {
-        if (i < Math.floor(rating)) return "\u2605";
-        if (i < rating) return "\u2605"; // 簡易: 切り捨て
-        return "\u2606";
-      }).join("")}
+        const fill = Math.min(1, Math.max(0, rating - i));
+        return (
+          <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+              fill="#E5E7EB"
+            />
+            {fill > 0 && (
+              <>
+                <defs>
+                  <clipPath id={`${prefix}-star-${i}`}>
+                    <rect x="0" y="0" width={24 * fill} height="24" />
+                  </clipPath>
+                </defs>
+                <path
+                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                  fill={color}
+                  clipPath={`url(#${prefix}-star-${i})`}
+                />
+              </>
+            )}
+          </svg>
+        );
+      })}
     </span>
   );
 }
 
+/* ─── Scroll Reveal Wrapper ─── */
+function ScrollRevealWrapper({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`salon-scroll-reveal${isVisible ? " is-visible" : ""}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── Review Card ─── */
 function ReviewCard({
   testimonial,
   theme,
@@ -361,51 +469,76 @@ function ReviewCard({
   return (
     <div
       onClick={onTap}
+      onKeyDown={onTap ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); } } : undefined}
+      role={onTap ? "button" : undefined}
+      tabIndex={onTap ? 0 : undefined}
+      className="salon-card"
       style={{
         background: theme.cardBg,
-        border: `1px solid ${theme.cardBorder}`,
+        border: `1px solid ${theme.cardBorder}20`,
         borderRadius: theme.borderRadius,
         padding: compact ? 10 : 14,
         cursor: onTap ? "pointer" : undefined,
         display: "flex",
         flexDirection: "column",
         gap: compact ? 4 : 6,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
       }}
     >
       {/* 星 */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {t.rating && <StarRating rating={t.rating} color={accent} size={12} />}
+        {t.rating && <SvgStarRating rating={t.rating} color={accent} size={12} />}
       </div>
 
-      {/* 本文 */}
+      {/* 本文（引用符装飾付き） */}
       {t.content && (
         <>
-        <p
-          className="text-[11px] sm:text-[13px]"
-          style={{
-            lineHeight: 1.55,
-            color: theme.textPrimary,
-            margin: 0,
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-            display: compact ? "-webkit-box" : undefined,
-            WebkitLineClamp: compact ? 4 : undefined,
-            WebkitBoxOrient: compact ? ("vertical" as const) : undefined,
-            overflow: compact ? "hidden" : undefined,
-          }}
-        >
-          {t.content}
-        </p>
-        {compact && onTap && t.content.length > 60 && (
-          <span style={{ fontSize: 11, color: accent, fontWeight: 500 }}>
-            続きを読む
-          </span>
-        )}
+          <div style={{ position: "relative" }}>
+            <span
+              style={{
+                position: "absolute",
+                top: -4,
+                left: -2,
+                fontSize: compact ? 28 : 36,
+                lineHeight: 1,
+                color: accent,
+                opacity: 0.15,
+                fontFamily: "Georgia, serif",
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+              aria-hidden="true"
+            >
+              &ldquo;
+            </span>
+            <p
+              className="text-[11px] sm:text-[13px]"
+              style={{
+                lineHeight: 1.55,
+                color: theme.textPrimary,
+                margin: 0,
+                paddingLeft: compact ? 12 : 16,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                display: compact ? "-webkit-box" : undefined,
+                WebkitLineClamp: compact ? 4 : undefined,
+                WebkitBoxOrient: compact ? ("vertical" as const) : undefined,
+                overflow: compact ? "hidden" : undefined,
+              }}
+            >
+              {t.content}
+            </p>
+          </div>
+          {compact && onTap && t.content.length > 60 && (
+            <span style={{ fontSize: 11, color: accent, fontWeight: 500, paddingLeft: compact ? 12 : 16 }}>
+              続きを読む
+            </span>
+          )}
         </>
       )}
 
       {/* 投稿者 + 日付 */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 2 }}>
         <span style={{ fontSize: 11, color: theme.textSecondary }}>
           {t.name || "匿名"}
         </span>
@@ -417,6 +550,7 @@ function ReviewCard({
   );
 }
 
+/* ─── Review List Item ─── */
 function ReviewListItem({
   testimonial,
   theme,
@@ -435,45 +569,14 @@ function ReviewListItem({
       style={{
         padding: "10px 0",
         borderBottom: isLast ? "none" : `1px solid ${theme.cardBorder}`,
-        display: "flex",
-        gap: 10,
       }}
     >
-      {/* アバター */}
-      <div style={{ flexShrink: 0, paddingTop: 2 }}>
-        {t.avatar_url ? (
-          <img
-            src={t.avatar_url}
-            alt=""
-            style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover" }}
-          />
-        ) : (
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: accent,
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 13,
-              fontWeight: 700,
-            }}
-          >
-            {(t.name || "?").charAt(0).toUpperCase()}
-          </div>
-        )}
-      </div>
-
-      {/* コンテンツ */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
           <span style={{ fontSize: 12, fontWeight: 600, color: theme.textPrimary }}>
             {t.name || "匿名"}
           </span>
-          {t.rating && <StarRating rating={t.rating} color={accent} size={10} />}
+          {t.rating && <SvgStarRating rating={t.rating} color={accent} size={10} />}
           <span style={{ fontSize: 9, color: theme.textSecondary, marginLeft: "auto" }}>
             {formatDate(t.submitted_at)}
           </span>
