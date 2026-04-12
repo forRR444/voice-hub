@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 import { getBaseUrl } from "@/lib/utils";
 import { getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
@@ -70,8 +71,9 @@ export default async function SalonPage({ params }: Props) {
     .eq("salon_page_id", salonPage.id)
     .order("display_order", { ascending: true });
 
-  // Fetch workspace subscription to apply display limit
-  const { data: workspace } = await supabase
+  // Fetch workspace subscription to apply display limit (admin client to bypass RLS)
+  const admin = createAdminClient();
+  const { data: workspace } = await admin
     .from("workspaces")
     .select("subscription_status")
     .eq("id", salonPage.workspace_id)
