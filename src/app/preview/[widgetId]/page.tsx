@@ -19,7 +19,7 @@ type Testimonial = Omit<Pick<TestimonialRow, "id" | "name" | "title" | "company"
 
 function StarRating({ rating, color }: { rating: number; color: string }) {
   return (
-    <span style={{ color, fontSize: "14px", letterSpacing: "1px" }}>
+    <span className="tc-stars" style={{ color, fontSize: "14px", letterSpacing: "1px" }}>
       {Array.from({ length: 5 }, (_, i) =>
         i < rating ? "\u2605" : "\u2606"
       ).join("")}
@@ -27,10 +27,11 @@ function StarRating({ rating, color }: { rating: number; color: string }) {
   );
 }
 
-function AvatarFallback({ name, color }: { name: string; color: string }) {
+function AvatarFallback({ name, color, className }: { name: string; color: string; className?: string }) {
   const letter = (name || "?").charAt(0).toUpperCase();
   return (
     <div
+      className={className}
       style={{
         width: 36,
         height: 36,
@@ -64,6 +65,7 @@ function TestimonialCard({
 
   return (
     <div
+      className="tc"
       style={{
         background: isDark ? "#1e1e2e" : "#ffffff",
         border: `1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"}`,
@@ -74,7 +76,6 @@ function TestimonialCard({
         gap: 8,
         minWidth: 0,
         width: "100%",
-        maxWidth: 300,
         flexShrink: 0,
       }}
     >
@@ -82,7 +83,7 @@ function TestimonialCard({
         <StarRating rating={t.rating} color={brand} />
       )}
       <p
-        className={clamp ? "clamp-content" : undefined}
+        className={clamp ? "tc-content clamp-content" : "tc-content"}
         style={{
           color: isDark ? "#e0e0e0" : "#374151",
           fontSize: 13,
@@ -96,10 +97,11 @@ function TestimonialCard({
       {clamp && t.content.length > 60 && (
         <button className="read-more-btn">もっと見る</button>
       )}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+      <div className="tc-author" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
         {theme.showAvatar === true &&
           (t.avatar_url ? (
             <img
+              className="tc-avatar"
               src={t.avatar_url}
               alt={t.name}
               width={36}
@@ -107,10 +109,11 @@ function TestimonialCard({
               style={{ borderRadius: "50%", objectFit: "cover" }}
             />
           ) : (
-            <AvatarFallback name={t.name} color={brand} />
+            <AvatarFallback className="tc-initials" name={t.name} color={brand} />
           ))}
         <div>
           <div
+            className="tc-name"
             style={{
               fontWeight: 600,
               color: isDark ? "#f0f0f0" : "#111827",
@@ -121,6 +124,7 @@ function TestimonialCard({
           </div>
           {(t.title || t.company) && (
             <div
+              className="tc-title"
               style={{
                 color: isDark ? "#9ca3af" : "#6b7280",
                 fontSize: 11,
@@ -131,6 +135,7 @@ function TestimonialCard({
           )}
           {theme.showDate && (
             <div
+              className="tc-date"
               style={{
                 color: isDark ? "#6b7280" : "#9ca3af",
                 fontSize: 11,
@@ -253,14 +258,12 @@ export default async function WidgetPreviewPage({
               }
               .carousel-track > div {
                 min-width: min(200px, 44vw);
+                max-width: 280px;
               }
               .grid-container {
                 display: grid;
-                grid-template-columns: repeat(1, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 16px;
-              }
-              @media (min-width: 640px) {
-                .grid-container { grid-template-columns: repeat(2, 1fr); }
               }
               @media (min-width: 1024px) {
                 .grid-container { grid-template-columns: repeat(3, 1fr); }
@@ -309,6 +312,7 @@ export default async function WidgetPreviewPage({
               }
               .marquee-track > div {
                 min-width: min(200px, 44vw);
+                max-width: 280px;
               }
               .marquee-container:hover .marquee-track {
                 animation-play-state: paused;
@@ -334,6 +338,7 @@ export default async function WidgetPreviewPage({
               }
               .dual-marquee-track > div {
                 min-width: min(200px, 44vw);
+                max-width: 280px;
               }
               .dual-marquee-track--left {
                 animation: dual-marquee-left var(--dual-marquee-duration, 30s) linear infinite;
@@ -363,17 +368,7 @@ export default async function WidgetPreviewPage({
               .list-container {
                 display: flex;
                 flex-direction: column;
-                gap: 16px;
-              }
-              .list-card {
-                background: ${isDark ? "#1e1e2e" : "#ffffff"};
-                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
-                border-left: 4px solid ${brand};
-                border-radius: 8px;
-                padding: 20px 24px;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
+                gap: 12px;
               }
               .single-container {
                 display: flex;
@@ -398,25 +393,41 @@ export default async function WidgetPreviewPage({
                 .single-card { padding: 48px; }
               }
               .wall-container {
-                column-count: 1;
+                column-count: 2;
                 column-gap: 16px;
-              }
-              @media (min-width: 768px) {
-                .wall-container { column-count: 2; }
               }
               @media (min-width: 1024px) {
                 .wall-container { column-count: 3; }
               }
-              .wall-card {
-                background: ${isDark ? "#1e1e2e" : "#ffffff"};
-                border: 1px solid ${isDark ? "#2e2e3e" : "#e5e7eb"};
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 16px;
-                break-inside: avoid;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
+              /* Mobile compact */
+              @media (max-width: 639px) {
+                .tc { padding: 10px !important; gap: 5px !important; border-radius: 8px !important; }
+                .tc-stars { font-size: 12px !important; letter-spacing: 0.5px !important; }
+                .tc-content { font-size: 12px !important; line-height: 1.5 !important; }
+                .clamp-content { -webkit-line-clamp: 2 !important; }
+                .tc-author { gap: 6px !important; margin-top: 3px !important; }
+                .tc-avatar { width: 28px !important; height: 28px !important; }
+                .tc-initials { width: 28px !important; height: 28px !important; font-size: 12px !important; }
+                .tc-name { font-size: 11px !important; }
+                .tc-title { font-size: 10px !important; }
+                .tc-date { font-size: 10px !important; }
+                .grid-container { gap: 8px !important; }
+                .list-container { gap: 8px !important; }
+                .wall-container { column-gap: 8px !important; }
+                .wall-card-wrap { margin-bottom: 8px !important; }
+                .carousel-track { gap: 12px !important; }
+                .marquee-track { gap: 12px !important; }
+                .dual-marquee-container { gap: 12px !important; }
+                .dual-marquee-track { gap: 12px !important; }
+                .single-card { padding: 20px !important; gap: 14px !important; border-radius: 12px !important; }
+                .single-stars { font-size: 18px !important; letter-spacing: 2px !important; }
+                .single-content { font-size: 15px !important; line-height: 1.6 !important; }
+                .single-avatar { width: 48px !important; height: 48px !important; }
+                .single-initials { width: 48px !important; height: 48px !important; font-size: 18px !important; }
+                .single-name { font-size: 14px !important; }
+                .single-subtitle { font-size: 12px !important; }
+                .single-date { font-size: 11px !important; }
+                .single-author { gap: 6px !important; }
               }
               .badge-container {
                 display: inline-flex;
@@ -519,36 +530,7 @@ export default async function WidgetPreviewPage({
         ) : widget.type === "list" ? (
           <div className="list-container">
             {items.map((t) => (
-              <div key={t.id} className="list-card">
-                {theme.showRating !== false && (
-                  <StarRating rating={t.rating} color={brand} />
-                )}
-                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 15, lineHeight: 1.6, margin: 0 }}>
-                  {t.content}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
-                  {theme.showAvatar === true && (
-                    t.avatar_url ? (
-                      <img src={t.avatar_url} alt={t.name} width={40} height={40} style={{ borderRadius: "50%", objectFit: "cover" }} />
-                    ) : (
-                      <AvatarFallback name={t.name} color={brand} />
-                    )
-                  )}
-                  <div>
-                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 14 }}>{t.name || "お客様"}</div>
-                    {(t.title || t.company) && (
-                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13 }}>
-                        {[t.title, t.company].filter(Boolean).join(" / ")}
-                      </div>
-                    )}
-                    {theme.showDate && (
-                      <div style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 12, marginTop: 2 }}>
-                        {new Date(t.submitted_at).toLocaleDateString("ja-JP")}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <TestimonialCard key={t.id} t={t} theme={theme} />
             ))}
           </div>
         ) : widget.type === "single" ? (
@@ -556,30 +538,30 @@ export default async function WidgetPreviewPage({
             {items[0] && (
               <div className="single-card single-fade" id="single-card">
                 {theme.showRating !== false && (
-                  <span style={{ color: brand, fontSize: "28px", letterSpacing: "4px" }} className="single-stars">
+                  <span style={{ color: brand, fontSize: "24px", letterSpacing: "3px" }} className="single-stars">
                     {Array.from({ length: 5 }, (_, i) => i < items[0].rating ? "\u2605" : "\u2606").join("")}
                   </span>
                 )}
-                <p className="single-content" style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 20, lineHeight: 1.7, margin: 0 }}>
+                <p className="single-content" style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 18, lineHeight: 1.7, margin: 0 }}>
                   {items[0].content}
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
+                <div className="single-author" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
                   {theme.showAvatar === true && (
                     items[0].avatar_url ? (
                       <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} className="single-avatar" />
                     ) : (
-                      <div className="single-initials" style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 28 }}>
+                      <div className="single-initials" style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 24 }}>
                         {(items[0].name || "お客様").charAt(0).toUpperCase()}
                       </div>
                     )
                   )}
                   <div style={{ textAlign: "center" }}>
-                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 18 }}>{items[0].name || "お客様"}</div>
-                    <div className="single-subtitle" style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 14, marginTop: 2 }}>
+                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 16 }}>{items[0].name || "お客様"}</div>
+                    <div className="single-subtitle" style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13, marginTop: 2 }}>
                       {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
                     </div>
                     {theme.showDate && (
-                      <div className="single-date" style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 13, marginTop: 4 }}>
+                      <div className="single-date" style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 12, marginTop: 4 }}>
                         {new Date(items[0].submitted_at).toLocaleDateString("ja-JP")}
                       </div>
                     )}
@@ -591,32 +573,8 @@ export default async function WidgetPreviewPage({
         ) : widget.type === "wall" ? (
           <div className="wall-container">
             {items.map((t) => (
-              <div key={t.id} className="wall-card">
-                {theme.showRating !== false && (
-                  <StarRating rating={t.rating} color={brand} />
-                )}
-                <p style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-                  {t.content}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
-                  {theme.showAvatar === true && (
-                    t.avatar_url ? (
-                      <img src={t.avatar_url} alt={t.name} width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{ width: 36, height: 36, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
-                        {(t.name || "お客様").charAt(0).toUpperCase()}
-                      </div>
-                    )
-                  )}
-                  <div>
-                    <div style={{ fontWeight: 600, color: isDark ? "#f0f0f0" : "#111827", fontSize: 13 }}>{t.name || "お客様"}</div>
-                    {(t.title || t.company) && (
-                      <div style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 12 }}>
-                        {[t.title, t.company].filter(Boolean).join(" / ")}
-                      </div>
-                    )}
-                  </div>
-                </div>
+              <div key={t.id} className="wall-card-wrap" style={{ breakInside: "avoid", marginBottom: 16 }}>
+                <TestimonialCard t={t} theme={theme} />
               </div>
             ))}
           </div>
@@ -805,22 +763,22 @@ export default async function WidgetPreviewPage({
                   function renderItem(t) {
                     var html = '';
                     if (showRating) {
-                      html += '<span class="single-stars" style="color:'+brand+';font-size:28px;letter-spacing:4px;">'+starsHtml(t.rating)+'</span>';
+                      html += '<span class="single-stars" style="color:'+brand+';font-size:24px;letter-spacing:3px;">'+starsHtml(t.rating)+'</span>';
                     }
-                    html += '<p class="single-content" style="color:'+(isDark?'#e0e0e0':'#374151')+';font-size:20px;line-height:1.7;margin:0;">'+esc(t.content)+'</p>';
+                    html += '<p class="single-content" style="color:'+(isDark?'#e0e0e0':'#374151')+';font-size:18px;line-height:1.7;margin:0;">'+esc(t.content)+'</p>';
                     html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">';
                     if (showAvatar) {
                       if (t.avatar_url) {
-                        html += '<img src="'+safeUrl(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
+                        html += '<img class="single-avatar" src="'+safeUrl(t.avatar_url)+'" width="64" height="64" style="border-radius:50%;object-fit:cover;">';
                       } else {
-                        html += '<div style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;">'+esc((t.name||'お客様').charAt(0).toUpperCase())+'</div>';
+                        html += '<div class="single-initials" style="width:64px;height:64px;border-radius:50%;background:'+brand+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;">'+esc((t.name||'お客様').charAt(0).toUpperCase())+'</div>';
                       }
                     }
                     html += '<div style="text-align:center;">';
-                    html += '<div style="font-weight:700;color:'+(isDark?'#f0f0f0':'#111827')+';font-size:18px;">'+esc(t.name||'お客様')+'</div>';
+                    html += '<div class="single-name" style="font-weight:700;color:'+(isDark?'#f0f0f0':'#111827')+';font-size:16px;">'+esc(t.name||'お客様')+'</div>';
                     var sub = [t.title, t.company].filter(Boolean).join(' / ');
-                    if (sub) html += '<div style="color:'+(isDark?'#9ca3af':'#6b7280')+';font-size:14px;margin-top:2px;">'+esc(sub)+'</div>';
-                    if (showDate) html += '<div style="color:'+(isDark?'#6b7280':'#9ca3af')+';font-size:13px;margin-top:4px;">'+new Date(t.submitted_at).toLocaleDateString('ja-JP')+'</div>';
+                    if (sub) html += '<div class="single-subtitle" style="color:'+(isDark?'#9ca3af':'#6b7280')+';font-size:13px;margin-top:2px;">'+esc(sub)+'</div>';
+                    if (showDate) html += '<div class="single-date" style="color:'+(isDark?'#6b7280':'#9ca3af')+';font-size:12px;margin-top:4px;">'+new Date(t.submitted_at).toLocaleDateString('ja-JP')+'</div>';
                     html += '</div></div>';
                     return html;
                   }
