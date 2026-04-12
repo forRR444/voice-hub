@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, Star, MapPin, ChevronLeft } from "lucide-react";
+import { Search, MapPin, ChevronLeft } from "lucide-react";
+import StarRating from "@/app/components/ui/star-rating";
 
 type Place = {
   id: string;
@@ -254,20 +255,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
                           {review.relativePublishTimeDescription}
                         </span>
                       </div>
-                      <div className="flex gap-0.5 mb-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            size={12}
-                            fill={i < review.rating ? "currentColor" : "none"}
-                            className={
-                              i < review.rating
-                                ? "text-amber-400"
-                                : "text-gray-200"
-                            }
-                          />
-                        ))}
-                      </div>
+                      <StarRating rating={review.rating} size={12} emptyClass="text-gray-200" className="mb-1" />
                       {(review.originalText?.text || review.text?.text) && (
                         <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
                           {review.originalText?.text || review.text?.text}

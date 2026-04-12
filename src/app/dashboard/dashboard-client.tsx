@@ -24,10 +24,9 @@ import GoogleReviewsModal from "./google-reviews-modal";
 import PageTitle from "@/app/components/page-title";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 
-import { ink, slate, muted, canvas, white, plate, brand, brandD, rule, gradient } from "@/lib/theme-tokens";
+import { ink, slate, muted, canvas, white, plate, brand, brandD, rule, gradient, ghostBorder, floatShadow } from "@/lib/theme-tokens";
+import StarRating from "@/app/components/ui/star-rating";
 
-const ghostBorder = "1px solid rgba(199,196,216,0.2)";
-const floatShadow = "0px 2px 4px rgba(26,31,54,0.04), 0px 12px 32px rgba(26,31,54,0.08)";
 
 type FilterTab = "all" | "pending" | "approved" | "rejected";
 export default function DashboardClient({
@@ -280,11 +279,7 @@ function TestimonialRow({ testimonial: t, isLast, onStatusChange }: {
                 {(t.title || t.company) && <span className="hidden sm:inline text-xs" style={{ color: muted }}>{[t.title, t.company].filter(Boolean).join(" / ")}</span>}
               </div>
               {t.rating != null && (
-                <span className="flex items-center gap-0.5 mt-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={13} fill={i < t.rating! ? "#F5A623" : "none"} style={{ color: i < t.rating! ? "#F5A623" : rule }} />
-                  ))}
-                </span>
+                <StarRating rating={t.rating!} size={13} filledColor="#F5A623" emptyColor={rule} className="mt-1" inline />
               )}
             </div>
             <div className="flex items-center gap-2 shrink-0">

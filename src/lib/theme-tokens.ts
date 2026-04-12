@@ -8,3 +8,7 @@ export const brand  = "#635BFF";
 export const brandD = "#493EE5";
 export const rule   = "#E3E8EE";
 export const gradient = `linear-gradient(180deg, ${brand} 0%, ${brandD} 100%)`;
+
+// 共通ボーダー・シャドウ
+export const ghostBorder = "1px solid rgba(199,196,216,0.2)";
+export const floatShadow = "0px 2px 4px rgba(26,31,54,0.04), 0px 12px 32px rgba(26,31,54,0.08)";

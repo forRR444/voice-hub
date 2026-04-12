@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Star,
   Trash,
   Bookmark,
   Tag,
@@ -21,6 +20,7 @@ import SnsImageModal from "../sns-image-modal";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 import Button from "@/app/components/ui/button";
 import Card from "@/app/components/ui/card";
+import StarRating from "@/app/components/ui/star-rating";
 
 export default function TestimonialDetailClient({
   testimonial: initial,
@@ -135,20 +135,7 @@ export default function TestimonialDetailClient({
         {/* Rating + date */}
         {t.rating != null && (
           <div className="flex items-center gap-2 mb-4">
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  fill={i < (t.rating ?? 0) ? "currentColor" : "none"}
-                  className={
-                    i < (t.rating ?? 0)
-                      ? "text-amber-400"
-                      : "text-foreground/20"
-                  }
-                />
-              ))}
-            </div>
+            <StarRating rating={t.rating ?? 0} size={16} />
             <span className="text-[10px] sm:text-xs text-foreground/25">{formatDate(t.submitted_at)}</span>
           </div>
         )}

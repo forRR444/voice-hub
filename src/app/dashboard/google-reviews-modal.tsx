@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { mapGoogleReviewsToRows } from "@/lib/google-review-mapper";
 import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
 import Modal from "@/app/components/modal";
 
@@ -26,20 +27,7 @@ export default function GoogleReviewsModal({
     setImportError("");
     setImportResult(null);
 
-    const rows = selectedReviews.map((r) => ({
-      workspace_id: workspaceId,
-      form_id: null,
-      name: "Googleユーザー",
-      content: r.content,
-      rating: r.rating,
-      avatar_url: null,
-      status: "pending" as const,
-      source: "google",
-      source_id: r.googleId,
-      is_featured: false,
-      permission_granted: true,
-      submitted_at: r.publishTime,
-    }));
+    const rows = mapGoogleReviewsToRows(selectedReviews, workspaceId, { status: "pending", includeSourceId: true });
 
     // 既存のsource_idを取得して重複を除外
     const sourceIds = rows.map((r) => r.source_id).filter(Boolean);

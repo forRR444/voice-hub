@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Star, ImageIcon, Download, Loader2, Check, Maximize2 } from "lucide-react";
+import { useState } from "react";
+import { ImageIcon, Download, Loader2, Check, Maximize2 } from "lucide-react";
 import { TestimonialWithTags } from "@/types/database";
 import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import Modal from "@/app/components/modal";
 import { formatDate } from "@/lib/utils";
 import PageTitle from "@/app/components/page-title";
 import CustomSelect from "@/app/components/custom-select";
+import StarRating from "@/app/components/ui/star-rating";
+import SnsImagePreview from "@/app/components/sns-image-preview";
+import { SNS_TEMPLATE_OPTIONS } from "@/lib/constants";
+import EmptyState from "@/app/components/ui/empty-state";
 import JSZip from "jszip";
-
-const TEMPLATE_OPTIONS: { key: TemplateSize; label: string }[] = [
-  { key: "instagram-story", label: "Instagram ストーリー" },
-  { key: "instagram-post", label: "Instagram 投稿" },
-  { key: "x-post", label: "X 投稿" },
-];
 
 export default function SnsClient({
   testimonials,
@@ -94,11 +92,12 @@ export default function SnsClient({
       </div>
 
       {testimonials.length === 0 ? (
-        <div className="bg-white rounded-lg border border-foreground/10 shadow-sm text-center py-16">
-          <ImageIcon size={32} className="mx-auto text-foreground/20 mb-3" />
-          <p className="text-sm text-foreground/50">承認済みの口コミがありません</p>
-          <p className="text-xs text-foreground/30 mt-1">口コミが届いて承認すると、ここからSNS画像を作成できます</p>
-        </div>
+        <EmptyState
+          card
+          icon={<ImageIcon size={32} />}
+          message="承認済みの口コミがありません"
+          description="口コミが届いて承認すると、ここからSNS画像を作成できます"
+        />
       ) : (
         <>
           {/* Toolbar */}
@@ -118,7 +117,7 @@ export default function SnsClient({
               <CustomSelect
                 value={template}
                 onChange={(v) => setTemplate(v as TemplateSize)}
-                options={TEMPLATE_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
+                options={SNS_TEMPLATE_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
               />
               <button
                 onClick={handleBulkDownload}
@@ -163,16 +162,7 @@ export default function SnsClient({
                         <span className="text-[10px] text-foreground/25">{formatDate(t.submitted_at)}</span>
                       </div>
                       {t.rating != null && (
-                        <div className="flex gap-0.5 mb-1">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              size={14}
-                              fill={i < t.rating! ? "currentColor" : "none"}
-                              className={i < t.rating! ? "text-amber-400" : "text-foreground/20"}
-                            />
-                          ))}
-                        </div>
+                        <StarRating rating={t.rating!} size={14} className="mb-1" />
                       )}
                       <p className="text-xs sm:text-sm text-foreground/50 line-clamp-2 leading-relaxed">
                         {t.content}
@@ -214,66 +204,13 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
   initialTemplate: TemplateSize;
   onClose: () => void;
 }) {
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateSize>(initialTemplate);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
-
-  useEffect(() => {
-    let revoked = false;
-    let objectUrl: string | null = null;
-
-    async function generate() {
-      setGenerating(true);
-      setPreviewUrl(null);
-      try {
-        const blob = await generateTestimonialImage(
-          {
-            rating: testimonial.rating,
-            content: testimonial.content,
-            name: testimonial.name || "お客様",
-            title: testimonial.title,
-            company: testimonial.company ?? null,
-            brandColor,
-          },
-          selectedTemplate,
-          "warm"
-        );
-        if (revoked) return;
-        objectUrl = URL.createObjectURL(blob);
-        setPreviewUrl(objectUrl);
-      } finally {
-        if (!revoked) setGenerating(false);
-      }
-    }
-
-    generate();
-    return () => { revoked = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [selectedTemplate, testimonial, brandColor]);
-
   return (
     <Modal title="プレビュー" onClose={onClose}>
-      <div className="flex flex-col gap-2 sm:flex-row sm:gap-2 mb-4">
-        {TEMPLATE_OPTIONS.map((opt) => (
-          <button
-            key={opt.key}
-            onClick={() => setSelectedTemplate(opt.key)}
-            className={`flex-1 px-4 py-3 text-base rounded-lg border cursor-pointer transition-colors ${
-              selectedTemplate === opt.key
-                ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-medium"
-                : "border-foreground/10 text-foreground/70 hover:bg-foreground/5"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-      <div className="flex items-center justify-center bg-foreground/5 rounded-lg max-h-[250px] sm:max-h-[400px] min-h-[150px] sm:min-h-[200px] overflow-hidden">
-        {generating ? (
-          <Loader2 size={32} className="animate-spin text-foreground/30" />
-        ) : previewUrl ? (
-          <img src={previewUrl} alt="プレビュー" className="object-contain max-h-[250px] sm:max-h-[400px] w-full" />
-        ) : null}
-      </div>
+      <SnsImagePreview
+        testimonial={testimonial}
+        brandColor={brandColor}
+        initialTemplate={initialTemplate}
+      />
     </Modal>
   );
 }

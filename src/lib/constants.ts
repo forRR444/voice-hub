@@ -34,6 +34,13 @@ export const WIDGET_TYPES = [
 export const TESTIMONIAL_SELECT_COLUMNS =
   "id, name, title, company, avatar_url, rating, content, before_story, is_featured, submitted_at";
 
+// SNSテンプレートオプション
+export const SNS_TEMPLATE_OPTIONS = [
+  { key: "instagram-story" as const, label: "Instagram ストーリー" },
+  { key: "instagram-post" as const, label: "Instagram 投稿" },
+  { key: "x-post" as const, label: "X 投稿" },
+] as const;
+
 // サロンページ
 export const SALON_TAGLINE_MAX_LENGTH = 100;
 export const SALON_MAX_LINKS = 3;

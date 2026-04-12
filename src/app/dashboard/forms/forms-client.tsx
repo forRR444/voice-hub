@@ -25,6 +25,7 @@ import Modal from "@/app/components/modal";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
 import Button from "@/app/components/ui/button";
 import Card from "@/app/components/ui/card";
+import EmptyState from "@/app/components/ui/empty-state";
 import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 export default function FormsClient({
@@ -214,9 +215,7 @@ export default function FormsClient({
 
 
       {forms.length === 0 ? (
-        <div className="text-center py-16 text-foreground/50">
-          フォームがまだありません。新しいフォームを作成してください。
-        </div>
+        <EmptyState message="フォームがまだありません。新しいフォームを作成してください。" />
       ) : (
         <div className="flex flex-col gap-4">
           {forms.map((form) => (

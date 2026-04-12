@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Plus,
-  Copy,
   Code,
   ExternalLink,
   Check,
@@ -27,9 +26,11 @@ import { WidgetThemeForm, type WidgetFormState } from "./widget-theme-form";
 import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
 import DeleteConfirmModal from "@/app/components/delete-confirm-modal";
+import EmbedCodeBlock from "@/app/components/embed-code-block";
 import PageTitle from "@/app/components/page-title";
 import Button from "@/app/components/ui/button";
 import Card from "@/app/components/ui/card";
+import EmptyState from "@/app/components/ui/empty-state";
 import { useCopy } from "@/hooks/use-copy";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
@@ -224,9 +225,7 @@ export default function WidgetsClient({
 
       {/* Widget list */}
       {widgets.length === 0 ? (
-        <div className="text-center py-16 text-foreground/50">
-          ウィジェットがまだありません。新しいウィジェットを作成してください。
-        </div>
+        <EmptyState message="ウィジェットがまだありません。新しいウィジェットを作成してください。" />
       ) : (
         <div className="flex flex-col gap-4">
           {widgets.map((w) => (
@@ -359,65 +358,20 @@ export default function WidgetsClient({
 
                 {expandedId === w.id && (
                   <div className="mt-4 flex flex-col gap-4">
-                    {/* Script embed */}
-                    <div>
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1">
-                        <span className="text-xs font-medium text-foreground/50">
-                          スクリプト埋め込み<span className="hidden sm:inline font-normal text-foreground/30 ml-2">おすすめ・デザインが自然に馴染む</span>
-                        </span>
-                        <button
-                          onClick={() =>
-                            copyText(getScriptEmbed(w.id), `script-${w.id}`)
-                          }
-                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
-                        >
-                          {copiedField === `script-${w.id}` ? (
-                            <>
-                              <Check size={12} />
-                              コピーしました
-                            </>
-                          ) : (
-                            <>
-                              <Copy size={12} />
-                              コピー
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <pre className="bg-foreground/5 text-foreground/70 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                        {getScriptEmbed(w.id)}
-                      </pre>
-                    </div>
-
-                    {/* iFrame embed */}
-                    <div>
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1">
-                        <span className="text-xs font-medium text-foreground/50">
-                          iFrame埋め込み<span className="hidden sm:inline font-normal text-foreground/30 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
-                        </span>
-                        <button
-                          onClick={() =>
-                            copyText(getIframeEmbed(w.id), `iframe-${w.id}`)
-                          }
-                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
-                        >
-                          {copiedField === `iframe-${w.id}` ? (
-                            <>
-                              <Check size={12} />
-                              コピーしました
-                            </>
-                          ) : (
-                            <>
-                              <Copy size={12} />
-                              コピー
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <pre className="bg-foreground/5 text-foreground/70 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                        {getIframeEmbed(w.id)}
-                      </pre>
-                    </div>
+                    <EmbedCodeBlock
+                      label="スクリプト埋め込み"
+                      description="おすすめ・デザインが自然に馴染む"
+                      code={getScriptEmbed(w.id)}
+                      copied={copiedField === `script-${w.id}`}
+                      onCopy={() => copyText(getScriptEmbed(w.id), `script-${w.id}`)}
+                    />
+                    <EmbedCodeBlock
+                      label="iFrame埋め込み"
+                      description="ペライチ・Wixなどスクリプトが使えない場合"
+                      code={getIframeEmbed(w.id)}
+                      copied={copiedField === `iframe-${w.id}`}
+                      onCopy={() => copyText(getIframeEmbed(w.id), `iframe-${w.id}`)}
+                    />
                   </div>
                 )}
                 </>

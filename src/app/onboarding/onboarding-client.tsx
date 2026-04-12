@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ArrowLeft, Copy, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useCopy } from "@/hooks/use-copy";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug, getBaseUrl } from "@/lib/utils";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { WorkspaceRow, FormQuestion } from "@/types/database";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
+import { mapGoogleReviewsToRows } from "@/lib/google-review-mapper";
 import GoogleImportStep, { type PickedReview } from "@/app/components/google-import-step";
 import StepCard from "@/app/components/step-card";
+import EmbedCodeBlock from "@/app/components/embed-code-block";
 
 export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
   const router = useRouter();
@@ -53,23 +55,9 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                 .single();
               if (formError) throw formError;
 
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               if (tryData.googleReviews?.length > 0) {
                 await supabase.from("testimonials").insert(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  tryData.googleReviews.map((r: any) => ({
-                    workspace_id: workspace.id,
-                    form_id: null,
-                    name: "Googleユーザー",
-                    content: r.content,
-                    rating: r.rating,
-                    avatar_url: null,
-                    status: "approved",
-                    source: "google",
-                    is_featured: false,
-                    permission_granted: true,
-                    submitted_at: r.publishTime,
-                  }))
+                  mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, { status: "approved" })
                 );
               }
 
@@ -167,19 +155,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
       if (selectedReviews.length > 0) {
         await supabase.from("testimonials").insert(
-          selectedReviews.map(r => ({
-            workspace_id: workspace.id,
-            form_id: null,
-            name: "Googleユーザー",
-            content: r.content,
-            rating: r.rating,
-            avatar_url: null,
-            status: "approved",
-            source: "google",
-            is_featured: false,
-            permission_granted: true,
-            submitted_at: r.publishTime,
-          }))
+          mapGoogleReviewsToRows(selectedReviews, workspace.id, { status: "approved" })
         );
       }
 
@@ -295,43 +271,22 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
           </div>
 
           <div className="flex flex-col gap-4 mb-4">
-            {/* Script embed */}
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-500">
-                  スクリプト埋め込み
-                  <span className="font-normal text-gray-400 ml-2">おすすめ・デザインが自然に馴染む</span>
-                </span>
-                <button
-                  onClick={() => copy(scriptCode, "script")}
-                  className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
-                >
-                  {copiedKey === "script" ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
-                </button>
-              </div>
-              <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
-                {scriptCode}
-              </pre>
-            </div>
-
-            {/* iFrame embed */}
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-500">
-                  iFrame埋め込み
-                  <span className="font-normal text-gray-400 ml-2">ペライチ・Wixなどスクリプトが使えない場合</span>
-                </span>
-                <button
-                  onClick={() => copy(iframeCode, "iframe")}
-                  className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
-                >
-                  {copiedKey === "iframe" ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
-                </button>
-              </div>
-              <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
-                {iframeCode}
-              </pre>
-            </div>
+            <EmbedCodeBlock
+              label="スクリプト埋め込み"
+              description="おすすめ・デザインが自然に馴染む"
+              code={scriptCode}
+              copied={copiedKey === "script"}
+              onCopy={() => copy(scriptCode, "script")}
+              variant="card"
+            />
+            <EmbedCodeBlock
+              label="iFrame埋め込み"
+              description="ペライチ・Wixなどスクリプトが使えない場合"
+              code={iframeCode}
+              copied={copiedKey === "iframe"}
+              onCopy={() => copy(iframeCode, "iframe")}
+              variant="card"
+            />
           </div>
 
           <p className="text-xs text-gray-400 text-center mb-6">
