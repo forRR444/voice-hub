@@ -5,6 +5,7 @@ import { validatePassword, validatePasswordMatch } from "@/lib/validation";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import AuthInput from "@/app/components/auth-input";
 
@@ -41,7 +42,10 @@ export default function UpdatePasswordClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
+          <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">
+            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-11 w-auto" />
+            VoiceHub
+          </Link>
           <p className="mt-2 text-sm text-foreground/60">新しいパスワードを設定</p>
         </div>
 

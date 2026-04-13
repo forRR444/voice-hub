@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata = {
@@ -10,7 +11,8 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-6 py-3">
-          <Link href="/" className="text-xl font-bold text-gray-900">
+          <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold text-gray-900">
+            <Image src="/logo-icon.png" alt="" width={1047} height={1267} className="h-8 w-auto" />
             VoiceHub
           </Link>
         </div>

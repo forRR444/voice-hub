@@ -1,10 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function FormNotFound() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="text-center">
-        <p className="text-sm font-semibold text-indigo-600">VoiceHub</p>
+        <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600">
+          <Image src="/logo-icon.png" alt="" width={1047} height={1267} className="h-5 w-auto" />
+          VoiceHub
+        </p>
         <h1 className="mt-4 text-2xl font-bold text-gray-900">
           フォームが見つかりません
         </h1>

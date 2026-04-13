@@ -6,6 +6,7 @@ import { preserveTemplate } from "@/lib/auth-utils";
 import { useGoogleOAuth } from "@/hooks/use-google-oauth";
 import { useState } from "react";
 import { Loader2, ArrowLeft, Mail } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import GoogleOAuthButton from "@/app/components/google-oauth-button";
 import AuthInput from "@/app/components/auth-input";
@@ -78,7 +79,10 @@ export default function SignupClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">VoiceHub</Link>
+          <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">
+            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-11 w-auto" />
+            VoiceHub
+          </Link>
           <div className="mt-4 flex gap-12 justify-center border-b border-foreground/10">
             <Link href="/login" className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors">
               ログイン

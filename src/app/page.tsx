@@ -181,7 +181,7 @@ export default function Home() {
             <Star size={14} />
             先着10名は正式リリース後もずっと無料
           </a>
-          <h1 className="text-[1.65rem] sm:text-5xl md:text-6xl font-bold text-[var(--ink)] leading-[1.15] tracking-[-0.022em]">
+          <h1 className="text-[2rem] sm:text-5xl md:text-6xl font-bold text-[var(--ink)] leading-[1.15] tracking-[-0.022em]">
             お客様の声を集めて、
             <br />
             <span className="text-[var(--brand)]">HPにもSNSにも。</span>
