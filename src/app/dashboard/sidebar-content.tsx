@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, FileText, Code, ImageIcon, Store, Settings, MessageSquare, ExternalLink, Crown } from "lucide-react";
-import { ink, slate, muted, brand } from "@/lib/theme-tokens";
+import { slate, muted, brand } from "@/lib/theme-tokens";
 import { getEffectivePlan } from "@/lib/plan";
 import type { SubscriptionStatus } from "@/types/database";
 
@@ -30,7 +30,7 @@ export function SidebarContent({ subscriptionStatus = "free" }: { subscriptionSt
       <div className="px-4 py-3.5" style={{ borderBottom: "1px solid rgba(227,232,238,0.5)" }}>
         <Link href="/dashboard" className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80">
           <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-9 w-auto" />
-          <span className="text-2xl font-bold" style={{ color: ink, letterSpacing: "-0.022em" }}>VoiceHub</span>
+          <span className="text-2xl font-bold" style={{ color: brand, letterSpacing: "-0.022em" }}>VoiceHub</span>
         </Link>
       </div>
 
