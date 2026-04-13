@@ -29,7 +29,7 @@ export function SidebarContent({ subscriptionStatus = "free" }: { subscriptionSt
     <div className="flex flex-col h-full" style={{ background: "#F7F8F9" }}>
       <div className="px-4 py-3.5" style={{ borderBottom: "1px solid rgba(227,232,238,0.5)" }}>
         <Link href="/dashboard" className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80">
-          <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-10 w-auto" />
+          <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-9 w-auto" />
           <span className="text-2xl font-bold" style={{ color: ink, letterSpacing: "-0.022em" }}>VoiceHub</span>
         </Link>
       </div>
