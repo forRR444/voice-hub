@@ -304,7 +304,7 @@ export default function Home() {
               <div key={i} className="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg leading-relaxed">
                 <span className="shrink-0">{item.icon}</span>
                 <p>
-                  <span className="text-[var(--slate)] line-through decoration-[var(--slate)]/30">{item.pain}</span>
+                  <span className="text-[var(--slate)] line-through">{item.pain}</span>
                   <span className="mx-2 text-[var(--slate)]">→</span>
                   <span className="text-[var(--ink)] font-medium">{item.solution}</span>
                 </p>
