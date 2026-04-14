@@ -12,7 +12,6 @@ import {
   Trash,
   MoreHorizontal,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import {
   WorkspaceRow,
   WidgetRow,
@@ -54,7 +53,6 @@ export default function WidgetsClient({
   widgets: WidgetRow[];
   subscriptionStatus: SubscriptionStatus;
 }) {
-  const supabase = createClient();
   const [widgets, setWidgets] = useState<WidgetRow[]>(initialWidgets);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -140,41 +138,55 @@ export default function WidgetsClient({
   }
 
   async function saveEdit(id: string) {
-    const { error } = await supabase
-      .from("widgets")
-      .update({
-        name: editForm.name,
-        type: editForm.type,
-        theme: editForm.theme,
-        filter_min_rating: editForm.filter_min_rating,
-        only_featured: editForm.only_featured,
-      })
-      .eq("id", id);
+    try {
+      const res = await fetch("/api/widgets", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          name: editForm.name,
+          type: editForm.type,
+          theme: editForm.theme,
+          filter_min_rating: editForm.filter_min_rating,
+          only_featured: editForm.only_featured,
+        }),
+      });
 
-    if (!error) {
-      setWidgets((prev) =>
-        prev.map((w) =>
-          w.id === id
-            ? {
-                ...w,
-                name: editForm.name,
-                type: editForm.type,
-                theme: editForm.theme,
-                filter_min_rating: editForm.filter_min_rating,
-                only_featured: editForm.only_featured,
-              }
-            : w
-        )
-      );
-      setEditingId(null);
+      if (res.ok) {
+        setWidgets((prev) =>
+          prev.map((w) =>
+            w.id === id
+              ? {
+                  ...w,
+                  name: editForm.name,
+                  type: editForm.type,
+                  theme: editForm.theme,
+                  filter_min_rating: editForm.filter_min_rating,
+                  only_featured: editForm.only_featured,
+                }
+              : w
+          )
+        );
+        setEditingId(null);
+      }
+    } catch {
+      // noop
     }
   }
 
   async function handleDelete(id: string) {
-    const { error } = await supabase.from("widgets").delete().eq("id", id);
-    if (!error) {
-      setWidgets((prev) => prev.filter((w) => w.id !== id));
-      setDeletingId(null);
+    try {
+      const res = await fetch("/api/widgets", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setWidgets((prev) => prev.filter((w) => w.id !== id));
+        setDeletingId(null);
+      }
+    } catch {
+      // noop
     }
   }
 
@@ -273,11 +285,14 @@ export default function WidgetsClient({
                               widget.id === w.id ? { ...widget, type: newType } : widget
                             )
                           );
-                          const { error } = await supabase
-                            .from("widgets")
-                            .update({ type: newType })
-                            .eq("id", w.id);
-                          if (error) {
+                          try {
+                            const res = await fetch("/api/widgets", {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: w.id, type: newType }),
+                            });
+                            if (!res.ok) throw new Error();
+                          } catch {
                             setWidgets((prev) =>
                               prev.map((widget) =>
                                 widget.id === w.id ? { ...widget, type: previousType } : widget

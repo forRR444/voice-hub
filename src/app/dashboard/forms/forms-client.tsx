@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
-import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, FormRow, FormQuestion, SubscriptionStatus } from "@/types/database";
 import { getPlanLimits } from "@/lib/plan";
 import { generateSlug, getBaseUrl, formatDate } from "@/lib/utils";
@@ -39,7 +38,6 @@ export default function FormsClient({
   submissionCounts: Record<string, number>;
   subscriptionStatus: SubscriptionStatus;
 }) {
-  const supabase = createClient();
   const [forms, setForms] = useState<FormRow[]>(initialForms);
   const [creating, setCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -107,33 +105,39 @@ export default function FormsClient({
   }
 
   async function saveEdit(id: string) {
-    const { error } = await supabase
-      .from("forms")
-      .update({
-        title: editForm.title,
-        description: editForm.description || null,
-        brand_color: editForm.brand_color,
-        thank_you_message: editForm.thank_you_message,
-        questions: editQuestions,
-      })
-      .eq("id", id);
+    try {
+      const res = await fetch("/api/forms", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          title: editForm.title,
+          description: editForm.description || null,
+          brand_color: editForm.brand_color,
+          thank_you_message: editForm.thank_you_message,
+          questions: editQuestions,
+        }),
+      });
 
-    if (!error) {
-      setForms((prev) =>
-        prev.map((f) =>
-          f.id === id
-            ? {
-                ...f,
-                title: editForm.title,
-                description: editForm.description || null,
-                brand_color: editForm.brand_color,
-                thank_you_message: editForm.thank_you_message,
-                questions: editQuestions,
-              }
-            : f
-        )
-      );
-      setEditingId(null);
+      if (res.ok) {
+        setForms((prev) =>
+          prev.map((f) =>
+            f.id === id
+              ? {
+                  ...f,
+                  title: editForm.title,
+                  description: editForm.description || null,
+                  brand_color: editForm.brand_color,
+                  thank_you_message: editForm.thank_you_message,
+                  questions: editQuestions,
+                }
+              : f
+          )
+        );
+        setEditingId(null);
+      }
+    } catch {
+      // noop
     }
   }
 
@@ -378,12 +382,20 @@ export default function FormsClient({
           onCancel={() => { setShowDeleteConfirm(false); setDeleteFormId(null); }}
           onConfirm={async () => {
             setDeleting(true);
-            const { error } = await supabase.from("forms").delete().eq("id", deleteFormId);
+            try {
+              const res = await fetch("/api/forms", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: deleteFormId }),
+              });
+              if (!res.ok) { alert("削除に失敗しました"); setDeleting(false); return; }
+              setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
+              setShowDeleteConfirm(false);
+              setDeleteFormId(null);
+            } catch {
+              alert("削除に失敗しました");
+            }
             setDeleting(false);
-            if (error) { alert("削除に失敗しました"); return; }
-            setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
-            setShowDeleteConfirm(false);
-            setDeleteFormId(null);
           }}
         />
       )}
