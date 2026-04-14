@@ -53,6 +53,12 @@ vi.mock("lucide-react", () => ({
   LayoutGrid: () => <span>grid</span>,
   Square: () => <span>square</span>,
   Columns3: () => <span>columns</span>,
+  Sparkles: () => <span>sparkles</span>,
+  FileText: () => <span>filetext</span>,
+  ClipboardList: () => <span>clipboard</span>,
+  MapPin: () => <span>mappin</span>,
+  Clock: () => <span>clock</span>,
+  ChevronDown: () => <span>chevron</span>,
 }));
 
 import SalonPageSettingsClient from "@/app/dashboard/salon-page/salon-page-client";
@@ -79,6 +85,12 @@ const existingSalonPage: SalonPageRow = {
   review_layout: "card",
   is_published: true,
   slug: "existing123",
+  description: null,
+  address: null,
+  google_map_url: null,
+  business_hours: null,
+  closed_days: null,
+  menu_items: null,
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
 };
@@ -270,16 +282,16 @@ describe("保存処理", () => {
     fireEvent.change(nameInput, { target: { value: "" } });
 
     fireEvent.click(screen.getByText("公開設定"));
-    fireEvent.click(screen.getByText("保存する"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
 
-    expect(screen.getByText("サロン名を入力してください")).toBeInTheDocument();
+    expect(screen.getAllByText("サロン名を入力してください").length).toBeGreaterThanOrEqual(1);
     expect(mockFrom).not.toHaveBeenCalled();
   });
 
   it("正常な入力で保存するとSupabaseのupsertが呼ばれる", async () => {
     renderSettings();
     fireEvent.click(screen.getByText("公開設定"));
-    fireEvent.click(screen.getByText("保存する"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
       expect(mockFrom).toHaveBeenCalledWith("salon_pages");
@@ -295,7 +307,7 @@ describe("保存処理", () => {
   it("既存リンクがある場合、保存時にdelete→insertが呼ばれる", async () => {
     renderSettings(existingSalonPage, existingLinks);
     fireEvent.click(screen.getByText("公開設定"));
-    fireEvent.click(screen.getByText("保存する"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
       expect(mockFrom).toHaveBeenCalledWith("salon_page_links");
@@ -310,10 +322,10 @@ describe("保存処理", () => {
 
     renderSettings();
     fireEvent.click(screen.getByText("公開設定"));
-    fireEvent.click(screen.getByText("保存する"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(screen.getByText("DB error")).toBeInTheDocument();
+      expect(screen.getAllByText("DB error").length).toBeGreaterThanOrEqual(1);
     });
   });
 });

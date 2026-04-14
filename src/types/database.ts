@@ -82,6 +82,16 @@ export type TestimonialTagRow = {
 export type SalonTheme = "natural" | "modern" | "elegant";
 export type SalonReviewLayout = "list" | "grid" | "card" | "wall";
 
+export type SalonMenuItem = {
+  name: string;
+  price: string;
+  description: string;
+};
+
+export type SalonBusinessHours = {
+  text: string;
+};
+
 export type SalonPageRow = {
   id: string;
   workspace_id: string;
@@ -95,6 +105,12 @@ export type SalonPageRow = {
   review_layout: SalonReviewLayout;
   is_published: boolean;
   slug: string;
+  description: string | null;
+  address: string | null;
+  google_map_url: string | null;
+  business_hours: SalonBusinessHours | null;
+  closed_days: string | null;
+  menu_items: SalonMenuItem[] | null;
   created_at: string;
   updated_at: string;
 };

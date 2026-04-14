@@ -91,10 +91,26 @@ export const salonLinkSchema = z.object({
   url: z.string().url("有効なURLを入力してください"),
 });
 
+export const salonMenuItemSchema = z.object({
+  name: z.string().min(1, "メニュー名を入力してください").max(50),
+  price: z.string().max(30),
+  description: z.string().max(100),
+});
+
+export const salonBusinessHoursSchema = z.object({
+  text: z.string().max(300),
+});
+
 export const salonPageSchema = z.object({
   salon_name: z.string().min(1, "サロン名を入力してください").max(50),
   tagline: z.string().max(100, "100文字以内で入力してください").optional(),
   theme: z.enum(["natural", "modern", "elegant"]),
   accent_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "有効なカラーコードを入力してください"),
   links: z.array(salonLinkSchema).max(3),
+  description: z.string().max(2000).optional().nullable(),
+  address: z.string().max(200).optional().nullable(),
+  google_map_url: z.string().url().regex(/^https:\/\//).optional().nullable().or(z.literal("")),
+  business_hours: salonBusinessHoursSchema.optional().nullable(),
+  closed_days: z.string().max(100).optional().nullable(),
+  menu_items: z.array(salonMenuItemSchema).max(20).optional().nullable(),
 });

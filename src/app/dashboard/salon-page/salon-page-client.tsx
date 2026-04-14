@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, ExternalLink, Plus, Trash2, Upload, Eye } from "lucide-react";
+import { Check, Copy, ExternalLink, Plus, Trash2, Upload, Eye, Sparkles, FileText, ClipboardList, MapPin, Clock, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resizeImage } from "@/lib/image-utils";
 import { generateSlug, getBaseUrl } from "@/lib/utils";
 import { useCopy } from "@/hooks/use-copy";
 import { SALON_THEMES, type SalonThemeConfig } from "@/lib/salon-themes";
-import { SALON_TAGLINE_MAX_LENGTH, SALON_MAX_LINKS, IMAGE_RESIZE_MAX_PX } from "@/lib/constants";
-import type { WorkspaceRow, SalonPageRow, SalonPageLinkRow, SalonTheme, SalonPageLinkIcon, SalonReviewLayout } from "@/types/database";
+import {
+  SALON_TAGLINE_MAX_LENGTH, SALON_MAX_LINKS, IMAGE_RESIZE_MAX_PX,
+  SALON_DESCRIPTION_MAX_LENGTH, SALON_ADDRESS_MAX_LENGTH, SALON_CLOSED_DAYS_MAX_LENGTH,
+  SALON_MENU_MAX_ITEMS, SALON_MENU_NAME_MAX_LENGTH, SALON_MENU_PRICE_MAX_LENGTH,
+  SALON_MENU_DESCRIPTION_MAX_LENGTH, SALON_BUSINESS_HOURS_TEXT_MAX_LENGTH,
+} from "@/lib/constants";
+import type { WorkspaceRow, SalonPageRow, SalonPageLinkRow, SalonTheme, SalonPageLinkIcon, SalonReviewLayout, SalonMenuItem } from "@/types/database";
 import { List, LayoutGrid, Square, Columns3 } from "lucide-react";
 import { SALON_LINK_ICONS, SalonLinkIcon } from "@/lib/salon-link-icons";
 import PageTitle from "@/app/components/page-title";
@@ -72,6 +77,18 @@ export default function SalonPageSettingsClient({
     initialLinks.map((l) => ({ label: l.label, url: l.url, icon: (l.icon && l.icon !== "none" ? l.icon : "web") as SalonPageLinkIcon }))
   );
   const [isPublished, setIsPublished] = useState(initialSalonPage?.is_published ?? false);
+
+  // HP充実フィールド
+  const [description, setDescription] = useState(initialSalonPage?.description ?? "");
+  const [address, setAddress] = useState(initialSalonPage?.address ?? "");
+  const [googleMapUrl, setGoogleMapUrl] = useState(initialSalonPage?.google_map_url ?? "");
+  const [businessHoursText, setBusinessHoursText] = useState(initialSalonPage?.business_hours?.text ?? "");
+  const [closedDays, setClosedDays] = useState(initialSalonPage?.closed_days ?? "");
+  const [menuItems, setMenuItems] = useState<SalonMenuItem[]>(
+    initialSalonPage?.menu_items ?? []
+  );
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +117,30 @@ export default function SalonPageSettingsClient({
   function handleThemeChange(newTheme: SalonTheme) {
     setTheme(newTheme);
     setAccentColor(SALON_THEMES[newTheme].defaultAccent);
+  }
+
+  function toggleSection(key: string) {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function addMenuItem() {
+    if (menuItems.length >= SALON_MENU_MAX_ITEMS) return;
+    setMenuItems([...menuItems, { name: "", price: "", description: "" }]);
+  }
+
+  function updateMenuItem(index: number, field: keyof SalonMenuItem, value: string) {
+    const updated = [...menuItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setMenuItems(updated);
+  }
+
+  function removeMenuItem(index: number) {
+    setMenuItems(menuItems.filter((_, i) => i !== index));
   }
 
   function addLink() {
@@ -168,6 +209,18 @@ export default function SalonPageSettingsClient({
             review_layout: reviewLayout,
             is_published: isPublished,
             slug: newSlug,
+            description: description.trim() || null,
+            address: address.trim() || null,
+            google_map_url: googleMapUrl.trim() || null,
+            business_hours: businessHoursText.trim() ? { text: businessHoursText.trim() } : null,
+            closed_days: closedDays.trim() || null,
+            menu_items: menuItems.filter((m) => m.name.trim()).length > 0
+              ? menuItems.filter((m) => m.name.trim()).map((m) => ({
+                  name: m.name.trim(),
+                  price: m.price.trim(),
+                  description: m.description.trim(),
+                }))
+              : null,
             updated_at: new Date().toISOString(),
           },
           { onConflict: "workspace_id" }
@@ -795,6 +848,269 @@ export default function SalonPageSettingsClient({
           </div>
         </div>
       )}
+      {/* ─── HPをもっと充実させる ─── */}
+      <div className="mt-12">
+        <hr style={{ borderColor: rule }} className="border-t" />
+        <div className="mt-8 flex items-center gap-3">
+          <Sparkles size={20} style={{ color: brand }} />
+          <span className="text-lg font-bold" style={{ color: ink }}>HPをもっと充実させる</span>
+        </div>
+        <p className="text-sm mt-2" style={{ color: slate }}>
+          任意項目です。入力するとサロンページの情報がより充実します。
+        </p>
+
+        <div className="space-y-3 mt-6">
+          {/* サロン紹介文 */}
+          <div className="rounded-lg overflow-hidden" style={{ background: plate }}>
+            <button
+              onClick={() => toggleSection("description")}
+              className="w-full flex items-center justify-between px-4 py-3 cursor-pointer transition-colors duration-150 hover:brightness-[0.97]"
+            >
+              <div className="flex items-center gap-3">
+                <FileText size={18} style={{ color: slate }} />
+                <span className="text-sm font-semibold" style={{ color: ink }}>サロン紹介文</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {description.trim() && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(99,91,255,0.1)", color: brand }}>
+                    入力済み
+                  </span>
+                )}
+                <ChevronDown
+                  size={16}
+                  style={{ color: muted, transition: "transform 0.2s", transform: openSections.has("description") ? "rotate(180deg)" : "rotate(0)" }}
+                />
+              </div>
+            </button>
+            {openSections.has("description") && (
+              <div className="px-4 pb-4">
+                <textarea
+                  style={{ ...inputStyle, resize: "none" as const }}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="サロンの特徴やこだわりを自由にお書きください"
+                  maxLength={SALON_DESCRIPTION_MAX_LENGTH}
+                  rows={6}
+                  onFocus={(e) => (e.target.style.borderColor = brand)}
+                  onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                />
+                <p className="text-xs text-right mt-1" style={{ color: description.length > SALON_DESCRIPTION_MAX_LENGTH ? "#EF4444" : muted }}>
+                  {description.length} / {SALON_DESCRIPTION_MAX_LENGTH}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* メニュー・料金表 */}
+          <div className="rounded-lg overflow-hidden" style={{ background: plate }}>
+            <button
+              onClick={() => toggleSection("menu")}
+              className="w-full flex items-center justify-between px-4 py-3 cursor-pointer transition-colors duration-150 hover:brightness-[0.97]"
+            >
+              <div className="flex items-center gap-3">
+                <ClipboardList size={18} style={{ color: slate }} />
+                <span className="text-sm font-semibold" style={{ color: ink }}>メニュー・料金表</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {menuItems.filter((m) => m.name.trim()).length > 0 && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(99,91,255,0.1)", color: brand }}>
+                    {menuItems.filter((m) => m.name.trim()).length}件
+                  </span>
+                )}
+                <ChevronDown
+                  size={16}
+                  style={{ color: muted, transition: "transform 0.2s", transform: openSections.has("menu") ? "rotate(180deg)" : "rotate(0)" }}
+                />
+              </div>
+            </button>
+            {openSections.has("menu") && (
+              <div className="px-4 pb-4">
+                <div className="space-y-3">
+                  {menuItems.map((item, i) => (
+                    <div key={i} className="rounded-lg p-3" style={{ background: white, border: `1px solid ${rule}` }}>
+                      <div className="flex items-center gap-2">
+                        <input
+                          style={inputStyle}
+                          className="flex-[3]"
+                          value={item.name}
+                          onChange={(e) => updateMenuItem(i, "name", e.target.value)}
+                          placeholder="メニュー名"
+                          maxLength={SALON_MENU_NAME_MAX_LENGTH}
+                          onFocus={(e) => (e.target.style.borderColor = brand)}
+                          onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                        />
+                        <input
+                          style={inputStyle}
+                          className="flex-[1]"
+                          value={item.price}
+                          onChange={(e) => updateMenuItem(i, "price", e.target.value)}
+                          placeholder="¥0,000"
+                          maxLength={SALON_MENU_PRICE_MAX_LENGTH}
+                          onFocus={(e) => (e.target.style.borderColor = brand)}
+                          onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                        />
+                        <button
+                          onClick={() => removeMenuItem(i)}
+                          className="flex-shrink-0 p-1.5 rounded-md transition-colors duration-150 cursor-pointer"
+                          style={{ color: muted }}
+                          onMouseEnter={(e) => { e.currentTarget.style.color = "#EF4444"; e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.color = muted; e.currentTarget.style.background = "transparent"; }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                      <input
+                        style={inputStyle}
+                        className="mt-2"
+                        value={item.description}
+                        onChange={(e) => updateMenuItem(i, "description", e.target.value)}
+                        placeholder="簡単な説明（任意）"
+                        maxLength={SALON_MENU_DESCRIPTION_MAX_LENGTH}
+                        onFocus={(e) => (e.target.style.borderColor = brand)}
+                        onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {menuItems.length < SALON_MENU_MAX_ITEMS ? (
+                  <button
+                    onClick={addMenuItem}
+                    className="flex items-center gap-1.5 text-sm font-medium mt-3 transition-opacity duration-150 hover:opacity-70 cursor-pointer"
+                    style={{ color: brand }}
+                  >
+                    <Plus size={16} />
+                    メニューを追加
+                  </button>
+                ) : (
+                  <p className="text-xs mt-3" style={{ color: muted }}>メニューは最大{SALON_MENU_MAX_ITEMS}件です</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* アクセス */}
+          <div className="rounded-lg overflow-hidden" style={{ background: plate }}>
+            <button
+              onClick={() => toggleSection("access")}
+              className="w-full flex items-center justify-between px-4 py-3 cursor-pointer transition-colors duration-150 hover:brightness-[0.97]"
+            >
+              <div className="flex items-center gap-3">
+                <MapPin size={18} style={{ color: slate }} />
+                <span className="text-sm font-semibold" style={{ color: ink }}>アクセス</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {address.trim() && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(99,91,255,0.1)", color: brand }}>
+                    入力済み
+                  </span>
+                )}
+                <ChevronDown
+                  size={16}
+                  style={{ color: muted, transition: "transform 0.2s", transform: openSections.has("access") ? "rotate(180deg)" : "rotate(0)" }}
+                />
+              </div>
+            </button>
+            {openSections.has("access") && (
+              <div className="px-4 pb-4 space-y-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1" style={{ color: ink }}>住所</label>
+                  <input
+                    style={inputStyle}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="東京都渋谷区..."
+                    maxLength={SALON_ADDRESS_MAX_LENGTH}
+                    onFocus={(e) => (e.target.style.borderColor = brand)}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1" style={{ color: ink }}>GoogleマップURL</label>
+                  <input
+                    style={inputStyle}
+                    value={googleMapUrl}
+                    onChange={(e) => setGoogleMapUrl(e.target.value)}
+                    placeholder="https://maps.google.com/..."
+                    onFocus={(e) => (e.target.style.borderColor = brand)}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                  />
+                  <p className="text-xs mt-1" style={{ color: muted }}>
+                    Googleマップで検索し、「共有」からURLをコピーしてください
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 営業時間・定休日 */}
+          <div className="rounded-lg overflow-hidden" style={{ background: plate }}>
+            <button
+              onClick={() => toggleSection("hours")}
+              className="w-full flex items-center justify-between px-4 py-3 cursor-pointer transition-colors duration-150 hover:brightness-[0.97]"
+            >
+              <div className="flex items-center gap-3">
+                <Clock size={18} style={{ color: slate }} />
+                <span className="text-sm font-semibold" style={{ color: ink }}>営業時間・定休日</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {(businessHoursText.trim() || closedDays.trim()) && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(99,91,255,0.1)", color: brand }}>
+                    入力済み
+                  </span>
+                )}
+                <ChevronDown
+                  size={16}
+                  style={{ color: muted, transition: "transform 0.2s", transform: openSections.has("hours") ? "rotate(180deg)" : "rotate(0)" }}
+                />
+              </div>
+            </button>
+            {openSections.has("hours") && (
+              <div className="px-4 pb-4 space-y-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1" style={{ color: ink }}>営業時間</label>
+                  <textarea
+                    style={{ ...inputStyle, resize: "none" as const }}
+                    value={businessHoursText}
+                    onChange={(e) => setBusinessHoursText(e.target.value)}
+                    placeholder={"例:\n平日 10:00〜20:00\n土日祝 10:00〜18:00"}
+                    maxLength={SALON_BUSINESS_HOURS_TEXT_MAX_LENGTH}
+                    rows={3}
+                    onFocus={(e) => (e.target.style.borderColor = brand)}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1" style={{ color: ink }}>定休日</label>
+                  <input
+                    style={inputStyle}
+                    value={closedDays}
+                    onChange={(e) => setClosedDays(e.target.value)}
+                    placeholder="毎週月曜日、第3火曜日"
+                    maxLength={SALON_CLOSED_DAYS_MAX_LENGTH}
+                    onFocus={(e) => (e.target.style.borderColor = brand)}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(227,232,238,0.5)")}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 保存ボタン */}
+        <div className="mt-8">
+          {error && (
+            <p className="text-sm mb-4" style={{ color: "#E25950" }}>{error}</p>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full py-3 text-sm font-semibold text-white rounded-lg transition-opacity duration-150 hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: gradient }}
+          >
+            {saving ? "保存中..." : saved ? "保存済み ✓" : "保存する"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

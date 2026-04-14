@@ -26,6 +26,12 @@ const baseSalonPage: SalonPageRow = {
   review_layout: "card",
   is_published: true,
   slug: "test123",
+  description: null,
+  address: null,
+  google_map_url: null,
+  business_hours: null,
+  closed_days: null,
+  menu_items: null,
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
 };

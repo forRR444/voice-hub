@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useId } from "react";
-import { SALON_THEMES } from "@/lib/salon-themes";
+import { MapPin, ExternalLink, Clock, CalendarOff } from "lucide-react";
+import { SALON_THEMES, generateThemeFromAccent } from "@/lib/salon-themes";
 import { SALON_INITIAL_DISPLAY_COUNT } from "@/lib/constants";
 import { SalonLinkIcon } from "@/lib/salon-link-icons";
 import { formatDate } from "@/lib/utils";
@@ -27,8 +28,8 @@ export default function SalonPageClient({
 }) {
   const [displayCount, setDisplayCount] = useState(SALON_INITIAL_DISPLAY_COUNT);
   const [modalTestimonial, setModalTestimonial] = useState<Testimonial | null>(null);
-  const theme = SALON_THEMES[salonPage.theme] ?? SALON_THEMES.natural;
   const accent = salonPage.accent_color;
+  const theme = generateThemeFromAccent(accent);
 
   const visibleTestimonials = testimonials.slice(0, displayCount);
   const hasMore = displayCount < testimonials.length;
@@ -169,33 +170,110 @@ export default function SalonPageClient({
                 {salonPage.tagline}
               </p>
             )}
+
+            {/* 評価サマリー（一番上） */}
+            {totalCount > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <SvgStarRating rating={avgRating} color={accent} size={20} />
+                  <span
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 700,
+                      color: theme.textPrimary,
+                    }}
+                  >
+                    {avgRating.toFixed(1)}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontSize: 13,
+                    color: theme.textSecondary,
+                    marginTop: 4,
+                  }}
+                >
+                  お客様の声 {totalCount}件
+                </p>
+              </div>
+            )}
+
+            {/* サロン紹介文 */}
+            {salonPage.description && (
+              <ExpandableDescription text={salonPage.description} color={theme.textSecondary} accent={accent} />
+            )}
           </header>
         </div>
 
-        {/* 評価サマリー */}
-        {totalCount > 0 && (
-          <section style={{ padding: "20px 20px 8px", textAlign: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              <SvgStarRating rating={avgRating} color={accent} size={20} />
-              <span
-                style={{
-                  fontSize: 18,
-                  fontWeight: 700,
-                  color: theme.textPrimary,
-                }}
-              >
-                {avgRating.toFixed(1)}
-              </span>
-            </div>
-            <p
+        {/* メニュー・料金表 */}
+        {(() => {
+          const items = salonPage.menu_items;
+          if (!items || items.length === 0) return null;
+          return (
+          <section style={{ padding: "0 16px" }}>
+            <SectionDivider label="メニュー・料金" theme={theme} />
+            <div
               style={{
-                fontSize: 13,
-                color: theme.textSecondary,
-                marginTop: 4,
+                borderRadius: theme.borderRadius,
+                border: `1px solid ${theme.cardBorder}`,
+                overflow: "hidden",
               }}
             >
-              お客様の声 {totalCount}件
-            </p>
+              {items.map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    padding: "12px 16px",
+                    borderBottom: i < items.length - 1 ? `1px solid ${theme.cardBorder}` : "none",
+                    background: theme.cardBg,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 }}>
+                    <span className="text-sm font-medium" style={{ color: theme.textPrimary }}>
+                      {item.name}
+                    </span>
+                    <span className="text-sm font-semibold flex-shrink-0" style={{ color: accent }}>
+                      {item.price}
+                    </span>
+                  </div>
+                  {item.description && (
+                    <p className="text-xs mt-0.5" style={{ color: theme.textSecondary, opacity: 0.7 }}>
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+          );
+        })()}
+
+        {/* 営業時間・定休日 */}
+        {(salonPage.business_hours?.text || salonPage.closed_days) && (
+          <section style={{ padding: "0 16px" }}>
+            <SectionDivider label="営業時間" theme={theme} />
+            <div className="space-y-3">
+              {salonPage.business_hours?.text && (
+                <div className="flex items-start gap-2">
+                  <Clock size={16} style={{ color: accent, marginTop: 2, flexShrink: 0 }} />
+                  <span
+                    className="text-sm leading-relaxed"
+                    style={{ color: theme.textPrimary, whiteSpace: "pre-wrap" }}
+                  >
+                    {salonPage.business_hours.text}
+                  </span>
+                </div>
+              )}
+              {salonPage.closed_days && (
+                <div className="flex items-start gap-2">
+                  <CalendarOff size={16} style={{ color: accent, marginTop: 2, flexShrink: 0 }} />
+                  <span className="text-sm" style={{ color: theme.textPrimary }}>
+                    <span className="font-medium">定休日: </span>
+                    {salonPage.closed_days}
+                  </span>
+                </div>
+              )}
+            </div>
           </section>
         )}
 
@@ -296,6 +374,33 @@ export default function SalonPageClient({
             </p>
           )}
         </section>
+
+        {/* アクセス */}
+        {salonPage.address && (
+          <section style={{ padding: "0 16px" }}>
+            <SectionDivider label="アクセス" theme={theme} />
+            <div className="space-y-3">
+              <div className="flex items-start gap-2">
+                <MapPin size={16} style={{ color: accent, marginTop: 2, flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: theme.textPrimary }}>
+                  {salonPage.address}
+                </span>
+              </div>
+              {salonPage.google_map_url && (
+                <a
+                  href={salonPage.google_map_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium ml-6 transition-opacity duration-150 hover:opacity-70"
+                  style={{ color: accent, textDecoration: "none" }}
+                >
+                  <ExternalLink size={14} />
+                  Googleマップで見る
+                </a>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* フッター */}
         <footer
@@ -546,6 +651,73 @@ function ReviewCard({
           {formatDate(t.submitted_at)}
         </span>
       </div>
+    </div>
+  );
+}
+
+/* ─── Expandable Description ─── */
+function ExpandableDescription({ text, color, accent }: { text: string; color: string; accent: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const LINE_CLAMP = 3;
+
+  return (
+    <div style={{ marginTop: 16, textAlign: "left" }}>
+      <p
+        className="text-sm leading-relaxed"
+        style={{
+          color,
+          whiteSpace: "pre-wrap",
+          ...(!expanded ? {
+            display: "-webkit-box",
+            WebkitLineClamp: LINE_CLAMP,
+            WebkitBoxOrient: "vertical" as const,
+            overflow: "hidden",
+          } : {}),
+        }}
+      >
+        {text}
+      </p>
+      <div style={{ textAlign: "center" }}>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            marginTop: 4,
+            fontSize: 13,
+            fontWeight: 500,
+            color: accent,
+            cursor: "pointer",
+          }}
+        >
+          {expanded ? "閉じる" : "もっと見る"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Section Divider ─── */
+function SectionDivider({ label, theme }: { label: string; theme: (typeof SALON_THEMES)[string] }) {
+  return (
+    <div style={{
+      padding: "24px 0 12px",
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+    }}>
+      <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
+      <span style={{
+        fontSize: 12,
+        fontWeight: 600,
+        color: theme.textSecondary,
+        letterSpacing: "0.04em",
+        whiteSpace: "nowrap",
+      }}>
+        {label}
+      </span>
+      <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
     </div>
   );
 }
