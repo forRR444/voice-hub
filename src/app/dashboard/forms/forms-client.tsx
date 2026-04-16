@@ -40,6 +40,7 @@ export default function FormsClient({
 }) {
   const [forms, setForms] = useState<FormRow[]>(initialForms);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
     title: "",
@@ -84,9 +85,12 @@ export default function FormsClient({
       if (res.ok) {
         const data = await res.json();
         setForms((prev) => [data, ...prev]);
+        setError(null);
+      } else {
+        setError("フォームの作成に失敗しました");
       }
     } catch {
-      // noop
+      setError("フォームの作成に失敗しました");
     }
 
     setCreating(false);
@@ -135,9 +139,12 @@ export default function FormsClient({
           )
         );
         setEditingId(null);
+        setError(null);
+      } else {
+        setError("フォームの保存に失敗しました");
       }
     } catch {
-      // noop
+      setError("フォームの保存に失敗しました");
     }
   }
 
@@ -186,6 +193,10 @@ export default function FormsClient({
           <span className="hidden sm:inline">{creating ? "作成中..." : "新しいフォーム"}</span>
         </Button>
       </div>
+
+      {error && (
+        <p className="text-sm mb-4" style={{ color: "#E25950" }}>{error}</p>
+      )}
 
       {/* Template picker modal */}
       {showCreateModal && (

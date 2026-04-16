@@ -56,6 +56,7 @@ export default function WidgetsClient({
   const [widgets, setWidgets] = useState<WidgetRow[]>(initialWidgets);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { copiedKey: copiedField, copy: copyText } = useCopy();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -109,9 +110,12 @@ export default function WidgetsClient({
           filter_min_rating: 1,
           only_featured: false,
         });
+        setError(null);
+      } else {
+        setError("ウィジェットの作成に失敗しました");
       }
     } catch {
-      // noop
+      setError("ウィジェットの作成に失敗しました");
     }
 
     setCreating(false);
@@ -168,9 +172,12 @@ export default function WidgetsClient({
           )
         );
         setEditingId(null);
+        setError(null);
+      } else {
+        setError("ウィジェットの保存に失敗しました");
       }
     } catch {
-      // noop
+      setError("ウィジェットの保存に失敗しました");
     }
   }
 
@@ -184,9 +191,14 @@ export default function WidgetsClient({
       if (res.ok) {
         setWidgets((prev) => prev.filter((w) => w.id !== id));
         setDeletingId(null);
+        setError(null);
+      } else {
+        setError("ウィジェットの削除に失敗しました");
+        setDeletingId(null);
       }
     } catch {
-      // noop
+      setError("ウィジェットの削除に失敗しました");
+      setDeletingId(null);
     }
   }
 
@@ -205,6 +217,9 @@ export default function WidgetsClient({
         </Button>
       </div>
 
+      {error && (
+        <p className="text-sm mb-4" style={{ color: "#E25950" }}>{error}</p>
+      )}
 
       {/* Create modal */}
       {showCreate && (
