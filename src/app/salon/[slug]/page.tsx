@@ -97,9 +97,10 @@ export default async function SalonPage({ params }: Props) {
   >[];
 
   const totalCount = approvedTestimonials.length;
+  const ratedTestimonials = approvedTestimonials.filter((t) => t.rating != null);
   const avgRating =
-    totalCount > 0
-      ? approvedTestimonials.reduce((sum, t) => sum + (t.rating ?? 0), 0) / totalCount
+    ratedTestimonials.length > 0
+      ? ratedTestimonials.reduce((sum, t) => sum + (t.rating ?? 0), 0) / ratedTestimonials.length
       : 0;
 
   return (

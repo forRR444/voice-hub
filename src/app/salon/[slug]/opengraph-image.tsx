@@ -53,8 +53,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   const testimonials = stats ?? [];
   const count = testimonials.length;
-  const avg = count > 0
-    ? (testimonials.reduce((s, t) => s + ((t as { rating: number | null }).rating ?? 0), 0) / count).toFixed(1)
+  const rated = testimonials.filter((t) => (t as { rating: number | null }).rating != null);
+  const avg = rated.length > 0
+    ? (rated.reduce((s, t) => s + ((t as { rating: number | null }).rating ?? 0), 0) / rated.length).toFixed(1)
     : "0.0";
 
   const accent = salonPage.accent_color || "#635BFF";
