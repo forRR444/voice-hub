@@ -29,7 +29,7 @@ export default function ResetPasswordClient() {
     });
 
     if (error) {
-      setError(error.message);
+      setError("パスワードリセットメールの送信に失敗しました。もう一度お試しください");
       setLoading(false);
     } else {
       setSent(true);

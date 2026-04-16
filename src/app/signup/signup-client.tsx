@@ -45,7 +45,11 @@ export default function SignupClient() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(
+        error.message.includes("already registered")
+          ? "このメールアドレスは既に登録されています"
+          : "アカウントの作成に失敗しました。もう一度お試しください"
+      );
       setLoading(null);
     } else {
       setEmailSent(true);

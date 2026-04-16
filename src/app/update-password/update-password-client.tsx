@@ -31,7 +31,7 @@ export default function UpdatePasswordClient() {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setError(error.message);
+      setError("パスワードの更新に失敗しました。もう一度お試しください");
       setLoading(false);
     } else {
       router.push("/dashboard");
