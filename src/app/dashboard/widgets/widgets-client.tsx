@@ -68,6 +68,7 @@ export default function WidgetsClient({
     only_featured: false,
   });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const [newWidget, setNewWidget] = useState<WidgetFormState>({
@@ -182,6 +183,7 @@ export default function WidgetsClient({
   }
 
   async function handleDelete(id: string) {
+    setDeleting(true);
     try {
       const res = await fetch("/api/widgets", {
         method: "DELETE",
@@ -199,6 +201,8 @@ export default function WidgetsClient({
     } catch {
       setError("ウィジェットの削除に失敗しました");
       setDeletingId(null);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -416,7 +420,7 @@ export default function WidgetsClient({
         <DeleteConfirmModal
           title="削除の確認"
           message="このウィジェットを削除しますか？埋め込み先でも表示されなくなります。"
-          isDeleting={false}
+          isDeleting={deleting}
           onCancel={() => setDeletingId(null)}
           onConfirm={() => handleDelete(deletingId)}
         />
