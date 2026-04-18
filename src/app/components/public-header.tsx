@@ -5,8 +5,8 @@ export default function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-[20px]">
       <div className="flex items-center justify-between max-w-5xl mx-auto px-6 py-3">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold text-[var(--brand)] tracking-[-0.022em]">
-          <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-[var(--brand)] tracking-[-0.022em]">
+          <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-8 w-auto" />
           VoiceHub
         </Link>
         <div className="flex items-center gap-6">
