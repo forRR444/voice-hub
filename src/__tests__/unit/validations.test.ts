@@ -478,7 +478,7 @@ describe("getBaseUrl", () => {
     [
       "環境変数未設定の場合はlocalhostを返す",
       {},
-      "http://localhost:3000",
+      "http://localhost:3001",
     ],
   ])("%s", (_label, envVars, expected) => {
     Object.assign(process.env, envVars);

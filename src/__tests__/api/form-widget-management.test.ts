@@ -75,7 +75,7 @@ describe("フォーム作成", () => {
 
   it("フォームURLが正しく構成される", () => {
     const url = `${getBaseUrl()}/form/abc12345`;
-    expect(url).toBe("http://localhost:3000/form/abc12345");
+    expect(url).toBe("http://localhost:3001/form/abc12345");
   });
 });
 
@@ -115,7 +115,7 @@ describe("フォーム編集", () => {
 // =========================================================================
 describe("フォームURLコピー", () => {
   it.each([
-    ["localhost（デフォルト）", undefined, undefined, "http://localhost:3000/form/testslug"],
+    ["localhost（デフォルト）", undefined, undefined, "http://localhost:3001/form/testslug"],
     ["本番ドメイン", "https://voicehub.example.com", undefined, "https://voicehub.example.com/form/testslug"],
     ["VERCEL_URL", undefined, "my-app.vercel.app", "https://my-app.vercel.app/form/testslug"],
   ])("%s のURLを正しく生成する", (_label, appUrl, vercelUrl, expected) => {
