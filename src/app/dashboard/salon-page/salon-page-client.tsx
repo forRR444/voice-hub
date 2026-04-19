@@ -292,11 +292,25 @@ export default function SalonPageSettingsClient({
   return (
     <div className="max-w-3xl mx-auto">
       {/* ─── Header ─── */}
-      <div className="mb-8 sm:mb-10 animate-fade-in">
-        <PageTitle>サロンページ</PageTitle>
-        <p className="text-sm mt-1" style={{ color: slate, letterSpacing: "-0.011em" }}>
-          お客様の声付きのサロン紹介ページを作成できます
-        </p>
+      <div className="flex items-start justify-between mb-8 sm:mb-10 animate-fade-in">
+        <div>
+          <PageTitle>サロンページ</PageTitle>
+          <p className="text-sm mt-1" style={{ color: slate, letterSpacing: "-0.011em" }}>
+            お客様の声付きのサロン紹介ページを作成できます
+          </p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-opacity duration-150 hover:opacity-90 cursor-pointer disabled:opacity-50 shrink-0"
+          style={{ background: gradient }}
+        >
+          {saving ? "保存中..." : saved ? (
+            <><Check size={15} /> 保存済み</>
+          ) : (
+            "保存する"
+          )}
+        </button>
       </div>
 
       {/* ─── Step Indicator ─── */}
@@ -1115,25 +1129,13 @@ export default function SalonPageSettingsClient({
                 <p className="text-sm" style={{ color: "#E25950" }}>{error}</p>
               )}
 
-              <div className="flex justify-between pt-2">
+              <div className="pt-2">
                 <button
                   onClick={() => setStep(3)}
                   className="px-4 py-2 text-sm font-medium rounded-lg transition-opacity duration-150 hover:opacity-70 cursor-pointer"
                   style={{ color: slate, background: plate }}
                 >
                   戻る
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-opacity duration-150 hover:opacity-90 cursor-pointer disabled:opacity-50"
-                  style={{ background: gradient }}
-                >
-                  {saving ? "保存中..." : saved ? (
-                    <><Check size={15} /> 保存済み</>
-                  ) : (
-                    "保存する"
-                  )}
                 </button>
               </div>
             </div>
