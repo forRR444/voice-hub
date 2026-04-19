@@ -29,7 +29,7 @@ export default function AutoTestPage() {
             ※ ウィジェットのモードを「自動適応」に設定してからテストしてください
           </span>
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))", gap: "20px" }}>
           {panels.map((p) => (
             <div
               key={p.label}
