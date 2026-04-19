@@ -65,7 +65,7 @@ export type WidgetRow = {
 };
 
 export type WidgetTheme = {
-  mode: "light" | "dark";
+  mode: "light" | "dark" | "auto";
   brandColor: string;
   showRating: boolean;
   showAvatar: boolean;

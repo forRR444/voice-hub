@@ -122,8 +122,20 @@ export default function WidgetsClient({
     setCreating(false);
   }
 
+  function getWidgetThemeMode(id: string): string {
+    const w = widgets.find((widget) => widget.id === id);
+    if (!w) return "light";
+    const theme = w.theme;
+    if (theme && typeof theme === "object" && "mode" in theme) {
+      const m = (theme as { mode: string }).mode;
+      if (m === "light" || m === "dark" || m === "auto") return m;
+    }
+    return "light";
+  }
+
   function getScriptEmbed(id: string) {
-    return `<script src="${baseUrl}/widget/v1/embed.js" defer></script>\n<div data-testimonial-widget="${id}" data-theme="light"></div>`;
+    const themeMode = getWidgetThemeMode(id);
+    return `<script src="${baseUrl}/widget/v1/embed.js" defer></script>\n<div data-testimonial-widget="${id}" data-theme="${themeMode}"></div>`;
   }
 
   function getIframeEmbed(id: string) {
@@ -326,9 +338,11 @@ export default function WidgetsClient({
                     </span>
                     <span>
                       モード:{" "}
-                      {(w.theme as WidgetTheme).mode === "light"
-                        ? "ライト"
-                        : "ダーク"}
+                      {(w.theme as WidgetTheme).mode === "auto"
+                        ? "自動"
+                        : (w.theme as WidgetTheme).mode === "dark"
+                          ? "ダーク"
+                          : "ライト"}
                     </span>
                     <span>作成日: {formatDate(w.created_at)}</span>
                   </div>

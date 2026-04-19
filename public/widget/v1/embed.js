@@ -14,10 +14,10 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     .vh-root { position: relative; }
-    .vh-root.vh-dark { --vh-bg: #1e1e2e; --vh-card: #252536; --vh-border: #2e2e3e; --vh-text: #e0e0e0; --vh-heading: #f0f0f0; --vh-muted: #9ca3af; --vh-dimmed: #6b7280; }
-    .vh-root.vh-light { --vh-bg: transparent; --vh-card: #ffffff; --vh-border: #e5e7eb; --vh-text: #374151; --vh-heading: #111827; --vh-muted: #6b7280; --vh-dimmed: #9ca3af; }
+    .vh-root.vh-dark { --vh-bg: #1e1e2e; --vh-card: #252536; --vh-border: #2e2e3e; --vh-text: #e0e0e0; --vh-heading: #f0f0f0; --vh-muted: #9ca3af; --vh-dimmed: #6b7280; --vh-shadow: none; }
+    .vh-root.vh-light { --vh-bg: transparent; --vh-card: #ffffff; --vh-border: #e5e7eb; --vh-text: #374151; --vh-heading: #111827; --vh-muted: #6b7280; --vh-dimmed: #9ca3af; --vh-shadow: none; }
 
-    .vh-card { background: var(--vh-card); border: 1px solid var(--vh-border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .vh-card { background: var(--vh-card); border: 1px solid var(--vh-border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--vh-shadow); }
     .vh-stars { font-size: 14px; letter-spacing: 1px; }
     .vh-content { color: var(--vh-text); font-size: 13px; line-height: 1.6; flex: 1; }
     .vh-content.vh-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -141,6 +141,83 @@
 
   function sanitizeColor(c) {
     return /^#[0-9a-fA-F]{3,8}$/.test(c) ? c : "#635BFF";
+  }
+
+  function parseCssColor(str) {
+    if (!str) return null;
+    var m = str.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (!m) return null;
+    return { r: parseInt(m[1], 10), g: parseInt(m[2], 10), b: parseInt(m[3], 10) };
+  }
+
+  function relativeLuminance(r, g, b) {
+    var rs = r / 255;
+    var gs = g / 255;
+    var bs = b / 255;
+    rs = rs <= 0.03928 ? rs / 12.92 : Math.pow((rs + 0.055) / 1.055, 2.4);
+    gs = gs <= 0.03928 ? gs / 12.92 : Math.pow((gs + 0.055) / 1.055, 2.4);
+    bs = bs <= 0.03928 ? bs / 12.92 : Math.pow((bs + 0.055) / 1.055, 2.4);
+    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  }
+
+  function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
+  function detectHostColors(el) {
+    var result = { mode: "light", bgColor: null, textColor: null, headingColor: null, accentColor: null };
+    try {
+      // Walk up to find non-transparent background
+      var node = el.parentElement;
+      while (node && node !== document.documentElement) {
+        var bg = window.getComputedStyle(node).backgroundColor;
+        if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
+          var parsed = parseCssColor(bg);
+          if (parsed) {
+            result.bgColor = rgbToHex(parsed.r, parsed.g, parsed.b);
+            result.mode = relativeLuminance(parsed.r, parsed.g, parsed.b) >= 0.5 ? "light" : "dark";
+          }
+          break;
+        }
+        node = node.parentElement;
+      }
+
+      // Detect text color from nearest parent
+      var textNode = el.parentElement;
+      if (textNode) {
+        var textRgb = parseCssColor(window.getComputedStyle(textNode).color);
+        if (textRgb) {
+          result.textColor = rgbToHex(textRgb.r, textRgb.g, textRgb.b);
+        }
+      }
+
+      // Search for heading and link colors within the nearest section (bgNode),
+      // falling back to document-wide search
+      var scope = node || document;
+
+      // Detect heading color from nearest scope
+      var heading = scope.querySelector("h1, h2, h3");
+      if (!heading && scope !== document) heading = document.querySelector("h1, h2, h3");
+      if (heading) {
+        var headingRgb = parseCssColor(window.getComputedStyle(heading).color);
+        if (headingRgb) {
+          result.headingColor = rgbToHex(headingRgb.r, headingRgb.g, headingRgb.b);
+        }
+      }
+
+      // Detect accent color from nearest link
+      var link = scope.querySelector("a");
+      if (!link && scope !== document) link = document.querySelector("a");
+      if (link) {
+        var linkRgb = parseCssColor(window.getComputedStyle(link).color);
+        if (linkRgb) {
+          result.accentColor = rgbToHex(linkRgb.r, linkRgb.g, linkRgb.b);
+        }
+      }
+    } catch (e) {
+      // Silently fall back to defaults
+    }
+    return result;
   }
 
   function stars(rating, color) {
@@ -462,14 +539,73 @@
     var widget = data.widget;
     var testimonials = data.testimonials;
     var theme = widget.theme || {};
-    var mode = theme.mode === "dark" ? "vh-dark" : "vh-light";
+
+    // Auto mode: detect host page colors and apply overrides
+    var autoOverrides = null;
+    if (theme.mode === "auto") {
+      var detected = detectHostColors(container);
+      autoOverrides = detected;
+      // Override brandColor if accent was detected
+      if (detected.accentColor) {
+        theme = { brandColor: detected.accentColor };
+        for (var k in (widget.theme || {})) {
+          if (k !== "brandColor") theme[k] = widget.theme[k];
+        }
+      }
+    }
+
+    var mode = theme.mode === "dark" ? "vh-dark"
+             : (theme.mode === "auto" && autoOverrides && autoOverrides.mode === "dark") ? "vh-dark"
+             : "vh-light";
 
     var shadow = container.shadowRoot || container.attachShadow({ mode: "open" });
     var style = document.createElement("style");
     style.textContent = CSS;
 
+    // Collect auto-mode CSS variable overrides to apply via inline style
+    var autoVars = null;
+    if (autoOverrides) {
+      autoVars = {};
+      autoVars["--vh-bg"] = "transparent";
+      autoVars["--vh-border"] = "transparent";
+      if (autoOverrides.mode === "dark") {
+        autoVars["--vh-card"] = "rgba(255,255,255,0.05)";
+        autoVars["--vh-shadow"] = "0 1px 4px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.06)";
+      } else {
+        autoVars["--vh-card"] = "rgba(255,255,255,0.7)";
+        autoVars["--vh-shadow"] = "0 1px 4px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04)";
+      }
+      if (autoOverrides.textColor) {
+        autoVars["--vh-text"] = autoOverrides.textColor;
+        var parsed = parseCssColor(autoOverrides.textColor);
+        if (parsed) {
+          var mr, mg, mb;
+          if (autoOverrides.mode === "dark") {
+            mr = Math.round(parsed.r * 0.6);
+            mg = Math.round(parsed.g * 0.6);
+            mb = Math.round(parsed.b * 0.6);
+          } else {
+            mr = Math.round(parsed.r + (255 - parsed.r) * 0.4);
+            mg = Math.round(parsed.g + (255 - parsed.g) * 0.4);
+            mb = Math.round(parsed.b + (255 - parsed.b) * 0.4);
+          }
+          autoVars["--vh-muted"] = "rgb(" + mr + "," + mg + "," + mb + ")";
+        } else {
+          autoVars["--vh-muted"] = autoOverrides.textColor;
+        }
+      }
+      if (autoOverrides.headingColor) autoVars["--vh-heading"] = autoOverrides.headingColor;
+    }
+
     var root = document.createElement("div");
     root.className = "vh-root " + mode;
+
+    // Apply auto-mode overrides via inline style (highest specificity)
+    if (autoVars) {
+      for (var prop in autoVars) {
+        root.style.setProperty(prop, autoVars[prop]);
+      }
+    }
 
     if (!testimonials || testimonials.length === 0) {
       root.innerHTML = '<div style="text-align:center;padding:32px;color:var(--vh-dimmed);">\u8868\u793A\u3067\u304D\u308B\u30C6\u30B9\u30C6\u30A3\u30E2\u30CB\u30A2\u30EB\u304C\u3042\u308A\u307E\u305B\u3093</div>';
@@ -514,12 +650,34 @@
     };
   }
 
-  function showSkeleton(container, isDark) {
+  function showSkeleton(container, themeAttr) {
     var shadow = container.attachShadow({ mode: "open" });
     var style = document.createElement("style");
     style.textContent = CSS;
+    var skeletonMode = "vh-light";
+    if (themeAttr === "dark") {
+      skeletonMode = "vh-dark";
+    } else if (themeAttr === "auto") {
+      // Synchronously detect background luminance for skeleton
+      try {
+        var node = container.parentElement;
+        while (node && node !== document.documentElement) {
+          var bg = window.getComputedStyle(node).backgroundColor;
+          if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
+            var parsed = parseCssColor(bg);
+            if (parsed && relativeLuminance(parsed.r, parsed.g, parsed.b) < 0.5) {
+              skeletonMode = "vh-dark";
+            }
+            break;
+          }
+          node = node.parentElement;
+        }
+      } catch (e) {
+        // Fall back to light
+      }
+    }
     var root = document.createElement("div");
-    root.className = "vh-root " + (isDark ? "vh-dark" : "vh-light");
+    root.className = "vh-root " + skeletonMode;
     root.innerHTML =
       '<div class="vh-skeleton-row">' +
       '<div class="vh-skeleton"></div>' +
@@ -534,8 +692,8 @@
     var widgetId = el.getAttribute("data-testimonial-widget");
     if (!widgetId) return;
 
-    var darkHint = el.getAttribute("data-theme") === "dark";
-    showSkeleton(el, darkHint);
+    var themeAttr = el.getAttribute("data-theme") || "light";
+    showSkeleton(el, themeAttr);
 
     var observer = new IntersectionObserver(
       function (entries) {

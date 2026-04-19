@@ -264,7 +264,7 @@ describe("widgetCreateSchema", () => {
   it.each([
     ["maxItems下限未満0", { maxItems: 0 }],
     ["maxItems上限超51", { maxItems: 51 }],
-    ["不正なmode", { mode: "auto" }],
+    ["不正なmode", { mode: "invalid" }],
   ])("不正なtheme値を拒否する: %s", (_label, theme) => {
     expect(
       widgetCreateSchema.safeParse({ ...validInput, theme }).success

@@ -208,6 +208,7 @@ export default async function WidgetPreviewPage({
   const { data: testimonials } = await query;
   const items = (testimonials as Testimonial[]) ?? [];
 
+  // "auto" mode is resolved client-side in embed.js; server preview treats it as light
   const isDark = theme.mode === "dark";
   const brand = sanitizeColor(theme.brandColor || DEFAULT_BRAND_COLOR);
 

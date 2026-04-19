@@ -3,8 +3,9 @@
 import type { WidgetTheme } from "@/types/database";
 import { WIDGET_TYPES } from "@/lib/constants";
 import { WidgetPreviewIcon } from "./widget-preview-icon";
-import CustomSelect from "@/app/components/custom-select";
 import FormField, { inputClass } from "@/app/components/ui/form-field";
+import { Sun, Moon, Sparkles, Info } from "lucide-react";
+import { brand, slate, muted, plate } from "@/lib/theme-tokens";
 
 type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
 
@@ -72,22 +73,62 @@ export function WidgetThemeForm({
           テーマ設定
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
+          <div className="sm:col-span-2">
             <label className="block text-xs text-foreground/50 mb-1">
               モード
             </label>
-            <CustomSelect
-              value={form.theme.mode}
-              onChange={(v) => onChange({ ...form, theme: { ...form.theme, mode: v as "light" | "dark" } })}
-              options={[
-                { value: "light", label: "ライト" },
-                { value: "dark", label: "ダーク" },
-              ]}
-            />
+            <div className="grid grid-cols-3 gap-3">
+              {([
+                { value: "light", label: "ライト", icon: Sun },
+                { value: "dark", label: "ダーク", icon: Moon },
+                { value: "auto", label: "自動適応", icon: Sparkles, sub: "HPの色に馴染む" },
+              ] as const).map((opt) => {
+                const Icon = opt.icon;
+                const selected = form.theme.mode === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      const mode = opt.value;
+                      if (mode === "light" || mode === "dark" || mode === "auto") {
+                        onChange({ ...form, theme: { ...form.theme, mode } });
+                      }
+                    }}
+                    className="p-3 rounded-lg cursor-pointer transition-all duration-150 text-left"
+                    style={{
+                      border: selected ? "2px solid " + brand : "2px solid transparent",
+                      background: selected ? undefined : plate,
+                    }}
+                  >
+                    <Icon size={18} style={{ color: selected ? brand : muted }} />
+                    <div className="text-sm font-medium mt-1" style={{ color: selected ? brand : slate }}>
+                      {opt.label}
+                    </div>
+                    {"sub" in opt && opt.sub && (
+                      <div className="text-xs" style={{ color: muted }}>{opt.sub}</div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            {form.theme.mode === "auto" && (
+              <div className="flex items-start gap-2.5 p-3 rounded-lg mt-3" style={{ background: "rgba(99,91,255,0.06)" }}>
+                <Info size={16} className="shrink-0 mt-0.5" style={{ color: brand }} />
+                <div>
+                  <p className="text-[13px]" style={{ color: slate }}>
+                    埋め込み先ページの背景色・アクセントカラーを自動検出し、ウィジェットが自然に馴染みます。
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: muted }}>
+                    検出できない場合は、下のフォールバックカラーが使われます。
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-xs text-foreground/50 mb-1">
-              ブランドカラー
+              {form.theme.mode === "auto" ? "フォールバックカラー" : "ブランドカラー"}
             </label>
             <div className="flex items-center gap-2">
               <input

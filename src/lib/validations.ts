@@ -42,7 +42,7 @@ export const widgetCreateSchema = z.object({
   type: z.enum(["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"]),
   theme: z
     .object({
-      mode: z.enum(["light", "dark"]).default("light"),
+      mode: z.enum(["light", "dark", "auto"]).default("light"),
       brandColor: z.string().default(DEFAULT_BRAND_COLOR),
       showRating: z.boolean().default(true),
       showAvatar: z.boolean().default(false),
