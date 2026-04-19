@@ -443,45 +443,49 @@ export default function SalonPageClient({
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.5)",
+            background: "rgba(0,0,0,0.45)",
             zIndex: 50,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 20,
+            animation: "vh-fade-in 0.15s ease",
           }}
           onClick={() => setModalTestimonial(null)}
         >
+          <style>{`@keyframes vh-fade-in { from { opacity: 0; } to { opacity: 1; } }`}</style>
           <div
             style={{
               background: theme.cardBg,
-              borderRadius: 16,
+              borderRadius: 12,
               padding: 24,
               maxWidth: 480,
-              width: "100%",
+              width: "calc(100% - 32px)",
               maxHeight: "80vh",
               overflow: "auto",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.15)",
+              position: "relative",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <ReviewCard testimonial={modalTestimonial} theme={theme} accent={accent} />
             <button
               onClick={() => setModalTestimonial(null)}
               style={{
-                display: "block",
-                margin: "16px auto 0",
-                padding: "8px 24px",
-                fontSize: 13,
-                color: theme.textSecondary,
+                position: "absolute",
+                top: 8,
+                right: 12,
                 background: "none",
-                border: `1px solid ${theme.cardBorder}`,
-                borderRadius: 8,
+                border: "none",
+                fontSize: 22,
                 cursor: "pointer",
+                color: theme.textSecondary,
+                lineHeight: 1,
+                padding: 4,
               }}
+              aria-label="閉じる"
             >
-              閉じる
+              ×
             </button>
+            <ReviewCard testimonial={modalTestimonial} theme={theme} accent={accent} />
           </div>
         </div>
       )}

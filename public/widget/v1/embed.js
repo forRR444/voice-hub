@@ -21,26 +21,33 @@
     .vh-stars { font-size: 14px; letter-spacing: 1px; }
     .vh-content { color: var(--vh-text); font-size: 13px; line-height: 1.6; flex: 1; }
     .vh-content.vh-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .vh-content.vh-clamp.vh-expanded { -webkit-line-clamp: unset; display: block; }
     .vh-read-more { background: none; border: none; padding: 0; margin-top: 2px; font-size: 12px; cursor: pointer; }
     .vh-read-more:hover { text-decoration: underline; }
+    .vh-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 999999; animation: vh-fade-in 0.15s ease; }
+    .vh-light .vh-modal { background: #fff; }
+    .vh-dark .vh-modal { background: #1f2937; }
+    .vh-modal { border-radius: 12px; padding: 24px; max-width: 480px; width: calc(100% - 32px); max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .vh-modal-close { position: absolute; top: 8px; right: 12px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--vh-muted); line-height: 1; padding: 4px; }
+    .vh-modal-close:hover { opacity: 0.7; }
+    .vh-modal .vh-content { -webkit-line-clamp: unset; display: block; overflow: visible; }
+    @keyframes vh-fade-in { from { opacity: 0; } to { opacity: 1; } }
+    .vh-quote { position: absolute; top: -4px; left: -2px; font-size: 32px; line-height: 1; opacity: 0.15; font-family: Georgia, serif; user-select: none; pointer-events: none; }
     .vh-author { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
     .vh-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
     .vh-initials { width: 36px; height: 36px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
-    .vh-name { font-weight: 600; color: var(--vh-heading); font-size: 12px; }
+    .vh-name { font-weight: 400; color: var(--vh-muted); font-size: 11px; }
     .vh-title { color: var(--vh-muted); font-size: 11px; }
     .vh-date { color: var(--vh-dimmed); font-size: 11px; margin-top: 1px; }
 
     /* Grid */
-    .vh-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    @media (min-width: 1024px) { .vh-grid { grid-template-columns: repeat(3, 1fr); } }
+    .vh-grid { display: grid; grid-template-columns: repeat(auto-fill, 280px); gap: 16px; justify-content: center; }
 
     /* Carousel */
     .vh-carousel-wrap { position: relative; }
     .vh-carousel { overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .vh-carousel::-webkit-scrollbar { display: none; }
     .vh-carousel-track { display: flex; gap: 16px; padding: 4px; }
-    .vh-carousel-track .vh-card { min-width: min(200px, 44vw); max-width: 280px; flex-shrink: 0; }
+    .vh-carousel-track .vh-card { width: 280px; flex-shrink: 0; }
     .vh-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--vh-border); background: var(--vh-card); color: var(--vh-text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; line-height: 1; }
     .vh-nav:hover { opacity: 0.8; }
     .vh-prev { left: -18px; }
@@ -50,76 +57,64 @@
     .vh-dot.active { transform: scale(1.25); }
 
     /* List */
-    .vh-list { display: flex; flex-direction: column; gap: 12px; }
+    .vh-list { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin-inline: auto; }
 
     /* Single */
-    .vh-single { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; }
-    .vh-single .vh-stars { font-size: 24px; letter-spacing: 3px; }
-    .vh-single .vh-content { font-size: 18px; line-height: 1.7; max-width: 600px; margin: 16px 0; }
-    .vh-single .vh-avatar, .vh-single .vh-initials { width: 64px; height: 64px; font-size: 24px; }
-    .vh-single .vh-author { flex-direction: column; text-align: center; gap: 8px; }
-    .vh-single .vh-name { font-size: 16px; font-weight: 700; }
-    .vh-single .vh-title { font-size: 13px; }
-    .vh-single .vh-date { font-size: 12px; margin-top: 4px; }
+    .vh-single { display: flex; flex-direction: column; padding: 24px; max-width: 600px; }
+    .vh-single .vh-stars { font-size: 14px; letter-spacing: 1px; }
+    .vh-single .vh-content { font-size: 13px; line-height: 1.6; }
+    .vh-single .vh-author { justify-content: space-between; }
+    .vh-single .vh-name { font-size: 11px; font-weight: 400; }
+    .vh-single .vh-date { font-size: 11px; }
     .vh-single-fade { transition: opacity 0.5s ease; }
 
     /* Wall (masonry) */
-    .vh-wall { column-count: 2; column-gap: 16px; }
+    .vh-wall { column-width: 280px; column-gap: 16px; }
     .vh-wall .vh-card { break-inside: avoid; margin-bottom: 16px; }
-    @media (min-width: 1024px) { .vh-wall { column-count: 3; } }
 
     /* Marquee */
     .vh-marquee { overflow: hidden; position: relative; }
     .vh-marquee-track { display: flex; gap: 16px; width: max-content; animation: vh-marquee-scroll var(--vh-marquee-duration, 30s) linear infinite; }
     .vh-marquee:hover .vh-marquee-track { animation-play-state: paused; }
-    .vh-marquee-track .vh-card { min-width: min(200px, 44vw); max-width: 280px; flex-shrink: 0; }
+    .vh-marquee-track .vh-card { width: 280px; flex-shrink: 0; }
     @keyframes vh-marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
     /* Dual Marquee */
     .vh-dual-marquee { display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
     .vh-dual-marquee-row { overflow: hidden; position: relative; }
     .vh-dual-marquee-track { display: flex; gap: 16px; width: max-content; }
-    .vh-dual-marquee-track .vh-card { min-width: min(200px, 44vw); max-width: 280px; flex-shrink: 0; }
+    .vh-dual-marquee-track .vh-card { width: 280px; flex-shrink: 0; }
     .vh-dual-marquee-track--left { animation: vh-dual-marquee-left var(--vh-dual-marquee-duration, 30s) linear infinite; }
     .vh-dual-marquee-track--right { animation: vh-dual-marquee-right var(--vh-dual-marquee-duration, 30s) linear infinite; }
     .vh-dual-marquee:hover .vh-dual-marquee-track--left,
     .vh-dual-marquee:hover .vh-dual-marquee-track--right { animation-play-state: paused; }
     @keyframes vh-dual-marquee-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     @keyframes vh-dual-marquee-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-    @media (min-width: 640px) {
-      .vh-carousel-track .vh-card,
-      .vh-marquee-track .vh-card,
-      .vh-dual-marquee-track .vh-card { min-width: 280px; }
-    }
 
     /* Mobile compact */
     @media (max-width: 639px) {
       .vh-card { padding: 10px; gap: 5px; border-radius: 8px; }
       .vh-stars { font-size: 12px; letter-spacing: 0.5px; }
       .vh-content { font-size: 12px; line-height: 1.5; }
-      .vh-content.vh-clamp { -webkit-line-clamp: 2; }
+      .vh-content.vh-clamp { -webkit-line-clamp: 3; }
       .vh-name { font-size: 11px; }
       .vh-title { font-size: 10px; }
       .vh-date { font-size: 10px; }
       .vh-avatar { width: 28px; height: 28px; }
       .vh-initials { width: 28px; height: 28px; font-size: 12px; }
       .vh-author { gap: 6px; margin-top: 3px; }
-      .vh-grid { gap: 8px; }
+      .vh-grid { gap: 8px; grid-template-columns: repeat(auto-fill, min(200px, 44vw)); justify-content: center; }
+      .vh-carousel-track .vh-card, .vh-marquee-track .vh-card, .vh-dual-marquee-track .vh-card { width: min(200px, 44vw); }
       .vh-list { gap: 8px; }
-      .vh-wall { column-gap: 8px; }
+      .vh-wall { column-width: 140px; column-gap: 8px; }
       .vh-wall .vh-card { margin-bottom: 8px; }
       .vh-carousel-track { gap: 12px; }
       .vh-marquee-track { gap: 12px; }
       .vh-dual-marquee { gap: 12px; }
       .vh-dual-marquee-track { gap: 12px; }
-      .vh-single { padding: 20px; }
-      .vh-single .vh-stars { font-size: 18px; letter-spacing: 2px; }
-      .vh-single .vh-content { font-size: 15px; line-height: 1.6; }
-      .vh-single .vh-avatar, .vh-single .vh-initials { width: 48px; height: 48px; font-size: 18px; }
-      .vh-single .vh-name { font-size: 14px; }
-      .vh-single .vh-title { font-size: 12px; }
-      .vh-single .vh-date { font-size: 11px; }
-      .vh-single .vh-author { gap: 6px; }
+      .vh-single { padding: 16px; }
+      .vh-single .vh-stars { font-size: 12px; }
+      .vh-single .vh-content { font-size: 12px; line-height: 1.5; }
     }
 
     /* Badge widget */
@@ -228,7 +223,8 @@
 
   function formatDate(d) {
     try {
-      return new Date(d).toLocaleDateString("ja-JP");
+      var dt = new Date(d);
+      return dt.getFullYear() + "\u5E74" + (dt.getMonth() + 1) + "\u6708" + dt.getDate() + "\u65E5";
     } catch (e) {
       return "";
     }
@@ -242,27 +238,25 @@
       html += '<div class="vh-stars" style="color:' + brand + '">' + stars(t.rating, brand) + "</div>";
     }
 
-    html += '<div class="vh-content' + (clamp ? ' vh-clamp' : '') + '">' + escapeHtml(t.content) + "</div>";
+    // Quote mark + content
+    html += '<div style="position:relative">';
+    html += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
+    html += '<div class="vh-content' + (clamp ? ' vh-clamp' : '') + '" style="padding-left:14px">' + escapeHtml(t.content) + '</div>';
+    html += '</div>';
     if (clamp && t.content && t.content.length > 60) {
-      html += '<button class="vh-read-more" style="color:' + brand + '">\u3082\u3063\u3068\u898B\u308B</button>';
-    }
-    html += '<div class="vh-author">';
-
-    if (theme.showAvatar === true) {
-      if (t.avatar_url) {
-        html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name) + '">';
-      } else {
-        var letter = (t.name || "?").charAt(0).toUpperCase();
-        html += '<div class="vh-initials" style="background:' + brand + '">' + letter + "</div>";
-      }
+      html += '<button class="vh-read-more" style="color:' + brand + ';padding-left:14px"'
+        + ' data-full-content="' + escapeAttr(t.content) + '"'
+        + ' data-name="' + escapeAttr(t.name || "\u533F\u540D") + '"'
+        + ' data-date="' + (t.submitted_at ? escapeAttr(formatDate(t.submitted_at)) : "") + '"'
+        + ' data-rating="' + (t.rating || 0) + '"'
+        + '>\u7D9A\u304D\u3092\u8AAD\u3080</button>';
     }
 
-    html += "<div>";
-    html += '<div class="vh-name">' + escapeHtml(t.name) + "</div>";
-    var subtitle = [t.title, t.company].filter(Boolean).join(" / ");
-    if (subtitle) html += '<div class="vh-title">' + escapeHtml(subtitle) + "</div>";
-    if (theme.showDate) html += '<div class="vh-date">' + formatDate(t.submitted_at) + "</div>";
-    html += "</div></div></div>";
+    // Author: name (left) + date (right), no avatar
+    html += '<div class="vh-author" style="justify-content:space-between">';
+    html += '<span class="vh-name">' + escapeHtml(t.name || "\u533F\u540D") + "</span>";
+    if (theme.showDate) html += '<span class="vh-date">' + formatDate(t.submitted_at) + "</span>";
+    html += "</div></div>";
 
     return html;
   }
@@ -285,7 +279,7 @@
     var theme = data.widget.theme || {};
     var html = '<div class="vh-list">';
     for (var i = 0; i < data.testimonials.length; i++) {
-      html += buildCard(data.testimonials[i], theme);
+      html += buildCard(data.testimonials[i], theme, true);
     }
     html += "</div>" + poweredBadge(data.showBadge);
     root.innerHTML = html;
@@ -302,22 +296,22 @@
       if (theme.showRating !== false) {
         html += '<div class="vh-stars" style="color:' + brand + '">' + stars(t.rating, brand) + "</div>";
       }
-      html += '<div class="vh-content">' + escapeHtml(t.content) + "</div>";
-      html += '<div class="vh-author">';
-      if (theme.showAvatar === true) {
-        if (t.avatar_url) {
-          html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name) + '">';
-        } else {
-          var letter = (t.name || "?").charAt(0).toUpperCase();
-          html += '<div class="vh-initials" style="background:' + brand + '">' + letter + "</div>";
-        }
+      html += '<div style="position:relative">';
+      html += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
+      html += '<div class="vh-content vh-clamp" style="padding-left:14px">' + escapeHtml(t.content) + '</div>';
+      html += '</div>';
+      if (t.content && t.content.length > 60) {
+        html += '<button class="vh-read-more" style="color:' + brand + ';padding-left:14px"'
+          + ' data-full-content="' + escapeAttr(t.content) + '"'
+          + ' data-name="' + escapeAttr(t.name || "\u533F\u540D") + '"'
+          + ' data-date="' + (t.submitted_at ? escapeAttr(formatDate(t.submitted_at)) : "") + '"'
+          + ' data-rating="' + (t.rating || 0) + '"'
+          + '>\u7D9A\u304D\u3092\u8AAD\u3080</button>';
       }
-      html += "<div>";
-      html += '<div class="vh-name">' + escapeHtml(t.name) + "</div>";
-      var subtitle = [t.title, t.company].filter(Boolean).join(" / ");
-      if (subtitle) html += '<div class="vh-title">' + escapeHtml(subtitle) + "</div>";
-      if (theme.showDate) html += '<div class="vh-date">' + formatDate(t.submitted_at) + "</div>";
-      html += "</div></div></div>";
+      html += '<div class="vh-author" style="justify-content:space-between">';
+      html += '<span class="vh-name">' + escapeHtml(t.name || "\u533F\u540D") + "</span>";
+      if (theme.showDate) html += '<span class="vh-date">' + formatDate(t.submitted_at) + "</span>";
+      html += "</div></div>";
       return html;
     }
 
@@ -355,7 +349,7 @@
     var theme = data.widget.theme || {};
     var html = '<div class="vh-wall">';
     for (var i = 0; i < data.testimonials.length; i++) {
-      html += buildCard(data.testimonials[i], theme);
+      html += buildCard(data.testimonials[i], theme, true);
     }
     html += "</div>" + poweredBadge(data.showBadge);
     root.innerHTML = html;
@@ -390,7 +384,7 @@
     html += '<button class="vh-nav vh-prev" aria-label="\u524D\u3078">&#8249;</button>';
     html += '<div class="vh-carousel"><div class="vh-carousel-track">';
     for (var i = 0; i < testimonials.length; i++) {
-      html += buildCard(testimonials[i], theme);
+      html += buildCard(testimonials[i], theme, true);
     }
     html += "</div></div>";
     html += '<button class="vh-nav vh-next" aria-label="\u6B21\u3078">&#8250;</button>';
@@ -537,6 +531,9 @@
 
   function renderWidget(container, data) {
     var widget = data.widget;
+    // Allow data-type attribute to override widget type (for testing)
+    var typeOverride = container.getAttribute("data-type");
+    if (typeOverride) widget = Object.assign({}, widget, { type: typeOverride });
     var testimonials = data.testimonials;
     var theme = widget.theme || {};
 
@@ -631,14 +628,47 @@
       default: renderGrid(container, shadow, root, data); break;
     }
 
-    // Read more toggle
+    // Read more → open modal
     root.addEventListener("click", function(e) {
       var btn = e.target;
-      if (!btn || !btn.classList.contains("vh-read-more")) return;
-      var content = btn.previousElementSibling;
-      if (!content || !content.classList.contains("vh-clamp")) return;
-      var isExpanded = content.classList.toggle("vh-expanded");
-      btn.textContent = isExpanded ? "\u9589\u3058\u308B" : "\u3082\u3063\u3068\u898B\u308B";
+      if (!btn) return;
+
+      // Close modal on overlay or close-button click
+      if (btn.classList.contains("vh-modal-overlay") || btn.classList.contains("vh-modal-close")) {
+        var overlay = root.querySelector(".vh-modal-overlay");
+        if (overlay) overlay.remove();
+        return;
+      }
+
+      if (!btn.classList.contains("vh-read-more")) return;
+
+      var brand = sanitizeColor(theme.brandColor || "#635BFF");
+      var fullContent = btn.getAttribute("data-full-content") || "";
+      var name = btn.getAttribute("data-name") || "\u533F\u540D";
+      var date = btn.getAttribute("data-date") || "";
+      var rating = parseInt(btn.getAttribute("data-rating") || "0", 10);
+
+      var modalHtml = '<div class="vh-modal-overlay"><div class="vh-modal">';
+      modalHtml += '<button class="vh-modal-close">\u00D7</button>';
+      if (theme.showRating !== false) {
+        modalHtml += '<div class="vh-stars" style="color:' + brand + '">' + stars(rating, brand) + '</div>';
+      }
+      modalHtml += '<div style="position:relative;margin-top:8px">';
+      modalHtml += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
+      modalHtml += '<div class="vh-content" style="padding-left:14px">' + escapeHtml(fullContent) + '</div>';
+      modalHtml += '</div>';
+      modalHtml += '<div class="vh-author" style="justify-content:space-between;margin-top:12px">';
+      modalHtml += '<span class="vh-name">' + escapeHtml(name) + '</span>';
+      if (theme.showDate && date) modalHtml += '<span class="vh-date">' + date + '</span>';
+      modalHtml += '</div></div></div>';
+
+      // Remove existing modal if any
+      var existing = root.querySelector(".vh-modal-overlay");
+      if (existing) existing.remove();
+
+      var wrapper = document.createElement("div");
+      wrapper.innerHTML = modalHtml;
+      root.appendChild(wrapper.firstChild);
     });
   }
 
