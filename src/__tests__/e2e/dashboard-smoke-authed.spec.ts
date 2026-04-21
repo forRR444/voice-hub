@@ -39,11 +39,11 @@ test.describe("認証済み：ダッシュボードスモーク", () => {
 
   test("サイドバーのナビゲーションリンクが表示される", async ({ page }) => {
     await page.goto("/dashboard");
-    await expect(page.getByRole("link", { name: "ダッシュボード" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "フォーム" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "ウィジェット" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "サロンページ" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "SNS画像" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "設定" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "ダッシュボード", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "フォーム", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "ウィジェット", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "サロンページ", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "SNS画像", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "設定", exact: true })).toBeVisible();
   });
 });
