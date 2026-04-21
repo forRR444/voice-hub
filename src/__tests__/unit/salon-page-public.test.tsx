@@ -185,19 +185,19 @@ describe("レイアウト別表示", () => {
 describe("グリッドモーダル", () => {
   it("グリッドカードをクリックするとモーダルが開く", () => {
     renderPage({ review_layout: "grid" });
-    expect(screen.queryByText("閉じる")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("閉じる")).not.toBeInTheDocument();
 
     // 「続きを読む」があるカードをクリック
     fireEvent.click(screen.getAllByText("続きを読む")[0]);
-    expect(screen.getByText("閉じる")).toBeInTheDocument();
+    expect(screen.getByLabelText("閉じる")).toBeInTheDocument();
   });
 
   it("モーダルの「閉じる」をクリックするとモーダルが閉じる", () => {
     renderPage({ review_layout: "grid" });
     fireEvent.click(screen.getAllByText("続きを読む")[0]);
-    expect(screen.getByText("閉じる")).toBeInTheDocument();
+    expect(screen.getByLabelText("閉じる")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText("閉じる"));
-    expect(screen.queryByText("閉じる")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText("閉じる"));
+    expect(screen.queryByLabelText("閉じる")).not.toBeInTheDocument();
   });
 });
