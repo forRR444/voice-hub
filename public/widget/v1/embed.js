@@ -138,6 +138,22 @@
 
   function parseCssColor(str) {
     if (!str) return null;
+    var hex = str.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+    if (hex) {
+      var h = hex[1];
+      if (h.length === 3) {
+        return {
+          r: parseInt(h[0] + h[0], 16),
+          g: parseInt(h[1] + h[1], 16),
+          b: parseInt(h[2] + h[2], 16)
+        };
+      }
+      return {
+        r: parseInt(h.slice(0, 2), 16),
+        g: parseInt(h.slice(2, 4), 16),
+        b: parseInt(h.slice(4, 6), 16)
+      };
+    }
     var m = str.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
     if (!m) return null;
     return { r: parseInt(m[1], 10), g: parseInt(m[2], 10), b: parseInt(m[3], 10) };
