@@ -13,7 +13,7 @@
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .vh-root { position: relative; }
+    .vh-root { position: relative; --vh-card-w: 280px; }
     .vh-root.vh-dark { --vh-bg: #1e1e2e; --vh-card: #252536; --vh-border: #2e2e3e; --vh-text: #e0e0e0; --vh-heading: #f0f0f0; --vh-muted: #9ca3af; --vh-dimmed: #6b7280; --vh-shadow: none; }
     .vh-root.vh-light { --vh-bg: transparent; --vh-card: #ffffff; --vh-border: #e5e7eb; --vh-text: #374151; --vh-heading: #111827; --vh-muted: #6b7280; --vh-dimmed: #9ca3af; --vh-shadow: none; }
 
@@ -40,14 +40,14 @@
     .vh-date { color: var(--vh-dimmed); font-size: 11px; margin-top: 1px; }
 
     /* Grid */
-    .vh-grid { display: grid; grid-template-columns: repeat(auto-fill, 280px); gap: 16px; justify-content: center; }
+    .vh-grid { display: grid; grid-template-columns: repeat(auto-fill, var(--vh-card-w)); gap: 16px; justify-content: center; }
 
     /* Carousel */
     .vh-carousel-wrap { position: relative; }
     .vh-carousel { overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .vh-carousel::-webkit-scrollbar { display: none; }
     .vh-carousel-track { display: flex; gap: 16px; padding: 4px; }
-    .vh-carousel-track .vh-card { width: 280px; flex-shrink: 0; }
+    .vh-carousel-track .vh-card { width: var(--vh-card-w); flex-shrink: 0; }
     .vh-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--vh-border); background: var(--vh-card); color: var(--vh-text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; line-height: 1; }
     .vh-nav:hover { opacity: 0.8; }
     .vh-prev { left: -18px; }
@@ -58,29 +58,29 @@
 
     /* List */
     .vh-list { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-    .vh-list .vh-card { width: 280px; }
+    .vh-list .vh-card { width: var(--vh-card-w); }
 
     /* Single */
     .vh-single { display: flex; justify-content: center; }
-    .vh-single .vh-card { width: 280px; }
+    .vh-single .vh-card { width: var(--vh-card-w); }
     .vh-single-fade { transition: opacity 0.5s ease; }
 
     /* Wall (masonry) */
-    .vh-wall { column-width: 280px; column-gap: 16px; }
+    .vh-wall { column-width: var(--vh-card-w); column-gap: 16px; }
     .vh-wall .vh-card { break-inside: avoid; margin-bottom: 16px; }
 
     /* Marquee */
     .vh-marquee { overflow: hidden; position: relative; }
     .vh-marquee-track { display: flex; gap: 16px; width: max-content; animation: vh-marquee-scroll var(--vh-marquee-duration, 30s) linear infinite; }
     .vh-marquee:hover .vh-marquee-track { animation-play-state: paused; }
-    .vh-marquee-track .vh-card { width: 280px; flex-shrink: 0; }
+    .vh-marquee-track .vh-card { width: var(--vh-card-w); flex-shrink: 0; }
     @keyframes vh-marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
     /* Dual Marquee */
     .vh-dual-marquee { display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
     .vh-dual-marquee-row { overflow: hidden; position: relative; }
     .vh-dual-marquee-track { display: flex; gap: 16px; width: max-content; }
-    .vh-dual-marquee-track .vh-card { width: 280px; flex-shrink: 0; }
+    .vh-dual-marquee-track .vh-card { width: var(--vh-card-w); flex-shrink: 0; }
     .vh-dual-marquee-track--left { animation: vh-dual-marquee-left var(--vh-dual-marquee-duration, 30s) linear infinite; }
     .vh-dual-marquee-track--right { animation: vh-dual-marquee-right var(--vh-dual-marquee-duration, 30s) linear infinite; }
     .vh-dual-marquee:hover .vh-dual-marquee-track--left,
@@ -90,27 +90,27 @@
 
     /* Mobile compact */
     @media (max-width: 639px) {
-      .vh-card { padding: 10px; gap: 5px; border-radius: 8px; }
-      .vh-stars { font-size: 12px; letter-spacing: 0.5px; }
-      .vh-content { font-size: 12px; line-height: 1.5; }
+      .vh-card { padding: 8px; gap: 4px; border-radius: 8px; }
+      .vh-stars { font-size: 11px; letter-spacing: 0.5px; }
+      .vh-content { font-size: 11px; line-height: 1.4; }
       .vh-content.vh-clamp { -webkit-line-clamp: 3; }
-      .vh-name { font-size: 11px; }
+      .vh-name { font-size: 10px; }
       .vh-title { font-size: 10px; }
       .vh-date { font-size: 10px; }
+      .vh-read-more { font-size: 10px; }
+      .vh-quote { font-size: 24px !important; }
       .vh-avatar { width: 28px; height: 28px; }
       .vh-initials { width: 28px; height: 28px; font-size: 12px; }
       .vh-author { gap: 6px; margin-top: 3px; }
-      .vh-grid { gap: 8px; grid-template-columns: repeat(auto-fill, min(230px, 60vw)); justify-content: center; }
-      .vh-carousel-track .vh-card, .vh-marquee-track .vh-card, .vh-dual-marquee-track .vh-card { width: min(230px, 60vw); }
+      .vh-root { --vh-card-w: min(230px, 60vw); }
+      .vh-grid { gap: 8px; grid-template-columns: repeat(2, 1fr); }
       .vh-list { gap: 8px; }
-      .vh-list .vh-card { width: min(230px, 60vw); }
       .vh-wall { column-width: 140px; column-gap: 8px; }
       .vh-wall .vh-card { margin-bottom: 8px; }
       .vh-carousel-track { gap: 12px; }
       .vh-marquee-track { gap: 12px; }
       .vh-dual-marquee { gap: 12px; }
       .vh-dual-marquee-track { gap: 12px; }
-      .vh-single .vh-card { width: min(230px, 60vw); }
     }
 
     /* Badge widget */
@@ -239,7 +239,7 @@
     html += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
     html += '<div class="vh-content' + (clamp ? ' vh-clamp' : '') + '" style="padding-left:14px">' + escapeHtml(t.content) + '</div>';
     html += '</div>';
-    if (clamp && t.content && t.content.length > 60) {
+    if (clamp && t.content) {
       html += '<button class="vh-read-more" style="color:' + brand + ';padding-left:14px"'
         + ' data-full-content="' + escapeAttr(t.content) + '"'
         + ' data-name="' + escapeAttr(t.name || "\u533F\u540D") + '"'
@@ -604,47 +604,70 @@
       default: renderGrid(container, shadow, root, data); break;
     }
 
-    // Read more → open modal
+    // Hide read-more buttons where content is not actually clipped
+    var clampEls = shadow.querySelectorAll(".vh-clamp");
+    for (var ci = 0; ci < clampEls.length; ci++) {
+      var el = clampEls[ci];
+      if (el.scrollHeight <= el.clientHeight) {
+        var nextBtn = el.parentElement && el.parentElement.nextElementSibling;
+        if (nextBtn && nextBtn.classList.contains("vh-read-more")) {
+          nextBtn.style.display = "none";
+        }
+      }
+    }
+
+    // Read more → open modal (appended to document.body for mobile compatibility)
     root.addEventListener("click", function(e) {
       var btn = e.target;
-      if (!btn) return;
-
-      // Close modal on overlay or close-button click
-      if (btn.classList.contains("vh-modal-overlay") || btn.classList.contains("vh-modal-close")) {
-        var overlay = root.querySelector(".vh-modal-overlay");
-        if (overlay) overlay.remove();
-        return;
-      }
-
-      if (!btn.classList.contains("vh-read-more")) return;
+      if (!btn || !btn.classList.contains("vh-read-more")) return;
 
       var brand = sanitizeColor(theme.brandColor || "#635BFF");
       var fullContent = btn.getAttribute("data-full-content") || "";
-      var name = btn.getAttribute("data-name") || "\u533F\u540D";
+      var rName = btn.getAttribute("data-name") || "\u533F\u540D";
       var date = btn.getAttribute("data-date") || "";
       var rating = parseInt(btn.getAttribute("data-rating") || "0", 10);
+      var isDark = root.classList.contains("vh-dark");
+      var modalBg = isDark ? "#1f2937" : "#fff";
+      var textColor = isDark ? "#e0e0e0" : "#374151";
+      var mutedColor = isDark ? "#9ca3af" : "#6b7280";
 
-      var modalHtml = '<div class="vh-modal-overlay"><div class="vh-modal">';
-      modalHtml += '<button class="vh-modal-close">\u00D7</button>';
+      var overlay = document.createElement("div");
+      overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999999;animation:vh-fade-in 0.15s ease;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif";
+
+      var modal = document.createElement("div");
+      modal.style.cssText = "background:" + modalBg + ";border-radius:12px;padding:24px;max-width:480px;width:calc(100% - 32px);max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.18)";
+
+      var closeBtn = document.createElement("button");
+      closeBtn.textContent = "\u00D7";
+      closeBtn.style.cssText = "position:absolute;top:8px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:" + mutedColor + ";line-height:1;padding:4px";
+
+      var html = "";
       if (theme.showRating !== false) {
-        modalHtml += '<div class="vh-stars" style="color:' + brand + '">' + stars(rating, brand) + '</div>';
+        html += '<div style="font-size:14px;letter-spacing:1px;color:' + brand + '">' + stars(rating, brand) + '</div>';
       }
-      modalHtml += '<div style="position:relative;margin-top:8px">';
-      modalHtml += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
-      modalHtml += '<div class="vh-content" style="padding-left:14px">' + escapeHtml(fullContent) + '</div>';
-      modalHtml += '</div>';
-      modalHtml += '<div class="vh-author" style="justify-content:space-between;margin-top:12px">';
-      modalHtml += '<span class="vh-name">' + escapeHtml(name) + '</span>';
-      if (theme.showDate && date) modalHtml += '<span class="vh-date">' + date + '</span>';
-      modalHtml += '</div></div></div>';
+      html += '<div style="position:relative;margin-top:8px">';
+      html += '<span style="position:absolute;top:-4px;left:-2px;font-size:32px;line-height:1;opacity:0.15;font-family:Georgia,serif;color:' + brand + '">\u201C</span>';
+      html += '<div style="padding-left:14px;font-size:13px;line-height:1.6;color:' + textColor + ';white-space:pre-wrap;word-break:break-word">' + escapeHtml(fullContent) + '</div>';
+      html += '</div>';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">';
+      html += '<span style="font-size:11px;color:' + mutedColor + '">' + escapeHtml(rName) + '</span>';
+      if (theme.showDate && date) html += '<span style="font-size:11px;color:' + mutedColor + ';opacity:0.7">' + date + '</span>';
+      html += '</div>';
 
-      // Remove existing modal if any
-      var existing = root.querySelector(".vh-modal-overlay");
+      modal.innerHTML = html;
+      modal.insertBefore(closeBtn, modal.firstChild);
+      overlay.appendChild(modal);
+
+      function closeModal() { if (overlay.parentNode) overlay.remove(); }
+      overlay.addEventListener("click", function(ev) { if (ev.target === overlay) closeModal(); });
+      closeBtn.addEventListener("click", closeModal);
+
+      // Remove existing modal
+      var existing = document.querySelector("[data-vh-modal]");
       if (existing) existing.remove();
 
-      var wrapper = document.createElement("div");
-      wrapper.innerHTML = modalHtml;
-      root.appendChild(wrapper.firstChild);
+      overlay.setAttribute("data-vh-modal", "1");
+      document.body.appendChild(overlay);
     });
   }
 
