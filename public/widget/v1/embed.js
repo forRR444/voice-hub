@@ -13,13 +13,15 @@
     :host { display: block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .vh-root { position: relative; --vh-card-w: 280px; }
+    .vh-root { position: relative; width: 100%; box-sizing: border-box; --vh-card-w: 280px; }
     .vh-root.vh-dark { --vh-bg: #1e1e2e; --vh-card: #252536; --vh-border: #2e2e3e; --vh-text: #e0e0e0; --vh-heading: #f0f0f0; --vh-muted: #9ca3af; --vh-dimmed: #6b7280; --vh-shadow: none; }
     .vh-root.vh-light { --vh-bg: transparent; --vh-card: #ffffff; --vh-border: #e5e7eb; --vh-text: #374151; --vh-heading: #111827; --vh-muted: #6b7280; --vh-dimmed: #9ca3af; --vh-shadow: none; }
 
-    .vh-card { background: var(--vh-card); border: 1px solid var(--vh-border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--vh-shadow); }
+    .vh-card { background: var(--vh-card); border: 1px solid var(--vh-border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--vh-shadow); min-height: 180px; }
+    .vh-wall .vh-card { min-height: auto; }
     .vh-stars { font-size: 14px; letter-spacing: 1px; }
-    .vh-content { color: var(--vh-text); font-size: 13px; line-height: 1.6; flex: 1; }
+    .vh-content { color: var(--vh-text); font-size: 13px; line-height: 1.6; }
+    .vh-content-wrap { flex: 1; position: relative; }
     .vh-content.vh-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .vh-read-more { background: none; border: none; padding: 0; margin-top: 2px; font-size: 12px; cursor: pointer; }
     .vh-read-more:hover { text-decoration: underline; }
@@ -35,12 +37,12 @@
     .vh-author { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
     .vh-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
     .vh-initials { width: 36px; height: 36px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
-    .vh-name { font-weight: 400; color: var(--vh-muted); font-size: 11px; }
+    .vh-name { font-weight: 400; color: var(--vh-dimmed); font-size: 11px; }
     .vh-title { color: var(--vh-muted); font-size: 11px; }
     .vh-date { color: var(--vh-dimmed); font-size: 11px; margin-top: 1px; }
 
     /* Grid */
-    .vh-grid { display: grid; grid-template-columns: repeat(auto-fill, var(--vh-card-w)); gap: 16px; justify-content: center; }
+    .vh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--vh-card-w), 1fr)); gap: 16px; }
 
     /* Carousel */
     .vh-carousel-wrap { position: relative; }
@@ -90,7 +92,7 @@
 
     /* Mobile compact */
     @media (max-width: 639px) {
-      .vh-card { padding: 8px; gap: 4px; border-radius: 8px; }
+      .vh-card { padding: 8px; gap: 4px; border-radius: 8px; min-height: 130px; }
       .vh-stars { font-size: 11px; letter-spacing: 0.5px; }
       .vh-content { font-size: 11px; line-height: 1.4; }
       .vh-content.vh-clamp { -webkit-line-clamp: 3; }
@@ -235,7 +237,7 @@
     }
 
     // Quote mark + content
-    html += '<div style="position:relative">';
+    html += '<div class="vh-content-wrap">';
     html += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
     html += '<div class="vh-content' + (clamp ? ' vh-clamp' : '') + '" style="padding-left:14px">' + escapeHtml(t.content) + '</div>';
     html += '</div>';
@@ -629,7 +631,7 @@
       var isDark = root.classList.contains("vh-dark");
       var modalBg = isDark ? "#1f2937" : "#fff";
       var textColor = isDark ? "#e0e0e0" : "#374151";
-      var mutedColor = isDark ? "#9ca3af" : "#6b7280";
+      var mutedColor = isDark ? "#6b7280" : "#9ca3af";
 
       var overlay = document.createElement("div");
       overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999999;animation:vh-fade-in 0.15s ease;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif";
