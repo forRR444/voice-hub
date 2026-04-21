@@ -606,15 +606,23 @@
       default: renderGrid(container, shadow, root, data); break;
     }
 
-    // Hide read-more buttons where content is not actually clipped
+    // Check each clamped element: if fits in 4 lines, show full text; otherwise clamp to 3
     var clampEls = shadow.querySelectorAll(".vh-clamp");
     for (var ci = 0; ci < clampEls.length; ci++) {
       var el = clampEls[ci];
+      // Temporarily expand to 4 lines to check if content fits
+      el.style.webkitLineClamp = "4";
+      var nextBtn = el.parentElement && el.parentElement.nextElementSibling;
       if (el.scrollHeight <= el.clientHeight) {
-        var nextBtn = el.parentElement && el.parentElement.nextElementSibling;
+        // Fits in 4 lines: remove clamp, show full text, hide "続きを読む"
+        el.classList.remove("vh-clamp");
+        el.style.webkitLineClamp = "";
         if (nextBtn && nextBtn.classList.contains("vh-read-more")) {
           nextBtn.style.display = "none";
         }
+      } else {
+        // Exceeds 4 lines: revert to 3-line clamp, show "続きを読む"
+        el.style.webkitLineClamp = "";
       }
     }
 
