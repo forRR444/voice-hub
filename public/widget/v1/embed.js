@@ -671,13 +671,14 @@
       var mutedColor = isDark ? "#6b7280" : "#9ca3af";
 
       var overlay = document.createElement("div");
-      overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999999;animation:vh-fade-in 0.15s ease;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif";
+      overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999999;opacity:0;transition:opacity 0.15s ease;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif";
 
       var modal = document.createElement("div");
       modal.style.cssText = "background:" + modalBg + ";border-radius:12px;padding:24px;max-width:480px;width:calc(100% - 32px);max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.18)";
 
       var closeBtn = document.createElement("button");
       closeBtn.textContent = "\u00D7";
+      closeBtn.setAttribute("aria-label", "\u9589\u3058\u308B");
       closeBtn.style.cssText = "position:absolute;top:8px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:" + mutedColor + ";line-height:1;padding:4px";
 
       var html = "";
@@ -707,16 +708,19 @@
       modal.insertBefore(closeBtn, modal.firstChild);
       overlay.appendChild(modal);
 
-      function closeModal() { if (overlay.parentNode) overlay.remove(); }
+      function closeModal() {
+        overlay.style.opacity = "0";
+        setTimeout(function() { if (overlay.parentNode) overlay.remove(); }, 150);
+      }
       overlay.addEventListener("click", function(ev) { if (ev.target === overlay) closeModal(); });
       closeBtn.addEventListener("click", closeModal);
 
-      // Remove existing modal
       var existing = document.querySelector("[data-vh-modal]");
       if (existing) existing.remove();
 
       overlay.setAttribute("data-vh-modal", "1");
       document.body.appendChild(overlay);
+      requestAnimationFrame(function() { overlay.style.opacity = "1"; });
     });
   }
 
