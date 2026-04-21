@@ -57,15 +57,12 @@
     .vh-dot.active { transform: scale(1.25); }
 
     /* List */
-    .vh-list { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin-inline: auto; }
+    .vh-list { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .vh-list .vh-card { width: 280px; }
 
     /* Single */
-    .vh-single { display: flex; flex-direction: column; padding: 24px; max-width: 600px; }
-    .vh-single .vh-stars { font-size: 14px; letter-spacing: 1px; }
-    .vh-single .vh-content { font-size: 13px; line-height: 1.6; }
-    .vh-single .vh-author { justify-content: space-between; }
-    .vh-single .vh-name { font-size: 11px; font-weight: 400; }
-    .vh-single .vh-date { font-size: 11px; }
+    .vh-single { display: flex; justify-content: center; }
+    .vh-single .vh-card { width: 280px; }
     .vh-single-fade { transition: opacity 0.5s ease; }
 
     /* Wall (masonry) */
@@ -103,18 +100,17 @@
       .vh-avatar { width: 28px; height: 28px; }
       .vh-initials { width: 28px; height: 28px; font-size: 12px; }
       .vh-author { gap: 6px; margin-top: 3px; }
-      .vh-grid { gap: 8px; grid-template-columns: repeat(auto-fill, min(200px, 44vw)); justify-content: center; }
-      .vh-carousel-track .vh-card, .vh-marquee-track .vh-card, .vh-dual-marquee-track .vh-card { width: min(200px, 44vw); }
+      .vh-grid { gap: 8px; grid-template-columns: repeat(auto-fill, min(230px, 60vw)); justify-content: center; }
+      .vh-carousel-track .vh-card, .vh-marquee-track .vh-card, .vh-dual-marquee-track .vh-card { width: min(230px, 60vw); }
       .vh-list { gap: 8px; }
+      .vh-list .vh-card { width: min(230px, 60vw); }
       .vh-wall { column-width: 140px; column-gap: 8px; }
       .vh-wall .vh-card { margin-bottom: 8px; }
       .vh-carousel-track { gap: 12px; }
       .vh-marquee-track { gap: 12px; }
       .vh-dual-marquee { gap: 12px; }
       .vh-dual-marquee-track { gap: 12px; }
-      .vh-single { padding: 16px; }
-      .vh-single .vh-stars { font-size: 12px; }
-      .vh-single .vh-content { font-size: 12px; line-height: 1.5; }
+      .vh-single .vh-card { width: min(230px, 60vw); }
     }
 
     /* Badge widget */
@@ -292,27 +288,7 @@
     var t = testimonials[0];
 
     function singleHtml(t) {
-      var html = '<div class="vh-single vh-single-fade">';
-      if (theme.showRating !== false) {
-        html += '<div class="vh-stars" style="color:' + brand + '">' + stars(t.rating, brand) + "</div>";
-      }
-      html += '<div style="position:relative">';
-      html += '<span class="vh-quote" style="color:' + brand + '">\u201C</span>';
-      html += '<div class="vh-content vh-clamp" style="padding-left:14px">' + escapeHtml(t.content) + '</div>';
-      html += '</div>';
-      if (t.content && t.content.length > 60) {
-        html += '<button class="vh-read-more" style="color:' + brand + ';padding-left:14px"'
-          + ' data-full-content="' + escapeAttr(t.content) + '"'
-          + ' data-name="' + escapeAttr(t.name || "\u533F\u540D") + '"'
-          + ' data-date="' + (t.submitted_at ? escapeAttr(formatDate(t.submitted_at)) : "") + '"'
-          + ' data-rating="' + (t.rating || 0) + '"'
-          + '>\u7D9A\u304D\u3092\u8AAD\u3080</button>';
-      }
-      html += '<div class="vh-author" style="justify-content:space-between">';
-      html += '<span class="vh-name">' + escapeHtml(t.name || "\u533F\u540D") + "</span>";
-      if (theme.showDate) html += '<span class="vh-date">' + formatDate(t.submitted_at) + "</span>";
-      html += "</div></div>";
-      return html;
+      return '<div class="vh-single vh-single-fade">' + buildCard(t, theme, true) + '</div>';
     }
 
     root.innerHTML = singleHtml(t) + poweredBadge(data.showBadge);
@@ -349,7 +325,7 @@
     var theme = data.widget.theme || {};
     var html = '<div class="vh-wall">';
     for (var i = 0; i < data.testimonials.length; i++) {
-      html += buildCard(data.testimonials[i], theme, true);
+      html += buildCard(data.testimonials[i], theme, false);
     }
     html += "</div>" + poweredBadge(data.showBadge);
     root.innerHTML = html;
