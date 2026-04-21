@@ -236,8 +236,10 @@
   }
 
   function formatDate(d) {
+    if (!d) return "";
     try {
       var dt = new Date(d);
+      if (isNaN(dt.getTime())) return "";
       return dt.getFullYear() + "\u5E74" + (dt.getMonth() + 1) + "\u6708" + dt.getDate() + "\u65E5";
     } catch (e) {
       return "";
@@ -733,7 +735,8 @@
   }
 
   function showSkeleton(container, themeAttr) {
-    var shadow = container.attachShadow({ mode: "open" });
+    var shadow = container.shadowRoot || container.attachShadow({ mode: "open" });
+    shadow.innerHTML = "";
     var style = document.createElement("style");
     style.textContent = CSS;
     var skeletonMode = "vh-light";
