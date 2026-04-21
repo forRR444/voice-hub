@@ -263,12 +263,23 @@
         + ' data-name="' + escapeAttr(t.name || "\u533F\u540D") + '"'
         + ' data-date="' + (t.submitted_at ? escapeAttr(formatDate(t.submitted_at)) : "") + '"'
         + ' data-rating="' + (t.rating || 0) + '"'
+        + ' data-avatar="' + escapeAttr(t.avatar_url || "") + '"'
+        + ' data-show-avatar="' + (theme.showAvatar === true ? "1" : "0") + '"'
         + '>\u7D9A\u304D\u3092\u8AAD\u3080</button>';
     }
 
-    // Author: name (left) + date (right), no avatar
     html += '<div class="vh-author" style="justify-content:space-between">';
+    html += '<div style="display:flex;align-items:center;gap:8px;min-width:0">';
+    if (theme.showAvatar === true) {
+      if (t.avatar_url) {
+        html += '<img class="vh-avatar" src="' + escapeAttr(t.avatar_url) + '" alt="' + escapeAttr(t.name || "") + '">';
+      } else {
+        var letter = (t.name || "?").charAt(0).toUpperCase();
+        html += '<div class="vh-initials" style="background:' + brand + '">' + letter + "</div>";
+      }
+    }
     html += '<span class="vh-name">' + escapeHtml(t.name || "\u533F\u540D") + "</span>";
+    html += '</div>';
     if (theme.showDate) html += '<span class="vh-date">' + formatDate(t.submitted_at) + "</span>";
     html += "</div></div>";
 
@@ -651,6 +662,8 @@
       var fullContent = btn.getAttribute("data-full-content") || "";
       var rName = btn.getAttribute("data-name") || "\u533F\u540D";
       var date = btn.getAttribute("data-date") || "";
+      var modalAvatar = btn.getAttribute("data-avatar") || "";
+      var modalShowAvatar = btn.getAttribute("data-show-avatar") === "1";
       var rating = parseInt(btn.getAttribute("data-rating") || "0", 10);
       var isDark = root.classList.contains("vh-dark");
       var modalBg = isDark ? "#1f2937" : "#fff";
@@ -676,7 +689,17 @@
       html += '<div style="padding-left:14px;font-size:13px;line-height:1.6;color:' + textColor + ';white-space:pre-wrap;word-break:break-word">' + escapeHtml(fullContent) + '</div>';
       html += '</div>';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">';
+      html += '<div style="display:flex;align-items:center;gap:8px;min-width:0">';
+      if (modalShowAvatar) {
+        if (modalAvatar) {
+          html += '<img src="' + escapeAttr(modalAvatar) + '" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0">';
+        } else {
+          var modalLetter = (rName || "?").charAt(0).toUpperCase();
+          html += '<div style="width:28px;height:28px;border-radius:50%;background:' + brand + ';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">' + modalLetter + '</div>';
+        }
+      }
       html += '<span style="font-size:11px;color:' + mutedColor + '">' + escapeHtml(rName) + '</span>';
+      html += '</div>';
       if (theme.showDate && date) html += '<span style="font-size:11px;color:' + mutedColor + ';opacity:0.7">' + date + '</span>';
       html += '</div>';
 
