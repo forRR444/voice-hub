@@ -78,7 +78,7 @@ export const formCreateSchema = z.object({
 
 export const formUpdateSchema = z.object({
   title: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional(),
+  description: z.string().max(1000).optional().nullable(),
   brand_color: z.string().optional(),
   logo_url: z.string().url().optional().nullable(),
   thank_you_message: z.string().max(500).optional(),
