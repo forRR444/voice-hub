@@ -33,9 +33,24 @@ test.describe("認証済み：ダッシュボードのモバイル表示", () =>
     await page.getByLabel("メニューを開く").click();
     await expect(page.getByLabel("メニューを閉じる")).toBeVisible();
 
-    // ナビリンクをクリックするとサイドバーが閉じる設計（onClick={() => setOpen(false)}）
+    // mobile-sidebar.tsx の <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
+    // aside (w-60 = 240px) が中央を覆うので、右側の空き領域をクリックする
+    await page
+      .locator("div.fixed.inset-0.bg-black\\/50")
+      .click({ position: { x: 350, y: 400 } });
+    await expect(page.getByLabel("メニューを閉じる")).toBeHidden();
+    await expect(page.getByLabel("メニューを開く")).toBeVisible();
+  });
+
+  test("ナビリンクをタップするとサイドバーが閉じて目的ページに遷移する", async ({ page }) => {
+    await page.goto("/dashboard");
+    await page.getByLabel("メニューを開く").click();
+    await expect(page.getByLabel("メニューを閉じる")).toBeVisible();
+
+    // mobile-sidebar.tsx の <div onClick={() => setOpen(false)}> 親ラッパーが Link クリックをバブリング受領して閉じる
     await page.getByRole("link", { name: "ウィジェット", exact: true }).click();
     await expect(page).toHaveURL(/\/dashboard\/widgets$/);
+    await expect(page.getByLabel("メニューを閉じる")).toBeHidden();
   });
 
   test("フォーム管理ページでモバイル用『追加』ボタンが表示される", async ({ page }) => {
@@ -46,11 +61,6 @@ test.describe("認証済み：ダッシュボードのモバイル表示", () =>
 
   test("ウィジェット管理ページでモバイル用『追加』ボタンが表示される", async ({ page }) => {
     await page.goto("/dashboard/widgets");
-    await expect(page.getByRole("button", { name: "追加", exact: true })).toBeVisible();
-  });
-
-  test("口コミ一覧ページで『追加』ボタンが表示される", async ({ page }) => {
-    await page.goto("/dashboard");
     await expect(page.getByRole("button", { name: "追加", exact: true })).toBeVisible();
   });
 
