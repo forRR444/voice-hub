@@ -329,3 +329,534 @@ describe("保存処理", () => {
     });
   });
 });
+
+// ─── ヘルパー ───
+function fireFileChange(input: HTMLInputElement, file: File) {
+  Object.defineProperty(input, "files", { value: [file], configurable: true });
+  fireEvent.change(input);
+}
+
+function getFileInputs(container: HTMLElement): HTMLInputElement[] {
+  return Array.from(container.querySelectorAll<HTMLInputElement>('input[type="file"]'));
+}
+
+// ─── ロゴ・カバー画像のファイル選択 ───
+describe("画像ファイル選択ハンドラ", () => {
+  beforeEach(() => {
+    const createObjectURL = vi.fn(() => "blob:mock-url");
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal("URL", Object.assign(globalThis.URL ?? {}, { createObjectURL, revokeObjectURL }));
+  });
+
+  it("画像ファイルを選択するとロゴプレビューが表示される", () => {
+    const { container } = renderSettings();
+    const [logoInput] = getFileInputs(container);
+    const file = new File(["x"], "logo.png", { type: "image/png" });
+    fireFileChange(logoInput, file);
+
+    const img = container.querySelector('img[alt="ロゴ"]');
+    expect(img).toBeInstanceOf(HTMLImageElement);
+    if (img instanceof HTMLImageElement) {
+      expect(img.src).toContain("blob:mock-url");
+    }
+  });
+
+  it("非画像ファイルを選択してもロゴプレビューは変わらない", () => {
+    const { container } = renderSettings();
+    const [logoInput] = getFileInputs(container);
+    const file = new File(["x"], "note.txt", { type: "text/plain" });
+    fireFileChange(logoInput, file);
+
+    // プレビュー用のimgは出ず、イニシャル表示のまま
+    expect(container.querySelector('img[alt="ロゴ"]')).toBeNull();
+  });
+
+  it("カバー画像を選択するとプレビューが表示される", () => {
+    const { container } = renderSettings();
+    const inputs = getFileInputs(container);
+    const coverInput = inputs[1]; // 2つ目はカバー
+    const file = new File(["x"], "cover.jpg", { type: "image/jpeg" });
+    fireFileChange(coverInput, file);
+
+    const img = container.querySelector('img[alt="カバー"]');
+    expect(img).toBeInstanceOf(HTMLImageElement);
+  });
+
+  it("カバー画像の位置スライダーを動かすとobjectPositionが更新される", () => {
+    const { container } = renderSettings();
+    const inputs = getFileInputs(container);
+    const coverInput = inputs[1];
+    fireFileChange(coverInput, new File(["x"], "cover.jpg", { type: "image/jpeg" }));
+
+    const slider = container.querySelector<HTMLInputElement>('input[type="range"]');
+    expect(slider).not.toBeNull();
+    if (!slider) return;
+    fireEvent.change(slider, { target: { value: "25" } });
+
+    const img = container.querySelector('img[alt="カバー"]');
+    expect(img).toBeInstanceOf(HTMLImageElement);
+    if (img instanceof HTMLImageElement) {
+      expect(img.style.objectPosition).toContain("25%");
+    }
+  });
+
+  it("カバー画像の「削除」ボタンでプレビューが消える", () => {
+    const { container } = renderSettings();
+    const inputs = getFileInputs(container);
+    const coverInput = inputs[1];
+    fireFileChange(coverInput, new File(["x"], "cover.jpg", { type: "image/jpeg" }));
+
+    expect(container.querySelector('img[alt="カバー"]')).not.toBeNull();
+    fireEvent.click(screen.getByText("削除"));
+    expect(container.querySelector('img[alt="カバー"]')).toBeNull();
+  });
+});
+
+// ─── 詳細情報ビュー (アコーディオン) ───
+describe("詳細情報ビュー", () => {
+  it("「詳細情報」ボタンで詳細ビューに切り替わる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    expect(screen.getByText("サロン紹介文")).toBeInTheDocument();
+    expect(screen.getByText("メニュー・料金表")).toBeInTheDocument();
+    expect(screen.getByText("アクセス")).toBeInTheDocument();
+    expect(screen.getByText("営業時間・定休日")).toBeInTheDocument();
+  });
+
+  it("「基本情報に戻る」ボタンで基本ビューに戻る", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("基本情報に戻る"));
+    expect(screen.queryByText("サロン紹介文")).not.toBeInTheDocument();
+  });
+
+  it("サロン紹介文アコーディオンを開くとtextareaが表示される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("サロン紹介文"));
+    expect(screen.getByPlaceholderText(/サロンの特徴やこだわり/)).toBeInTheDocument();
+  });
+
+  it("紹介文を入力すると文字数カウンターが更新される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("サロン紹介文"));
+    const textarea = screen.getByPlaceholderText(/サロンの特徴やこだわり/);
+    fireEvent.change(textarea, { target: { value: "こんにちは" } });
+    expect(screen.getByText(/5 \/ /)).toBeInTheDocument();
+  });
+
+  it("サロン紹介文を入力するとヘッダに「入力済み」バッジが出る", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("サロン紹介文"));
+    const textarea = screen.getByPlaceholderText(/サロンの特徴やこだわり/);
+    fireEvent.change(textarea, { target: { value: "Hello" } });
+    expect(screen.getAllByText("入力済み").length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ─── メニュー項目 CRUD ───
+describe("メニュー項目CRUD", () => {
+  it("メニューセクションを開くと「メニューを追加」ボタンが表示される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    expect(screen.getByText("メニューを追加")).toBeInTheDocument();
+  });
+
+  it("「メニューを追加」で入力欄が1つ追加される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    fireEvent.click(screen.getByText("メニューを追加"));
+    expect(screen.getByPlaceholderText("メニュー名")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("¥0,000")).toBeInTheDocument();
+  });
+
+  it("メニュー名・価格・説明を入力できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    fireEvent.click(screen.getByText("メニューを追加"));
+
+    fireEvent.change(screen.getByPlaceholderText("メニュー名"), { target: { value: "カット" } });
+    fireEvent.change(screen.getByPlaceholderText("¥0,000"), { target: { value: "¥4,500" } });
+    fireEvent.change(screen.getByPlaceholderText("簡単な説明（任意）"), { target: { value: "シャンプー込み" } });
+
+    expect(screen.getByDisplayValue("カット")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("¥4,500")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("シャンプー込み")).toBeInTheDocument();
+  });
+
+  it("メニュー項目の件数バッジが更新される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    fireEvent.click(screen.getByText("メニューを追加"));
+    fireEvent.change(screen.getByPlaceholderText("メニュー名"), { target: { value: "カット" } });
+    expect(screen.getByText("1件")).toBeInTheDocument();
+  });
+
+  it("ゴミ箱ボタンでメニュー項目を削除できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    fireEvent.click(screen.getByText("メニューを追加"));
+    fireEvent.change(screen.getByPlaceholderText("メニュー名"), { target: { value: "カット" } });
+    expect(screen.getByDisplayValue("カット")).toBeInTheDocument();
+
+    // trashボタン（メニュー項目のゴミ箱）
+    fireEvent.click(screen.getByText("trash"));
+    expect(screen.queryByDisplayValue("カット")).not.toBeInTheDocument();
+  });
+});
+
+// ─── アクセス情報 ───
+describe("アクセス情報入力", () => {
+  it("アクセスセクションを開くと住所とGoogleマップURL入力が表示される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("アクセス"));
+    expect(screen.getByPlaceholderText(/東京都渋谷区/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/maps\.google\.com/)).toBeInTheDocument();
+  });
+
+  it("住所を入力できて「入力済み」バッジが出る", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("アクセス"));
+    fireEvent.change(screen.getByPlaceholderText(/東京都渋谷区/), {
+      target: { value: "東京都渋谷区1-1-1" },
+    });
+    expect(screen.getByDisplayValue("東京都渋谷区1-1-1")).toBeInTheDocument();
+    expect(screen.getAllByText("入力済み").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("GoogleマップURLを入力できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("アクセス"));
+    fireEvent.change(screen.getByPlaceholderText(/maps\.google\.com/), {
+      target: { value: "https://maps.google.com/abc" },
+    });
+    expect(screen.getByDisplayValue("https://maps.google.com/abc")).toBeInTheDocument();
+  });
+});
+
+// ─── 営業時間・定休日 ───
+describe("営業時間・定休日入力", () => {
+  it("営業時間セクションを開くとtextareaと定休日入力が表示される", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("営業時間・定休日"));
+    expect(screen.getByPlaceholderText(/平日 10:00/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/毎週月曜日/)).toBeInTheDocument();
+  });
+
+  it("営業時間を入力できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("営業時間・定休日"));
+    fireEvent.change(screen.getByPlaceholderText(/平日 10:00/), {
+      target: { value: "平日 10-20" },
+    });
+    expect(screen.getByDisplayValue("平日 10-20")).toBeInTheDocument();
+  });
+
+  it("定休日を入力すると「入力済み」バッジが出る", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("営業時間・定休日"));
+    fireEvent.change(screen.getByPlaceholderText(/毎週月曜日/), {
+      target: { value: "毎週火曜日" },
+    });
+    expect(screen.getByDisplayValue("毎週火曜日")).toBeInTheDocument();
+    expect(screen.getAllByText("入力済み").length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ─── Step 2: アクセントカラー ───
+describe("アクセントカラー入力", () => {
+  it("カラーピッカーで色を変更できる", () => {
+    const { container } = renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    const colorInput = container.querySelector<HTMLInputElement>('input[type="color"]');
+    expect(colorInput).not.toBeNull();
+    if (!colorInput) return;
+    fireEvent.change(colorInput, { target: { value: "#ff0000" } });
+    expect(colorInput.value).toBe("#ff0000");
+  });
+
+  it("HEXテキスト入力で有効な値は反映される", () => {
+    const { container } = renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    const hexInput = Array.from(
+      container.querySelectorAll<HTMLInputElement>("input")
+    ).find((el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#"));
+    expect(hexInput).toBeDefined();
+    if (!hexInput) return;
+    fireEvent.change(hexInput, { target: { value: "#abcdef" } });
+    expect(hexInput.value).toBe("#abcdef");
+  });
+
+  it("HEXテキスト入力で不正フォーマットは反映されない", () => {
+    const { container } = renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    const hexInput = Array.from(
+      container.querySelectorAll<HTMLInputElement>("input")
+    ).find((el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#"));
+    expect(hexInput).toBeDefined();
+    if (!hexInput) return;
+    const before = hexInput.value;
+    fireEvent.change(hexInput, { target: { value: "zzz" } });
+    expect(hexInput.value).toBe(before);
+  });
+});
+
+// ─── Step 2: レイアウト選択の切替挙動 ───
+describe("レイアウト選択切替", () => {
+  it("グリッドレイアウトを選択できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    fireEvent.click(screen.getByText("グリッド"));
+    // 選択後、再度「次へ」で遷移できることを確認
+    fireEvent.click(screen.getByText("次へ"));
+    expect(screen.getByText(/リンクを追加できます/)).toBeInTheDocument();
+  });
+
+  it("Wallレイアウトを選択できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    fireEvent.click(screen.getByText("Wall"));
+    fireEvent.click(screen.getByText("次へ"));
+    expect(screen.getByText(/リンクを追加できます/)).toBeInTheDocument();
+  });
+
+  it("リストレイアウトを選択できる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    fireEvent.click(screen.getByText("リスト"));
+    fireEvent.click(screen.getByText("次へ"));
+    expect(screen.getByText(/リンクを追加できます/)).toBeInTheDocument();
+  });
+});
+
+// ─── Step 3: リンクアイコン選択 ───
+describe("リンクアイコン選択", () => {
+  it("LINEアイコンボタンでURL入力のプレースホルダーがLINE用に切り替わる", () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("予約導線"));
+    fireEvent.click(screen.getAllByText(/リンクを追加/)[1]);
+
+    // 切替前は web 用プレースホルダ
+    expect(screen.getByPlaceholderText(/WebサイトのURL/)).toBeInTheDocument();
+
+    // LINE ボタンをクリック
+    const lineButtons = screen.getAllByTitle("LINE");
+    fireEvent.click(lineButtons[0]);
+
+    // プレースホルダが LINE 用に切り替わる
+    expect(screen.getByPlaceholderText(/公式LINEのURL/)).toBeInTheDocument();
+  });
+});
+
+// ─── Step 4: 公開トグル ───
+describe("公開トグル", () => {
+  it("非公開→公開に切り替えると保存データのis_publishedがtrueになる", async () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("公開設定"));
+
+    // トグルボタンを探す (w-11 h-6 rounded-full のbutton)
+    const toggles = screen
+      .getAllByRole("button")
+      .filter((b) => b.className.includes("w-11") && b.className.includes("rounded-full"));
+    expect(toggles.length).toBeGreaterThanOrEqual(1);
+    fireEvent.click(toggles[0]);
+
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.is_published).toBe(true);
+  });
+
+  it("既存公開中ページでトグルをオフにするとis_publishedがfalseで保存される", async () => {
+    renderSettings(existingSalonPage);
+    fireEvent.click(screen.getByText("公開設定"));
+
+    const toggles = screen
+      .getAllByRole("button")
+      .filter((b) => b.className.includes("w-11") && b.className.includes("rounded-full"));
+    fireEvent.click(toggles[0]);
+
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.is_published).toBe(false);
+  });
+});
+
+// ─── handleSave: ロゴ・カバーアップロード ───
+describe("保存処理での画像アップロード", () => {
+  beforeEach(() => {
+    const createObjectURL = vi.fn(() => "blob:mock-url");
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal("URL", Object.assign(globalThis.URL ?? {}, { createObjectURL, revokeObjectURL }));
+  });
+
+  it("ロゴ画像選択後に保存するとstorage.uploadが呼ばれる", async () => {
+    const { container } = renderSettings();
+    const [logoInput] = getFileInputs(container);
+    fireFileChange(logoInput, new File(["x"], "logo.png", { type: "image/png" }));
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockUpload).toHaveBeenCalled();
+    });
+    expect(mockGetPublicUrl).toHaveBeenCalled();
+    // 保存時にlogo_urlにpublicUrlが入る
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.logo_url).toBe("https://example.com/uploaded.jpg");
+  });
+
+  it("ロゴアップロード失敗時にエラーメッセージが表示される", async () => {
+    mockUpload.mockResolvedValueOnce({ error: { message: "disk full" } });
+
+    const { container } = renderSettings();
+    const [logoInput] = getFileInputs(container);
+    fireFileChange(logoInput, new File(["x"], "logo.png", { type: "image/png" }));
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/ロゴのアップロードに失敗/).length).toBeGreaterThanOrEqual(1);
+    });
+    expect(mockChain.upsert).not.toHaveBeenCalled();
+  });
+
+  it("カバー画像選択後に保存するとstorage.uploadが呼ばれる", async () => {
+    const { container } = renderSettings();
+    const inputs = getFileInputs(container);
+    fireFileChange(inputs[1], new File(["x"], "cover.jpg", { type: "image/jpeg" }));
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockUpload).toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.cover_image_url).toBe("https://example.com/uploaded.jpg");
+  });
+
+  it("カバーアップロード失敗時にエラーメッセージが表示される", async () => {
+    mockUpload.mockResolvedValueOnce({ error: { message: "upload failed" } });
+
+    const { container } = renderSettings();
+    const inputs = getFileInputs(container);
+    fireFileChange(inputs[1], new File(["x"], "cover.jpg", { type: "image/jpeg" }));
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/カバー画像のアップロードに失敗/).length).toBeGreaterThanOrEqual(1);
+    });
+    expect(mockChain.upsert).not.toHaveBeenCalled();
+  });
+});
+
+// ─── 保存データにStep1詳細が反映される ───
+describe("保存データに詳細情報が反映される", () => {
+  it("紹介文・住所・営業時間・定休日が保存ペイロードに含まれる", async () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+
+    fireEvent.click(screen.getByText("サロン紹介文"));
+    fireEvent.change(screen.getByPlaceholderText(/サロンの特徴やこだわり/), {
+      target: { value: "こだわり説明" },
+    });
+    fireEvent.click(screen.getByText("アクセス"));
+    fireEvent.change(screen.getByPlaceholderText(/東京都渋谷区/), {
+      target: { value: "東京都渋谷区A" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/maps\.google\.com/), {
+      target: { value: "https://maps.google.com/z" },
+    });
+    fireEvent.click(screen.getByText("営業時間・定休日"));
+    fireEvent.change(screen.getByPlaceholderText(/平日 10:00/), {
+      target: { value: "平日 10-20" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/毎週月曜日/), {
+      target: { value: "毎週月曜日" },
+    });
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.description).toBe("こだわり説明");
+    expect(args.address).toBe("東京都渋谷区A");
+    expect(args.google_map_url).toBe("https://maps.google.com/z");
+    expect(args.business_hours).toEqual({ text: "平日 10-20" });
+    expect(args.closed_days).toBe("毎週月曜日");
+  });
+
+  it("メニュー項目が保存ペイロードに配列として含まれる", async () => {
+    renderSettings();
+    fireEvent.click(screen.getByText("詳細情報"));
+    fireEvent.click(screen.getByText("メニュー・料金表"));
+    fireEvent.click(screen.getByText("メニューを追加"));
+    fireEvent.change(screen.getByPlaceholderText("メニュー名"), { target: { value: "カット" } });
+    fireEvent.change(screen.getByPlaceholderText("¥0,000"), { target: { value: "¥4,500" } });
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(Array.isArray(args.menu_items)).toBe(true);
+    expect(args.menu_items[0].name).toBe("カット");
+    expect(args.menu_items[0].price).toBe("¥4,500");
+  });
+
+  it("アクセントカラーとレイアウトが保存ペイロードに含まれる", async () => {
+    const { container } = renderSettings();
+    fireEvent.click(screen.getByText("デザイン"));
+    const colorInput = container.querySelector<HTMLInputElement>('input[type="color"]');
+    if (colorInput) {
+      fireEvent.change(colorInput, { target: { value: "#112233" } });
+    }
+    fireEvent.click(screen.getByText("グリッド"));
+
+    fireEvent.click(screen.getByText("公開設定"));
+    fireEvent.click(screen.getAllByText("保存する")[0]);
+
+    await waitFor(() => {
+      expect(mockChain.upsert).toHaveBeenCalled();
+    });
+    const args = mockChain.upsert.mock.calls[0][0];
+    expect(args.accent_color).toBe("#112233");
+    expect(args.review_layout).toBe("grid");
+  });
+});
