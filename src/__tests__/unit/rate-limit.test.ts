@@ -1,5 +1,47 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+// Upstash Redis パス（L6-12 初期化分岐, L17-28 limiterキャッシュ, L62-66 rateLimitAsync の Redis 経路）用のモック。
+// in-memory フォールバックパスのテストでは env 未設定により実コードで参照されないため、
+// 両 describe で共通のモックを使える。
+// vi.fn().mockImplementation(...) は `new` 演算子で呼べないため、本物の class を使う。
+const upstashMocks = vi.hoisted(() => {
+  const limitFn = vi.fn();
+  const slidingWindowFn = vi.fn().mockReturnValue({ __tag: "sliding-window" });
+  const redisCalls: Array<unknown> = [];
+  const ratelimitCalls: Array<unknown> = [];
+
+  class RedisMock {
+    constructor(opts: unknown) {
+      redisCalls.push(opts);
+    }
+  }
+  class RatelimitMock {
+    limit: typeof limitFn;
+    constructor(opts: unknown) {
+      ratelimitCalls.push(opts);
+      this.limit = limitFn;
+    }
+    static slidingWindow = slidingWindowFn;
+  }
+
+  return {
+    limitFn,
+    slidingWindowFn,
+    RedisMock,
+    RatelimitMock,
+    redisCalls,
+    ratelimitCalls,
+  };
+});
+
+vi.mock("@upstash/redis", () => ({
+  Redis: upstashMocks.RedisMock,
+}));
+
+vi.mock("@upstash/ratelimit", () => ({
+  Ratelimit: upstashMocks.RatelimitMock,
+}));
+
 // We need to test the in-memory fallback path (no Redis).
 // The module reads env vars at import time, so we ensure they're unset.
 
@@ -91,5 +133,145 @@ describe("rate-limit (in-memory fallback)", () => {
     expect(result.success).toBe(true);
 
     vi.useRealTimers();
+  });
+});
+
+// Upstash Redis パス（L6-12 初期化分岐, L17-28 limiterキャッシュ, L62-66 rateLimitAsync の Redis 経路）を検証する。
+// @upstash/redis / @upstash/ratelimit を vi.mock で差し替え、ネットワーク呼び出しは発生させない。
+describe("rate-limit (Upstash Redis)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    upstashMocks.limitFn.mockReset();
+    upstashMocks.slidingWindowFn.mockClear();
+    upstashMocks.redisCalls.length = 0;
+    upstashMocks.ratelimitCalls.length = 0;
+    process.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
+    process.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+  });
+
+  async function loadModuleWithRedis() {
+    return import("@/lib/rate-limit");
+  }
+
+  it("env が両方セットされていれば Redis と Ratelimit が初期化される", async () => {
+    await loadModuleWithRedis();
+    // Redis コンストラクタが URL/TOKEN と共に呼ばれている
+    expect(upstashMocks.redisCalls).toHaveLength(1);
+    expect(upstashMocks.redisCalls[0]).toEqual({
+      url: "https://example.upstash.io",
+      token: "test-token",
+    });
+    // この時点では Ratelimit コンストラクタはまだ呼ばれない（lazy: getUpstashLimiter 時）
+    expect(upstashMocks.ratelimitCalls).toHaveLength(0);
+  });
+
+  it("rateLimitAsync が Upstash 経由で成功結果を返す", async () => {
+    upstashMocks.limitFn.mockResolvedValueOnce({
+      success: true,
+      remaining: 4,
+      limit: 5,
+      reset: Date.now() + 60000,
+      pending: Promise.resolve(),
+    });
+    const { rateLimitAsync } = await loadModuleWithRedis();
+    const result = await rateLimitAsync("upstash-key-1", 5, 60000);
+
+    expect(result).toEqual({ success: true, remaining: 4 });
+    // limiter.limit に正しい key が渡されている
+    expect(upstashMocks.limitFn).toHaveBeenCalledTimes(1);
+    expect(upstashMocks.limitFn).toHaveBeenCalledWith("upstash-key-1");
+    // Ratelimit コンストラクタが slidingWindow と共に初期化された
+    expect(upstashMocks.ratelimitCalls).toHaveLength(1);
+    expect(upstashMocks.slidingWindowFn).toHaveBeenCalledWith(5, "60000 ms");
+  });
+
+  it("rateLimitAsync が Upstash 経由で失敗結果を返す", async () => {
+    upstashMocks.limitFn.mockResolvedValueOnce({
+      success: false,
+      remaining: 0,
+      limit: 3,
+      reset: Date.now() + 60000,
+      pending: Promise.resolve(),
+    });
+    const { rateLimitAsync } = await loadModuleWithRedis();
+    const result = await rateLimitAsync("upstash-key-fail", 3, 60000);
+
+    expect(result).toEqual({ success: false, remaining: 0 });
+    expect(upstashMocks.limitFn).toHaveBeenCalledWith("upstash-key-fail");
+  });
+
+  it("getUpstashLimiter は同じ (windowMs, limit) でインスタンスをキャッシュする", async () => {
+    upstashMocks.limitFn.mockResolvedValue({
+      success: true,
+      remaining: 4,
+      limit: 5,
+      reset: Date.now() + 60000,
+      pending: Promise.resolve(),
+    });
+    const { rateLimitAsync } = await loadModuleWithRedis();
+
+    await rateLimitAsync("k1", 5, 60000);
+    await rateLimitAsync("k2", 5, 60000);
+
+    // 同じ (windowMs=60000, limit=5) なのでコンストラクタは1回だけ
+    expect(upstashMocks.ratelimitCalls).toHaveLength(1);
+    // limit 呼び出しは2回、それぞれ異なるキーで
+    expect(upstashMocks.limitFn).toHaveBeenNthCalledWith(1, "k1");
+    expect(upstashMocks.limitFn).toHaveBeenNthCalledWith(2, "k2");
+  });
+
+  it("getUpstashLimiter は異なる (windowMs, limit) で別インスタンスを作る", async () => {
+    upstashMocks.limitFn.mockResolvedValue({
+      success: true,
+      remaining: 1,
+      limit: 5,
+      reset: Date.now() + 60000,
+      pending: Promise.resolve(),
+    });
+    const { rateLimitAsync } = await loadModuleWithRedis();
+
+    await rateLimitAsync("k1", 5, 60000);
+    await rateLimitAsync("k2", 10, 30000);
+
+    // 異なるキーなので2つのインスタンスが作られる
+    expect(upstashMocks.ratelimitCalls).toHaveLength(2);
+    expect(upstashMocks.slidingWindowFn).toHaveBeenNthCalledWith(1, 5, "60000 ms");
+    expect(upstashMocks.slidingWindowFn).toHaveBeenNthCalledWith(2, 10, "30000 ms");
+  });
+
+  it("URL のみセットで TOKEN 未設定なら in-memory フォールバックになる", async () => {
+    vi.resetModules();
+    upstashMocks.redisCalls.length = 0;
+    upstashMocks.ratelimitCalls.length = 0;
+    upstashMocks.limitFn.mockReset();
+    process.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
+    delete process.env.UPSTASH_REDIS_REST_TOKEN;
+
+    const { rateLimitAsync } = await import("@/lib/rate-limit");
+    const result = await rateLimitAsync("fallback-url-only", 5, 60000);
+
+    // Redis/Ratelimit は一切触られない
+    expect(upstashMocks.redisCalls).toHaveLength(0);
+    expect(upstashMocks.ratelimitCalls).toHaveLength(0);
+    expect(upstashMocks.limitFn).not.toHaveBeenCalled();
+    // in-memory パスなので 1回目は success / remaining=limit-1
+    expect(result).toEqual({ success: true, remaining: 4 });
+  });
+
+  it("TOKEN のみセットで URL 未設定でも in-memory フォールバックになる", async () => {
+    vi.resetModules();
+    upstashMocks.redisCalls.length = 0;
+    upstashMocks.ratelimitCalls.length = 0;
+    upstashMocks.limitFn.mockReset();
+    delete process.env.UPSTASH_REDIS_REST_URL;
+    process.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+
+    const { rateLimitAsync } = await import("@/lib/rate-limit");
+    const result = await rateLimitAsync("fallback-token-only", 3, 60000);
+
+    expect(upstashMocks.redisCalls).toHaveLength(0);
+    expect(upstashMocks.ratelimitCalls).toHaveLength(0);
+    expect(upstashMocks.limitFn).not.toHaveBeenCalled();
+    expect(result).toEqual({ success: true, remaining: 2 });
   });
 });
