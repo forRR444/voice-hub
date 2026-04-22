@@ -3,7 +3,7 @@
  * LP、設定ページ、料金ページ、アップグレードモーダルで共通利用する
  */
 
-export const PLAN_FEATURE_COMPARISONS = [
+const PLAN_FEATURE_COMPARISONS = [
   { label: "口コミ収集", free: "無制限", pro: "無制限" },
   { label: "口コミ表示", free: "上限 5件", pro: "無制限" },
   { label: "ダッシュボード閲覧", free: "上限 10件", pro: "無制限" },

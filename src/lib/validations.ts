@@ -91,13 +91,13 @@ export const salonLinkSchema = z.object({
   url: z.string().url("有効なURLを入力してください"),
 });
 
-export const salonMenuItemSchema = z.object({
+const salonMenuItemSchema = z.object({
   name: z.string().min(1, "メニュー名を入力してください").max(50),
   price: z.string().max(30),
   description: z.string().max(100),
 });
 
-export const salonBusinessHoursSchema = z.object({
+const salonBusinessHoursSchema = z.object({
   text: z.string().max(300),
 });
 

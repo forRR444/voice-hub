@@ -1,8 +1,6 @@
 import { FormQuestion } from "@/types/database";
 
-export const CORE_QUESTION_IDS = ["rating", "content", "name", "permission"];
-
-export type FormTemplate = {
+type FormTemplate = {
   id: string;
   label: string;
   description: string;

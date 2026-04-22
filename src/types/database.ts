@@ -74,11 +74,6 @@ export type WidgetTheme = {
   autoplay: boolean;
 };
 
-export type TestimonialTagRow = {
-  testimonial_id: string;
-  tag: string;
-};
-
 export type SalonTheme = "natural" | "modern" | "elegant";
 export type SalonReviewLayout = "list" | "grid" | "card" | "wall";
 
@@ -135,14 +130,6 @@ export type SalonPageLinkRow = {
 };
 
 export type SubscriptionStatus = "free" | "pro" | "canceled";
-
-export type UserProfile = {
-  workspace: WorkspaceRow;
-  subscription: SubscriptionStatus;
-  testimonial_count: number;
-  form_count: number;
-  widget_count: number;
-};
 
 // Plan limits
 export const PLAN_LIMITS = {

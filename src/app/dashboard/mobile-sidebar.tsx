@@ -3,18 +3,6 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-export function MobileMenuButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="md:hidden p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 rounded-lg cursor-pointer"
-      aria-label="メニューを開く"
-    >
-      <Menu size={20} />
-    </button>
-  );
-}
-
 export function MobileSidebar({
   children,
 }: {

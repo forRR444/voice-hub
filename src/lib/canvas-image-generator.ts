@@ -3,11 +3,11 @@
 // ============================================================================
 
 export type TemplateSize = "instagram-story" | "instagram-post" | "x-post";
-export type DesignStyle = "glass" | "warm";
+type DesignStyle = "glass" | "warm";
 
-export type ImageConfig = { width: number; height: number; label: string };
+type ImageConfig = { width: number; height: number; label: string };
 
-export type TestimonialImageData = {
+type TestimonialImageData = {
   rating: number | null;
   content: string;
   name: string;
@@ -16,7 +16,7 @@ export type TestimonialImageData = {
   brandColor: string;
 };
 
-export const TEMPLATES: Record<TemplateSize, ImageConfig> = {
+const TEMPLATES: Record<TemplateSize, ImageConfig> = {
   "instagram-story": { width: 1080, height: 1920, label: "Instagram ストーリー" },
   "instagram-post": { width: 1080, height: 1080, label: "Instagram 投稿" },
   "x-post": { width: 1200, height: 675, label: "X (Twitter) 投稿" },
