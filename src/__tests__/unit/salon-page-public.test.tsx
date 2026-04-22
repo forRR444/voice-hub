@@ -114,7 +114,9 @@ describe("カバー画像", () => {
 
   it("cover_image_positionがobject-positionに反映される", () => {
     const { container } = renderPage({ cover_image_url: "https://example.com/cover.jpg", cover_image_position: 25 });
-    const img = container.querySelector('img[alt=""]') as HTMLImageElement;
+    const img = container.querySelector('img[alt=""]');
+    expect(img).toBeInstanceOf(HTMLImageElement);
+    if (!(img instanceof HTMLImageElement)) throw new Error("cover img not rendered");
     expect(img.style.objectPosition).toContain("25%");
   });
 });
@@ -199,5 +201,216 @@ describe("グリッドモーダル", () => {
 
     fireEvent.click(screen.getByLabelText("閉じる"));
     expect(screen.queryByLabelText("閉じる")).not.toBeInTheDocument();
+  });
+
+  it("モーダル外側をクリックするとモーダルが閉じる", () => {
+    renderPage({ review_layout: "grid" });
+    fireEvent.click(screen.getAllByText("続きを読む")[0]);
+    const closeBtn = screen.getByLabelText("閉じる");
+    const overlay = closeBtn.closest('div[style*="position: fixed"]');
+    expect(overlay).not.toBeNull();
+    if (overlay) {
+      fireEvent.click(overlay);
+      expect(screen.queryByLabelText("閉じる")).not.toBeInTheDocument();
+    }
+  });
+
+  it("モーダル本体をクリックしても閉じない（stopPropagation）", () => {
+    renderPage({ review_layout: "grid" });
+    fireEvent.click(screen.getAllByText("続きを読む")[0]);
+    const closeBtn = screen.getByLabelText("閉じる");
+    const modalBody = closeBtn.parentElement;
+    expect(modalBody).not.toBeNull();
+    if (modalBody) {
+      fireEvent.click(modalBody);
+      expect(screen.getByLabelText("閉じる")).toBeInTheDocument();
+    }
+  });
+
+  it("gridカードで Enter キーを押すとモーダルが開く", () => {
+    renderPage({ review_layout: "grid" });
+    const cards = document.querySelectorAll('.salon-card[role="button"]');
+    expect(cards.length).toBeGreaterThan(0);
+    const firstCard = cards[0];
+    fireEvent.keyDown(firstCard, { key: "Enter" });
+    expect(screen.getByLabelText("閉じる")).toBeInTheDocument();
+  });
+
+  it("gridカードで Space キーを押してもモーダルが開く", () => {
+    renderPage({ review_layout: "grid" });
+    const cards = document.querySelectorAll('.salon-card[role="button"]');
+    expect(cards.length).toBeGreaterThan(0);
+    fireEvent.keyDown(cards[0], { key: " " });
+    expect(screen.getByLabelText("閉じる")).toBeInTheDocument();
+  });
+
+  it("gridカードで他のキーを押してもモーダルは開かない", () => {
+    renderPage({ review_layout: "grid" });
+    const cards = document.querySelectorAll('.salon-card[role="button"]');
+    fireEvent.keyDown(cards[0], { key: "a" });
+    expect(screen.queryByLabelText("閉じる")).not.toBeInTheDocument();
+  });
+});
+
+// ─── サロン紹介文（ExpandableDescription） ───
+describe("サロン紹介文（展開可能）", () => {
+  it("descriptionがある場合は文章と「もっと見る」が表示される", () => {
+    renderPage({ description: "こだわりのサロンです。リラックスできる空間で施術いたします。" });
+    expect(
+      screen.getByText("こだわりのサロンです。リラックスできる空間で施術いたします。")
+    ).toBeInTheDocument();
+    expect(screen.getByText("もっと見る")).toBeInTheDocument();
+  });
+
+  it("「もっと見る」をクリックすると「閉じる」になる", () => {
+    renderPage({ description: "長文の紹介" });
+    fireEvent.click(screen.getByText("もっと見る"));
+    expect(screen.getByText("閉じる")).toBeInTheDocument();
+    expect(screen.queryByText("もっと見る")).not.toBeInTheDocument();
+  });
+
+  it("「閉じる」をクリックすると「もっと見る」に戻る", () => {
+    renderPage({ description: "長文の紹介" });
+    fireEvent.click(screen.getByText("もっと見る"));
+    // グリッドモーダルのaria-label「閉じる」との衝突を避けるため、ボタンtextで限定
+    const closeButton = screen.getByRole("button", { name: "閉じる" });
+    fireEvent.click(closeButton);
+    expect(screen.getByText("もっと見る")).toBeInTheDocument();
+  });
+});
+
+// ─── メニュー・料金セクション ───
+describe("メニュー・料金", () => {
+  it("menu_items が空配列の場合はセクションが表示されない", () => {
+    renderPage({ menu_items: [] });
+    expect(screen.queryByText("メニュー・料金")).not.toBeInTheDocument();
+  });
+
+  it("menu_items がある場合にセクションと項目が表示される", () => {
+    renderPage({
+      menu_items: [
+        { name: "カット", price: "5,000円", description: "丁寧にカット" },
+        { name: "カラー", price: "8,000円", description: "" },
+      ],
+    });
+    expect(screen.getByText("メニュー・料金")).toBeInTheDocument();
+    expect(screen.getByText("カット")).toBeInTheDocument();
+    expect(screen.getByText("5,000円")).toBeInTheDocument();
+    expect(screen.getByText("丁寧にカット")).toBeInTheDocument();
+    expect(screen.getByText("カラー")).toBeInTheDocument();
+  });
+});
+
+// ─── 営業時間・定休日セクション ───
+describe("営業時間・定休日", () => {
+  it("business_hours.textとclosed_daysが両方ない場合はセクション非表示", () => {
+    renderPage({ business_hours: null, closed_days: null });
+    expect(screen.queryByText("営業時間")).not.toBeInTheDocument();
+  });
+
+  it("business_hours.textだけある場合に営業時間が表示される", () => {
+    renderPage({ business_hours: { text: "10:00 - 20:00" }, closed_days: null });
+    expect(screen.getByText("営業時間")).toBeInTheDocument();
+    expect(screen.getByText("10:00 - 20:00")).toBeInTheDocument();
+  });
+
+  it("closed_daysだけある場合に定休日が表示される", () => {
+    renderPage({ business_hours: null, closed_days: "火曜日" });
+    expect(screen.getByText("営業時間")).toBeInTheDocument();
+    expect(screen.getByText("定休日:")).toBeInTheDocument();
+    expect(screen.getByText("火曜日")).toBeInTheDocument();
+  });
+});
+
+// ─── アクセスセクション ───
+describe("アクセス", () => {
+  it("addressがない場合はセクション非表示", () => {
+    renderPage({ address: null });
+    expect(screen.queryByText("アクセス")).not.toBeInTheDocument();
+  });
+
+  it("addressがある場合に住所が表示される", () => {
+    renderPage({ address: "東京都渋谷区1-2-3", google_map_url: null });
+    expect(screen.getByText("アクセス")).toBeInTheDocument();
+    expect(screen.getByText("東京都渋谷区1-2-3")).toBeInTheDocument();
+    expect(screen.queryByText("Googleマップで見る")).not.toBeInTheDocument();
+  });
+
+  it("google_map_urlがある場合にGoogleマップリンクが表示される", () => {
+    renderPage({
+      address: "東京都渋谷区1-2-3",
+      google_map_url: "https://maps.google.com/?q=test",
+    });
+    const link = screen.getByRole("link", { name: /Googleマップで見る/ });
+    expect(link).toHaveAttribute("href", "https://maps.google.com/?q=test");
+    expect(link).toHaveAttribute("target", "_blank");
+  });
+});
+
+// ─── listレイアウト（ReviewListItem） ───
+describe("listレイアウトの詳細", () => {
+  it("名前が空の場合「匿名」が表示される", () => {
+    renderPage(
+      { review_layout: "list" },
+      [
+        {
+          id: "t-anon",
+          name: "",
+          title: null,
+          company: null,
+          avatar_url: null,
+          rating: 5,
+          content: "よかった",
+          before_story: null,
+          is_featured: false,
+          submitted_at: "2026-04-01T00:00:00Z",
+        },
+      ]
+    );
+    expect(screen.getByText("匿名")).toBeInTheDocument();
+    expect(screen.getByText("よかった")).toBeInTheDocument();
+  });
+
+  it("ratingがnullでも表示が崩れない", () => {
+    renderPage(
+      { review_layout: "list" },
+      [
+        {
+          id: "t-norating",
+          name: "顧客A",
+          title: null,
+          company: null,
+          avatar_url: null,
+          rating: null,
+          content: "感想",
+          before_story: null,
+          is_featured: false,
+          submitted_at: "2026-04-01T00:00:00Z",
+        },
+      ]
+    );
+    expect(screen.getByText("顧客A")).toBeInTheDocument();
+    expect(screen.getByText("感想")).toBeInTheDocument();
+  });
+
+  it("contentがない場合は本文が表示されない", () => {
+    renderPage(
+      { review_layout: "list" },
+      [
+        {
+          id: "t-nocontent",
+          name: "顧客B",
+          title: null,
+          company: null,
+          avatar_url: null,
+          rating: 4,
+          content: "",
+          before_story: null,
+          is_featured: false,
+          submitted_at: "2026-04-01T00:00:00Z",
+        },
+      ]
+    );
+    expect(screen.getByText("顧客B")).toBeInTheDocument();
   });
 });
