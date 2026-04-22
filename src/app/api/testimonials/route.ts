@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSubmitSchema } from "@/lib/validations";
 import { getClientIp, checkRateLimit, handleApiError } from "@/lib/api-utils";
@@ -78,4 +79,45 @@ export async function POST(request: Request) {
   } catch (error) {
     return handleApiError(error);
   }
+}
+
+const deleteSchema = z.object({ id: z.string().min(1) });
+
+export async function DELETE(request: NextRequest) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { data: workspace } = await supabase
+    .from("workspaces")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  if (!workspace) {
+    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
+
+  const body = await request.json();
+  const parsed = deleteSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "IDが必要です" }, { status: 400 });
+  }
+
+  const { error } = await supabase
+    .from("testimonials")
+    .delete()
+    .eq("id", parsed.data.id)
+    .eq("workspace_id", workspace.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
 }
