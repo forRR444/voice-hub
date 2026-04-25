@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/api-utils";
-import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 import { shouldShowBadge, getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
 
 const corsHeaders = {
@@ -9,6 +8,75 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
+
+type WidgetTheme = { maxItems?: number } & Record<string, unknown>;
+
+type PublicWidget = {
+  id: string;
+  type: string;
+  theme: WidgetTheme | null;
+  filter_min_rating: number | null;
+  only_featured: boolean;
+};
+
+type WidgetPublicData = {
+  widget: PublicWidget;
+  subscription_status: unknown;
+  testimonials: unknown[];
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function parseWidget(value: unknown): PublicWidget | null {
+  if (!isRecord(value)) return null;
+  if (typeof value.id !== "string") return null;
+  if (typeof value.type !== "string") return null;
+  if (typeof value.only_featured !== "boolean") return null;
+
+  const theme = value.theme;
+  const parsedTheme: WidgetTheme | null =
+    theme === null || theme === undefined
+      ? null
+      : isRecord(theme)
+        ? theme
+        : null;
+
+  const filterMinRating = value.filter_min_rating;
+  const parsedFilterMinRating: number | null =
+    filterMinRating === null || filterMinRating === undefined
+      ? null
+      : typeof filterMinRating === "number"
+        ? filterMinRating
+        : null;
+
+  return {
+    id: value.id,
+    type: value.type,
+    theme: parsedTheme,
+    filter_min_rating: parsedFilterMinRating,
+    only_featured: value.only_featured,
+  };
+}
+
+function parseWidgetPublicData(value: unknown): WidgetPublicData | null {
+  if (!isRecord(value)) return null;
+  const widget = parseWidget(value.widget);
+  if (!widget) return null;
+  const testimonials = Array.isArray(value.testimonials) ? value.testimonials : [];
+  return {
+    widget,
+    subscription_status: value.subscription_status,
+    testimonials,
+  };
+}
+
+function getThemeMaxItems(theme: WidgetTheme | null): number {
+  if (!theme) return 10;
+  const value = theme.maxItems;
+  return typeof value === "number" ? value : 10;
+}
 
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
@@ -22,66 +90,37 @@ export async function GET(
     const { widgetId } = await params;
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    // Fetch widget config (only fields needed for rendering)
-    const { data: widget, error: widgetError } = await supabase
-      .from("widgets")
-      .select("id, workspace_id, type, theme, filter_min_rating, only_featured")
-      .eq("id", widgetId)
-      .single();
+    const { data, error } = await supabase.rpc("get_widget_public_data", {
+      p_widget_id: widgetId,
+    });
 
-    if (widgetError || !widget) {
-      return NextResponse.json(
-        { error: "Widget not found" },
-        { status: 404, headers: corsHeaders }
-      );
-    }
-
-    // Fetch workspace to check subscription
-    const { data: workspace } = await supabase
-      .from("workspaces")
-      .select("subscription_status")
-      .eq("id", widget.workspace_id)
-      .single();
-
-    const status = toSubscriptionStatus(workspace?.subscription_status);
-    const showBadge = shouldShowBadge(status);
-    const displayLimit = getTestimonialDisplayLimit(status);
-
-    // Build testimonials query
-    let query = supabase
-      .from("testimonials")
-      .select(TESTIMONIAL_SELECT_COLUMNS)
-      .eq("workspace_id", widget.workspace_id)
-      .eq("status", "approved")
-      .not("source", "in", '("sample","guide")')
-      .gte("rating", widget.filter_min_rating ?? 1)
-      .order("submitted_at", { ascending: false });
-
-    if (widget.only_featured) {
-      query = query.eq("is_featured", true);
-    }
-
-    const themeMax = widget.theme?.maxItems ?? 10;
-    const maxItems = Math.min(themeMax, displayLimit);
-    query = query.limit(maxItems);
-
-    const { data: testimonials, error: testimonialsError } = await query;
-
-    if (testimonialsError) {
+    if (error) {
       return NextResponse.json(
         { error: "Failed to fetch testimonials" },
         { status: 500, headers: corsHeaders }
       );
     }
 
-    // Exclude internal fields from response
-    const { workspace_id: _, ...publicWidget } = widget;
+    const parsed = parseWidgetPublicData(data);
+    if (!parsed) {
+      return NextResponse.json(
+        { error: "Widget not found" },
+        { status: 404, headers: corsHeaders }
+      );
+    }
+
+    const status = toSubscriptionStatus(parsed.subscription_status);
+    const showBadge = shouldShowBadge(status);
+    const displayLimit = getTestimonialDisplayLimit(status);
+    const themeMax = getThemeMaxItems(parsed.widget.theme);
+    const maxItems = Math.min(themeMax, displayLimit);
+    const testimonials = parsed.testimonials.slice(0, maxItems);
 
     return NextResponse.json(
-      { widget: publicWidget, testimonials: testimonials ?? [], showBadge },
+      { widget: parsed.widget, testimonials, showBadge },
       {
         headers: {
           ...corsHeaders,

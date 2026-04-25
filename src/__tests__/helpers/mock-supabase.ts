@@ -56,6 +56,16 @@ export function createMockSupabase(
 }
 
 // ---------------------------------------------------------------------------
+// Mock Supabase client that exposes only `.rpc()`
+// ---------------------------------------------------------------------------
+
+export function createMockRpcSupabase(rpcResult: QueryResult) {
+  return {
+    rpc: vi.fn().mockResolvedValue(rpcResult),
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Helper to build a Request object for API route tests
 // ---------------------------------------------------------------------------
 

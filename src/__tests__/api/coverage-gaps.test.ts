@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import {
   createMockSupabase,
   createMockQueryBuilder,
+  createMockRpcSupabase,
   makeRequest,
   type QueryResult,
 } from "../helpers/mock-supabase";
@@ -257,46 +258,28 @@ describe("POST /api/testimonials - uncovered branches", () => {
 // GET /api/widgets/[widgetId] - only_featured, testimonials error, catch block (lines 61, 70, 87)
 // ========================
 describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
-  function setupWidgetMock(
-    widgetResult: QueryResult,
-    workspaceResult?: QueryResult,
-    testimonialsResult?: QueryResult
-  ) {
-    const mockSupa = {
-      from: vi.fn((table: string) => {
-        if (table === "widgets") return createMockQueryBuilder(widgetResult);
-        if (table === "workspaces")
-          return createMockQueryBuilder(
-            workspaceResult ?? {
-              data: { subscription_status: "free" },
-              error: null,
-            }
-          );
-        if (table === "testimonials")
-          return createMockQueryBuilder(
-            testimonialsResult ?? { data: [], error: null }
-          );
-        return createMockQueryBuilder({ data: null, error: null });
-      }),
-    };
+  function setupRpcMock(rpcResult: QueryResult) {
+    const mockSupa = createMockRpcSupabase(rpcResult);
     mockCreateSupabaseClient.mockReturnValue(mockSupa);
     return mockSupa;
   }
 
-  it("only_featuredがtrueの場合、is_featuredフィルタが適用される", async () => {
-    const widgetData = {
+  it("only_featuredがtrueの場合でも200を返す", async () => {
+    const publicWidget = {
       id: "widget-1",
-      workspace_id: "ws-1",
       type: "carousel",
       filter_min_rating: 1,
       only_featured: true,
       theme: { maxItems: 5 },
     };
-    setupWidgetMock(
-      { data: widgetData, error: null },
-      { data: { subscription_status: "pro" }, error: null },
-      { data: [{ id: "t-1", name: "Featured", rating: 5 }], error: null }
-    );
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "pro",
+        testimonials: [{ id: "t-1", name: "Featured", rating: 5 }],
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -309,24 +292,10 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     expect(response.status).toBe(200);
     expect(json.widget.only_featured).toBe(true);
     expect(json.showBadge).toBe(false); // pro subscription
-    // The only_featured branch (line 61) is exercised by having widget.only_featured = true
-    // which causes query = query.eq("is_featured", true) to be called in the route
   });
 
-  it("テスティモニアル取得エラー時に500を返す", async () => {
-    const widgetData = {
-      id: "widget-1",
-      workspace_id: "ws-1",
-      type: "carousel",
-      filter_min_rating: 1,
-      only_featured: false,
-      theme: { maxItems: 5 },
-    };
-    setupWidgetMock(
-      { data: widgetData, error: null },
-      { data: { subscription_status: "free" }, error: null },
-      { data: null, error: { message: "DB error" } }
-    );
+  it("RPCエラー時に500を返す", async () => {
+    setupRpcMock({ data: null, error: { message: "DB error" } });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -341,20 +310,22 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
   });
 
-  it("filter_min_ratingがnullの場合にデフォルト値1が使用される", async () => {
-    const widgetData = {
+  it("filter_min_ratingがnullの場合でも200を返す", async () => {
+    const publicWidget = {
       id: "widget-1",
-      workspace_id: "ws-1",
       type: "carousel",
       filter_min_rating: null,
       only_featured: false,
       theme: { maxItems: 5 },
     };
-    setupWidgetMock(
-      { data: widgetData, error: null },
-      { data: { subscription_status: "free" }, error: null },
-      { data: [{ id: "t-1" }], error: null }
-    );
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: [{ id: "t-1" }],
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -366,20 +337,22 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     expect(response.status).toBe(200);
   });
 
-  it("themeがnullの場合にmaxItemsデフォルト値10が使用される", async () => {
-    const widgetData = {
+  it("themeがnullの場合でも200を返す", async () => {
+    const publicWidget = {
       id: "widget-1",
-      workspace_id: "ws-1",
       type: "carousel",
       filter_min_rating: 3,
       only_featured: false,
       theme: null,
     };
-    setupWidgetMock(
-      { data: widgetData, error: null },
-      { data: { subscription_status: "free" }, error: null },
-      { data: [{ id: "t-1" }], error: null }
-    );
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: [{ id: "t-1" }],
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -391,20 +364,22 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     expect(response.status).toBe(200);
   });
 
-  it("testimonialsがnullの場合に空配列が返される", async () => {
-    const widgetData = {
+  it("testimonialsが空配列の場合に空配列が返される", async () => {
+    const publicWidget = {
       id: "widget-1",
-      workspace_id: "ws-1",
       type: "carousel",
       filter_min_rating: 1,
       only_featured: false,
       theme: { maxItems: 5 },
     };
-    setupWidgetMock(
-      { data: widgetData, error: null },
-      { data: { subscription_status: "free" }, error: null },
-      { data: null, error: null }
-    );
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: [],
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextResponse } from "next/server";
 import {
   createMockSupabase,
-  createMockQueryBuilder,
+  createMockRpcSupabase,
   makeRequest,
   type QueryResult,
 } from "../helpers/mock-supabase";
@@ -180,9 +180,8 @@ describe("GET /api/forms/[slug]", () => {
 // GET /api/widgets/[widgetId]
 // ========================
 describe("GET /api/widgets/[widgetId]", () => {
-  const widgetData = {
+  const publicWidget = {
     id: "widget-1",
-    workspace_id: "ws-1",
     type: "carousel",
     filter_min_rating: 3,
     only_featured: false,
@@ -199,34 +198,21 @@ describe("GET /api/widgets/[widgetId]", () => {
     },
   ];
 
-  function setupWidgetMock(
-    widgetResult: QueryResult,
-    workspaceResult?: QueryResult,
-    testimonialsResult?: QueryResult
-  ) {
-    const mockSupa = {
-      from: vi.fn((table: string) => {
-        if (table === "widgets") return createMockQueryBuilder(widgetResult);
-        if (table === "workspaces")
-          return createMockQueryBuilder(
-            workspaceResult ?? {
-              data: { subscription_status: "free" },
-              error: null,
-            }
-          );
-        if (table === "testimonials")
-          return createMockQueryBuilder(
-            testimonialsResult ?? { data: testimonialsList, error: null }
-          );
-        return createMockQueryBuilder({ data: null, error: null });
-      }),
-    };
+  function setupRpcMock(rpcResult: QueryResult) {
+    const mockSupa = createMockRpcSupabase(rpcResult);
     mockCreateSupabaseClient.mockReturnValue(mockSupa);
     return mockSupa;
   }
 
   it("ウィジェットデータとテスティモニアルを返す", async () => {
-    setupWidgetMock({ data: widgetData, error: null });
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: testimonialsList,
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -237,14 +223,13 @@ describe("GET /api/widgets/[widgetId]", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    const { workspace_id: _, ...expectedWidget } = widgetData;
-    expect(json.widget).toEqual(expectedWidget);
+    expect(json.widget).toEqual(publicWidget);
     expect(json.testimonials).toEqual(testimonialsList);
     expect(json.showBadge).toBe(true);
   });
 
   it("存在しないウィジェットで404を返す", async () => {
-    setupWidgetMock({ data: null, error: { message: "not found" } });
+    setupRpcMock({ data: null, error: null });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -259,7 +244,14 @@ describe("GET /api/widgets/[widgetId]", () => {
   });
 
   it("CORSヘッダーがレスポンスに含まれる", async () => {
-    setupWidgetMock({ data: widgetData, error: null });
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: testimonialsList,
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
@@ -278,7 +270,14 @@ describe("GET /api/widgets/[widgetId]", () => {
   });
 
   it("キャッシュヘッダーがレスポンスに含まれる", async () => {
-    setupWidgetMock({ data: widgetData, error: null });
+    setupRpcMock({
+      data: {
+        widget: publicWidget,
+        subscription_status: "free",
+        testimonials: testimonialsList,
+      },
+      error: null,
+    });
 
     const { GET } = await import("@/app/api/widgets/[widgetId]/route");
 
