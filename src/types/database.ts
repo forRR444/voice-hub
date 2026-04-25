@@ -3,6 +3,9 @@ export type WorkspaceRow = {
   user_id: string;
   name: string;
   onboarding_completed: boolean;
+  subscription_status: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   created_at: string;
 };
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit, getClientIp } from "@/lib/api-utils";
+import { requireUser } from "@/lib/api-auth";
 import { logError } from "@/lib/logger";
 
 export async function DELETE(request: NextRequest) {
@@ -9,14 +9,11 @@ export async function DELETE(request: NextRequest) {
     const rateLimited = await checkRateLimit(`account_delete:${getClientIp(request)}`, 3, 60000);
     if (rateLimited) return rateLimited;
 
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    const auth = await requireUser();
+    if (!auth.ok) {
       return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
     }
+    const { supabase, user } = auth;
 
     const admin = createAdminClient();
 

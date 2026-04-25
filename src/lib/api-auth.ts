@@ -32,6 +32,12 @@ async function authenticate(): Promise<
   return { ok: true, supabase, user };
 }
 
+export async function requireUser(): Promise<
+  { ok: true; supabase: SupabaseClient; user: User } | AuthFailure
+> {
+  return authenticate();
+}
+
 function workspaceNotFound(): AuthFailure {
   return {
     ok: false,
@@ -67,13 +73,8 @@ export async function requireAuthAndWorkspaceWithSubscription(): Promise<
   return { ok: true, supabase: auth.supabase, user: auth.user, workspace };
 }
 
-type WorkspaceFull = WorkspaceRow & {
-  subscription_status: string | null;
-  stripe_customer_id: string | null;
-};
-
 export async function requireAuthAndWorkspaceFull(): Promise<
-  AuthSuccess<WorkspaceFull> | AuthFailure
+  AuthSuccess<WorkspaceRow> | AuthFailure
 > {
   const auth = await authenticate();
   if (!auth.ok) return auth;
