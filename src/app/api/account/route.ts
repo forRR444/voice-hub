@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { checkRateLimit, getClientIp } from "@/lib/api-utils";
+import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
 import { requireUser } from "@/lib/api-auth";
 import { logError } from "@/lib/logger";
 
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+
 export async function DELETE(request: NextRequest) {
   try {
-    const rateLimited = await checkRateLimit(`account_delete:${getClientIp(request)}`, 3, 60000);
+    const rateLimited = await checkRateLimit(
+      `account_delete:${getClientIp(request)}`,
+      RATE_LIMIT_MAX,
+      RATE_LIMIT_WINDOW_MS,
+    );
     if (rateLimited) return rateLimited;
 
     const auth = await requireUser();
@@ -15,59 +22,20 @@ export async function DELETE(request: NextRequest) {
     }
     const { supabase, user } = auth;
 
-    const admin = createAdminClient();
-
-    // ワークスペースを取得
-    const { data: workspace } = await admin
-      .from("workspaces")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (workspace) {
-      const wsId = workspace.id;
-
-      // テスティモニアルIDを取得してタグを削除
-      const { data: testimonials } = await admin
-        .from("testimonials")
-        .select("id")
-        .eq("workspace_id", wsId);
-
-      if (testimonials && testimonials.length > 0) {
-        const ids = testimonials.map((t) => t.id);
-        await admin.from("testimonial_tags").delete().in("testimonial_id", ids);
-      }
-
-      // ワークスペース配下のデータを削除
-      await Promise.all([
-        admin.from("testimonials").delete().eq("workspace_id", wsId),
-        admin.from("forms").delete().eq("workspace_id", wsId),
-        admin.from("widgets").delete().eq("workspace_id", wsId),
-      ]);
-
-      // ワークスペースを削除
-      await admin.from("workspaces").delete().eq("id", wsId);
-    }
-
-    // セッションを無効化
     await supabase.auth.signOut();
 
-    // Supabase Authからユーザーを削除
-    const { error: authError } = await admin.auth.admin.deleteUser(user.id);
-    if (authError) {
-      logError("ユーザー認証情報の削除に失敗", authError);
+    const admin = createAdminClient();
+    const { error } = await admin.auth.admin.deleteUser(user.id);
+    if (error) {
+      logError("ユーザー認証情報の削除に失敗", error);
       return NextResponse.json(
         { error: "アカウント削除に失敗しました" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    logError("アカウント削除エラー", error);
-    return NextResponse.json(
-      { error: "アカウント削除に失敗しました" },
-      { status: 500 }
-    );
+    return handleApiError(error, "アカウント削除に失敗しました");
   }
 }
