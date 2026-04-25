@@ -57,7 +57,7 @@ describe("GET /api/auth/callback", () => {
       },
       from: vi.fn(() =>
         chainable({
-          data: [{ onboarding_completed: false }],
+          data: { onboarding_completed: false },
           error: null,
         })
       ),
@@ -87,7 +87,7 @@ describe("GET /api/auth/callback", () => {
       },
       from: vi.fn(() =>
         chainable({
-          data: [{ onboarding_completed: true }],
+          data: { onboarding_completed: true },
           error: null,
         })
       ),

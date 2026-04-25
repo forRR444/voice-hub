@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { getBaseUrl } from "@/lib/utils";
+import { getPostAuthRedirect } from "@/lib/auth-redirect";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
 export async function GET(request: Request) {
@@ -24,15 +25,7 @@ export async function GET(request: Request) {
       }
 
       if (user) {
-        const { data: workspace } = await supabase
-          .from("workspaces")
-          .select("onboarding_completed")
-          .eq("user_id", user.id)
-          .single();
-
-        if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${baseUrl}/onboarding`);
-        }
+        return NextResponse.redirect(await getPostAuthRedirect(supabase, user, baseUrl));
       }
 
       return NextResponse.redirect(`${baseUrl}/dashboard`);
@@ -53,15 +46,7 @@ export async function GET(request: Request) {
 
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: workspace } = await supabase
-          .from("workspaces")
-          .select("onboarding_completed")
-          .eq("user_id", user.id)
-          .single();
-
-        if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${baseUrl}/onboarding`);
-        }
+        return NextResponse.redirect(await getPostAuthRedirect(supabase, user, baseUrl));
       }
 
       return NextResponse.redirect(`${baseUrl}/dashboard`);

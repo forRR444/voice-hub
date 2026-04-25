@@ -1,29 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { getPlanLimits, toSubscriptionStatus } from "@/lib/plan";
 import { formCreateSchema, formUpdateSchema } from "@/lib/validations";
-import { logError } from "@/lib/logger";
-import { z } from "zod";
+import {
+  requireAuthAndWorkspace,
+  requireAuthAndWorkspaceWithSubscription,
+  createWorkspaceDeleteHandler,
+} from "@/lib/api-auth";
+import { validationErrorResponse } from "@/lib/api-utils";
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { data: workspace } = await supabase
-    .from("workspaces")
-    .select("id, subscription_status")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!workspace) {
-    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
-  }
+  const auth = await requireAuthAndWorkspaceWithSubscription();
+  if (!auth.ok) return auth.response;
+  const { supabase, workspace } = auth;
 
   // Server-side plan limit check
   const status = toSubscriptionStatus(workspace.subscription_status);
@@ -44,11 +32,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const parsed = formCreateSchema.safeParse(body);
   if (!parsed.success) {
-    logError("Form validation error:", JSON.stringify(parsed.error.flatten()));
-    return NextResponse.json(
-      { error: "入力内容に不備があります", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    return validationErrorResponse(parsed.error, "Form validation error");
   }
 
   const { slug, title, description, questions, brand_color, thank_you_message } = parsed.data;
@@ -75,24 +59,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { data: workspace } = await supabase
-    .from("workspaces")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!workspace) {
-    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
-  }
+  const auth = await requireAuthAndWorkspace();
+  if (!auth.ok) return auth.response;
+  const { supabase, workspace } = auth;
 
   const body = await request.json();
   const { id, ...fields } = body;
@@ -103,11 +72,7 @@ export async function PATCH(request: NextRequest) {
 
   const parsed = formUpdateSchema.safeParse(fields);
   if (!parsed.success) {
-    logError("Form update validation error:", JSON.stringify(parsed.error.flatten()));
-    return NextResponse.json(
-      { error: "入力内容に不備があります", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    return validationErrorResponse(parsed.error, "Form update validation error");
   }
 
   const { data, error } = await supabase
@@ -125,43 +90,4 @@ export async function PATCH(request: NextRequest) {
   return NextResponse.json(data);
 }
 
-const deleteSchema = z.object({ id: z.string().min(1) });
-
-export async function DELETE(request: NextRequest) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { data: workspace } = await supabase
-    .from("workspaces")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!workspace) {
-    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
-  }
-
-  const body = await request.json();
-  const parsed = deleteSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "IDが必要です" }, { status: 400 });
-  }
-
-  const { error } = await supabase
-    .from("forms")
-    .delete()
-    .eq("id", parsed.data.id)
-    .eq("workspace_id", workspace.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ success: true });
-}
+export const DELETE = createWorkspaceDeleteHandler("forms");

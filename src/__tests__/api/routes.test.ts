@@ -38,6 +38,12 @@ vi.mock("@/lib/api-utils", () => ({
   handleApiError: vi.fn((_error: unknown, message = "サーバーエラーが発生しました", headers?: Record<string, string>) => {
     return NextResponse.json({ error: message }, { status: 500, ...(headers ? { headers } : {}) });
   }),
+  validationErrorResponse: vi.fn((error: { flatten: () => unknown }) => {
+    return NextResponse.json(
+      { error: "入力内容に不備があります", details: error.flatten() },
+      { status: 400 },
+    );
+  }),
 }));
 
 vi.mock("@/lib/logger", () => ({

@@ -1,8 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSubmitSchema } from "@/lib/validations";
-import { getClientIp, checkRateLimit, handleApiError } from "@/lib/api-utils";
+import {
+  getClientIp,
+  checkRateLimit,
+  handleApiError,
+  validationErrorResponse,
+} from "@/lib/api-utils";
+import { createWorkspaceDeleteHandler } from "@/lib/api-auth";
 import { logError } from "@/lib/logger";
 import { RATE_LIMITS } from "@/lib/constants";
 
@@ -24,11 +29,7 @@ export async function POST(request: Request) {
     if (rateLimited) return rateLimited;
 
     if (!parsed.success) {
-      logError("Validation error:", JSON.stringify(parsed.error.flatten()));
-      return NextResponse.json(
-        { error: "入力内容に不備があります", details: parsed.error.flatten() },
-        { status: 400 }
-      );
+      return validationErrorResponse(parsed.error, "Validation error");
     }
 
     const data = parsed.data;
@@ -81,43 +82,4 @@ export async function POST(request: Request) {
   }
 }
 
-const deleteSchema = z.object({ id: z.string().min(1) });
-
-export async function DELETE(request: NextRequest) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { data: workspace } = await supabase
-    .from("workspaces")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
-
-  if (!workspace) {
-    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
-  }
-
-  const body = await request.json();
-  const parsed = deleteSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "IDが必要です" }, { status: 400 });
-  }
-
-  const { error } = await supabase
-    .from("testimonials")
-    .delete()
-    .eq("id", parsed.data.id)
-    .eq("workspace_id", workspace.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ success: true });
-}
+export const DELETE = createWorkspaceDeleteHandler("testimonials");

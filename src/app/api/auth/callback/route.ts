@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { getBaseUrl } from "@/lib/utils";
+import { getPostAuthRedirect } from "@/lib/auth-redirect";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -17,18 +18,7 @@ export async function GET(request: Request) {
       } = await supabase.auth.getUser();
 
       if (user) {
-        const { data: workspaces } = await supabase
-          .from("workspaces")
-          .select("onboarding_completed")
-          .eq("user_id", user.id);
-
-        const workspace = workspaces?.[0] ?? null;
-
-        if (!workspace || !workspace.onboarding_completed) {
-          return NextResponse.redirect(`${baseUrl}/onboarding`);
-        }
-
-        return NextResponse.redirect(`${baseUrl}/dashboard`);
+        return NextResponse.redirect(await getPostAuthRedirect(supabase, user, baseUrl));
       }
 
       return NextResponse.redirect(`${baseUrl}/dashboard`);

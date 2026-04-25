@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { rateLimitAsync } from "@/lib/rate-limit";
 import { logError } from "@/lib/logger";
 
@@ -39,5 +40,20 @@ export function handleApiError(
   return NextResponse.json(
     { error: message },
     { status: 500, ...(headers ? { headers } : {}) },
+  );
+}
+
+/**
+ * Zod バリデーション失敗時の共通レスポンス。
+ * logTag にエラー文脈を渡すと `{logTag}:` としてログ出力される。
+ */
+export function validationErrorResponse(
+  error: ZodError,
+  logTag: string,
+): NextResponse {
+  logError(`${logTag}:`, JSON.stringify(error.flatten()));
+  return NextResponse.json(
+    { error: "入力内容に不備があります", details: error.flatten() },
+    { status: 400 },
   );
 }
