@@ -1,6 +1,6 @@
 export type WorkspaceRow = {
   id: string;
-  user_id: string;
+  user_id: string; // 1 user = 1 workspace, UNIQUE constraint
   name: string;
   onboarding_completed: boolean;
   subscription_status: string | null;
