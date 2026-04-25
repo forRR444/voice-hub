@@ -278,6 +278,6 @@ describe("createWorkspaceDeleteHandler", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json.error).toBe("DB error");
+    expect(json.error).toBe("削除に失敗しました");
   });
 });

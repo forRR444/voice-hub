@@ -5,10 +5,14 @@ import { makeRequest } from "../helpers/mock-supabase";
 // Mock setup
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/api-utils", () => ({
-  checkRateLimit: vi.fn().mockResolvedValue(null),
-  getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
-}));
+vi.mock("@/lib/api-utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/api-utils")>();
+  return {
+    ...actual,
+    checkRateLimit: vi.fn().mockResolvedValue(null),
+    getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
+  };
+});
 
 const mockGetUser = vi.fn();
 const mockFrom = vi.fn();

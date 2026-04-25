@@ -269,6 +269,6 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "delete failed" });
+    expect(json).toEqual({ error: "削除に失敗しました" });
   });
 });

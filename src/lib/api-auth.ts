@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { handleApiError } from "@/lib/api-utils";
 import type { WorkspaceRow } from "@/types/database";
 
 type AuthSuccess<W> = {
@@ -109,7 +110,7 @@ export function createWorkspaceDeleteHandler(
       .eq("workspace_id", auth.workspace.id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return handleApiError(error, "削除に失敗しました");
     }
 
     return NextResponse.json({ success: true });

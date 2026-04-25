@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, STRIPE_PRICES } from "@/lib/stripe";
 import { getBaseUrl } from "@/lib/utils";
-import { checkRateLimit, getClientIp } from "@/lib/api-utils";
+import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
 import { requireAuthAndWorkspaceFull } from "@/lib/api-auth";
-import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,10 +31,7 @@ export async function POST(request: NextRequest) {
         .eq("id", workspace.id);
 
       if (updateError) {
-        return NextResponse.json(
-          { error: "Failed to update workspace" },
-          { status: 500 }
-        );
+        return handleApiError(updateError, "Failed to update workspace");
       }
     }
 
@@ -55,18 +51,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!session.url) {
-      return NextResponse.json(
-        { error: "Failed to create checkout session" },
-        { status: 500 }
+      return handleApiError(
+        new Error("Stripe session.url is missing"),
+        "Failed to create checkout session",
       );
     }
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    logError("Stripe checkout error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Internal server error");
   }
 }

@@ -3,6 +3,7 @@ import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripeCustomerId, getStripeSubscriptionId } from "@/lib/stripe-utils";
 import Stripe from "stripe";
+import { handleApiError } from "@/lib/api-utils";
 import { logError } from "@/lib/logger";
 
 export async function POST(request: Request) {
@@ -62,8 +63,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          logError("Failed to update workspace after checkout:", error);
-          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+          return handleApiError(error, "DB update failed");
         }
         break;
       }
@@ -101,8 +101,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          logError("Failed to update subscription status:", error);
-          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+          return handleApiError(error, "DB update failed");
         }
         break;
       }
@@ -125,8 +124,7 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
 
         if (error) {
-          logError("Failed to update workspace after deletion:", error);
-          return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+          return handleApiError(error, "DB update failed");
         }
         break;
       }
@@ -138,10 +136,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    logError("Webhook error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Internal server error");
   }
 }

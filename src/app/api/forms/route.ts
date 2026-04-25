@@ -6,7 +6,7 @@ import {
   requireAuthAndWorkspaceWithSubscription,
   createWorkspaceDeleteHandler,
 } from "@/lib/api-auth";
-import { validationErrorResponse } from "@/lib/api-utils";
+import { handleApiError, validationErrorResponse } from "@/lib/api-utils";
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuthAndWorkspaceWithSubscription();
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return handleApiError(error, "フォームの作成に失敗しました");
   }
 
   return NextResponse.json(data);
@@ -84,7 +84,7 @@ export async function PATCH(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return handleApiError(error, "フォームの更新に失敗しました");
   }
 
   return NextResponse.json(data);

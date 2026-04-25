@@ -361,9 +361,7 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({
-      error: "duplicate key value violates unique constraint",
-    });
+    expect(json).toEqual({ error: "フォームの作成に失敗しました" });
   });
 });
 
@@ -524,7 +522,7 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "update failed" });
+    expect(json).toEqual({ error: "フォームの更新に失敗しました" });
   });
 
   it("他workspaceのformへのPATCH試行で500を返す（RLS不ヒット想定）", async () => {
@@ -548,7 +546,7 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "No rows found" });
+    expect(json).toEqual({ error: "フォームの更新に失敗しました" });
   });
 });
 
@@ -672,6 +670,6 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "delete failed" });
+    expect(json).toEqual({ error: "削除に失敗しました" });
   });
 });

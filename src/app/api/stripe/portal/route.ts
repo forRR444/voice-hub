@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { getBaseUrl } from "@/lib/utils";
-import { checkRateLimit, getClientIp } from "@/lib/api-utils";
+import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
 import { requireAuthAndWorkspaceFull } from "@/lib/api-auth";
-import { logError } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,10 +28,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    logError("Stripe portal error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return handleApiError(error, "Internal server error");
   }
 }
