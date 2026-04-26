@@ -163,7 +163,7 @@ describe("POST /api/testimonials - uncovered branches", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
   });
 
   it("ハニーポットフィールド(website)がある場合、静かに成功を返す", async () => {
@@ -290,8 +290,8 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.widget.only_featured).toBe(true);
-    expect(json.showBadge).toBe(false); // pro subscription
+    expect(json.data.widget.only_featured).toBe(true);
+    expect(json.data.showBadge).toBe(false); // pro subscription
   });
 
   it("RPCエラー時に500を返す", async () => {
@@ -390,7 +390,7 @@ describe("GET /api/widgets/[widgetId] - uncovered branches", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.testimonials).toEqual([]);
+    expect(json.data.testimonials).toEqual([]);
   });
 
   it("予期しない例外発生時にhandleApiErrorを呼ぶ", async () => {

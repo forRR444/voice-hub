@@ -168,7 +168,7 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
     expect(mock.testimonialsDeleteBuilder?.delete).toHaveBeenCalled();
     expect(mock.testimonialsDeleteBuilder?.eq).toHaveBeenCalledWith(
       "id",
@@ -192,7 +192,7 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -210,7 +210,7 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("id欠落で400を返す", async () => {
@@ -229,7 +229,7 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({ ok: false, error: "IDが必要です", code: "VALIDATION_ERROR" });
     expect(mock.testimonialsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -249,7 +249,7 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({ ok: false, error: "IDが必要です", code: "VALIDATION_ERROR" });
     expect(mock.testimonialsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -269,6 +269,6 @@ describe("DELETE /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "削除に失敗しました" });
+    expect(json).toEqual({ ok: false, error: "削除に失敗しました", code: "INTERNAL_ERROR" });
   });
 });

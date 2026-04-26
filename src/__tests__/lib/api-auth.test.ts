@@ -241,7 +241,7 @@ describe("createWorkspaceDeleteHandler", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
   });
 
   it("delete がエラーを返す場合は 500 を返す", async () => {

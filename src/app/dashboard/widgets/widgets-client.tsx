@@ -101,17 +101,21 @@ export default function WidgetsClient({
       });
 
       if (res.ok) {
-        const data = await res.json();
-        setWidgets((prev) => [data, ...prev]);
-        setShowCreate(false);
-        setNewWidget({
-          name: "",
-          type: "carousel",
-          theme: { ...DEFAULT_THEME },
-          filter_min_rating: 1,
-          only_featured: false,
-        });
-        setError(null);
+        const json = await res.json();
+        if (json.ok) {
+          setWidgets((prev) => [json.data, ...prev]);
+          setShowCreate(false);
+          setNewWidget({
+            name: "",
+            type: "carousel",
+            theme: { ...DEFAULT_THEME },
+            filter_min_rating: 1,
+            only_featured: false,
+          });
+          setError(null);
+        } else {
+          setError("ウィジェットの作成に失敗しました");
+        }
       } else {
         setError("ウィジェットの作成に失敗しました");
       }

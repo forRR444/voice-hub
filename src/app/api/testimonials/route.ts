@@ -7,6 +7,7 @@ import {
   handleApiError,
   validationErrorResponse,
 } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import { createWorkspaceDeleteHandler } from "@/lib/api-auth";
 import { logError } from "@/lib/logger";
 import { RATE_LIMITS } from "@/lib/constants";
@@ -17,7 +18,8 @@ export async function POST(request: Request) {
 
     // ハニーポット: ボットがこのフィールドを埋めたら拒否
     if (body.website || body.url || body.email_confirm) {
-      return NextResponse.json({ success: true }); // ボットには成功に見せる
+      // 意図的に旧形状を維持: ApiResponse 統一対象から除外。bot に通常応答との差を与えないため。
+      return NextResponse.json({ success: true });
     }
 
     const parsed = testimonialSubmitSchema.safeParse(body);
@@ -43,10 +45,7 @@ export async function POST(request: Request) {
       .single();
 
     if (formError || !form) {
-      return NextResponse.json(
-        { error: "フォームが見つかりません" },
-        { status: 404 }
-      );
+      return apiError("フォームが見つかりません", 404, "NOT_FOUND");
     }
 
     const { error: insertError } = await supabase
@@ -70,13 +69,14 @@ export async function POST(request: Request) {
 
     if (insertError) {
       logError("Testimonial insert error:", insertError);
-      return NextResponse.json(
-        { error: "送信に失敗しました。もう一度お試しください。" },
-        { status: 500 }
+      return apiError(
+        "送信に失敗しました。もう一度お試しください。",
+        500,
+        "INTERNAL_ERROR",
       );
     }
 
-    return NextResponse.json({ success: true });
+    return apiSuccess(null);
   } catch (error) {
     return handleApiError(error);
   }

@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { getStripe, STRIPE_PRICES } from "@/lib/stripe";
 import { getBaseUrl } from "@/lib/utils";
 import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
+import { apiSuccess } from "@/lib/api-response";
 import { requireAuthAndWorkspaceFull } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ url: session.url });
+    return apiSuccess({ url: session.url });
   } catch (error) {
     return handleApiError(error, "Internal server error");
   }

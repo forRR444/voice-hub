@@ -147,7 +147,7 @@ describe("GET /api/google-reviews", () => {
     const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=テスト歯科") as never);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.places).toEqual(places);
+    expect(json.data.places).toEqual(places);
   });
 
   it("search - queryなしで400を返す", async () => {
@@ -172,8 +172,8 @@ describe("GET /api/google-reviews", () => {
     const res = await GET(makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.reviews).toEqual(reviews);
-    expect(json.placeName).toBe("テスト歯科");
+    expect(json.data.reviews).toEqual(reviews);
+    expect(json.data.placeName).toBe("テスト歯科");
   });
 
   it("reviews - placeIdなしで400を返す", async () => {
@@ -188,6 +188,6 @@ describe("GET /api/google-reviews", () => {
     const res = await GET(makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.reviews).toEqual([]);
+    expect(json.data.reviews).toEqual([]);
   });
 });

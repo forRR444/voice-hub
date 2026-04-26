@@ -56,15 +56,16 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
     const res = await fetch(
       `/api/google-reviews?action=search&query=${encodeURIComponent(query)}`
     );
-    const data = await res.json();
+    const json = await res.json();
     setSearchLoading(false);
 
-    if (!res.ok) {
-      setError(data.error || "検索に失敗しました");
+    if (!res.ok || !json.ok) {
+      setError(json.error || "検索に失敗しました");
       return;
     }
-    setPlaces(data.places);
-    if (data.places.length === 0) {
+    const places = json.data?.places ?? [];
+    setPlaces(places);
+    if (places.length === 0) {
       setError("ビジネスが見つかりませんでした。別のキーワードで試してください。");
     }
   }

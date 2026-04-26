@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { rateLimitAsync } from "@/lib/rate-limit";
 import { logError } from "@/lib/logger";
+import { apiError } from "@/lib/api-response";
 
 /**
  * リクエストからクライアントIPを取得する
@@ -23,13 +24,14 @@ export async function checkRateLimit(
 ): Promise<NextResponse | null> {
   const { success } = await rateLimitAsync(key, limit, windowMs);
   if (!success) {
-    return NextResponse.json({ error: message }, { status: 429 });
+    return apiError(message, 429, "RATE_LIMITED");
   }
   return null;
 }
 
 /**
- * APIルートの共通エラーハンドラ
+ * APIルートの共通エラーハンドラ。
+ * 内部実装は apiError に委譲しつつ、外部シグネチャ（呼び出し側）は変更しない。
  */
 export function handleApiError(
   error: unknown,
@@ -37,23 +39,23 @@ export function handleApiError(
   headers?: Record<string, string>,
 ): NextResponse {
   logError(message, error);
-  return NextResponse.json(
-    { error: message },
-    { status: 500, ...(headers ? { headers } : {}) },
+  return apiError(
+    message,
+    500,
+    "INTERNAL_ERROR",
+    headers ? { headers } : undefined,
   );
 }
 
 /**
  * Zod バリデーション失敗時の共通レスポンス。
  * logTag にエラー文脈を渡すと `{logTag}:` としてログ出力される。
+ * 詳細は ApiResponse から削除（クライアントでは error メッセージのみ利用するため）。
  */
 export function validationErrorResponse(
   error: ZodError,
   logTag: string,
 ): NextResponse {
   logError(`${logTag}:`, JSON.stringify(error.flatten()));
-  return NextResponse.json(
-    { error: "入力内容に不備があります", details: error.flatten() },
-    { status: 400 },
-  );
+  return apiError("入力内容に不備があります", 400, "VALIDATION_ERROR");
 }

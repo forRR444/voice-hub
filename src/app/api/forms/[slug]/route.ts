@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getClientIp, checkRateLimit } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import { RATE_LIMITS } from "@/lib/constants";
 
 export async function GET(
@@ -22,11 +22,8 @@ export async function GET(
     .single();
 
   if (error || !form) {
-    return NextResponse.json(
-      { error: "フォームが見つかりません" },
-      { status: 404 }
-    );
+    return apiError("フォームが見つかりません", 404, "NOT_FOUND");
   }
 
-  return NextResponse.json(form);
+  return apiSuccess(form);
 }

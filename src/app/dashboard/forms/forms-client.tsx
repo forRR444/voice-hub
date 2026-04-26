@@ -83,9 +83,13 @@ export default function FormsClient({
       });
 
       if (res.ok) {
-        const data = await res.json();
-        setForms((prev) => [data, ...prev]);
-        setError(null);
+        const json = await res.json();
+        if (json.ok) {
+          setForms((prev) => [json.data, ...prev]);
+          setError(null);
+        } else {
+          setError("フォームの作成に失敗しました");
+        }
       } else {
         setError("フォームの作成に失敗しました");
       }

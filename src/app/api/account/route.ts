@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import { requireUser } from "@/lib/api-auth";
 import { logError } from "@/lib/logger";
 
@@ -18,7 +19,7 @@ export async function DELETE(request: NextRequest) {
 
     const auth = await requireUser();
     if (!auth.ok) {
-      return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+      return apiError("認証が必要です", 401, "UNAUTHORIZED");
     }
     const { supabase, user } = auth;
 
@@ -28,13 +29,10 @@ export async function DELETE(request: NextRequest) {
     const { error } = await admin.auth.admin.deleteUser(user.id);
     if (error) {
       logError("ユーザー認証情報の削除に失敗", error);
-      return NextResponse.json(
-        { error: "アカウント削除に失敗しました" },
-        { status: 500 },
-      );
+      return apiError("アカウント削除に失敗しました", 500, "INTERNAL_ERROR");
     }
 
-    return NextResponse.json({ success: true });
+    return apiSuccess(null);
   } catch (error) {
     return handleApiError(error, "アカウント削除に失敗しました");
   }

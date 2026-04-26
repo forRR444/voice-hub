@@ -36,11 +36,14 @@ vi.mock("@/lib/api-utils", () => ({
   checkRateLimit: vi.fn().mockResolvedValue(null),
   getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
   handleApiError: vi.fn((_error: unknown, message = "サーバーエラーが発生しました", headers?: Record<string, string>) => {
-    return NextResponse.json({ error: message }, { status: 500, ...(headers ? { headers } : {}) });
-  }),
-  validationErrorResponse: vi.fn((error: { flatten: () => unknown }) => {
     return NextResponse.json(
-      { error: "入力内容に不備があります", details: error.flatten() },
+      { ok: false, error: message, code: "INTERNAL_ERROR" },
+      { status: 500, ...(headers ? { headers } : {}) },
+    );
+  }),
+  validationErrorResponse: vi.fn(() => {
+    return NextResponse.json(
+      { ok: false, error: "入力内容に不備があります", code: "VALIDATION_ERROR" },
       { status: 400 },
     );
   }),
@@ -87,7 +90,7 @@ describe("POST /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
     expect(mockSupa.from).toHaveBeenCalledWith("forms");
     expect(mockSupa.from).toHaveBeenCalledWith("testimonials");
   });
@@ -105,8 +108,11 @@ describe("POST /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("入力内容に不備があります");
-    expect(json.details).toBeDefined();
+    expect(json).toEqual({
+      ok: false,
+      error: "入力内容に不備があります",
+      code: "VALIDATION_ERROR",
+    });
   });
 
   it("フォームが見つからない場合404を返す", async () => {
@@ -125,7 +131,11 @@ describe("POST /api/testimonials", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json.error).toBe("フォームが見つかりません");
+    expect(json).toEqual({
+      ok: false,
+      error: "フォームが見つかりません",
+      code: "NOT_FOUND",
+    });
   });
 });
 
@@ -154,7 +164,7 @@ describe("GET /api/forms/[slug]", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual(formData);
+    expect(json).toEqual({ ok: true, data: formData });
   });
 
   it("存在しないslugで404を返す", async () => {
@@ -223,9 +233,9 @@ describe("GET /api/widgets/[widgetId]", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.widget).toEqual(publicWidget);
-    expect(json.testimonials).toEqual(testimonialsList);
-    expect(json.showBadge).toBe(true);
+    expect(json.data.widget).toEqual(publicWidget);
+    expect(json.data.testimonials).toEqual(testimonialsList);
+    expect(json.data.showBadge).toBe(true);
   });
 
   it("存在しないウィジェットで404を返す", async () => {

@@ -3,6 +3,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { handleApiError } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import type { WorkspaceRow } from "@/types/database";
 
 type AuthSuccess<W> = {
@@ -27,7 +28,7 @@ async function authenticate(): Promise<
   if (!user) {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+      response: apiError("Unauthorized", 401, "UNAUTHORIZED"),
     };
   }
   return { ok: true, supabase, user };
@@ -42,7 +43,7 @@ export async function requireUser(): Promise<
 function workspaceNotFound(): AuthFailure {
   return {
     ok: false,
-    response: NextResponse.json({ error: "Workspace not found" }, { status: 404 }),
+    response: apiError("Workspace not found", 404, "NOT_FOUND"),
   };
 }
 
@@ -100,7 +101,7 @@ export function createWorkspaceDeleteHandler(
     const body = await request.json();
     const parsed = deleteIdSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "IDが必要です" }, { status: 400 });
+      return apiError("IDが必要です", 400, "VALIDATION_ERROR");
     }
 
     const { error } = await auth.supabase
@@ -113,6 +114,6 @@ export function createWorkspaceDeleteHandler(
       return handleApiError(error, "削除に失敗しました");
     }
 
-    return NextResponse.json({ success: true });
+    return apiSuccess(null);
   };
 }

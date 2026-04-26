@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { getPlanLimits, toSubscriptionStatus } from "@/lib/plan";
 import { formCreateSchema, formUpdateSchema } from "@/lib/validations";
 import {
@@ -7,6 +7,7 @@ import {
   createWorkspaceDeleteHandler,
 } from "@/lib/api-auth";
 import { handleApiError, validationErrorResponse } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuthAndWorkspaceWithSubscription();
@@ -23,10 +24,7 @@ export async function POST(request: NextRequest) {
     .eq("workspace_id", workspace.id);
 
   if ((count ?? 0) >= limits.forms) {
-    return NextResponse.json(
-      { error: "フォーム数が上限に達しています" },
-      { status: 403 }
-    );
+    return apiError("フォーム数が上限に達しています", 403, "PLAN_LIMIT");
   }
 
   const body = await request.json();
@@ -55,7 +53,7 @@ export async function POST(request: NextRequest) {
     return handleApiError(error, "フォームの作成に失敗しました");
   }
 
-  return NextResponse.json(data);
+  return apiSuccess(data);
 }
 
 export async function PATCH(request: NextRequest) {
@@ -67,7 +65,7 @@ export async function PATCH(request: NextRequest) {
   const { id, ...fields } = body;
 
   if (!id || typeof id !== "string") {
-    return NextResponse.json({ error: "IDが必要です" }, { status: 400 });
+    return apiError("IDが必要です", 400, "VALIDATION_ERROR");
   }
 
   const parsed = formUpdateSchema.safeParse(fields);
@@ -87,7 +85,7 @@ export async function PATCH(request: NextRequest) {
     return handleApiError(error, "フォームの更新に失敗しました");
   }
 
-  return NextResponse.json(data);
+  return apiSuccess(data);
 }
 
 export const DELETE = createWorkspaceDeleteHandler("forms");

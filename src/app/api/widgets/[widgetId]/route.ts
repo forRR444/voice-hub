@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import { shouldShowBadge, getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
 
 const corsHeaders = {
@@ -98,18 +99,16 @@ export async function GET(
     });
 
     if (error) {
-      return NextResponse.json(
-        { error: "Failed to fetch testimonials" },
-        { status: 500, headers: corsHeaders }
-      );
+      return apiError("Failed to fetch testimonials", 500, "INTERNAL_ERROR", {
+        headers: corsHeaders,
+      });
     }
 
     const parsed = parseWidgetPublicData(data);
     if (!parsed) {
-      return NextResponse.json(
-        { error: "Widget not found" },
-        { status: 404, headers: corsHeaders }
-      );
+      return apiError("Widget not found", 404, "NOT_FOUND", {
+        headers: corsHeaders,
+      });
     }
 
     const status = toSubscriptionStatus(parsed.subscription_status);
@@ -119,7 +118,7 @@ export async function GET(
     const maxItems = Math.min(themeMax, displayLimit);
     const testimonials = parsed.testimonials.slice(0, maxItems);
 
-    return NextResponse.json(
+    return apiSuccess(
       { widget: parsed.widget, testimonials, showBadge },
       {
         headers: {

@@ -251,7 +251,7 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual(insertedWidget);
+    expect(json).toEqual({ ok: true, data: insertedWidget });
     expect(mock.supabase.from).toHaveBeenNthCalledWith(1, "workspaces");
     expect(mock.supabase.from).toHaveBeenNthCalledWith(2, "widgets");
     expect(mock.supabase.from).toHaveBeenNthCalledWith(3, "widgets");
@@ -279,7 +279,7 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -297,7 +297,7 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("プラン上限到達時に403を返す（getPlanLimitsを有限値でモック）", async () => {
@@ -326,11 +326,15 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(403);
-    expect(json).toEqual({ error: "ウィジェット数が上限に達しています" });
+    expect(json).toEqual({
+      ok: false,
+      error: "ウィジェット数が上限に達しています",
+      code: "PLAN_LIMIT",
+    });
     expect(mock.widgetsInsertBuilder?.insert).not.toHaveBeenCalled();
   });
 
-  it("バリデーション失敗で400とdetailsを返す", async () => {
+  it("バリデーション失敗で400を返す", async () => {
     setupWidgetsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -347,8 +351,11 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("入力内容に不備があります");
-    expect(json.details).toBeDefined();
+    expect(json).toEqual({
+      ok: false,
+      error: "入力内容に不備があります",
+      code: "VALIDATION_ERROR",
+    });
   });
 
   it("insertがDBエラー（制約違反等）で500を返す", async () => {
@@ -371,7 +378,11 @@ describe("POST /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "ウィジェットの作成に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "ウィジェットの作成に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });
 
@@ -407,7 +418,7 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual(updatedWidget);
+    expect(json).toEqual({ ok: true, data: updatedWidget });
     // widgetUpdateSchema は partial だが、create スキーマ由来の default 値
     // （例: only_featured=false）が parsed.data に混ざる可能性があるため、
     // 提供済みフィールドが確実に含まれていることだけを検証する
@@ -440,7 +451,7 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -458,7 +469,7 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("id欠落で400 \"IDが必要です\"を返す", async () => {
@@ -477,7 +488,11 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.widgetsUpdateBuilder?.update).not.toHaveBeenCalled();
   });
 
@@ -497,11 +512,15 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.widgetsUpdateBuilder?.update).not.toHaveBeenCalled();
   });
 
-  it("バリデーション失敗で400とdetailsを返す", async () => {
+  it("バリデーション失敗で400を返す", async () => {
     setupWidgetsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -517,8 +536,11 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("入力内容に不備があります");
-    expect(json.details).toBeDefined();
+    expect(json).toEqual({
+      ok: false,
+      error: "入力内容に不備があります",
+      code: "VALIDATION_ERROR",
+    });
   });
 
   it("updateがDBエラーで500を返す", async () => {
@@ -540,7 +562,11 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "ウィジェットの更新に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "ウィジェットの更新に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 
   it("他workspaceのwidgetへのPATCH試行で500を返す（RLS不ヒット想定）", async () => {
@@ -564,7 +590,11 @@ describe("PATCH /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "ウィジェットの更新に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "ウィジェットの更新に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });
 
@@ -574,7 +604,7 @@ describe("PATCH /api/widgets", () => {
 describe("DELETE /api/widgets", () => {
   const validDeleteBody = { id: "widget-1" };
 
-  it("有効なidで200と{success:true}を返す", async () => {
+  it("有効なidで200と{ok:true,data:null}を返す", async () => {
     const mock = setupWidgetsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -590,7 +620,7 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
     expect(mock.widgetsDeleteBuilder?.delete).toHaveBeenCalled();
     expect(mock.widgetsDeleteBuilder?.eq).toHaveBeenCalledWith(
       "id",
@@ -614,7 +644,7 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -632,7 +662,7 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("id欠落で400を返す", async () => {
@@ -651,7 +681,11 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.widgetsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -671,7 +705,11 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.widgetsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -691,6 +729,10 @@ describe("DELETE /api/widgets", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "削除に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "削除に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });

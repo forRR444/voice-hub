@@ -240,7 +240,7 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual(insertedForm);
+    expect(json).toEqual({ ok: true, data: insertedForm });
     expect(mock.supabase.from).toHaveBeenNthCalledWith(1, "workspaces");
     expect(mock.supabase.from).toHaveBeenNthCalledWith(2, "forms");
     expect(mock.supabase.from).toHaveBeenNthCalledWith(3, "forms");
@@ -269,7 +269,7 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -287,7 +287,7 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("プラン上限到達時に403を返す（getPlanLimitsを有限値でモック）", async () => {
@@ -316,11 +316,15 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(403);
-    expect(json).toEqual({ error: "フォーム数が上限に達しています" });
+    expect(json).toEqual({
+      ok: false,
+      error: "フォーム数が上限に達しています",
+      code: "PLAN_LIMIT",
+    });
     expect(mock.formsInsertBuilder?.insert).not.toHaveBeenCalled();
   });
 
-  it("バリデーション失敗で400とdetailsを返す", async () => {
+  it("バリデーション失敗で400を返す", async () => {
     setupFormsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -337,8 +341,11 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("入力内容に不備があります");
-    expect(json.details).toBeDefined();
+    expect(json).toEqual({
+      ok: false,
+      error: "入力内容に不備があります",
+      code: "VALIDATION_ERROR",
+    });
   });
 
   it("insertがDBエラー（slug重複等）で500を返す", async () => {
@@ -361,7 +368,11 @@ describe("POST /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "フォームの作成に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "フォームの作成に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });
 
@@ -397,7 +408,7 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual(updatedForm);
+    expect(json).toEqual({ ok: true, data: updatedForm });
     expect(mock.formsUpdateBuilder?.update).toHaveBeenCalledWith({
       title: validPatchBody.title,
       description: validPatchBody.description,
@@ -422,7 +433,7 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -440,7 +451,7 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("id欠落で400 \"IDが必要です\"を返す", async () => {
@@ -459,7 +470,11 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.formsUpdateBuilder?.update).not.toHaveBeenCalled();
   });
 
@@ -479,11 +494,15 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.formsUpdateBuilder?.update).not.toHaveBeenCalled();
   });
 
-  it("バリデーション失敗で400とdetailsを返す", async () => {
+  it("バリデーション失敗で400を返す", async () => {
     setupFormsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -499,8 +518,11 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("入力内容に不備があります");
-    expect(json.details).toBeDefined();
+    expect(json).toEqual({
+      ok: false,
+      error: "入力内容に不備があります",
+      code: "VALIDATION_ERROR",
+    });
   });
 
   it("updateがDBエラーで500を返す", async () => {
@@ -522,7 +544,11 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "フォームの更新に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "フォームの更新に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 
   it("他workspaceのformへのPATCH試行で500を返す（RLS不ヒット想定）", async () => {
@@ -546,7 +572,11 @@ describe("PATCH /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "フォームの更新に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "フォームの更新に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });
 
@@ -556,7 +586,7 @@ describe("PATCH /api/forms", () => {
 describe("DELETE /api/forms", () => {
   const validDeleteBody = { id: "form-1" };
 
-  it("有効なidで200と{success:true}を返す", async () => {
+  it("有効なidで200と{ok:true,data:null}を返す", async () => {
     const mock = setupFormsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -572,7 +602,7 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ success: true });
+    expect(json).toEqual({ ok: true, data: null });
     expect(mock.formsDeleteBuilder?.delete).toHaveBeenCalled();
     expect(mock.formsDeleteBuilder?.eq).toHaveBeenCalledWith("id", "form-1");
     expect(mock.formsDeleteBuilder?.eq).toHaveBeenCalledWith(
@@ -593,7 +623,7 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(401);
-    expect(json).toEqual({ error: "Unauthorized" });
+    expect(json).toEqual({ ok: false, error: "Unauthorized", code: "UNAUTHORIZED" });
   });
 
   it("workspaceが無い場合404を返す", async () => {
@@ -611,7 +641,7 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(404);
-    expect(json).toEqual({ error: "Workspace not found" });
+    expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
   it("id欠落で400を返す", async () => {
@@ -630,7 +660,11 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.formsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -650,7 +684,11 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json).toEqual({ error: "IDが必要です" });
+    expect(json).toEqual({
+      ok: false,
+      error: "IDが必要です",
+      code: "VALIDATION_ERROR",
+    });
     expect(mock.formsDeleteBuilder?.delete).not.toHaveBeenCalled();
   });
 
@@ -670,6 +708,10 @@ describe("DELETE /api/forms", () => {
     const json = await response.json();
 
     expect(response.status).toBe(500);
-    expect(json).toEqual({ error: "削除に失敗しました" });
+    expect(json).toEqual({
+      ok: false,
+      error: "削除に失敗しました",
+      code: "INTERNAL_ERROR",
+    });
   });
 });

@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { getBaseUrl } from "@/lib/utils";
 import { checkRateLimit, getClientIp, handleApiError } from "@/lib/api-utils";
+import { apiError, apiSuccess } from "@/lib/api-response";
 import { requireAuthAndWorkspaceFull } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
@@ -13,9 +14,10 @@ export async function POST(request: NextRequest) {
     const { workspace } = auth;
 
     if (!workspace.stripe_customer_id) {
-      return NextResponse.json(
-        { error: "No billing account found. Please subscribe first." },
-        { status: 400 }
+      return apiError(
+        "No billing account found. Please subscribe first.",
+        400,
+        "VALIDATION_ERROR",
       );
     }
 
@@ -26,7 +28,7 @@ export async function POST(request: NextRequest) {
       return_url: `${baseUrl}/dashboard/settings`,
     });
 
-    return NextResponse.json({ url: session.url });
+    return apiSuccess({ url: session.url });
   } catch (error) {
     return handleApiError(error, "Internal server error");
   }

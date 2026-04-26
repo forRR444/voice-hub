@@ -162,7 +162,7 @@ describe("POST /api/stripe/checkout", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.url).toBe("https://checkout.stripe.com/session_123");
+    expect(json.data.url).toBe("https://checkout.stripe.com/session_123");
     expect(mockCustomersCreate).not.toHaveBeenCalled();
     expect(mockCheckoutSessionsCreate).toHaveBeenCalledWith({
       customer: "cus_existing",
@@ -191,7 +191,7 @@ describe("POST /api/stripe/checkout", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.url).toBe("https://checkout.stripe.com/session_456");
+    expect(json.data.url).toBe("https://checkout.stripe.com/session_456");
     expect(mockCustomersCreate).toHaveBeenCalledWith({
       email: "test@example.com",
       metadata: { workspace_id: "ws_1", user_id: "user_1" },

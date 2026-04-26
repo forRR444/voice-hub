@@ -194,7 +194,7 @@ describe("POST /api/stripe/portal", () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json.url).toBe("https://billing.stripe.com/session_789");
+    expect(json.data.url).toBe("https://billing.stripe.com/session_789");
     expect(mockBillingPortalSessionsCreate).toHaveBeenCalledWith({
       customer: "cus_existing",
       return_url: "http://localhost:3000/dashboard/settings",

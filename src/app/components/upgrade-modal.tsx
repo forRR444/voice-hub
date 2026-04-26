@@ -22,9 +22,10 @@ export default function UpgradeModal() {
     setLoading(true);
     try {
       const res = await fetch("/api/stripe/checkout", { method: "POST" });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
+      const json = await res.json();
+      const url = res.ok && json.ok ? json.data?.url : undefined;
+      if (url) {
+        window.location.href = url;
       } else {
         alert("エラーが発生しました。もう一度お試しください。");
         setLoading(false);

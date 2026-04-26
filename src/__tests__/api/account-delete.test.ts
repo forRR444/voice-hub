@@ -97,7 +97,7 @@ describe("DELETE /api/account", () => {
     const response = await DELETE(request as never);
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
+    expect(await response.json()).toEqual({ ok: true, data: null });
     expect(serverMock.auth.signOut).toHaveBeenCalledTimes(1);
     expect(adminMock.auth.admin.deleteUser).toHaveBeenCalledWith("user-1");
   });
