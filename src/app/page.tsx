@@ -77,7 +77,7 @@ export default function Home() {
               <span className="text-[10px] sm:text-xs text-[var(--slate)]">SNS投稿画像を作成</span>
             </div>
           </div>
-          <p className="mt-6 sm:mt-8 text-base sm:text-xl text-[var(--slate)] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 sm:mt-8 text-sm sm:text-xl text-[var(--slate)] max-w-2xl mx-auto leading-relaxed">
             お客様にフォームURLを送って、届いた声を承認するだけ。
             <br className="hidden md:block" />
             ホームページに自動反映。SNS用の投稿画像もワンクリックで。
@@ -129,35 +129,35 @@ export default function Home() {
       {/* ── How it works ── */}
       <section className="py-16 sm:py-24">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
+          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
             <span className="text-[var(--brand)]">2ステップ</span>で完了
           </h2>
-          <p className="text-center text-[var(--slate)] mb-12 sm:mb-16">
+          <p className="text-center text-sm sm:text-base text-[var(--slate)] mb-12 sm:mb-16">
             あとはホームページに自動反映。SNS投稿画像もすぐ作れます。
           </p>
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
-            <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
+            <div className="bg-[var(--plate)] rounded-lg p-4 sm:p-8">
               <div className="flex items-center gap-3">
-                <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
+                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
                 <div className="flex items-center gap-2">
                   <MessageCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
                   <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                   <QrCode size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
                 </div>
               </div>
-              <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
+              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
                 お客様に<span className="text-[var(--brand)] font-semibold">URL</span>を送るだけ。LINEでもメールでもOK。<span className="text-[var(--brand)] font-semibold">QRコード</span>も作れるので、店頭やレジ横に置くこともできます。
               </p>
             </div>
-            <div className="bg-[var(--plate)] rounded-lg p-6 sm:p-8">
+            <div className="bg-[var(--plate)] rounded-lg p-4 sm:p-8">
               <div className="flex items-center gap-3">
-                <span className="text-3xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
+                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
                 <div className="flex items-center gap-2">
                   <CheckCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
                 </div>
               </div>
-              <h3 className="mt-3 text-base sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">届いた声を承認する</h3>
+              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">届いた声を承認する</h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
                 ダッシュボードに届いた声を確認。「承認」ボタンを押すだけ。内容を見て選べるので安心です。
               </p>
@@ -170,12 +170,12 @@ export default function Home() {
       </section>
 
       {/* ── Pain → Solution ── */}
-      <section className="bg-[var(--plate)] py-16 sm:py-24">
+      <section className="bg-[var(--plate)] py-12 sm:py-24">
         <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-2xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-14 sm:mb-16">
+          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-8 sm:mb-16">
             こんな面倒から解放されます。
           </h2>
-          <div className="space-y-5 sm:space-y-6">
+          <div className="space-y-3.5 sm:space-y-6">
             {[
               {
                 icon: <MessageSquareText size={18} className="text-[var(--brand)]" />,
@@ -184,7 +184,7 @@ export default function Home() {
               },
               {
                 icon: <LayoutDashboard size={18} className="text-[var(--brand)]" />,
-                pain: "感想がバラバラに散らばる",
+                pain: "口コミがバラバラ",
                 solution: (<><span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約</>),
               },
               {
@@ -203,7 +203,7 @@ export default function Home() {
                 solution: "フォームURLを送るだけ",
               },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-base sm:text-lg leading-relaxed">
+              <div key={i} className="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg leading-relaxed">
                 <span className="shrink-0">{item.icon}</span>
                 <p>
                   <span className="text-[var(--slate)] line-through decoration-[var(--slate)]/30">{item.pain}</span>
@@ -217,59 +217,32 @@ export default function Home() {
       </section>
 
       {/* ── Product + Features (統合セクション) ── */}
-      <section id="features" className="py-16 sm:py-24 scroll-mt-20">
+      <section id="features" className="py-12 sm:py-24 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-2xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
+          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-4">
             できること
           </h2>
-          <p className="text-center text-[var(--slate)] mb-12 sm:mb-16">
-            回答フォームと、ホームページに表示されるウィジェット。
-          </p>
-
-          {/* Screenshots */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 mb-16 sm:mb-24">
-            <div>
-              <img
-                src="/Form.png"
-                alt="お客様が回答する収集フォーム"
-                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
-              <p className="mt-4 text-sm text-[var(--slate)] text-center">お客様が回答するフォーム画面</p>
-              <div className="mt-3 text-center">
-                <Link
-                  href="/form/demo"
-                  className="text-sm font-medium text-[var(--brand)] hover:brightness-110 transition"
-                >
-                  収集フォームを試す →
-                </Link>
-              </div>
-            </div>
-            <div>
-              <img
-                src="/Dashboard.png"
-                alt="届いた声を管理するダッシュボード"
-                className="w-full rounded-lg shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]"
-              />
-              <p className="mt-4 text-sm text-[var(--slate)] text-center">届いた声を管理するダッシュボード</p>
-            </div>
-          </div>
 
           {/* Feature 1: HP埋め込み — テキスト左、ビジュアル右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
             <div>
-              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-                <Code size={20} className="text-[var(--brand)]" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <Code size={16} className="text-[var(--brand)] sm:hidden" />
+                <Code size={20} className="text-[var(--brand)] hidden sm:block" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 ホームページに埋め込み
               </h3>
-              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。承認した声がホームページに自動で表示されます。{WIDGET_TYPES.length}種類のデザインから選べます。
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
+                埋め込みコードを<span className="text-[var(--brand)] font-semibold">コピペするだけ</span>。
+                <br />
+                承認した声がホームページに自動で表示されます。
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
-                {["ペライチ・WordPress・Wix対応", "コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5">
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
+              <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
+                {["コード1行で設置完了", "スマホでも綺麗に表示"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
                     {item}
                   </li>
                 ))}
@@ -285,7 +258,7 @@ export default function Home() {
           </div>
 
           {/* Feature 2: SNS画像 — ビジュアル左、テキスト右（交互） */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
             <div className="order-2 md:order-1 flex justify-center">
               <img
                 src="/sns-story-sample.png"
@@ -294,42 +267,41 @@ export default function Home() {
               />
             </div>
             <div className="order-1 md:order-2">
-              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-                <Instagram size={20} className="text-[var(--brand)]" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <Instagram size={16} className="text-[var(--brand)] sm:hidden" />
+                <Instagram size={20} className="text-[var(--brand)] hidden sm:block" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 SNS投稿画像を作成
               </h3>
-              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                お客様の声から、そのままInstagramやストーリーズに使える画像を<span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。デザインの手間ゼロ。
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
+                お客様の声から、そのままInstagramやXに使える画像を
+                <br />
+                <span className="text-[var(--brand)] font-semibold">ワンクリックで生成</span>。
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
-                {["ストーリーズ・フィード対応", "ワンクリックで画像生成", "そのままSNSに投稿できる"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5">
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
           {/* Feature: サロンページ — テキスト左、ビジュアル右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
             <div>
-              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-                <Store size={20} className="text-[var(--brand)]" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <Store size={16} className="text-[var(--brand)] sm:hidden" />
+                <Store size={20} className="text-[var(--brand)] hidden sm:block" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 HPがなくても、<br className="hidden sm:inline" />お客様の声ページが持てる
               </h3>
-              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。お客様の声付きのサロン紹介ページが簡単に作れます。
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
+                インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。
+                <br />
+                お客様の声付きのサロン紹介ページが簡単に作れます。
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
-                {["インスタのプロフに貼るだけで使える", "LINE・予約リンクもまとめて設置", "HPの代わりとして使える"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5">
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
+              <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[var(--ink)]">
+                {["LINE・予約リンクもまとめて設置", "HPの代わりとして使える"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
+                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
                     {item}
                   </li>
                 ))}
@@ -377,7 +349,7 @@ export default function Home() {
           </div>
 
           {/* Feature 3: 管理ダッシュボード — ビジュアル左、テキスト右 */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-16 sm:mb-24">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-10 items-center mb-12 sm:mb-24">
             <div className="order-2 md:order-1">
               <img
                 src="/Dashboard.png"
@@ -386,23 +358,18 @@ export default function Home() {
               />
             </div>
             <div className="order-1 md:order-2">
-              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-                <LayoutDashboard size={20} className="text-[var(--brand)]" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <LayoutDashboard size={16} className="text-[var(--brand)] sm:hidden" />
+                <LayoutDashboard size={20} className="text-[var(--brand)] hidden sm:block" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
+              <h3 className="text-base sm:text-2xl font-semibold text-[var(--ink)] tracking-[-0.022em]">
                 管理ダッシュボード
               </h3>
-              <p className="mt-3 text-sm sm:text-base text-[var(--slate)] leading-relaxed">
-                届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。承認・タグ付け・検索もワンクリック。
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[var(--slate)] leading-relaxed">
+                届いた声を<span className="text-[var(--brand)] font-semibold">ひとつの画面</span>で管理。
+                <br />
+                承認・タグ付け・検索もワンクリック。
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
-                {["承認・非承認をワンクリック", "タグ付け・検索で整理", "お気に入り機能で優先表示"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2.5">
-                    <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
@@ -420,7 +387,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-sm sm:text-base font-semibold text-[var(--ink)] tracking-[-0.011em]">{f.title}</h4>
-                  <p className="mt-1 text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -431,7 +398,7 @@ export default function Home() {
             <h3 className="text-lg sm:text-xl font-semibold text-center text-[var(--ink)] tracking-[-0.022em] mb-2">
               ホームページへの表示タイプ
             </h3>
-            <p className="text-center text-sm text-[var(--slate)] mb-8">
+            <p className="text-center text-xs sm:text-sm text-[var(--slate)] mb-8">
               {WIDGET_TYPES.length}種類から選べます。
             </p>
             <WidgetDemo />
@@ -440,41 +407,38 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="bg-[var(--plate)] py-16 sm:py-24 scroll-mt-20">
+      <section id="pricing" className="bg-[var(--plate)] py-12 sm:py-24 scroll-mt-20">
         <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-2xl sm:text-[2rem] font-bold text-[var(--ink)] tracking-[-0.022em] mb-4">
+          <h2 className="text-xl sm:text-[2rem] font-bold text-[var(--ink)] tracking-[-0.022em] mb-4">
             今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span>
           </h2>
-          <p className="text-base sm:text-lg text-[var(--slate)] mb-10 sm:mb-12 leading-relaxed">
+          <p className="text-xs sm:text-lg text-[var(--slate)] mb-8 sm:mb-12 leading-relaxed">
             現在ベータ版につき、全機能を無料で使えます。
             <br />
             <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
           </p>
-          <div className="bg-[var(--canvas)] rounded-lg p-6 sm:p-8 max-w-sm mx-auto shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
-            <p className="text-label text-[var(--brand)] mb-4">ベータ限定</p>
-            <p className="text-3xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">¥0</p>
-            <p className="text-sm text-[var(--slate)] mt-1">全機能が無料で使い放題</p>
-            <ul className="mt-6 space-y-3 text-left">
+          <div className="bg-[var(--canvas)] rounded-lg p-4 sm:p-8 max-w-sm mx-auto shadow-[0_2px_4px_rgba(26,31,54,0.04),0_12px_24px_rgba(26,31,54,0.08)]">
+            <p className="text-sm font-semibold tracking-wide uppercase text-[var(--brand)] mb-3 sm:mb-4">ベータ限定</p>
+            <p className="text-2xl sm:text-4xl font-bold text-[var(--ink)] tabular-nums">¥0</p>
+            <p className="text-xs sm:text-sm text-[var(--slate)] mt-1">全機能が無料で使い放題</p>
+            <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-left">
               {[
-                "お客様の声フォーム 無制限",
-                "お客様の声の登録数 無制限",
-                "埋め込みウィジェット 無制限",
-                `${WIDGET_TYPES.length}種類のウィジェットデザイン`,
+                "登録数・ウィジェット 無制限",
+                "承認するだけでHPに自動反映",
                 "SNS投稿画像をワンクリック生成",
                 "お客様の声つきサロンページ",
-                "Google口コミ 最新5件を取り込み",
-                "手動追加OK",
-                "ペライチ・WordPress対応",
+                "Google口コミ取り込み",
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--ink)]">
-                  <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)]" />
+                <li key={i} className="flex items-center gap-2 text-xs sm:text-sm text-[var(--ink)]">
+                  <Circle size={5} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] sm:hidden" />
+                  <Circle size={6} className="text-[var(--brand)] shrink-0 fill-[var(--brand)] hidden sm:block" />
                   {item}
                 </li>
               ))}
             </ul>
             <Link
               href="/try"
-              className="block mt-8 w-full px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition text-center"
+              className="block mt-6 sm:mt-8 w-full px-6 py-3 sm:py-3.5 text-xs sm:text-base font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition text-center"
             >
               まずは試してみる
             </Link>
@@ -488,7 +452,7 @@ export default function Home() {
       {/* ── FAQ ── */}
       <section id="faq" className="py-16 sm:py-24 scroll-mt-20">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-10 sm:mb-14">
+          <h2 className="text-xl sm:text-[2rem] font-bold text-center text-[var(--ink)] tracking-[-0.022em] mb-8 sm:mb-14">
             よくある質問
           </h2>
           <div className="space-y-3">
@@ -521,25 +485,26 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="bg-[#2A3050] py-20 sm:py-28">
+      <section className="bg-[#2A3050] py-14 sm:py-28">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-2xl sm:text-[2.5rem] font-bold text-white leading-tight tracking-[-0.022em]">
+          <h2 className="text-xl sm:text-[2.5rem] font-bold text-white leading-tight tracking-[-0.022em]">
             お客様の声は、
             <br />
             24時間、営業してくれます。
           </h2>
-          <p className="mt-5 sm:mt-6 text-base sm:text-lg text-white/70 leading-relaxed">
+          <p className="mt-4 sm:mt-6 text-xs sm:text-lg text-white/70 leading-relaxed">
             コーチ・コンサル、サロン、教室、フリーランスなど、
             <br className="hidden sm:block" />
             口コミを活かしたいすべての方に。
           </p>
-          <div className="mt-8 sm:mt-10 flex flex-col items-center gap-3">
+          <div className="mt-6 sm:mt-10 flex flex-col items-center gap-2 sm:gap-3">
             <Link
               href="/try"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-10 sm:py-4 text-xs sm:text-lg font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition"
             >
               無料で試してみる
-              <ArrowRight size={18} />
+              <ArrowRight size={14} className="sm:hidden" />
+              <ArrowRight size={18} className="hidden sm:block" />
             </Link>
             <span className="text-xs text-white">登録不要・30秒で体験</span>
           </div>
@@ -547,8 +512,8 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-8 sm:py-10">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--slate)]">
+      <footer className="py-6 sm:py-10">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm text-[var(--slate)]">
           <span>&copy; 2026 VoiceHub. All rights reserved.</span>
           <div className="flex gap-6">
             <Link href="/terms" className="hover:text-[var(--ink)] transition-colors">利用規約</Link>

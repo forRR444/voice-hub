@@ -21,7 +21,7 @@ const BRAND = DEFAULT_BRAND_COLOR;
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <span style={{ color: BRAND, fontSize: 14, letterSpacing: 2 }}>
+    <span className="demo-stars" style={{ color: BRAND, letterSpacing: 2 }}>
       {Array.from({ length: 5 }, (_, i) => (i < rating ? "★" : "☆")).join("")}
     </span>
   );
@@ -42,20 +42,6 @@ function Avatar({ name }: { name: string }) {
 function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: boolean; fill?: boolean }) {
   return (
     <>
-      <style>{`
-        .demo-card-compact { min-width: min(140px, 38vw); max-width: 160px; padding: 10px; }
-        @media (min-width: 640px) { .demo-card-compact { min-width: 220px; max-width: 260px; padding: 14px; } }
-        .demo-card-compact .demo-text { font-size: 11px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .demo-card-compact .demo-text.demo-expanded { -webkit-line-clamp: unset; display: block; }
-        @media (min-width: 640px) { .demo-card-compact .demo-text { font-size: 13px; } }
-        .demo-read-more { background: none; border: none; padding: 0; margin-top: 2px; font-size: 10px; color: ${BRAND}; cursor: pointer; }
-        .demo-read-more:hover { text-decoration: underline; }
-        @media (min-width: 640px) { .demo-read-more { font-size: 12px; } }
-        .demo-card-compact .demo-name { font-size: 10px; }
-        @media (min-width: 640px) { .demo-card-compact .demo-name { font-size: 12px; } }
-        .demo-card-compact .demo-title { font-size: 9px; }
-        @media (min-width: 640px) { .demo-card-compact .demo-title { font-size: 11px; } }
-      `}</style>
       <div
         className={compact ? "demo-card-compact" : undefined}
         style={{
@@ -67,7 +53,7 @@ function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: 
         }}
       >
         <Stars rating={item.rating} />
-        <p className={compact ? "demo-text" : undefined} style={{ color: "#374151", ...(!compact ? { fontSize: 13 } : {}), lineHeight: 1.5, margin: 0 }}>
+        <p className={compact ? "demo-text" : "demo-text-full"} style={{ color: "#374151", lineHeight: 1.5, margin: 0 }}>
           {item.content}
         </p>
         {compact && item.content.length > 60 && (
@@ -87,8 +73,8 @@ function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: 
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
           <Avatar name={item.name} />
           <div>
-            <div className={compact ? "demo-name" : undefined} style={{ fontWeight: 600, color: "#111827", ...(!compact ? { fontSize: 12 } : {}) }}>{item.name}</div>
-            <div className={compact ? "demo-title" : undefined} style={{ color: "#6b7280", ...(!compact ? { fontSize: 11 } : {}) }}>{item.title}</div>
+            <div className={compact ? "demo-name" : "demo-name-full"} style={{ fontWeight: 600, color: "#111827" }}>{item.name}</div>
+            <div className={compact ? "demo-title" : "demo-title-full"} style={{ color: "#6b7280" }}>{item.title}</div>
           </div>
         </div>
       </div>
@@ -175,15 +161,15 @@ function WallDemo() {
 
 function ListDemo() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20, maxWidth: 480, width: "100%", margin: "0 auto" }}>
+    <div className="demo-list-wrap" style={{ display: "flex", flexDirection: "column", maxWidth: 480, width: "100%", margin: "0 auto" }}>
       {SAMPLE_DATA.slice(0, 3).map((item, i) => (
-        <div key={i} style={{
+        <div key={i} className="demo-list-item" style={{
           background: "#fff", border: "1px solid #e5e7eb", borderLeft: `3px solid ${BRAND}`,
-          borderRadius: 8, padding: 16, display: "flex", flexDirection: "column", gap: 8,
+          borderRadius: 8, display: "flex", flexDirection: "column",
         }}>
           <Stars rating={item.rating} />
-          <p style={{ color: "#374151", fontSize: 14, lineHeight: 1.6, margin: 0 }}>{item.content}</p>
-          <div style={{ color: "#6b7280", fontSize: 12 }}>{item.name} — {item.title}</div>
+          <p className="demo-text-full" style={{ color: "#374151", lineHeight: 1.6, margin: 0 }}>{item.content}</p>
+          <div className="demo-title-full" style={{ color: "#6b7280" }}>{item.name} — {item.title}</div>
         </div>
       ))}
     </div>
@@ -192,20 +178,20 @@ function ListDemo() {
 
 function SingleDemo() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
-      <div style={{
+    <div className="demo-single-wrap" style={{ display: "flex", justifyContent: "center" }}>
+      <div className="demo-single-card" style={{
         background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16,
-        padding: 20, maxWidth: 480, width: "100%", textAlign: "center",
+        maxWidth: 480, width: "100%", textAlign: "center",
       }}>
         <Stars rating={5} />
-        <p style={{ color: "#374151", fontSize: 18, lineHeight: 1.8, margin: "16px 0" }}>
+        <p className="demo-single-text" style={{ color: "#374151", margin: 0 }}>
           {SAMPLE_DATA[0].content}
         </p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
           <Avatar name={SAMPLE_DATA[0].name} />
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontWeight: 600, color: "#111827", fontSize: 14 }}>{SAMPLE_DATA[0].name}</div>
-            <div style={{ color: "#6b7280", fontSize: 13 }}>{SAMPLE_DATA[0].title}</div>
+            <div className="demo-name-full" style={{ fontWeight: 600, color: "#111827" }}>{SAMPLE_DATA[0].name}</div>
+            <div className="demo-title-full" style={{ color: "#6b7280" }}>{SAMPLE_DATA[0].title}</div>
           </div>
         </div>
       </div>
@@ -253,6 +239,38 @@ export default function WidgetDemo() {
 
   return (
     <div>
+      <style>{`
+        .demo-card-compact { min-width: min(140px, 38vw); max-width: 160px; padding: 10px; }
+        @media (min-width: 640px) { .demo-card-compact { min-width: 220px; max-width: 260px; padding: 14px; } }
+        .demo-card-compact .demo-text { font-size: 11px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .demo-card-compact .demo-text.demo-expanded { -webkit-line-clamp: unset; display: block; }
+        @media (min-width: 640px) { .demo-card-compact .demo-text { font-size: 13px; } }
+        .demo-read-more { background: none; border: none; padding: 0; margin-top: 2px; font-size: 10px; color: ${BRAND}; cursor: pointer; }
+        .demo-read-more:hover { text-decoration: underline; }
+        @media (min-width: 640px) { .demo-read-more { font-size: 12px; } }
+        .demo-card-compact .demo-name { font-size: 10px; }
+        @media (min-width: 640px) { .demo-card-compact .demo-name { font-size: 12px; } }
+        .demo-card-compact .demo-title { font-size: 9px; }
+        @media (min-width: 640px) { .demo-card-compact .demo-title { font-size: 11px; } }
+        .demo-list-wrap { gap: 8px; padding: 12px; }
+        @media (min-width: 640px) { .demo-list-wrap { gap: 12px; padding: 20px; } }
+        .demo-list-item { gap: 4px; padding: 10px; }
+        @media (min-width: 640px) { .demo-list-item { gap: 8px; padding: 16px; } }
+        .demo-text-full { font-size: 12px; }
+        @media (min-width: 640px) { .demo-text-full { font-size: 13px; } }
+        .demo-name-full { font-size: 11px; }
+        @media (min-width: 640px) { .demo-name-full { font-size: 12px; } }
+        .demo-title-full { font-size: 10px; }
+        @media (min-width: 640px) { .demo-title-full { font-size: 11px; } }
+        .demo-stars { font-size: 12px; }
+        @media (min-width: 640px) { .demo-stars { font-size: 14px; } }
+        .demo-single-wrap { padding: 12px; }
+        @media (min-width: 640px) { .demo-single-wrap { padding: 20px; } }
+        .demo-single-card { padding: 14px; }
+        @media (min-width: 640px) { .demo-single-card { padding: 20px; } }
+        .demo-single-text { font-size: 12px; line-height: 1.6; margin: 10px 0; }
+        @media (min-width: 640px) { .demo-single-text { font-size: 18px; line-height: 1.8; margin: 16px 0; } }
+      `}</style>
       <div className="flex items-center justify-center gap-4 mb-4">
         <button
           onClick={prev}
