@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
+import { salonPageLinkIconSchema } from "@/lib/schemas";
 
 const safeUrlSchema = z
   .string()
@@ -93,6 +94,7 @@ export const formUpdateSchema = z.object({
 export const salonLinkSchema = z.object({
   label: z.string().min(1, "ラベルを入力してください").max(30),
   url: z.string().url("有効なURLを入力してください"),
+  icon: salonPageLinkIconSchema,
 });
 
 const salonMenuItemSchema = z.object({
@@ -123,4 +125,16 @@ export const salonPageSchema = z.object({
   business_hours: salonBusinessHoursSchema.optional().nullable(),
   closed_days: z.string().max(100).optional().nullable(),
   menu_items: z.array(salonMenuItemSchema).max(20).optional().nullable(),
+});
+
+/**
+ * /api/salon-page PUT のリクエストボディ用スキーマ。
+ * salonPageSchema をベースに、保存系エンドポイントで必要な追加フィールドを足す。
+ */
+export const salonPageUpsertSchema = salonPageSchema.extend({
+  cover_image_url: z.string().url().nullable().optional(),
+  cover_image_position: z.number().min(0).max(100).optional(),
+  review_layout: z.enum(["list", "grid", "card", "wall"]),
+  is_published: z.boolean(),
+  logo_url: z.string().url().nullable().optional(),
 });

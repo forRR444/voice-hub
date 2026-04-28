@@ -15,9 +15,7 @@ import {
   Clock,
   ChevronDown,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { resizeImage } from "@/lib/image-utils";
-import { generateSlug } from "@/lib/utils";
 import { useCopy } from "@/hooks/use-copy";
 import { SALON_THEMES } from "@/lib/salon-themes";
 import {
@@ -64,6 +62,18 @@ const inputStyle: React.CSSProperties = {
 
 type LinkEntry = { label: string; url: string; icon: SalonPageLinkIcon };
 
+function extractErrorMessage(json: unknown): string {
+  if (typeof json === "object" && json !== null && "error" in json) {
+    const e: unknown = Reflect.get(json, "error");
+    if (typeof e === "string") return e;
+    if (typeof e === "object" && e !== null && "message" in e) {
+      const m: unknown = Reflect.get(e, "message");
+      if (typeof m === "string") return m;
+    }
+  }
+  return "保存に失敗しました";
+}
+
 const urlPlaceholders: Record<string, string> = {
   line: "https://lin.ee/xxxxx（公式LINEのURL）",
   instagram: "https://instagram.com/yourname",
@@ -82,7 +92,6 @@ export default function SalonPageSettingsClient({
   initialSalonPage: SalonPageRow | null;
   initialLinks: SalonPageLinkRow[];
 }) {
-  const supabase = createClient();
   const { copiedKey, copy } = useCopy();
 
   const [step, setStep] = useState(1);
@@ -205,93 +214,95 @@ export default function SalonPageSettingsClient({
 
       if (logoFile) {
         const resized = await resizeImage(logoFile, IMAGE_RESIZE_MAX_PX);
-        const path = `salon/${workspace.id}/${crypto.randomUUID()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(path, resized, { contentType: "image/jpeg" });
-        if (uploadError)
-          throw new Error(`ロゴのアップロードに失敗しました: ${uploadError.message}`);
-        const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-        uploadedLogoUrl = urlData.publicUrl;
+        const formData = new FormData();
+        formData.append("file", resized);
+        formData.append("kind", "logo");
+        const uploadRes = await fetch("/api/salon-page/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok || !uploadJson.ok) {
+          const message = extractErrorMessage(uploadJson);
+          throw new Error(`ロゴのアップロードに失敗しました: ${message}`);
+        }
+        uploadedLogoUrl = uploadJson.data.url;
       }
 
       if (coverFile) {
         const resized = await resizeImage(coverFile, 1920);
-        const path = `salon/${workspace.id}/cover_${crypto.randomUUID()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(path, resized, { contentType: "image/jpeg" });
-        if (uploadError)
-          throw new Error(`カバー画像のアップロードに失敗しました: ${uploadError.message}`);
-        const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-        uploadedCoverUrl = urlData.publicUrl;
+        const formData = new FormData();
+        formData.append("file", resized);
+        formData.append("kind", "cover");
+        const uploadRes = await fetch("/api/salon-page/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadJson = await uploadRes.json();
+        if (!uploadRes.ok || !uploadJson.ok) {
+          const message = extractErrorMessage(uploadJson);
+          throw new Error(`カバー画像のアップロードに失敗しました: ${message}`);
+        }
+        uploadedCoverUrl = uploadJson.data.url;
       }
 
-      const newSlug = slug ?? generateSlug(10);
+      const iconLabelMap: Record<string, string> = {
+        line: "LINE",
+        instagram: "Instagram",
+        phone: "電話",
+        mail: "メール",
+        map: "地図",
+        web: "Webサイト",
+      };
 
-      const { data: upserted, error: upsertError } = await supabase
-        .from("salon_pages")
-        .upsert(
-          {
-            workspace_id: workspace.id,
-            salon_name: salonName.trim(),
-            tagline: tagline.trim() || null,
-            logo_url: uploadedLogoUrl,
-            theme,
-            accent_color: accentColor,
-            cover_image_url: uploadedCoverUrl,
-            cover_image_position: coverPosition,
-            review_layout: reviewLayout,
-            is_published: isPublished,
-            slug: newSlug,
-            description: description.trim() || null,
-            address: address.trim() || null,
-            google_map_url: googleMapUrl.trim() || null,
-            business_hours: businessHoursText.trim() ? { text: businessHoursText.trim() } : null,
-            closed_days: closedDays.trim() || null,
-            menu_items:
-              menuItems.filter((m) => m.name.trim()).length > 0
-                ? menuItems
-                    .filter((m) => m.name.trim())
-                    .map((m) => ({
-                      name: m.name.trim(),
-                      price: m.price.trim(),
-                      description: m.description.trim(),
-                    }))
-                : null,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "workspace_id" }
-        )
-        .select("id, slug")
-        .single();
+      const trimmedTagline = tagline.trim();
+      const trimmedDescription = description.trim();
+      const trimmedAddress = address.trim();
+      const trimmedGoogleMapUrl = googleMapUrl.trim();
+      const trimmedBusinessHours = businessHoursText.trim();
+      const trimmedClosedDays = closedDays.trim();
+      const filteredMenuItems = menuItems.filter((m) => m.name.trim());
 
-      if (upsertError) throw new Error(upsertError.message);
-
-      const salonPageId = upserted.id;
-
-      await supabase.from("salon_page_links").delete().eq("salon_page_id", salonPageId);
-
-      const validLinks = links.filter((l) => l.url.trim());
-      if (validLinks.length > 0) {
-        const iconLabelMap: Record<string, string> = {
-          line: "LINE",
-          instagram: "Instagram",
-          phone: "電話",
-          mail: "メール",
-          map: "地図",
-          web: "Webサイト",
-        };
-        const { error: linkError } = await supabase.from("salon_page_links").insert(
-          validLinks.map((l, i) => ({
-            salon_page_id: salonPageId,
+      const body = {
+        salon_name: salonName.trim(),
+        tagline: trimmedTagline || undefined,
+        logo_url: uploadedLogoUrl,
+        theme,
+        accent_color: accentColor,
+        cover_image_url: uploadedCoverUrl,
+        cover_image_position: coverPosition,
+        review_layout: reviewLayout,
+        is_published: isPublished,
+        description: trimmedDescription || null,
+        address: trimmedAddress || null,
+        google_map_url: trimmedGoogleMapUrl || null,
+        business_hours: trimmedBusinessHours ? { text: trimmedBusinessHours } : null,
+        closed_days: trimmedClosedDays || null,
+        menu_items:
+          filteredMenuItems.length > 0
+            ? filteredMenuItems.map((m) => ({
+                name: m.name.trim(),
+                price: m.price.trim(),
+                description: m.description.trim(),
+              }))
+            : null,
+        links: links
+          .filter((l) => l.url.trim())
+          .map((l) => ({
             label: l.label.trim() || iconLabelMap[l.icon] || "リンク",
             url: l.url.trim(),
             icon: l.icon,
-            display_order: i,
-          }))
-        );
-        if (linkError) throw new Error(linkError.message);
+          })),
+      };
+
+      const saveRes = await fetch("/api/salon-page", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const saveJson = await saveRes.json();
+      if (!saveRes.ok || !saveJson.ok) {
+        throw new Error(extractErrorMessage(saveJson));
       }
 
       setLogoUrl(uploadedLogoUrl);

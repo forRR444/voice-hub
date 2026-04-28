@@ -3,9 +3,9 @@ import { test, expect } from "@playwright/test";
 // ---------------------------------------------------------------------------
 // /dashboard/salon-page の保存フローを検証する authed E2E テスト
 //
-// ・UI の『保存する』ボタンをクリックして Supabase upsert が走り、
+// ・UI の『保存する』ボタンをクリックして /api/salon-page PUT が走り、
 //   ボタン表示が「保存中...」→「保存済み」に遷移することを確認する
-// ・破壊的操作（workspace スコープの salon_pages upsert）を実行する
+// ・破壊的操作（workspace スコープのサロンページ upsert）を実行する
 // ---------------------------------------------------------------------------
 
 test.describe("認証済み：サロンページ保存フロー", () => {
@@ -26,7 +26,7 @@ test.describe("認証済み：サロンページ保存フロー", () => {
     const saveBtn = page.getByRole("button", { name: "保存する" });
     await expect(saveBtn).toBeVisible();
 
-    // supabase.from("salon_pages").upsert() は Supabase REST を叩くので、
+    // 『保存する』クリックで /api/salon-page PUT を叩くので、
     // 保存完了のシグナルはボタン表示の『保存済み』で確認する
     await saveBtn.click();
 

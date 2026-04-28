@@ -16,7 +16,25 @@ export const RATE_LIMITS = {
   googleReviewsGuestHourly: { limit: 6, windowMs: 60 * 60 * 1000 }, // 未ログイン: 3フロー/時間
   googleReviewsGuestDaily: { limit: 20, windowMs: 24 * 60 * 60 * 1000 }, // 未ログイン: 10フロー/日
   googleReviewsUser: { limit: 20, windowMs: 24 * 60 * 60 * 1000 }, // ログイン済み: 10フロー/日
+  salonPageSave: { limit: 30, windowMs: 60_000 },
+  salonUpload: { limit: 20, windowMs: 60_000 },
 } as const;
+
+// 予約済み slug — サロンページ slug 生成時に衝突回避する
+export const RESERVED_SLUGS = [
+  "api",
+  "admin",
+  "login",
+  "signup",
+  "dashboard",
+  "salon",
+  "stripe",
+  "auth",
+  "onboarding",
+  "favicon.ico",
+  "sitemap.xml",
+  "robots.txt",
+] as const;
 
 // ウィジェットタイプ一覧
 export const WIDGET_TYPES = [

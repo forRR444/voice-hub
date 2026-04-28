@@ -1,31 +1,71 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
-// ─── Supabase mock ───
-const mockUpsertResult = { data: { id: "sp-new", slug: "testslug123" }, error: null };
-const mockChain: Record<string, ReturnType<typeof vi.fn>> = {};
-function resetChain() {
-  const methods = ["select", "insert", "update", "delete", "upsert", "eq", "order", "single"];
-  for (const m of methods) {
-    mockChain[m] = vi.fn().mockReturnValue(mockChain);
-  }
-  mockChain.single = vi.fn().mockResolvedValue(mockUpsertResult);
-  mockChain.then = vi.fn((resolve: (v: unknown) => void) => resolve({ data: null, error: null }));
-}
-resetChain();
+// ─── fetch mock ───
+// salon-page-client は /api/salon-page (PUT) と /api/salon-page/upload (POST) を叩くので、
+// global.fetch をモック化して URL ごとにレスポンスを切り替える。
+type FetchInit = RequestInit | undefined;
 
-const mockFrom = vi.fn().mockReturnValue(mockChain);
-const mockUpload = vi.fn().mockResolvedValue({ error: null });
-const mockGetPublicUrl = vi
-  .fn()
-  .mockReturnValue({ data: { publicUrl: "https://example.com/uploaded.jpg" } });
-const mockStorage = {
-  from: vi.fn().mockReturnValue({ upload: mockUpload, getPublicUrl: mockGetPublicUrl }),
+const defaultSaveResponse = { ok: true, data: { id: "sp-new", slug: "testslug123" } };
+const defaultUploadResponse = {
+  ok: true,
+  data: { url: "https://example.com/uploaded.jpg" },
 };
 
-vi.mock("@/lib/supabase/client", () => ({
-  createClient: () => ({ from: mockFrom, storage: mockStorage }),
-}));
+let saveResponseQueue: Array<{ status: number; body: unknown }> = [];
+let uploadResponseQueue: Array<{ status: number; body: unknown }> = [];
+
+function jsonResponse(status: number, body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+function nextResponse(
+  queue: Array<{ status: number; body: unknown }>,
+  fallback: { status: number; body: unknown }
+): Response {
+  const entry = queue.shift() ?? fallback;
+  return jsonResponse(entry.status, entry.body);
+}
+
+const mockFetch = vi.fn(async (input: RequestInfo | URL, _init?: FetchInit) => {
+  const url = typeof input === "string" ? input : input.toString();
+  if (url.includes("/api/salon-page/upload")) {
+    return nextResponse(uploadResponseQueue, { status: 200, body: defaultUploadResponse });
+  }
+  if (url.includes("/api/salon-page")) {
+    return nextResponse(saveResponseQueue, { status: 200, body: defaultSaveResponse });
+  }
+  return jsonResponse(404, { ok: false, error: "not found" });
+});
+
+function getCallsTo(path: "/api/salon-page" | "/api/salon-page/upload"): Array<[string, FetchInit]> {
+  return mockFetch.mock.calls
+    .map((call): [string, FetchInit] => {
+      const input = call[0];
+      const init = call[1];
+      const url = typeof input === "string" ? input : input.toString();
+      return [url, init];
+    })
+    .filter(([url]) => {
+      if (path === "/api/salon-page/upload") return url.includes("/api/salon-page/upload");
+      // /api/salon-page そのものを呼ぶケースは upload を除外
+      return url.includes("/api/salon-page") && !url.includes("/api/salon-page/upload");
+    });
+}
+
+async function getSavePayload(): Promise<Record<string, unknown>> {
+  const calls = getCallsTo("/api/salon-page");
+  expect(calls.length).toBeGreaterThan(0);
+  const [, init] = calls[0];
+  expect(init?.method).toBe("PUT");
+  const body = init?.body;
+  expect(typeof body).toBe("string");
+  return JSON.parse(typeof body === "string" ? body : "");
+}
+
 vi.mock("@/lib/image-utils", () => ({
   resizeImage: vi.fn().mockResolvedValue(new Blob(["fake"])),
 }));
@@ -121,8 +161,9 @@ function renderSettings(salonPage: SalonPageRow | null = null, links: SalonPageL
 
 beforeEach(() => {
   vi.clearAllMocks();
-  resetChain();
-  mockFrom.mockReturnValue(mockChain);
+  saveResponseQueue = [];
+  uploadResponseQueue = [];
+  vi.stubGlobal("fetch", mockFetch);
 });
 
 // ─── 初期表示 ───
@@ -299,7 +340,7 @@ describe("保存処理", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     expect(screen.getAllByText("サロン名を入力してください").length).toBeGreaterThanOrEqual(1);
-    expect(mockFrom).not.toHaveBeenCalled();
+    expect(getCallsTo("/api/salon-page")).toHaveLength(0);
   });
 
   it("正常な入力で保存するとSupabaseのupsertが呼ばれる", async () => {
@@ -308,14 +349,11 @@ describe("保存処理", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockFrom).toHaveBeenCalledWith("salon_pages");
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    expect(mockChain.upsert).toHaveBeenCalledTimes(1);
 
-    const upsertArgs = mockChain.upsert.mock.calls[0][0];
-    expect(upsertArgs.workspace_id).toBe("ws-1");
-    expect(upsertArgs.salon_name).toBe("テストワークスペース");
-    expect(upsertArgs.slug).toBe("testslug123");
+    const payload = await getSavePayload();
+    expect(payload.salon_name).toBe("テストワークスペース");
   });
 
   it("既存リンクがある場合、保存時にdelete→insertが呼ばれる", async () => {
@@ -324,15 +362,21 @@ describe("保存処理", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockFrom).toHaveBeenCalledWith("salon_page_links");
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    // delete + insertの2回呼ばれる
-    const linkCalls = mockFrom.mock.calls.filter((c: string[]) => c[0] === "salon_page_links");
-    expect(linkCalls.length).toBeGreaterThanOrEqual(2);
+    // API ルート側で delete→insert を担当するため、クライアントは links 配列を payload に載せて送るだけ。
+    const payload = await getSavePayload();
+    expect(Array.isArray(payload.links)).toBe(true);
+    const linksPayload = payload.links;
+    if (!Array.isArray(linksPayload)) throw new Error("links must be array");
+    expect(linksPayload).toHaveLength(1);
+    const first = linksPayload[0];
+    if (typeof first !== "object" || first === null) throw new Error("link entry must be object");
+    expect(Reflect.get(first, "url")).toBe("https://lin.ee/xxx");
   });
 
   it("upsertエラー時にエラーメッセージが表示される", async () => {
-    mockChain.single = vi.fn().mockResolvedValue({ data: null, error: { message: "DB error" } });
+    saveResponseQueue.push({ status: 500, body: { ok: false, error: "DB error" } });
 
     renderSettings();
     fireEvent.click(screen.getByText("公開設定"));
@@ -693,10 +737,10 @@ describe("公開トグル", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.is_published).toBe(true);
+    const payload = await getSavePayload();
+    expect(payload.is_published).toBe(true);
   });
 
   it("既存公開中ページでトグルをオフにするとis_publishedがfalseで保存される", async () => {
@@ -711,10 +755,10 @@ describe("公開トグル", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.is_published).toBe(false);
+    const payload = await getSavePayload();
+    expect(payload.is_published).toBe(false);
   });
 });
 
@@ -735,19 +779,26 @@ describe("保存処理での画像アップロード", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockUpload).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page/upload")).toHaveLength(1);
     });
-    expect(mockGetPublicUrl).toHaveBeenCalled();
-    // 保存時にlogo_urlにpublicUrlが入る
+    // upload リクエストは multipart/form-data (FormData)
+    const [, init] = getCallsTo("/api/salon-page/upload")[0];
+    expect(init?.method).toBe("POST");
+    expect(init?.body).toBeInstanceOf(FormData);
+    if (init?.body instanceof FormData) {
+      expect(init.body.get("kind")).toBe("logo");
+    }
+
+    // 保存時にlogo_urlにアップロードAPIから返ったURLが入る
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.logo_url).toBe("https://example.com/uploaded.jpg");
+    const payload = await getSavePayload();
+    expect(payload.logo_url).toBe("https://example.com/uploaded.jpg");
   });
 
   it("ロゴアップロード失敗時にエラーメッセージが表示される", async () => {
-    mockUpload.mockResolvedValueOnce({ error: { message: "disk full" } });
+    uploadResponseQueue.push({ status: 500, body: { ok: false, error: "disk full" } });
 
     const { container } = renderSettings();
     const [logoInput] = getFileInputs(container);
@@ -759,7 +810,7 @@ describe("保存処理での画像アップロード", () => {
     await waitFor(() => {
       expect(screen.getAllByText(/ロゴのアップロードに失敗/).length).toBeGreaterThanOrEqual(1);
     });
-    expect(mockChain.upsert).not.toHaveBeenCalled();
+    expect(getCallsTo("/api/salon-page")).toHaveLength(0);
   });
 
   it("カバー画像選択後に保存するとstorage.uploadが呼ばれる", async () => {
@@ -771,17 +822,24 @@ describe("保存処理での画像アップロード", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockUpload).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page/upload")).toHaveLength(1);
     });
+    const [, init] = getCallsTo("/api/salon-page/upload")[0];
+    expect(init?.method).toBe("POST");
+    expect(init?.body).toBeInstanceOf(FormData);
+    if (init?.body instanceof FormData) {
+      expect(init.body.get("kind")).toBe("cover");
+    }
+
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.cover_image_url).toBe("https://example.com/uploaded.jpg");
+    const payload = await getSavePayload();
+    expect(payload.cover_image_url).toBe("https://example.com/uploaded.jpg");
   });
 
   it("カバーアップロード失敗時にエラーメッセージが表示される", async () => {
-    mockUpload.mockResolvedValueOnce({ error: { message: "upload failed" } });
+    uploadResponseQueue.push({ status: 500, body: { ok: false, error: "upload failed" } });
 
     const { container } = renderSettings();
     const inputs = getFileInputs(container);
@@ -795,7 +853,7 @@ describe("保存処理での画像アップロード", () => {
         1
       );
     });
-    expect(mockChain.upsert).not.toHaveBeenCalled();
+    expect(getCallsTo("/api/salon-page")).toHaveLength(0);
   });
 });
 
@@ -828,14 +886,14 @@ describe("保存データに詳細情報が反映される", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.description).toBe("こだわり説明");
-    expect(args.address).toBe("東京都渋谷区A");
-    expect(args.google_map_url).toBe("https://maps.google.com/z");
-    expect(args.business_hours).toEqual({ text: "平日 10-20" });
-    expect(args.closed_days).toBe("毎週月曜日");
+    const payload = await getSavePayload();
+    expect(payload.description).toBe("こだわり説明");
+    expect(payload.address).toBe("東京都渋谷区A");
+    expect(payload.google_map_url).toBe("https://maps.google.com/z");
+    expect(payload.business_hours).toEqual({ text: "平日 10-20" });
+    expect(payload.closed_days).toBe("毎週月曜日");
   });
 
   it("メニュー項目が保存ペイロードに配列として含まれる", async () => {
@@ -850,12 +908,16 @@ describe("保存データに詳細情報が反映される", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(Array.isArray(args.menu_items)).toBe(true);
-    expect(args.menu_items[0].name).toBe("カット");
-    expect(args.menu_items[0].price).toBe("¥4,500");
+    const payload = await getSavePayload();
+    expect(Array.isArray(payload.menu_items)).toBe(true);
+    const items = payload.menu_items;
+    if (!Array.isArray(items)) throw new Error("menu_items must be array");
+    const first = items[0];
+    if (typeof first !== "object" || first === null) throw new Error("menu item must be object");
+    expect(Reflect.get(first, "name")).toBe("カット");
+    expect(Reflect.get(first, "price")).toBe("¥4,500");
   });
 
   it("アクセントカラーとレイアウトが保存ペイロードに含まれる", async () => {
@@ -871,10 +933,10 @@ describe("保存データに詳細情報が反映される", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(mockChain.upsert).toHaveBeenCalled();
+      expect(getCallsTo("/api/salon-page")).toHaveLength(1);
     });
-    const args = mockChain.upsert.mock.calls[0][0];
-    expect(args.accent_color).toBe("#112233");
-    expect(args.review_layout).toBe("grid");
+    const payload = await getSavePayload();
+    expect(payload.accent_color).toBe("#112233");
+    expect(payload.review_layout).toBe("grid");
   });
 });
