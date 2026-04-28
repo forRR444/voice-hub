@@ -50,7 +50,7 @@ export default function OnboardingClient({
                 .from("workspaces")
                 .update({ name: tryData.workspaceName || "マイサービス" })
                 .eq("id", workspace.id);
-              const { data: form, error: formError } = await supabase
+              const { data: _form, error: formError } = await supabase
                 .from("forms")
                 .insert({
                   workspace_id: workspace.id,
@@ -65,11 +65,13 @@ export default function OnboardingClient({
               if (formError) throw formError;
 
               if (tryData.googleReviews?.length > 0) {
-                await supabase.from("testimonials").insert(
-                  mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, {
-                    status: "approved",
-                  })
-                );
+                await supabase
+                  .from("testimonials")
+                  .insert(
+                    mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, {
+                      status: "approved",
+                    })
+                  );
               }
 
               await supabase.from("widgets").insert({
@@ -126,7 +128,7 @@ export default function OnboardingClient({
             .from("workspaces")
             .update({ name: workspace.name || "マイサービス" })
             .eq("id", workspace.id);
-          const { data: form, error: formError } = await supabase
+          const { data: _form, error: formError } = await supabase
             .from("forms")
             .insert({
               workspace_id: workspace.id,

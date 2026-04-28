@@ -5,7 +5,7 @@
   var baseUrl = "";
   try {
     baseUrl = new URL(scriptUrl).origin;
-  } catch (e) {
+  } catch (_e) {
     baseUrl = window.location.origin;
   }
 
@@ -223,13 +223,13 @@
           result.accentColor = rgbToHex(linkRgb.r, linkRgb.g, linkRgb.b);
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Silently fall back to defaults
     }
     return result;
   }
 
-  function stars(rating, color) {
+  function stars(rating, _color) {
     var s = "";
     for (var i = 0; i < 5; i++) s += i < rating ? "\u2605" : "\u2606";
     return s;
@@ -241,7 +241,7 @@
       var dt = new Date(d);
       if (isNaN(dt.getTime())) return "";
       return dt.getFullYear() + "\u5E74" + (dt.getMonth() + 1) + "\u6708" + dt.getDate() + "\u65E5";
-    } catch (e) {
+    } catch (_e) {
       return "";
     }
   }
@@ -314,7 +314,6 @@
 
   function renderSingle(container, shadow, root, data) {
     var theme = data.widget.theme || {};
-    var brand = sanitizeColor(theme.brandColor || "#635BFF");
     var testimonials = data.testimonials;
     var t = testimonials[0];
 
@@ -757,7 +756,7 @@
           }
           node = node.parentElement;
         }
-      } catch (e) {
+      } catch (_e) {
         // Fall back to light
       }
     }

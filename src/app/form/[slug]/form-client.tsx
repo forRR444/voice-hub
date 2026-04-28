@@ -13,8 +13,6 @@ import {
 } from "@/lib/constants";
 import { resizeImage } from "@/lib/image-utils";
 import { StarRatingInput } from "@/app/components/star-rating-input";
-import { cssVars } from "@/lib/css-helpers";
-import { isOneOf } from "@/lib/type-guards";
 
 type FormData = {
   rating: number;
@@ -35,23 +33,6 @@ export type FormClientHandle = { skip: () => void };
 
 // ── Helpers ──────────────────────────────────────────────────
 
-function darkenHex(hex: string, amount: number): string {
-  const clean = hex.replace("#", "");
-  const num = parseInt(
-    clean.length === 3
-      ? clean
-          .split("")
-          .map((c) => c + c)
-          .join("")
-      : clean,
-    16
-  );
-  const r = Math.max(0, (num >> 16) - amount);
-  const g = Math.max(0, ((num >> 8) & 0xff) - amount);
-  const b = Math.max(0, (num & 0xff) - amount);
-  return `rgb(${r},${g},${b})`;
-}
-
 function SpinnerIcon() {
   return (
     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -68,23 +49,6 @@ function SpinnerIcon() {
 const inputClass =
   "w-full rounded-lg bg-white px-4 py-3 text-[15px] text-gray-900 placeholder-gray-400 transition-all duration-150 focus:outline-none focus:ring-2";
 const ghostBorder = "1px solid rgba(227,232,238,0.5)";
-
-type CustomFieldMap = Record<string, string | boolean | number>;
-function getCFString(cf: CustomFieldMap, id: string): string {
-  const v = cf[id];
-  return typeof v === "string" ? v : "";
-}
-function getCFNumber(cf: CustomFieldMap, id: string): number {
-  const v = cf[id];
-  return typeof v === "number" ? v : 0;
-}
-function getCFBoolean(cf: CustomFieldMap, id: string): boolean {
-  const v = cf[id];
-  return typeof v === "boolean" ? v : false;
-}
-
-const TEXTAREA_KNOWN_IDS = ["before_story", "content"] as const;
-const TEXT_KNOWN_IDS = ["name", "title"] as const;
 
 // ── Main component ────────────────────────────────────────────
 
@@ -119,7 +83,6 @@ export const FormClient = forwardRef<
   }, []);
 
   const brandColor = form.brand_color || DEFAULT_BRAND_COLOR;
-  const brandDark = darkenHex(brandColor, 40);
   const currentQuestion = questions[step];
   const totalSteps = questions.length;
   const progress = ((step + 1) / totalSteps) * 100;
@@ -275,7 +238,10 @@ export const FormClient = forwardRef<
   // ── Render question inputs ──────────────────────────────
   const renderQuestion = (question: FormQuestion) => {
     const isKnown = KNOWN_IDS.includes(question.id);
-    const ringStyle = cssVars({ border: ghostBorder, "--tw-ring-color": `${brandColor}40` });
+    const ringStyle = {
+      border: ghostBorder,
+      "--tw-ring-color": `${brandColor}40`,
+    } as React.CSSProperties;
 
     switch (question.type) {
       case "star_rating":
@@ -287,15 +253,15 @@ export const FormClient = forwardRef<
           />
         ) : (
           <StarRatingInput
-            value={getCFNumber(formData.customFields, question.id)}
+            value={(formData.customFields[question.id] as number) || 0}
             onChange={(v) => updateCustomField(question.id, v)}
             brandColor={brandColor}
           />
         );
 
       case "textarea": {
-        if (isOneOf(TEXTAREA_KNOWN_IDS, question.id)) {
-          const fieldKey = question.id;
+        if (isKnown) {
+          const fieldKey = question.id as "before_story" | "content";
           const value = formData[fieldKey];
           return (
             <div className="space-y-1.5">
@@ -313,7 +279,7 @@ export const FormClient = forwardRef<
             </div>
           );
         }
-        const cv = getCFString(formData.customFields, question.id);
+        const cv = (formData.customFields[question.id] as string) || "";
         return (
           <div className="space-y-1.5">
             <textarea
@@ -332,8 +298,8 @@ export const FormClient = forwardRef<
       }
 
       case "text": {
-        if (isOneOf(TEXT_KNOWN_IDS, question.id)) {
-          const textKey = question.id;
+        if (isKnown) {
+          const textKey = question.id as "name" | "title";
           return (
             <input
               type="text"
@@ -352,7 +318,7 @@ export const FormClient = forwardRef<
             className={inputClass}
             style={ringStyle}
             placeholder={question.placeholder}
-            value={getCFString(formData.customFields, question.id)}
+            value={(formData.customFields[question.id] as string) || ""}
             onChange={(e) => updateCustomField(question.id, e.target.value)}
             maxLength={100}
           />
@@ -365,7 +331,7 @@ export const FormClient = forwardRef<
             <select
               className={`${inputClass} appearance-none pr-10 cursor-pointer`}
               style={ringStyle}
-              value={getCFString(formData.customFields, question.id)}
+              value={(formData.customFields[question.id] as string) || ""}
               onChange={(e) => updateCustomField(question.id, e.target.value)}
             >
               <option value="">選択してください</option>
@@ -460,7 +426,7 @@ export const FormClient = forwardRef<
         const isPermission = isKnown;
         const checked = isPermission
           ? formData.permission
-          : getCFBoolean(formData.customFields, question.id);
+          : (formData.customFields[question.id] as boolean) || false;
         const label = isPermission ? "はい、掲載を許可します" : question.label;
         const onChange = isPermission
           ? (e: React.ChangeEvent<HTMLInputElement>) => updateField("permission", e.target.checked)
@@ -711,11 +677,13 @@ export const FormClient = forwardRef<
               onClick={handleNext}
               disabled={(!demo && currentQuestion.required && !isCurrentStepValid()) || submitting}
               className="flex-1 h-11 rounded-lg px-6 text-white text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={cssVars({
-                background: brandColor,
-                boxShadow: "none",
-                "--tw-ring-color": `${brandColor}40`,
-              })}
+              style={
+                {
+                  background: brandColor,
+                  boxShadow: "none",
+                  "--tw-ring-color": `${brandColor}40`,
+                } as React.CSSProperties
+              }
             >
               {submitting ? (
                 <span className="flex items-center justify-center gap-2">

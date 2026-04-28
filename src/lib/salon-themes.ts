@@ -36,15 +36,6 @@ function rgbToHex(r: number, g: number, b: number): string {
   );
 }
 
-// 白と混ぜる（ratio: 0=元の色, 1=白）
-function mixWhite(rgb: [number, number, number], ratio: number): string {
-  return rgbToHex(
-    rgb[0] + (255 - rgb[0]) * ratio,
-    rgb[1] + (255 - rgb[1]) * ratio,
-    rgb[2] + (255 - rgb[2]) * ratio
-  );
-}
-
 // RGBをHSLに変換
 function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
   r /= 255;

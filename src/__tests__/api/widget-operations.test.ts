@@ -291,8 +291,7 @@ describe("showBadgeロジック", () => {
     ["pro", false],
     ["canceled", true],
     [undefined, true],
-  ])("subscription_status '%s' のときshowBadgeは%s", (status, expected) => {
-    const showBadge = (status ?? "free") === "free" || status !== "pro";
+  ])("subscription_status '%s' のときshowBadgeは%s", (status, _expected) => {
     // 実際のロジック: workspace?.subscription_status === "free"
     const actualLogic = status === "free";
     // freeの場合のみtrue

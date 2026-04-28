@@ -17,9 +17,9 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resizeImage } from "@/lib/image-utils";
-import { generateSlug, getBaseUrl } from "@/lib/utils";
+import { generateSlug } from "@/lib/utils";
 import { useCopy } from "@/hooks/use-copy";
-import { SALON_THEMES, type SalonThemeConfig } from "@/lib/salon-themes";
+import { SALON_THEMES } from "@/lib/salon-themes";
 import {
   SALON_TAGLINE_MAX_LENGTH,
   SALON_MAX_LINKS,
@@ -99,7 +99,7 @@ export default function SalonPageSettingsClient({
     initialSalonPage?.cover_image_url ?? null
   );
   const [coverPosition, setCoverPosition] = useState(initialSalonPage?.cover_image_position ?? 50);
-  const [theme, setTheme] = useState<SalonTheme>(initialSalonPage?.theme ?? "natural");
+  const [theme] = useState<SalonTheme>(initialSalonPage?.theme ?? "natural");
   const [accentColor, setAccentColor] = useState(
     initialSalonPage?.accent_color ?? SALON_THEMES.natural.defaultAccent
   );
@@ -135,7 +135,6 @@ export default function SalonPageSettingsClient({
   const slug = initialSalonPage?.slug ?? null;
   const salonBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.jp";
   const pageUrl = slug ? `${salonBaseUrl}/salon/${slug}` : null;
-  const themeConfig = SALON_THEMES[theme];
 
   function handleLogoSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -151,11 +150,6 @@ export default function SalonPageSettingsClient({
     if (!file.type.startsWith("image/")) return;
     setCoverFile(file);
     setCoverPreview(URL.createObjectURL(file));
-  }
-
-  function handleThemeChange(newTheme: SalonTheme) {
-    setTheme(newTheme);
-    setAccentColor(SALON_THEMES[newTheme].defaultAccent);
   }
 
   function toggleSection(key: string) {

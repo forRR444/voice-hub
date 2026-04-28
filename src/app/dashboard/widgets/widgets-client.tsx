@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Plus, Code, ExternalLink, Check, X, Pencil, Trash, MoreHorizontal } from "lucide-react";
 import { WorkspaceRow, WidgetRow, WidgetTheme, SubscriptionStatus } from "@/types/database";
-import { isRecord } from "@/lib/type-guards";
-import { widgetTypeSchema } from "@/lib/schemas";
 import { getPlanLimits } from "@/lib/plan";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
@@ -20,6 +17,16 @@ import Card from "@/app/components/ui/card";
 import EmptyState from "@/app/components/ui/empty-state";
 import { useCopy } from "@/hooks/use-copy";
 
+type WidgetType =
+  | "carousel"
+  | "grid"
+  | "marquee"
+  | "list"
+  | "single"
+  | "wall"
+  | "dual-marquee"
+  | "badge";
+
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
   brandColor: DEFAULT_BRAND_COLOR,
@@ -31,7 +38,7 @@ const DEFAULT_THEME: WidgetTheme = {
 };
 
 export default function WidgetsClient({
-  workspace,
+  workspace: _workspace,
   widgets: initialWidgets,
   subscriptionStatus,
 }: {
@@ -116,8 +123,8 @@ export default function WidgetsClient({
     const w = widgets.find((widget) => widget.id === id);
     if (!w) return "light";
     const theme = w.theme;
-    if (isRecord(theme)) {
-      const m = theme.mode;
+    if (theme && typeof theme === "object" && "mode" in theme) {
+      const m = (theme as { mode: string }).mode;
       if (m === "light" || m === "dark" || m === "auto") return m;
     }
     return "light";
@@ -133,11 +140,12 @@ export default function WidgetsClient({
   }
 
   function startEdit(w: WidgetRow) {
+    const theme = w.theme as WidgetTheme;
     setEditingId(w.id);
     setEditForm({
       name: w.name,
-      type: w.type,
-      theme: { ...DEFAULT_THEME, ...w.theme },
+      type: w.type as WidgetType,
+      theme: { ...DEFAULT_THEME, ...theme },
       filter_min_rating: w.filter_min_rating,
       only_featured: w.only_featured,
     });
@@ -285,9 +293,7 @@ export default function WidgetsClient({
                           <CustomSelect
                             value={w.type}
                             onChange={async (val) => {
-                              const parsed = widgetTypeSchema.safeParse(val);
-                              if (!parsed.success) return;
-                              const newType = parsed.data;
+                              const newType = val as WidgetType;
                               const previousType = w.type;
                               setWidgets((prev) =>
                                 prev.map((widget) =>
@@ -316,9 +322,9 @@ export default function WidgetsClient({
                         </span>
                         <span>
                           モード:{" "}
-                          {w.theme.mode === "auto"
+                          {(w.theme as WidgetTheme).mode === "auto"
                             ? "自動"
-                            : w.theme.mode === "dark"
+                            : (w.theme as WidgetTheme).mode === "dark"
                               ? "ダーク"
                               : "ライト"}
                         </span>

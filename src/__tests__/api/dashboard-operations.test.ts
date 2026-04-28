@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TestimonialWithTags } from "@/types/database";
-import { createMockSupabase, type QueryResult } from "../helpers/mock-supabase";
+import { createMockSupabase } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Module mocks

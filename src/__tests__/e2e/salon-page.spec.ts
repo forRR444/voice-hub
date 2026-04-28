@@ -2,9 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("サロン公開ページ", () => {
   test("存在しないslugで404ページが表示される", async ({ page }) => {
-    const response = await page.goto("/salon/nonexistent-slug-xyz-999", {
-      waitUntil: "networkidle",
-    });
+    await page.goto("/salon/nonexistent-slug-xyz-999", { waitUntil: "networkidle" });
     await expect(page.getByText("ページが見つかりません")).toBeVisible({ timeout: 10000 });
   });
 

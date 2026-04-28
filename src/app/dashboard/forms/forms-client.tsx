@@ -19,7 +19,7 @@ import EmptyState from "@/app/components/ui/empty-state";
 import FormField, { inputClass } from "@/app/components/ui/form-field";
 
 export default function FormsClient({
-  workspace,
+  workspace: _workspace,
   forms: initialForms,
   submissionCounts,
   subscriptionStatus,
