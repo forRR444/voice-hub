@@ -67,9 +67,9 @@ export default function TestimonialDetailClient({
   async function handleDelete() {
     setDeleting(true);
     setErrorMsg(null);
-    const { error } = await supabase.from("testimonials").delete().eq("id", testimonial.id);
+    const res = await fetch(`/api/testimonials/${testimonial.id}`, { method: "DELETE" });
     setDeleting(false);
-    if (error) {
+    if (!res.ok) {
       setErrorMsg("削除に失敗しました");
       return;
     }

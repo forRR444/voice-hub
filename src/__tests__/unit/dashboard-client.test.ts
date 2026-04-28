@@ -191,36 +191,60 @@ describe("ダッシュボード - 統計", () => {
 });
 
 // =========================================================================
-// ステータス更新
+// ステータス更新（API ルート経由）
 // =========================================================================
 describe("ダッシュボード - ステータス更新", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("承認操作でDBを更新する", async () => {
-    mockSupabase = createMockSupabase({
-      testimonials: { data: null, error: null },
+  it("承認操作で /api/testimonials/[id] に PATCH を送る", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, data: null }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await fetch("/api/testimonials/t-2", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "approved" }),
     });
 
-    const builder = mockSupabase.from("testimonials");
-    await (builder as any).update({ status: "approved" }).eq("id", "t-2");
+    expect(res.ok).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/testimonials/t-2",
+      expect.objectContaining({
+        method: "PATCH",
+        body: JSON.stringify({ status: "approved" }),
+      })
+    );
 
-    expect(mockSupabase.from).toHaveBeenCalledWith("testimonials");
-    const updateCall = (builder as any).update.mock.calls[0][0];
-    expect(updateCall.status).toBe("approved");
+    vi.unstubAllGlobals();
   });
 
-  it("却下操作でDBを更新する", async () => {
-    mockSupabase = createMockSupabase({
-      testimonials: { data: null, error: null },
+  it("却下操作で /api/testimonials/[id] に PATCH を送る", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, data: null }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await fetch("/api/testimonials/t-2", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "rejected" }),
     });
 
-    const builder = mockSupabase.from("testimonials");
-    await (builder as any).update({ status: "rejected" }).eq("id", "t-2");
+    expect(res.ok).toBe(true);
+    const init = mockFetch.mock.calls[0][1];
+    expect(JSON.parse(init.body)).toEqual({ status: "rejected" });
 
-    const updateCall = (builder as any).update.mock.calls[0][0];
-    expect(updateCall.status).toBe("rejected");
+    vi.unstubAllGlobals();
   });
 
   it("ステータス更新後にローカルステートが更新される", () => {
@@ -235,35 +259,55 @@ describe("ダッシュボード - ステータス更新", () => {
 });
 
 // =========================================================================
-// 注目トグル
+// 注目トグル（API ルート経由）
 // =========================================================================
 describe("ダッシュボード - 注目トグル", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("注目をONにする", async () => {
-    mockSupabase = createMockSupabase({
-      testimonials: { data: null, error: null },
+  it("注目をONにする PATCH を送る", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, data: null }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await fetch("/api/testimonials/t-1", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_featured: true }),
     });
 
-    const builder = mockSupabase.from("testimonials");
-    await (builder as any).update({ is_featured: true }).eq("id", "t-1");
+    expect(res.ok).toBe(true);
+    const init = mockFetch.mock.calls[0][1];
+    expect(JSON.parse(init.body)).toEqual({ is_featured: true });
 
-    const updateCall = (builder as any).update.mock.calls[0][0];
-    expect(updateCall.is_featured).toBe(true);
+    vi.unstubAllGlobals();
   });
 
-  it("注目をOFFにする", async () => {
-    mockSupabase = createMockSupabase({
-      testimonials: { data: null, error: null },
+  it("注目をOFFにする PATCH を送る", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, data: null }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await fetch("/api/testimonials/t-2", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_featured: false }),
     });
 
-    const builder = mockSupabase.from("testimonials");
-    await (builder as any).update({ is_featured: false }).eq("id", "t-2");
+    expect(res.ok).toBe(true);
+    const init = mockFetch.mock.calls[0][1];
+    expect(JSON.parse(init.body)).toEqual({ is_featured: false });
 
-    const updateCall = (builder as any).update.mock.calls[0][0];
-    expect(updateCall.is_featured).toBe(false);
+    vi.unstubAllGlobals();
   });
 
   it("トグル後にローカルステートが反転する", () => {

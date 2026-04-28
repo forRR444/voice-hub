@@ -18,6 +18,8 @@ export const RATE_LIMITS = {
   googleReviewsUser: { limit: 20, windowMs: 24 * 60 * 60 * 1000 }, // ログイン済み: 10フロー/日
   salonPageSave: { limit: 30, windowMs: 60_000 },
   salonUpload: { limit: 20, windowMs: 60_000 },
+  testimonialUpdate: { limit: 60, windowMs: 60_000 },
+  testimonialDelete: { limit: 30, windowMs: 60_000 },
 } as const;
 
 // 予約済み slug — サロンページ slug 生成時に衝突回避する

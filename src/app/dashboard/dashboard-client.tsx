@@ -14,7 +14,6 @@ import {
   MessageSquare,
   CircleDot,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { WorkspaceRow, TestimonialWithTags, SubscriptionStatus } from "@/types/database";
 import { getDashboardViewLimit, IS_BETA } from "@/lib/plan";
 import TryDataDetector from "./try-data-detector";
@@ -50,7 +49,6 @@ export default function DashboardClient({
   testimonials: TestimonialWithTags[];
   subscriptionStatus?: SubscriptionStatus;
 }) {
-  const supabase = createClient();
   const [testimonials, setTestimonials] = useState<TestimonialWithTags[]>(initialTestimonials);
   const real = useMemo(
     () => testimonials.filter((t) => t.source !== "sample" && t.source !== "guide"),
@@ -86,12 +84,19 @@ export default function DashboardClient({
   }, [real]);
 
   async function updateStatus(id: string, status: "approved" | "rejected" | "pending") {
-    const { error } = await supabase.from("testimonials").update({ status }).eq("id", id);
-    if (error) {
-      window.alert("ステータスの更新に失敗しました");
-      return;
-    }
+    const original = testimonials.find((t) => t.id === id)?.status;
     setTestimonials((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
+    const res = await fetch(`/api/testimonials/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok && original !== undefined) {
+      setTestimonials((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, status: original } : t))
+      );
+      window.alert("ステータスの更新に失敗しました");
+    }
   }
 
   function handleTestimonialAdded(t: TestimonialWithTags) {
