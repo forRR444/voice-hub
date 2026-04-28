@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { FORM_TEMPLATES } from "@/lib/default-questions";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
@@ -210,10 +211,12 @@ export default function TryClient() {
               <div className="bg-[#f2f2f0]">
                 {/* Full-bleed hero image */}
                 <div className="relative" style={{ height: 180 }}>
-                  <img
+                  <Image
                     src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=360&fit=crop&crop=center"
                     alt="サロンの内装イメージ"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 768px"
                   />
                   <div
                     className="absolute inset-0"
@@ -255,12 +258,15 @@ export default function TryClient() {
                 </div>
 
                 <div className="flex">
-                  <img
-                    src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=240&h=200&fit=crop&crop=center&sat=-100"
-                    alt="サロンの施術イメージ"
-                    className="w-[45%] object-cover"
-                    style={{ height: 110 }}
-                  />
+                  <div className="relative w-[45%]" style={{ height: 110 }}>
+                    <Image
+                      src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=240&h=200&fit=crop&crop=center&sat=-100"
+                      alt="サロンの施術イメージ"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 45vw, 360px"
+                    />
+                  </div>
                   <div className="flex-1 px-4 py-4 flex flex-col justify-center bg-[#eaeae8]">
                     <p className="text-[7px] tracking-[0.3em] text-[#999] uppercase mb-1">
                       Concept

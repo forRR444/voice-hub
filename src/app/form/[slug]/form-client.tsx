@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect, useImperativeHandle, forwardRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { FormRow, FormQuestion } from "@/types/database";
 import {
@@ -361,6 +362,7 @@ export const FormClient = forwardRef<
             {formData.avatarPreview && (
               <div className="flex justify-center">
                 <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- blob URL のため next/image 化不要 */}
                   <img
                     src={formData.avatarPreview}
                     alt="プレビュー"
@@ -549,10 +551,12 @@ export const FormClient = forwardRef<
         <div className="px-8 pt-8 pb-0 sm:px-10 sm:pt-10">
           <div className="flex items-center gap-3 mb-3">
             {form.logo_url && (
-              <img
+              <Image
                 src={form.logo_url}
                 alt=""
-                className="w-10 h-10 rounded-lg object-contain shrink-0"
+                width={40}
+                height={40}
+                className="rounded-lg object-contain shrink-0"
                 style={{ border: ghostBorder }}
               />
             )}

@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import dashboardImg from "../../public/Dashboard.png";
+import widgetDemoImg from "../../public/widget-demo-screenshot.png";
+import snsStorySampleImg from "../../public/sns-story-sample.png";
 import PublicHeader from "./components/public-header";
 import TestimonialToast from "./components/testimonial-toast";
 import FaqItem from "./components/faq-item";
@@ -236,10 +240,11 @@ export default function Home() {
             <span className="text-xs text-[var(--slate)]">登録不要・30秒で体験</span>
           </div>
           <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
-            <img
-              src="/Dashboard.png"
+            <Image
+              src={dashboardImg}
               alt="VoiceHub ダッシュボード画面"
               className="w-full rounded-lg shadow-ambient"
+              priority
             />
           </div>
         </div>
@@ -427,32 +432,39 @@ export default function Home() {
                     <div className="flex items-center justify-center">
                       {i === 0 && (
                         <div className="w-full max-h-[280px] sm:max-h-[340px] overflow-hidden rounded-lg shadow-ambient">
-                          <img
-                            src="/widget-demo-screenshot.png"
+                          <Image
+                            src={widgetDemoImg}
                             alt="HPウィジェット埋め込み例"
                             className="w-full object-cover object-top"
+                            sizes="(max-width: 768px) 90vw, 480px"
                           />
                         </div>
                       )}
                       {i === 1 && (
-                        <img
-                          src="/sns-story-sample.png"
+                        <Image
+                          src={snsStorySampleImg}
                           alt="SNS投稿画像"
                           className="w-36 sm:w-48 rounded-lg shadow-ambient"
                         />
                       )}
                       {i === 2 && (
                         <div className="bg-[var(--canvas)] rounded-lg overflow-hidden shadow-ambient w-full">
-                          <img
-                            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=640&h=200&fit=crop&crop=center"
-                            alt=""
-                            className="w-full h-24 sm:h-28 object-cover"
-                          />
+                          <div className="relative w-full h-24 sm:h-28">
+                            <Image
+                              src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=640&h=200&fit=crop&crop=center"
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 90vw, 600px"
+                            />
+                          </div>
                           <div className="p-4 sm:p-6">
                             <div className="text-center">
-                              <img
+                              <Image
                                 src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=100&h=100&fit=crop&crop=face"
                                 alt=""
+                                width={56}
+                                height={56}
                                 className="w-14 h-14 rounded-full object-cover mx-auto border-2 border-white shadow-sm -mt-10"
                               />
                               <p className="mt-2 font-semibold text-[var(--ink)] text-sm">
@@ -484,8 +496,8 @@ export default function Home() {
                         </div>
                       )}
                       {i === 3 && (
-                        <img
-                          src="/Dashboard.png"
+                        <Image
+                          src={dashboardImg}
                           alt="管理ダッシュボード"
                           className="w-full rounded-lg shadow-ambient"
                         />

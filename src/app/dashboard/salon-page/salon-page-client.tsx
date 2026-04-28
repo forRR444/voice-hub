@@ -477,6 +477,7 @@ export default function SalonPageSettingsClient({
                 <FieldLabel label="ロゴ画像">
                   <div className="flex items-center gap-5">
                     {logoPreview ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- blob URL のため next/image 化不要
                       <img
                         src={logoPreview!}
                         alt="ロゴ"
@@ -517,6 +518,7 @@ export default function SalonPageSettingsClient({
                         className="relative rounded-lg overflow-hidden"
                         style={{ aspectRatio: "3.2 / 1", border: ghostBorder }}
                       >
+                        {/* eslint-disable-next-line @next/next/no-img-element -- blob URL のため next/image 化不要 */}
                         <img
                           src={coverPreview!}
                           alt="カバー"

@@ -122,6 +122,7 @@ function TestimonialCard({
       >
         {theme.showAvatar === true &&
           (t.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element -- iframe 埋め込み内のため next/image 化不要
             <img
               className="tc-avatar"
               src={t.avatar_url}
@@ -606,6 +607,7 @@ export default async function WidgetPreviewPage({
               >
                 {theme.showAvatar === true &&
                   (items[0].avatar_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- iframe 埋め込み内のため next/image 化不要
                     <img
                       src={items[0].avatar_url}
                       alt={items[0].name}

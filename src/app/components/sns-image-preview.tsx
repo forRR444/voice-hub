@@ -92,6 +92,7 @@ export default function SnsImagePreview({
         {generating ? (
           <Loader2 size={32} className="animate-spin text-foreground/30" />
         ) : previewUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- Canvas 生成 blob のため next/image 化不要
           <img
             src={previewUrl}
             alt="SNS画像プレビュー"

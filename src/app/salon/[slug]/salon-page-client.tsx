@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useId } from "react";
+import Image from "next/image";
 import { MapPin, ExternalLink, Clock, CalendarOff } from "lucide-react";
 import { SALON_THEMES, generateThemeFromAccent } from "@/lib/salon-themes";
 import { SALON_INITIAL_DISPLAY_COUNT } from "@/lib/constants";
@@ -64,17 +65,26 @@ export default function SalonPageClient({
         {/* カバー画像 + ロゴ重なり */}
         <div style={{ position: "relative" }}>
           {hasCover && (
-            <img
-              src={salonPage.cover_image_url!}
-              alt=""
+            <div
               style={{
+                position: "relative",
                 width: "100%",
                 aspectRatio: "3.2 / 1",
-                objectFit: "cover",
-                objectPosition: `center ${salonPage.cover_image_position ?? 50}%`,
                 display: "block",
               }}
-            />
+            >
+              <Image
+                src={salonPage.cover_image_url!}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 1280px"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: `center ${salonPage.cover_image_position ?? 50}%`,
+                }}
+              />
+            </div>
           )}
 
           {/* プロフィール */}
@@ -97,20 +107,26 @@ export default function SalonPageClient({
               }}
             >
               {salonPage.logo_url ? (
-                <img
-                  src={salonPage.logo_url}
-                  alt={salonPage.salon_name}
-                  className="w-20 h-20 sm:w-28 sm:h-28"
+                <div
+                  className="relative w-20 h-20 sm:w-28 sm:h-28"
                   style={{
                     borderRadius: "50%",
-                    objectFit: "cover",
+                    overflow: "hidden",
                     border: hasCover
                       ? `3px solid ${theme.cardBg}`
                       : `3px solid ${theme.cardBorder}`,
                     boxShadow: hasCover ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                     background: theme.cardBg,
                   }}
-                />
+                >
+                  <Image
+                    src={salonPage.logo_url}
+                    alt={salonPage.salon_name}
+                    fill
+                    sizes="112px"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
               ) : (
                 <div
                   className="w-20 h-20 sm:w-28 sm:h-28 text-3xl sm:text-5xl"

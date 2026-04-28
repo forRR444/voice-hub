@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Trash, Bookmark, Tag, X, Plus, ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
@@ -99,11 +100,15 @@ export default function TestimonialDetailClient({
         <div className="flex items-start justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3 sm:gap-4">
             {t.avatar_url ? (
-              <img
-                src={t.avatar_url}
-                alt={t.name}
-                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover"
-              />
+              <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-full overflow-hidden">
+                <Image
+                  src={t.avatar_url}
+                  alt={t.name}
+                  fill
+                  sizes="(max-width: 640px) 40px, 56px"
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/50 font-bold text-base sm:text-xl">
                 {t.name.charAt(0)}
