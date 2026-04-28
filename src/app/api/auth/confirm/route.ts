@@ -17,7 +17,9 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       // Check if this is a recovery flow
       if (type === "recovery") {
@@ -44,7 +46,9 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${baseUrl}/update-password`);
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         return NextResponse.redirect(await getPostAuthRedirect(supabase, user, baseUrl));
       }

@@ -21,9 +21,15 @@ export default function UpdatePasswordClient() {
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     const passErr = validatePassword(password);
-    if (passErr) { setError(passErr); return; }
+    if (passErr) {
+      setError(passErr);
+      return;
+    }
     const matchErr = validatePasswordMatch(password, confirmPassword);
-    if (matchErr) { setError(matchErr); return; }
+    if (matchErr) {
+      setError(matchErr);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -42,8 +48,18 @@ export default function UpdatePasswordClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity">
-            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={1047}
+              height={1267}
+              priority
+              className="h-7 w-auto"
+            />
             VoiceHub
           </Link>
           <p className="mt-2 text-sm text-foreground/60">新しいパスワードを設定</p>
@@ -79,9 +95,7 @@ export default function UpdatePasswordClient() {
             </button>
           </form>
 
-          {error && (
-            <p className="text-center text-xs text-red-500">{error}</p>
-          )}
+          {error && <p className="text-center text-xs text-red-500">{error}</p>}
         </div>
       </div>
     </div>

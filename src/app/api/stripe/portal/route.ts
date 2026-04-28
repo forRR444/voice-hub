@@ -14,11 +14,7 @@ export async function POST(request: NextRequest) {
     const { workspace } = auth;
 
     if (!workspace.stripe_customer_id) {
-      return apiError(
-        "No billing account found. Please subscribe first.",
-        400,
-        "VALIDATION_ERROR",
-      );
+      return apiError("No billing account found. Please subscribe first.", 400, "VALIDATION_ERROR");
     }
 
     const baseUrl = getBaseUrl();

@@ -24,12 +24,21 @@ export default function AutoTestPage() {
           Auto Mode Preview
         </h1>
         <p style={{ fontSize: "14px", color: "#6b7280", marginBottom: "24px" }}>
-          Widget ID: <code style={{ background: "#e5e7eb", padding: "2px 6px", borderRadius: "4px" }}>{widgetId}</code>
+          Widget ID:{" "}
+          <code style={{ background: "#e5e7eb", padding: "2px 6px", borderRadius: "4px" }}>
+            {widgetId}
+          </code>
           <span style={{ marginLeft: "12px", color: "#ef4444" }}>
             ※ ウィジェットのモードを「自動適応」に設定してからテストしてください
           </span>
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))", gap: "20px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
+            gap: "20px",
+          }}
+        >
           {panels.map((p) => (
             <div
               key={p.label}
@@ -41,12 +50,24 @@ export default function AutoTestPage() {
                 minHeight: "320px",
               }}
             >
-              <div style={{ marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  marginBottom: "16px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <h2 style={{ fontSize: "16px", fontWeight: 600, color: p.heading }}>{p.label}</h2>
-                <span style={{ fontSize: "11px", fontFamily: "monospace", opacity: 0.6 }}>{p.bg}</span>
+                <span style={{ fontSize: "11px", fontFamily: "monospace", opacity: 0.6 }}>
+                  {p.bg}
+                </span>
               </div>
               <p style={{ fontSize: "13px", marginBottom: "8px" }}>
-                サンプルテキスト — <a href="#" style={{ color: p.link, textDecoration: "underline" }}>リンクの色</a>
+                サンプルテキスト —{" "}
+                <a href="#" style={{ color: p.link, textDecoration: "underline" }}>
+                  リンクの色
+                </a>
               </p>
               <div
                 data-testimonial-widget={widgetId}

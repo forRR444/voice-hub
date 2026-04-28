@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("認証済み：オンボーディング", () => {
-  test("オンボーディング完了済みなら /onboarding から /dashboard にリダイレクトされる", async ({ page }) => {
+  test("オンボーディング完了済みなら /onboarding から /dashboard にリダイレクトされる", async ({
+    page,
+  }) => {
     await page.goto("/onboarding");
     await page.waitForURL(/\/dashboard/, { timeout: 15_000 });
     await expect(page).toHaveURL(/\/dashboard/);

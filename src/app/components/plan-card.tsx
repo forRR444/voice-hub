@@ -35,21 +35,23 @@ export default function PlanCard({ plan, features, cta, note, compact }: PlanCar
           おすすめ
         </span>
       )}
-      <p className={`text-sm font-semibold mb-1 ${isFree ? "text-[var(--slate)]" : "text-[var(--brand)]"}`}>
+      <p
+        className={`text-sm font-semibold mb-1 ${isFree ? "text-[var(--slate)]" : "text-[var(--brand)]"}`}
+      >
         {isFree ? "Freeプラン" : "Proプラン"}
       </p>
       <p className={`${priceSize} font-bold text-[var(--ink)] tabular-nums`}>
         {isFree ? "¥0" : "¥1,980"}
-        <span className="text-sm font-normal text-[var(--slate)]">
-          /月{!isFree && "（税込）"}
-        </span>
+        <span className="text-sm font-normal text-[var(--slate)]">/月{!isFree && "（税込）"}</span>
       </p>
       <p className={`text-xs sm:text-sm text-[var(--slate)] ${descMargin}`}>
         {isFree ? "まずはお試しください" : "本格運用に"}
       </p>
       <ul className="space-y-2 sm:space-y-3">
         {features.map((item, i) => (
-          <BulletItem key={i} className="text-xs sm:text-sm text-[var(--ink)]">{item}</BulletItem>
+          <BulletItem key={i} className="text-xs sm:text-sm text-[var(--ink)]">
+            {item}
+          </BulletItem>
         ))}
       </ul>
       {cta && (
@@ -57,9 +59,7 @@ export default function PlanCard({ plan, features, cta, note, compact }: PlanCar
           {cta.href ? (
             <a
               href={cta.href}
-              className={`${ctaMargin} block w-full text-center inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition px-6 py-3 sm:py-3.5 text-xs sm:text-base ${
-                "bg-[var(--brand)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110"
-              } ${cta.disabled ? "opacity-50 pointer-events-none" : ""}`}
+              className={`${ctaMargin} block w-full text-center inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition px-6 py-3 sm:py-3.5 text-xs sm:text-base ${"bg-[var(--brand)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110"} ${cta.disabled ? "opacity-50 pointer-events-none" : ""}`}
             >
               {cta.label}
             </a>
@@ -67,9 +67,7 @@ export default function PlanCard({ plan, features, cta, note, compact }: PlanCar
             <button
               onClick={cta.onClick}
               disabled={cta.disabled}
-              className={`${ctaMargin} block w-full text-center font-semibold rounded-lg transition px-6 py-3 sm:py-3.5 text-xs sm:text-base cursor-pointer disabled:opacity-50 disabled:pointer-events-none ${
-                "bg-[var(--brand)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110"
-              }`}
+              className={`${ctaMargin} block w-full text-center font-semibold rounded-lg transition px-6 py-3 sm:py-3.5 text-xs sm:text-base cursor-pointer disabled:opacity-50 disabled:pointer-events-none ${"bg-[var(--brand)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110"}`}
             >
               {cta.label}
             </button>

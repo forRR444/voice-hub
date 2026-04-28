@@ -59,7 +59,9 @@ describe("GET /api/google-reviews", () => {
   it("APIキー未設定で500を返す", async () => {
     delete process.env.GOOGLE_PLACES_API_KEY;
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never
+    );
     expect(res.status).toBe(500);
     const json = await res.json();
     expect(json.error).toContain("APIキー");
@@ -78,7 +80,9 @@ describe("GET /api/google-reviews", () => {
       rateLimitedResponse("1時間あたりの利用上限に達しました。")
     );
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never
+    );
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toBe("1時間あたりの利用上限に達しました。");
@@ -87,11 +91,11 @@ describe("GET /api/google-reviews", () => {
   it("未ログイン - 日次制限超過で429を返し適切なメッセージを含む", async () => {
     mockCheckRateLimit
       .mockResolvedValueOnce(null) // hourly: OK
-      .mockResolvedValueOnce(
-        rateLimitedResponse("本日の利用上限に達しました。")
-      );
+      .mockResolvedValueOnce(rateLimitedResponse("本日の利用上限に達しました。"));
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never
+    );
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toBe("本日の利用上限に達しました。");
@@ -101,11 +105,11 @@ describe("GET /api/google-reviews", () => {
 
   it("ログイン済み - 日次制限超過で429を返し適切なメッセージを含む", async () => {
     mockGetUser.mockResolvedValue(USER_AUTH);
-    mockCheckRateLimit.mockResolvedValueOnce(
-      rateLimitedResponse("本日の利用上限に達しました。")
-    );
+    mockCheckRateLimit.mockResolvedValueOnce(rateLimitedResponse("本日の利用上限に達しました。"));
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never
+    );
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toBe("本日の利用上限に達しました。");
@@ -121,7 +125,7 @@ describe("GET /api/google-reviews", () => {
       expect.stringContaining("guest"),
       expect.any(Number),
       expect.any(Number),
-      expect.any(String),
+      expect.any(String)
     );
   });
 
@@ -134,17 +138,21 @@ describe("GET /api/google-reviews", () => {
       expect.stringContaining("user-123"),
       expect.any(Number),
       expect.any(Number),
-      expect.any(String),
+      expect.any(String)
     );
   });
 
   // --- search ---
 
   it("search - 正常なリクエストで場所一覧を返す", async () => {
-    const places = [{ id: "p1", displayName: { text: "テスト歯科" }, formattedAddress: "東京都..." }];
+    const places = [
+      { id: "p1", displayName: { text: "テスト歯科" }, formattedAddress: "東京都..." },
+    ];
     mockFetch.mockResolvedValue(placesApiResponse({ places }));
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=テスト歯科") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=テスト歯科") as never
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.places).toEqual(places);
@@ -152,24 +160,34 @@ describe("GET /api/google-reviews", () => {
 
   it("search - queryなしで400を返す", async () => {
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search") as never
+    );
     expect(res.status).toBe(400);
   });
 
   it("search - Places APIエラー時にエラーを返す", async () => {
     mockFetch.mockResolvedValue(placesApiResponse({ error: { message: "API error" } }, false));
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=search&query=test") as never
+    );
     expect(res.status).toBe(400);
   });
 
   // --- reviews ---
 
   it("reviews - 正常なリクエストで口コミ一覧を返す", async () => {
-    const reviews = [{ name: "r1", rating: 5, text: { text: "良かった" }, publishTime: "2024-01-01" }];
-    mockFetch.mockResolvedValue(placesApiResponse({ reviews, displayName: { text: "テスト歯科" } }));
+    const reviews = [
+      { name: "r1", rating: 5, text: { text: "良かった" }, publishTime: "2024-01-01" },
+    ];
+    mockFetch.mockResolvedValue(
+      placesApiResponse({ reviews, displayName: { text: "テスト歯科" } })
+    );
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.reviews).toEqual(reviews);
@@ -178,14 +196,18 @@ describe("GET /api/google-reviews", () => {
 
   it("reviews - placeIdなしで400を返す", async () => {
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=reviews") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=reviews") as never
+    );
     expect(res.status).toBe(400);
   });
 
   it("reviews - 口コミなし時は空配列を返す", async () => {
     mockFetch.mockResolvedValue(placesApiResponse({ displayName: { text: "テスト" } }));
     const { GET } = await import("@/app/api/google-reviews/route");
-    const res = await GET(makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never);
+    const res = await GET(
+      makeRequest("http://localhost/api/google-reviews?action=reviews&placeId=place-123") as never
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.reviews).toEqual([]);

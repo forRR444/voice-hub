@@ -10,7 +10,16 @@ import type { SalonPageRow, SalonPageLinkRow, TestimonialRow } from "@/types/dat
 
 type Testimonial = Pick<
   TestimonialRow,
-  "id" | "name" | "title" | "company" | "avatar_url" | "rating" | "content" | "before_story" | "is_featured" | "submitted_at"
+  | "id"
+  | "name"
+  | "title"
+  | "company"
+  | "avatar_url"
+  | "rating"
+  | "content"
+  | "before_story"
+  | "is_featured"
+  | "submitted_at"
 >;
 
 export default function SalonPageClient({
@@ -43,13 +52,15 @@ export default function SalonPageClient({
         background: "#F0F1F3",
       }}
     >
-      <div style={{
-        maxWidth: 640,
-        margin: "0 auto",
-        background: theme.bodyBg,
-        minHeight: "100vh",
-        boxShadow: "0 0 40px rgba(0,0,0,0.06)",
-      }}>
+      <div
+        style={{
+          maxWidth: 640,
+          margin: "0 auto",
+          background: theme.bodyBg,
+          minHeight: "100vh",
+          boxShadow: "0 0 40px rgba(0,0,0,0.06)",
+        }}
+      >
         {/* カバー画像 + ロゴ重なり */}
         <div style={{ position: "relative" }}>
           {hasCover && (
@@ -93,7 +104,9 @@ export default function SalonPageClient({
                   style={{
                     borderRadius: "50%",
                     objectFit: "cover",
-                    border: hasCover ? `3px solid ${theme.cardBg}` : `3px solid ${theme.cardBorder}`,
+                    border: hasCover
+                      ? `3px solid ${theme.cardBg}`
+                      : `3px solid ${theme.cardBorder}`,
                     boxShadow: hasCover ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                     background: theme.cardBg,
                   }}
@@ -119,7 +132,15 @@ export default function SalonPageClient({
             </div>
 
             {/* サロン名 + リンクアイコン */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                flexWrap: "wrap",
+              }}
+            >
               <h1
                 style={{
                   fontSize: 20,
@@ -151,7 +172,11 @@ export default function SalonPageClient({
                       onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
                       onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                     >
-                      <SalonLinkIcon icon={link.icon && link.icon !== "none" ? link.icon : "web"} size={22} color={theme.textSecondary} />
+                      <SalonLinkIcon
+                        icon={link.icon && link.icon !== "none" ? link.icon : "web"}
+                        size={22}
+                        color={theme.textSecondary}
+                      />
                     </a>
                   ))}
                 </div>
@@ -174,7 +199,14 @@ export default function SalonPageClient({
             {/* 評価サマリー（一番上） */}
             {totalCount > 0 && (
               <div style={{ marginTop: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
                   <SvgStarRating rating={avgRating} color={accent} size={20} />
                   <span
                     style={{
@@ -200,7 +232,11 @@ export default function SalonPageClient({
 
             {/* サロン紹介文 */}
             {salonPage.description && (
-              <ExpandableDescription text={salonPage.description} color={theme.textSecondary} accent={accent} />
+              <ExpandableDescription
+                text={salonPage.description}
+                color={theme.textSecondary}
+                accent={accent}
+              />
             )}
           </header>
         </div>
@@ -210,41 +246,54 @@ export default function SalonPageClient({
           const items = salonPage.menu_items;
           if (!items || items.length === 0) return null;
           return (
-          <section style={{ padding: "0 16px" }}>
-            <SectionDivider label="メニュー・料金" theme={theme} />
-            <div
-              style={{
-                borderRadius: theme.borderRadius,
-                border: `1px solid ${theme.cardBorder}`,
-                overflow: "hidden",
-              }}
-            >
-              {items.map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    padding: "12px 16px",
-                    borderBottom: i < items.length - 1 ? `1px solid ${theme.cardBorder}` : "none",
-                    background: theme.cardBg,
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 }}>
-                    <span className="text-sm font-medium" style={{ color: theme.textPrimary }}>
-                      {item.name}
-                    </span>
-                    <span className="text-sm font-semibold flex-shrink-0" style={{ color: accent }}>
-                      {item.price}
-                    </span>
+            <section style={{ padding: "0 16px" }}>
+              <SectionDivider label="メニュー・料金" theme={theme} />
+              <div
+                style={{
+                  borderRadius: theme.borderRadius,
+                  border: `1px solid ${theme.cardBorder}`,
+                  overflow: "hidden",
+                }}
+              >
+                {items.map((item, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: "12px 16px",
+                      borderBottom: i < items.length - 1 ? `1px solid ${theme.cardBorder}` : "none",
+                      background: theme.cardBg,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                        gap: 16,
+                      }}
+                    >
+                      <span className="text-sm font-medium" style={{ color: theme.textPrimary }}>
+                        {item.name}
+                      </span>
+                      <span
+                        className="text-sm font-semibold flex-shrink-0"
+                        style={{ color: accent }}
+                      >
+                        {item.price}
+                      </span>
+                    </div>
+                    {item.description && (
+                      <p
+                        className="text-xs mt-0.5"
+                        style={{ color: theme.textSecondary, opacity: 0.7 }}
+                      >
+                        {item.description}
+                      </p>
+                    )}
                   </div>
-                  {item.description && (
-                    <p className="text-xs mt-0.5" style={{ color: theme.textSecondary, opacity: 0.7 }}>
-                      {item.description}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
           );
         })()}
 
@@ -279,20 +328,24 @@ export default function SalonPageClient({
 
         {/* セクションヘッダー */}
         {totalCount > 0 && (
-          <div style={{
-            padding: "20px 16px 4px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}>
+          <div
+            style={{
+              padding: "20px 16px 4px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
             <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
-            <span style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: theme.textSecondary,
-              letterSpacing: "0.04em",
-              whiteSpace: "nowrap",
-            }}>
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: theme.textSecondary,
+                letterSpacing: "0.04em",
+                whiteSpace: "nowrap",
+              }}
+            >
               お客様の声
             </span>
             <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
@@ -305,7 +358,13 @@ export default function SalonPageClient({
             <div className="salon-grid-layout">
               {visibleTestimonials.map((t, i) => (
                 <ScrollRevealWrapper key={t.id} delay={i * 40}>
-                  <ReviewCard testimonial={t} theme={theme} accent={accent} compact onTap={() => setModalTestimonial(t)} />
+                  <ReviewCard
+                    testimonial={t}
+                    theme={theme}
+                    accent={accent}
+                    compact
+                    onTap={() => setModalTestimonial(t)}
+                  />
                 </ScrollRevealWrapper>
               ))}
             </div>
@@ -427,7 +486,16 @@ export default function SalonPageClient({
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" y1="19" x2="12" y2="23" />
@@ -494,7 +562,15 @@ export default function SalonPageClient({
 }
 
 /* ─── SVG Star Rating ─── */
-function SvgStarRating({ rating, color, size = 14 }: { rating: number; color: string; size?: number }) {
+function SvgStarRating({
+  rating,
+  color,
+  size = 14,
+}: {
+  rating: number;
+  color: string;
+  size?: number;
+}) {
   const prefix = useId();
   return (
     <span style={{ display: "inline-flex", gap: 1 }}>
@@ -528,7 +604,13 @@ function SvgStarRating({ rating, color, size = 14 }: { rating: number; color: st
 }
 
 /* ─── Scroll Reveal Wrapper ─── */
-function ScrollRevealWrapper({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function ScrollRevealWrapper({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -578,7 +660,16 @@ function ReviewCard({
   return (
     <div
       onClick={onTap}
-      onKeyDown={onTap ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); } } : undefined}
+      onKeyDown={
+        onTap
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onTap();
+              }
+            }
+          : undefined
+      }
       role={onTap ? "button" : undefined}
       tabIndex={onTap ? 0 : undefined}
       className="salon-card"
@@ -639,7 +730,14 @@ function ReviewCard({
             </p>
           </div>
           {compact && onTap && t.content.length > 60 && (
-            <span style={{ fontSize: 11, color: accent, fontWeight: 500, paddingLeft: compact ? 12 : 16 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: accent,
+                fontWeight: 500,
+                paddingLeft: compact ? 12 : 16,
+              }}
+            >
               続きを読む
             </span>
           )}
@@ -647,10 +745,15 @@ function ReviewCard({
       )}
 
       {/* 投稿者 + 日付 */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 2 }}>
-        <span style={{ fontSize: 11, color: theme.textSecondary }}>
-          {t.name || "匿名"}
-        </span>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 2,
+        }}
+      >
+        <span style={{ fontSize: 11, color: theme.textSecondary }}>{t.name || "匿名"}</span>
         <span style={{ fontSize: 10, color: theme.textSecondary, opacity: 0.7 }}>
           {formatDate(t.submitted_at)}
         </span>
@@ -660,7 +763,15 @@ function ReviewCard({
 }
 
 /* ─── Expandable Description ─── */
-function ExpandableDescription({ text, color, accent }: { text: string; color: string; accent: string }) {
+function ExpandableDescription({
+  text,
+  color,
+  accent,
+}: {
+  text: string;
+  color: string;
+  accent: string;
+}) {
   const [expanded, setExpanded] = useState(false);
   const LINE_CLAMP = 3;
 
@@ -671,12 +782,14 @@ function ExpandableDescription({ text, color, accent }: { text: string; color: s
         style={{
           color,
           whiteSpace: "pre-wrap",
-          ...(!expanded ? {
-            display: "-webkit-box",
-            WebkitLineClamp: LINE_CLAMP,
-            WebkitBoxOrient: "vertical" as const,
-            overflow: "hidden",
-          } : {}),
+          ...(!expanded
+            ? {
+                display: "-webkit-box",
+                WebkitLineClamp: LINE_CLAMP,
+                WebkitBoxOrient: "vertical" as const,
+                overflow: "hidden",
+              }
+            : {}),
         }}
       >
         {text}
@@ -705,20 +818,24 @@ function ExpandableDescription({ text, color, accent }: { text: string; color: s
 /* ─── Section Divider ─── */
 function SectionDivider({ label, theme }: { label: string; theme: (typeof SALON_THEMES)[string] }) {
   return (
-    <div style={{
-      padding: "24px 0 12px",
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-    }}>
+    <div
+      style={{
+        padding: "24px 0 12px",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+      }}
+    >
       <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />
-      <span style={{
-        fontSize: 12,
-        fontWeight: 600,
-        color: theme.textSecondary,
-        letterSpacing: "0.04em",
-        whiteSpace: "nowrap",
-      }}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: theme.textSecondary,
+          letterSpacing: "0.04em",
+          whiteSpace: "nowrap",
+        }}
+      >
         {label}
       </span>
       <div style={{ flex: 1, height: 1, background: theme.cardBorder }} />

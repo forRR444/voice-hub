@@ -30,8 +30,7 @@ const FONT_CONFIGS: Record<TemplateSize, FontConfig> = {
   "x-post": { contentSize: 28, nameSize: 24 },
 };
 
-const FONT_FAMILY =
-  '"Hiragino Sans", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif';
+const FONT_FAMILY = '"Hiragino Sans", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif';
 
 // ---------------------------------------------------------------------------
 // Color utilities
@@ -39,9 +38,15 @@ const FONT_FAMILY =
 
 function hexToRGB(hex: string): [number, number, number] {
   const clean = hex.replace("#", "");
-  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
   const num = parseInt(full, 16);
-  return [(num >> 16), ((num >> 8) & 0xff), (num & 0xff)];
+  return [num >> 16, (num >> 8) & 0xff, num & 0xff];
 }
 
 function darkenHex(hex: string, amount: number): string {
@@ -56,20 +61,31 @@ function darkenHex(hex: string, amount: number): string {
 
 function isCJK(char: string): boolean {
   const code = char.charCodeAt(0);
-  return (code >= 0x3000 && code <= 0x9fff) || (code >= 0xf900 && code <= 0xfaff) || (code >= 0xff00 && code <= 0xffef);
+  return (
+    (code >= 0x3000 && code <= 0x9fff) ||
+    (code >= 0xf900 && code <= 0xfaff) ||
+    (code >= 0xff00 && code <= 0xffef)
+  );
 }
 
 type WrappedLine = { text: string; y: number };
 
 function wrapText(
-  ctx: CanvasRenderingContext2D, text: string, maxWidth: number,
-  lineHeight: number, startY: number, maxLines: number,
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  lineHeight: number,
+  startY: number,
+  maxLines: number
 ): WrappedLine[] {
   const lines: WrappedLine[] = [];
   const paragraphs = text.split(/\r?\n/);
   for (const paragraph of paragraphs) {
     if (lines.length >= maxLines) break;
-    if (paragraph.length === 0) { lines.push({ text: "", y: startY + lines.length * lineHeight }); continue; }
+    if (paragraph.length === 0) {
+      lines.push({ text: "", y: startY + lines.length * lineHeight });
+      continue;
+    }
     let currentLine = "";
     for (let i = 0; i < paragraph.length; i++) {
       if (lines.length >= maxLines) break;
@@ -79,7 +95,8 @@ function wrapText(
         if (lines.length === maxLines - 1) {
           currentLine = truncate(ctx, currentLine, maxWidth);
           lines.push({ text: currentLine, y: startY + lines.length * lineHeight });
-          currentLine = ""; break;
+          currentLine = "";
+          break;
         }
         if (isCJK(char)) {
           lines.push({ text: currentLine, y: startY + lines.length * lineHeight });
@@ -87,14 +104,19 @@ function wrapText(
         } else {
           const sp = currentLine.lastIndexOf(" ");
           if (sp > 0) {
-            lines.push({ text: currentLine.substring(0, sp), y: startY + lines.length * lineHeight });
+            lines.push({
+              text: currentLine.substring(0, sp),
+              y: startY + lines.length * lineHeight,
+            });
             currentLine = currentLine.substring(sp + 1) + char;
           } else {
             lines.push({ text: currentLine, y: startY + lines.length * lineHeight });
             currentLine = char;
           }
         }
-      } else { currentLine = testLine; }
+      } else {
+        currentLine = testLine;
+      }
     }
     if (currentLine.length > 0 && lines.length < maxLines) {
       if (lines.length === maxLines - 1 && paragraphs.indexOf(paragraph) < paragraphs.length - 1)
@@ -119,16 +141,35 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 // Canvas helpers
 // ---------------------------------------------------------------------------
 
-function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number
+) {
   ctx.beginPath();
-  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
-function drawStars(ctx: CanvasRenderingContext2D, rating: number, x: number, y: number, size: number, color: string) {
+function drawStars(
+  ctx: CanvasRenderingContext2D,
+  rating: number,
+  x: number,
+  y: number,
+  size: number,
+  color: string
+) {
   ctx.font = `${size}px ${FONT_FAMILY}`;
   ctx.textBaseline = "top";
   ctx.fillStyle = color;
@@ -142,28 +183,65 @@ function drawStars(ctx: CanvasRenderingContext2D, rating: number, x: number, y: 
 // ---------------------------------------------------------------------------
 
 type Layout = {
-  paddingX: number; topY: number; starSize: number;
-  lineHeight: number; dividerGap: number; nameGap: number;
-  subtitleGap: number; footerSize: number; footerBottom: number;
+  paddingX: number;
+  topY: number;
+  starSize: number;
+  lineHeight: number;
+  dividerGap: number;
+  nameGap: number;
+  subtitleGap: number;
+  footerSize: number;
+  footerBottom: number;
   // Glass-specific
-  cardMargin: number; cardPadding: number; cardRadius: number;
+  cardMargin: number;
+  cardPadding: number;
+  cardRadius: number;
 };
 
 function getLayout(t: TemplateSize): Layout {
-  if (t === "instagram-story") return {
-    paddingX: 100, topY: 420, starSize: 36, lineHeight: 72,
-    dividerGap: 56, nameGap: 44, subtitleGap: 40, footerSize: 24, footerBottom: 80,
-    cardMargin: 56, cardPadding: 64, cardRadius: 28,
-  };
-  if (t === "instagram-post") return {
-    paddingX: 80, topY: 130, starSize: 30, lineHeight: 60,
-    dividerGap: 44, nameGap: 36, subtitleGap: 32, footerSize: 22, footerBottom: 50,
-    cardMargin: 48, cardPadding: 52, cardRadius: 24,
-  };
+  if (t === "instagram-story")
+    return {
+      paddingX: 100,
+      topY: 420,
+      starSize: 36,
+      lineHeight: 72,
+      dividerGap: 56,
+      nameGap: 44,
+      subtitleGap: 40,
+      footerSize: 24,
+      footerBottom: 80,
+      cardMargin: 56,
+      cardPadding: 64,
+      cardRadius: 28,
+    };
+  if (t === "instagram-post")
+    return {
+      paddingX: 80,
+      topY: 130,
+      starSize: 30,
+      lineHeight: 60,
+      dividerGap: 44,
+      nameGap: 36,
+      subtitleGap: 32,
+      footerSize: 22,
+      footerBottom: 50,
+      cardMargin: 48,
+      cardPadding: 52,
+      cardRadius: 24,
+    };
   return {
-    paddingX: 60, topY: 60, starSize: 26, lineHeight: 46,
-    dividerGap: 32, nameGap: 28, subtitleGap: 24, footerSize: 18, footerBottom: 30,
-    cardMargin: 32, cardPadding: 40, cardRadius: 18,
+    paddingX: 60,
+    topY: 60,
+    starSize: 26,
+    lineHeight: 46,
+    dividerGap: 32,
+    nameGap: 28,
+    subtitleGap: 24,
+    footerSize: 18,
+    footerBottom: 30,
+    cardMargin: 32,
+    cardPadding: 40,
+    cardRadius: 18,
   };
 }
 
@@ -172,11 +250,19 @@ function getLayout(t: TemplateSize): Layout {
 // ---------------------------------------------------------------------------
 
 function autoScaleText(
-  ctx: CanvasRenderingContext2D, content: string, maxWidth: number,
-  maxTextH: number, defaultSize: number, lineHeightRatio: number,
+  ctx: CanvasRenderingContext2D,
+  content: string,
+  maxWidth: number,
+  maxTextH: number,
+  defaultSize: number,
+  lineHeightRatio: number
 ): { fontSize: number; lineHeight: number; lines: WrappedLine[] } {
   const minSize = Math.round(defaultSize * 0.55);
-  let best = { fontSize: defaultSize, lineHeight: Math.round(defaultSize * lineHeightRatio), lines: [] as WrappedLine[] };
+  let best = {
+    fontSize: defaultSize,
+    lineHeight: Math.round(defaultSize * lineHeightRatio),
+    lines: [] as WrappedLine[],
+  };
 
   for (let s = defaultSize; s >= minSize; s -= 2) {
     const lh = Math.round(s * lineHeightRatio);
@@ -201,8 +287,11 @@ function autoScaleText(
 // ===========================================================================
 
 function renderGlass(
-  ctx: CanvasRenderingContext2D, data: TestimonialImageData,
-  template: TemplateSize, width: number, height: number,
+  ctx: CanvasRenderingContext2D,
+  data: TestimonialImageData,
+  template: TemplateSize,
+  width: number,
+  height: number
 ) {
   const fonts = FONT_CONFIGS[template];
   const L = getLayout(template);
@@ -225,7 +314,9 @@ function renderGlass(
   const fixedH =
     L.cardPadding + // top padding
     (data.rating !== null ? L.starSize + 28 : 0) +
-    L.dividerGap + L.nameGap + fonts.nameSize * 1.2 +
+    L.dividerGap +
+    L.nameGap +
+    fonts.nameSize * 1.2 +
     (subtitleParts.length > 0 ? L.subtitleGap : 0) +
     L.cardPadding; // bottom padding
 
@@ -234,8 +325,15 @@ function renderGlass(
 
   const scaled = autoScaleText(ctx, data.content, innerW, maxTextH, fonts.contentSize, 1.72);
 
-  const textH = scaled.lines.length > 0 ? (scaled.lines.length - 1) * scaled.lineHeight + scaled.fontSize : 0;
-  const cardContentH = (data.rating !== null ? L.starSize + 28 : 0) + textH + L.dividerGap + L.nameGap + fonts.nameSize * 1.2 + (subtitleParts.length > 0 ? L.subtitleGap : 0);
+  const textH =
+    scaled.lines.length > 0 ? (scaled.lines.length - 1) * scaled.lineHeight + scaled.fontSize : 0;
+  const cardContentH =
+    (data.rating !== null ? L.starSize + 28 : 0) +
+    textH +
+    L.dividerGap +
+    L.nameGap +
+    fonts.nameSize * 1.2 +
+    (subtitleParts.length > 0 ? L.subtitleGap : 0);
   const cardH = L.cardPadding + cardContentH + L.cardPadding;
 
   // Center card vertically in available space
@@ -277,7 +375,10 @@ function renderGlass(
   // Divider
   ctx.strokeStyle = "rgba(255,255,255,0.2)";
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(innerX, y); ctx.lineTo(innerX + innerW, y); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(innerX, y);
+  ctx.lineTo(innerX + innerW, y);
+  ctx.stroke();
   y += L.nameGap;
 
   // Name
@@ -308,8 +409,11 @@ function renderGlass(
 // ===========================================================================
 
 function renderWarm(
-  ctx: CanvasRenderingContext2D, data: TestimonialImageData,
-  template: TemplateSize, width: number, height: number,
+  ctx: CanvasRenderingContext2D,
+  data: TestimonialImageData,
+  template: TemplateSize,
+  width: number,
+  height: number
 ) {
   const fonts = FONT_CONFIGS[template];
   const L = getLayout(template);
@@ -327,9 +431,12 @@ function renderWarm(
   const fixedH =
     L.topY +
     (data.rating !== null ? L.starSize + 32 : 0) +
-    L.dividerGap + L.nameGap + fonts.nameSize * 1.2 +
+    L.dividerGap +
+    L.nameGap +
+    fonts.nameSize * 1.2 +
     (subtitleParts.length > 0 ? L.subtitleGap : 0) +
-    L.footerBottom + L.footerSize;
+    L.footerBottom +
+    L.footerSize;
 
   const maxTextH = height - fixedH;
   const scaled = autoScaleText(ctx, data.content, contentW, maxTextH, fonts.contentSize, 1.72);
@@ -356,7 +463,10 @@ function renderWarm(
   // Divider (right-aligned)
   ctx.strokeStyle = "#C4A76C";
   ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(x + contentW - 48, y); ctx.lineTo(x + contentW, y); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + contentW - 48, y);
+  ctx.lineTo(x + contentW, y);
+  ctx.stroke();
   y += L.nameGap;
 
   // Name (right-aligned)
@@ -375,7 +485,11 @@ function renderWarm(
     ctx.font = `${Math.round(fonts.nameSize * 0.85)}px ${FONT_FAMILY}`;
     ctx.textAlign = "right";
     const sub = subtitleParts.join(" / ");
-    ctx.fillText(ctx.measureText(sub).width > contentW ? truncate(ctx, sub, contentW) : sub, rightX, y);
+    ctx.fillText(
+      ctx.measureText(sub).width > contentW ? truncate(ctx, sub, contentW) : sub,
+      rightX,
+      y
+    );
     ctx.textAlign = "start";
   }
 
@@ -395,7 +509,7 @@ function renderWarm(
 export async function generateTestimonialImage(
   data: TestimonialImageData,
   template: TemplateSize,
-  style: DesignStyle = "glass",
+  style: DesignStyle = "glass"
 ): Promise<Blob> {
   const { width, height } = TEMPLATES[template];
   const canvas = document.createElement("canvas");

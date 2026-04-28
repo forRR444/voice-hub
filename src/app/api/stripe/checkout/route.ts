@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (!session.url) {
       return handleApiError(
         new Error("Stripe session.url is missing"),
-        "Failed to create checkout session",
+        "Failed to create checkout session"
       );
     }
 

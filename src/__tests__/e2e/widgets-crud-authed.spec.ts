@@ -87,9 +87,7 @@ test.describe("認証済み：ウィジェット CRUD", () => {
     const [response] = await Promise.all([
       page.waitForResponse(
         (res) =>
-          res.url().endsWith("/api/widgets") &&
-          res.request().method() === "POST" &&
-          res.ok(),
+          res.url().endsWith("/api/widgets") && res.request().method() === "POST" && res.ok(),
         { timeout: 15_000 }
       ),
       page.getByRole("button", { name: "作成する" }).click(),
@@ -116,7 +114,10 @@ test.describe("認証済み：ウィジェット CRUD", () => {
     await expect(card).toHaveCount(1, { timeout: 10_000 });
 
     // 3点メニュー → 編集
-    await card.locator("button", { has: page.locator("svg.lucide-ellipsis") }).first().click();
+    await card
+      .locator("button", { has: page.locator("svg.lucide-ellipsis") })
+      .first()
+      .click();
     await page.getByRole("button", { name: "編集" }).click();
 
     // 編集モードのカード（保存ボタンを持つ）
@@ -138,12 +139,13 @@ test.describe("認証済み：ウィジェット CRUD", () => {
     test.skip(!created, "ウィジェット作成不可（プラン上限など）");
 
     await page.goto("/dashboard/widgets");
-    const card = page
-      .locator(".shadow-sm")
-      .filter({ has: page.locator("h3", { hasText: name }) });
+    const card = page.locator(".shadow-sm").filter({ has: page.locator("h3", { hasText: name }) });
     await expect(card).toHaveCount(1, { timeout: 10_000 });
 
-    await card.locator("button", { has: page.locator("svg.lucide-ellipsis") }).first().click();
+    await card
+      .locator("button", { has: page.locator("svg.lucide-ellipsis") })
+      .first()
+      .click();
     await page.getByRole("button", { name: "削除" }).click();
     await expect(page.getByRole("heading", { name: "削除の確認" })).toBeVisible();
     await page.getByRole("button", { name: "削除する" }).click();

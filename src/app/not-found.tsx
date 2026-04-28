@@ -5,9 +5,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="text-center">
         <p className="text-8xl font-bold text-indigo-600">404</p>
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">
-          ページが見つかりません
-        </h1>
+        <h1 className="mt-4 text-2xl font-bold text-gray-900">ページが見つかりません</h1>
         <p className="mt-2 text-gray-600">
           お探しのページは存在しないか、移動した可能性があります。
         </p>

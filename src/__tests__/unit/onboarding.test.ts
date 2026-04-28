@@ -26,9 +26,7 @@ describe("オンボーディング", () => {
     });
 
     const builder = mockSupabase.from("workspaces");
-    await (builder as any)
-      .update({ name: "山田コーチング" })
-      .eq("id", "ws-1");
+    await (builder as any).update({ name: "山田コーチング" }).eq("id", "ws-1");
 
     const updateCall = (builder as any).update.mock.calls[0][0];
     expect(updateCall.name).toBe("山田コーチング");
@@ -92,9 +90,7 @@ describe("オンボーディング", () => {
     });
 
     const builder = mockSupabase.from("workspaces");
-    await (builder as any)
-      .update({ onboarding_completed: true })
-      .eq("id", "ws-1");
+    await (builder as any).update({ onboarding_completed: true }).eq("id", "ws-1");
 
     const updateCall = (builder as any).update.mock.calls[0][0];
     expect(updateCall.onboarding_completed).toBe(true);

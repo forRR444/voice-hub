@@ -7,7 +7,15 @@ import FormField, { inputClass } from "@/app/components/ui/form-field";
 import { Sun, Moon, Sparkles, Info } from "lucide-react";
 import { brand, slate, muted, plate } from "@/lib/theme-tokens";
 
-type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
+type WidgetType =
+  | "carousel"
+  | "grid"
+  | "marquee"
+  | "list"
+  | "single"
+  | "wall"
+  | "dual-marquee"
+  | "badge";
 
 export type WidgetFormState = {
   name: string;
@@ -55,9 +63,7 @@ export function WidgetThemeForm({
               <WidgetPreviewIcon type={wt.id} selected={form.type === wt.id} />
               <div
                 className={`text-sm font-medium mt-2 ${
-                  form.type === wt.id
-                    ? "text-indigo-600"
-                    : "text-foreground/70"
+                  form.type === wt.id ? "text-indigo-600" : "text-foreground/70"
                 }`}
               >
                 {wt.label}
@@ -69,20 +75,18 @@ export function WidgetThemeForm({
       </FormField>
 
       <div className="border-t border-foreground/10 pt-4">
-        <h4 className="text-sm font-medium text-foreground/70 mb-3">
-          テーマ設定
-        </h4>
+        <h4 className="text-sm font-medium text-foreground/70 mb-3">テーマ設定</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs text-foreground/50 mb-1">
-              モード
-            </label>
+            <label className="block text-xs text-foreground/50 mb-1">モード</label>
             <div className="grid grid-cols-3 gap-3">
-              {([
-                { value: "light", label: "ライト", icon: Sun },
-                { value: "dark", label: "ダーク", icon: Moon },
-                { value: "auto", label: "自動適応", icon: Sparkles, sub: "HPの色に馴染む" },
-              ] as const).map((opt) => {
+              {(
+                [
+                  { value: "light", label: "ライト", icon: Sun },
+                  { value: "dark", label: "ダーク", icon: Moon },
+                  { value: "auto", label: "自動適応", icon: Sparkles, sub: "HPの色に馴染む" },
+                ] as const
+              ).map((opt) => {
                 const Icon = opt.icon;
                 const selected = form.theme.mode === opt.value;
                 return (
@@ -102,18 +106,26 @@ export function WidgetThemeForm({
                     }}
                   >
                     <Icon size={18} style={{ color: selected ? brand : muted }} />
-                    <div className="text-sm font-medium mt-1" style={{ color: selected ? brand : slate }}>
+                    <div
+                      className="text-sm font-medium mt-1"
+                      style={{ color: selected ? brand : slate }}
+                    >
                       {opt.label}
                     </div>
                     {"sub" in opt && opt.sub && (
-                      <div className="text-xs" style={{ color: muted }}>{opt.sub}</div>
+                      <div className="text-xs" style={{ color: muted }}>
+                        {opt.sub}
+                      </div>
                     )}
                   </button>
                 );
               })}
             </div>
             {form.theme.mode === "auto" && (
-              <div className="flex items-start gap-2.5 p-3 rounded-lg mt-3" style={{ background: "rgba(99,91,255,0.06)" }}>
+              <div
+                className="flex items-start gap-2.5 p-3 rounded-lg mt-3"
+                style={{ background: "rgba(99,91,255,0.06)" }}
+              >
                 <Info size={16} className="shrink-0 mt-0.5" style={{ color: brand }} />
                 <div>
                   <p className="text-[13px]" style={{ color: slate }}>
@@ -145,9 +157,7 @@ export function WidgetThemeForm({
             </div>
           </div>
           <div>
-            <label className="block text-xs text-foreground/50 mb-1">
-              最大表示数
-            </label>
+            <label className="block text-xs text-foreground/50 mb-1">最大表示数</label>
             <input
               type="number"
               min={1}
@@ -166,9 +176,7 @@ export function WidgetThemeForm({
             />
           </div>
           <div>
-            <label className="block text-xs text-foreground/50 mb-1">
-              最低評価
-            </label>
+            <label className="block text-xs text-foreground/50 mb-1">最低評価</label>
             <input
               type="number"
               min={1}
@@ -194,10 +202,7 @@ export function WidgetThemeForm({
               { key: "autoplay" as const, label: "自動再生" },
             ] as const
           ).map(({ key, label }) => (
-            <label
-              key={key}
-              className="flex items-center gap-2 text-sm text-foreground/60"
-            >
+            <label key={key} className="flex items-center gap-2 text-sm text-foreground/60">
               <input
                 type="checkbox"
                 checked={form.theme[key]}
@@ -216,9 +221,7 @@ export function WidgetThemeForm({
             <input
               type="checkbox"
               checked={form.only_featured}
-              onChange={(e) =>
-                onChange({ ...form, only_featured: e.target.checked })
-              }
+              onChange={(e) => onChange({ ...form, only_featured: e.target.checked })}
               className="rounded border-foreground/20"
             />
             注目のみ表示

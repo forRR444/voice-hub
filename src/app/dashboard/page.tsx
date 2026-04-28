@@ -40,12 +40,10 @@ export default async function DashboardPage() {
   const testimonialList = (testimonials ?? []) as TestimonialRow[];
 
   const ids = testimonialList.map((t) => t.id);
-  const { data: tagRows } = ids.length > 0
-    ? await supabase
-        .from("testimonial_tags")
-        .select("*")
-        .in("testimonial_id", ids)
-    : { data: [] };
+  const { data: tagRows } =
+    ids.length > 0
+      ? await supabase.from("testimonial_tags").select("*").in("testimonial_id", ids)
+      : { data: [] };
 
   const tagMap: Record<string, string[]> = {};
   (tagRows ?? []).forEach((row: { testimonial_id: string; tag: string }) => {
@@ -53,12 +51,10 @@ export default async function DashboardPage() {
     tagMap[row.testimonial_id].push(row.tag);
   });
 
-  const testimonialsWithTags: TestimonialWithTags[] = testimonialList.map(
-    (t) => ({
-      ...t,
-      tags: tagMap[t.id] ?? [],
-    })
-  );
+  const testimonialsWithTags: TestimonialWithTags[] = testimonialList.map((t) => ({
+    ...t,
+    tags: tagMap[t.id] ?? [],
+  }));
 
   return (
     <DashboardClient

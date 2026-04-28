@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-import {
-  createMockQueryBuilder,
-  type QueryResult,
-} from "../helpers/mock-supabase";
+import { createMockQueryBuilder, type QueryResult } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Local request factory returning NextRequest (the route handler signature)
@@ -82,9 +79,7 @@ type ReturnedSupabase = {
   testimonialsDeleteBuilder: DeleteBuilder | null;
 };
 
-function setupTestimonialsMock(
-  options: TestimonialsDeleteMockOptions = {}
-): ReturnedSupabase {
+function setupTestimonialsMock(options: TestimonialsDeleteMockOptions = {}): ReturnedSupabase {
   const { auth, workspace, testimonialsDelete } = options;
 
   const workspaceBuilder = workspace ? createMockQueryBuilder(workspace) : null;
@@ -94,9 +89,7 @@ function setupTestimonialsMock(
 
   const from = vi.fn((table: string) => {
     if (table === "workspaces") {
-      return (
-        workspaceBuilder ?? createMockQueryBuilder({ data: null, error: null })
-      );
+      return workspaceBuilder ?? createMockQueryBuilder({ data: null, error: null });
     }
     if (table === "testimonials") {
       if (testimonialsDeleteBuilder) {
@@ -170,14 +163,8 @@ describe("DELETE /api/testimonials", () => {
     expect(response.status).toBe(200);
     expect(json).toEqual({ ok: true, data: null });
     expect(mock.testimonialsDeleteBuilder?.delete).toHaveBeenCalled();
-    expect(mock.testimonialsDeleteBuilder?.eq).toHaveBeenCalledWith(
-      "id",
-      "testimonial-1"
-    );
-    expect(mock.testimonialsDeleteBuilder?.eq).toHaveBeenCalledWith(
-      "workspace_id",
-      "ws-1"
-    );
+    expect(mock.testimonialsDeleteBuilder?.eq).toHaveBeenCalledWith("id", "testimonial-1");
+    expect(mock.testimonialsDeleteBuilder?.eq).toHaveBeenCalledWith("workspace_id", "ws-1");
   });
 
   it("未認証で401を返す", async () => {

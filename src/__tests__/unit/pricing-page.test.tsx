@@ -45,7 +45,9 @@ describe("料金プランページ - 基本表示", () => {
 
   it("VoiceHubロゴリンクがhref=/を持つ", async () => {
     await renderPricing();
-    const logoLinks = screen.getAllByRole("link").filter((el) => /VoiceHub/.test(el.textContent ?? ""));
+    const logoLinks = screen
+      .getAllByRole("link")
+      .filter((el) => /VoiceHub/.test(el.textContent ?? ""));
     expect(logoLinks.length).toBeGreaterThanOrEqual(1);
     expect(logoLinks[0]).toHaveAttribute("href", "/");
   });
@@ -75,9 +77,7 @@ describe("料金プランページ - 説明文の分岐", () => {
   it("ベータ時は特別価格の案内が表示される", async () => {
     setBeta(true);
     await renderPricing();
-    expect(
-      screen.getByText("現在ベータ版につき、全機能を無料で使えます。")
-    ).toBeInTheDocument();
+    expect(screen.getByText("現在ベータ版につき、全機能を無料で使えます。")).toBeInTheDocument();
     expect(
       screen.getByText("ベータユーザーには正式リリース後も特別価格を適用します。")
     ).toBeInTheDocument();
@@ -176,9 +176,7 @@ describe("料金プランページ - フッター文言", () => {
     setBeta(true);
     await renderPricing();
     expect(
-      screen.getByText(
-        "いつでもキャンセル可能 · ベータ期間中は全機能無料でご利用いただけます"
-      )
+      screen.getByText("いつでもキャンセル可能 · ベータ期間中は全機能無料でご利用いただけます")
     ).toBeInTheDocument();
   });
 });

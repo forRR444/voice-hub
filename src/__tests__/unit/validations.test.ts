@@ -37,10 +37,9 @@ describe("testimonialSubmitSchema", () => {
   });
 
   it("avatar_urlがnullまたは未指定でも受理される", () => {
-    expect(
-      testimonialSubmitSchema.safeParse({ ...validInput, avatar_url: null })
-        .success
-    ).toBe(true);
+    expect(testimonialSubmitSchema.safeParse({ ...validInput, avatar_url: null }).success).toBe(
+      true
+    );
 
     const result = testimonialSubmitSchema.safeParse(validInput);
     expect(result.success).toBe(true);
@@ -51,7 +50,13 @@ describe("testimonialSubmitSchema", () => {
 
   it.each([
     ["空のform_id", { ...validInput, form_id: "" }],
-    ["form_id欠落", (() => { const { form_id, ...rest } = validInput; return rest; })()],
+    [
+      "form_id欠落",
+      (() => {
+        const { form_id, ...rest } = validInput;
+        return rest;
+      })(),
+    ],
     ["文字列のrating", { ...validInput, rating: "5" }],
     ["空のcontent", { ...validInput, content: "" }],
     ["5000文字超のcontent", { ...validInput, content: "a".repeat(5001) }],
@@ -60,7 +65,13 @@ describe("testimonialSubmitSchema", () => {
     ["100文字超のtitle", { ...validInput, title: "a".repeat(101) }],
     ["不正なavatar_url", { ...validInput, avatar_url: "not-a-url" }],
     ["文字列のpermission_granted", { ...validInput, permission_granted: "yes" }],
-    ["permission_granted欠落", (() => { const { permission_granted, ...rest } = validInput; return rest; })()],
+    [
+      "permission_granted欠落",
+      (() => {
+        const { permission_granted, ...rest } = validInput;
+        return rest;
+      })(),
+    ],
   ])("不正な入力を拒否する: %s", (_label, input) => {
     expect(testimonialSubmitSchema.safeParse(input).success).toBe(false);
   });
@@ -96,34 +107,24 @@ describe("testimonialUpdateSchema", () => {
   );
 
   it("不正なstatus値を拒否する", () => {
-    expect(
-      testimonialUpdateSchema.safeParse({ status: "archived" }).success
-    ).toBe(false);
+    expect(testimonialUpdateSchema.safeParse({ status: "archived" }).success).toBe(false);
   });
 
   it.each([true, false])("is_featured=%s を受理する", (val) => {
-    expect(
-      testimonialUpdateSchema.safeParse({ is_featured: val }).success
-    ).toBe(true);
+    expect(testimonialUpdateSchema.safeParse({ is_featured: val }).success).toBe(true);
   });
 
   it("is_featuredの文字列値を拒否する", () => {
-    expect(
-      testimonialUpdateSchema.safeParse({ is_featured: "true" }).success
-    ).toBe(false);
+    expect(testimonialUpdateSchema.safeParse({ is_featured: "true" }).success).toBe(false);
   });
 
   it("tagsとして文字列配列を受理する", () => {
-    expect(
-      testimonialUpdateSchema.safeParse({ tags: ["tag1", "tag2"] }).success
-    ).toBe(true);
+    expect(testimonialUpdateSchema.safeParse({ tags: ["tag1", "tag2"] }).success).toBe(true);
     expect(testimonialUpdateSchema.safeParse({ tags: [] }).success).toBe(true);
   });
 
   it("tagsに非文字列要素が含まれると拒否する", () => {
-    expect(testimonialUpdateSchema.safeParse({ tags: [1, 2] }).success).toBe(
-      false
-    );
+    expect(testimonialUpdateSchema.safeParse({ tags: [1, 2] }).success).toBe(false);
   });
 });
 
@@ -164,8 +165,7 @@ describe("testimonialManualCreateSchema", () => {
 
   it("avatar_urlがnullでも受理される", () => {
     expect(
-      testimonialManualCreateSchema.safeParse({ ...validInput, avatar_url: null })
-        .success
+      testimonialManualCreateSchema.safeParse({ ...validInput, avatar_url: null }).success
     ).toBe(true);
   });
 
@@ -206,16 +206,14 @@ describe("widgetCreateSchema", () => {
   it.each(["carousel", "grid", "marquee", "list", "single", "wall", "badge"] as const)(
     "ウィジェットタイプ '%s' を受理する",
     (type) => {
-      expect(widgetCreateSchema.safeParse({ ...validInput, type }).success).toBe(
-        true
-      );
+      expect(widgetCreateSchema.safeParse({ ...validInput, type }).success).toBe(true);
     }
   );
 
   it("不正なウィジェットタイプを拒否する", () => {
-    expect(
-      widgetCreateSchema.safeParse({ ...validInput, type: "invalid_type" }).success
-    ).toBe(false);
+    expect(widgetCreateSchema.safeParse({ ...validInput, type: "invalid_type" }).success).toBe(
+      false
+    );
   });
 
   it.each([
@@ -266,30 +264,23 @@ describe("widgetCreateSchema", () => {
     ["maxItems上限超51", { maxItems: 51 }],
     ["不正なmode", { mode: "invalid" }],
   ])("不正なtheme値を拒否する: %s", (_label, theme) => {
-    expect(
-      widgetCreateSchema.safeParse({ ...validInput, theme }).success
-    ).toBe(false);
+    expect(widgetCreateSchema.safeParse({ ...validInput, theme }).success).toBe(false);
   });
 
   it.each([1, 50])("theme.maxItemsの境界値 %d を受理する", (maxItems) => {
-    expect(
-      widgetCreateSchema.safeParse({ ...validInput, theme: { maxItems } })
-        .success
-    ).toBe(true);
+    expect(widgetCreateSchema.safeParse({ ...validInput, theme: { maxItems } }).success).toBe(true);
   });
 
   it.each([1, 5])("filter_min_ratingの境界値 %d を受理する", (val) => {
-    expect(
-      widgetCreateSchema.safeParse({ ...validInput, filter_min_rating: val })
-        .success
-    ).toBe(true);
+    expect(widgetCreateSchema.safeParse({ ...validInput, filter_min_rating: val }).success).toBe(
+      true
+    );
   });
 
   it.each([0, 6])("filter_min_ratingの境界値外 %d を拒否する", (val) => {
-    expect(
-      widgetCreateSchema.safeParse({ ...validInput, filter_min_rating: val })
-        .success
-    ).toBe(false);
+    expect(widgetCreateSchema.safeParse({ ...validInput, filter_min_rating: val }).success).toBe(
+      false
+    );
   });
 });
 
@@ -309,9 +300,7 @@ describe("widgetUpdateSchema", () => {
   });
 
   it("不正なtypeを拒否する", () => {
-    expect(widgetUpdateSchema.safeParse({ type: "invalid" }).success).toBe(
-      false
-    );
+    expect(widgetUpdateSchema.safeParse({ type: "invalid" }).success).toBe(false);
   });
 });
 
@@ -348,7 +337,13 @@ describe("formUpdateSchema", () => {
   it("selectタイプの質問をoptionsつきで受理する", () => {
     const result = formUpdateSchema.safeParse({
       questions: [
-        { id: "select_1", label: "満足度", type: "select", required: false, options: ["とても満足", "満足", "普通"] },
+        {
+          id: "select_1",
+          label: "満足度",
+          type: "select",
+          required: false,
+          options: ["とても満足", "満足", "普通"],
+        },
       ],
     });
     expect(result.success).toBe(true);
@@ -356,9 +351,7 @@ describe("formUpdateSchema", () => {
 
   it("不正な質問タイプを拒否する", () => {
     const result = formUpdateSchema.safeParse({
-      questions: [
-        { id: "q1", label: "テスト", type: "invalid_type", required: false },
-      ],
+      questions: [{ id: "q1", label: "テスト", type: "invalid_type", required: false }],
     });
     expect(result.success).toBe(false);
   });
@@ -366,7 +359,13 @@ describe("formUpdateSchema", () => {
   it("selectタイプのoptionsが21個以上で拒否する", () => {
     const result = formUpdateSchema.safeParse({
       questions: [
-        { id: "s1", label: "選択", type: "select", required: false, options: Array.from({ length: 21 }, (_, i) => `選択肢${i + 1}`) },
+        {
+          id: "s1",
+          label: "選択",
+          type: "select",
+          required: false,
+          options: Array.from({ length: 21 }, (_, i) => `選択肢${i + 1}`),
+        },
       ],
     });
     expect(result.success).toBe(false);
@@ -375,7 +374,13 @@ describe("formUpdateSchema", () => {
   it("selectタイプのoptionsが20個以内で受理する", () => {
     const result = formUpdateSchema.safeParse({
       questions: [
-        { id: "s1", label: "選択", type: "select", required: false, options: Array.from({ length: 20 }, (_, i) => `選択肢${i + 1}`) },
+        {
+          id: "s1",
+          label: "選択",
+          type: "select",
+          required: false,
+          options: Array.from({ length: 20 }, (_, i) => `選択肢${i + 1}`),
+        },
       ],
     });
     expect(result.success).toBe(true);
@@ -394,7 +399,13 @@ describe("formUpdateSchema", () => {
     const result = formUpdateSchema.safeParse({
       questions: [
         { id: "rating", label: "総合評価", type: "star_rating", required: true, enabled: true },
-        { id: "before_story", label: "利用前の悩み", type: "textarea", required: false, enabled: false },
+        {
+          id: "before_story",
+          label: "利用前の悩み",
+          type: "textarea",
+          required: false,
+          enabled: false,
+        },
         { id: "permission", label: "掲載許可", type: "checkbox", required: true },
       ],
     });
@@ -475,11 +486,7 @@ describe("getBaseUrl", () => {
       { VERCEL_URL: "my-app.vercel.app" },
       "https://my-app.vercel.app",
     ],
-    [
-      "環境変数未設定の場合はlocalhostを返す",
-      {},
-      "http://localhost:3001",
-    ],
+    ["環境変数未設定の場合はlocalhostを返す", {}, "http://localhost:3001"],
   ])("%s", (_label, envVars, expected) => {
     Object.assign(process.env, envVars);
     expect(getBaseUrl()).toBe(expected);
@@ -517,15 +524,12 @@ describe("DEFAULT_FORM_QUESTIONS", () => {
     ["star_rating", "rating", true],
     ["checkbox", "permission", true],
     ["image", "avatar", false],
-  ])(
-    "タイプ '%s' の質問（id=%s, required=%s）が存在する",
-    (type, id, required) => {
-      const q = DEFAULT_FORM_QUESTIONS.find((q) => q.id === id);
-      expect(q).toBeDefined();
-      expect(q!.type).toBe(type);
-      expect(q!.required).toBe(required);
-    }
-  );
+  ])("タイプ '%s' の質問（id=%s, required=%s）が存在する", (type, id, required) => {
+    const q = DEFAULT_FORM_QUESTIONS.find((q) => q.id === id);
+    expect(q).toBeDefined();
+    expect(q!.type).toBe(type);
+    expect(q!.required).toBe(required);
+  });
 
   it("有効な質問タイプのみ使用されている", () => {
     const validTypes = ["star_rating", "text", "textarea", "image", "checkbox"];

@@ -25,7 +25,7 @@ vi.mock("@/lib/api-utils", () => ({
   checkRateLimit: vi.fn().mockResolvedValue(null),
   getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
   handleApiError: vi.fn((_error: unknown, message: string) =>
-    NextResponse.json({ error: message }, { status: 500 }),
+    NextResponse.json({ error: message }, { status: 500 })
   ),
 }));
 
@@ -119,10 +119,9 @@ describe("DELETE /api/account", () => {
     expect(response.status).toBe(500);
     const body = await response.json();
     expect(body.error).toBe("アカウント削除に失敗しました");
-    expect(mockLogError).toHaveBeenCalledWith(
-      "ユーザー認証情報の削除に失敗",
-      { message: "Failed to delete" },
-    );
+    expect(mockLogError).toHaveBeenCalledWith("ユーザー認証情報の削除に失敗", {
+      message: "Failed to delete",
+    });
   });
 
   it("admin呼び出しがthrowした場合、catchで500を返す", async () => {

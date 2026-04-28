@@ -6,7 +6,13 @@ type EmptyStateProps = {
   card?: boolean;
 };
 
-export default function EmptyState({ icon, message, description, children, card = false }: EmptyStateProps) {
+export default function EmptyState({
+  icon,
+  message,
+  description,
+  children,
+  card = false,
+}: EmptyStateProps) {
   const wrapperClass = card
     ? "bg-white rounded-lg border border-foreground/10 shadow-sm text-center py-16"
     : "text-center py-16 text-foreground/50";

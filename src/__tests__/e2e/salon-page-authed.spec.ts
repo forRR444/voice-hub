@@ -12,9 +12,7 @@ async function waitForData(locator: Locator, timeout = 5000): Promise<boolean> {
 test.describe("認証済み：サロンページ設定", () => {
   test("ページタイトルと保存ボタンが表示される", async ({ page }) => {
     await page.goto("/dashboard/salon-page");
-    await expect(
-      page.getByRole("heading", { name: "サロンページ", level: 2 })
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "サロンページ", level: 2 })).toBeVisible();
     // 保存ボタンはクリックしない（破壊的操作）
     await expect(page.getByRole("button", { name: "保存する" })).toBeVisible();
   });
@@ -22,9 +20,7 @@ test.describe("認証済み：サロンページ設定", () => {
   test("STEP 1 のサロン名・一言紹介文プレースホルダが可視", async ({ page }) => {
     await page.goto("/dashboard/salon-page");
     await expect(page.getByPlaceholder("例: Nail Salon Miki")).toBeVisible();
-    await expect(
-      page.getByPlaceholder("例: 爪に優しいジェルネイル専門サロン")
-    ).toBeVisible();
+    await expect(page.getByPlaceholder("例: 爪に優しいジェルネイル専門サロン")).toBeVisible();
   });
 
   test("STEP 2 タブに切り替えるとデザイン画面が表示される", async ({ page }) => {
@@ -46,15 +42,13 @@ test.describe("認証済み：サロンページ設定", () => {
     const visible = await waitForData(detailToggle);
     test.skip(!visible, "詳細情報トグルが見つからないためスキップ");
     await detailToggle.click();
-    await expect(
-      page.getByText("サロン詳細情報", { exact: true })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "基本情報に戻る" })
-    ).toBeVisible();
+    await expect(page.getByText("サロン詳細情報", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "基本情報に戻る" })).toBeVisible();
   });
 
-  test("STEP 4 公開設定で URL コピーボタンが表示される（slug 未発行時は skip）", async ({ page }) => {
+  test("STEP 4 公開設定で URL コピーボタンが表示される（slug 未発行時は skip）", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/salon-page");
     const step4Button = page.getByRole("button", { name: /STEP\s*4\s*公開設定/ });
     const tabVisible = await waitForData(step4Button);

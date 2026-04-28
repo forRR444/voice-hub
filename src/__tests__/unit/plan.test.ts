@@ -99,13 +99,15 @@ describe("plan", () => {
 
   describe("getDashboardViewLimit / getTestimonialDisplayLimit", () => {
     it("free: ダッシュボード10件、表示5件", async () => {
-      const { getDashboardViewLimit, getTestimonialDisplayLimit } = await importPlanWithBeta("false");
+      const { getDashboardViewLimit, getTestimonialDisplayLimit } =
+        await importPlanWithBeta("false");
       expect(getDashboardViewLimit("free")).toBe(10);
       expect(getTestimonialDisplayLimit("free")).toBe(5);
     });
 
     it("pro: 両方 Infinity", async () => {
-      const { getDashboardViewLimit, getTestimonialDisplayLimit } = await importPlanWithBeta("false");
+      const { getDashboardViewLimit, getTestimonialDisplayLimit } =
+        await importPlanWithBeta("false");
       expect(getDashboardViewLimit("pro")).toBe(Infinity);
       expect(getTestimonialDisplayLimit("pro")).toBe(Infinity);
     });

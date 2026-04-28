@@ -2,22 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  Plus,
-  Code,
-  ExternalLink,
-  Check,
-  X,
-  Pencil,
-  Trash,
-  MoreHorizontal,
-} from "lucide-react";
-import {
-  WorkspaceRow,
-  WidgetRow,
-  WidgetTheme,
-  SubscriptionStatus,
-} from "@/types/database";
+import { Plus, Code, ExternalLink, Check, X, Pencil, Trash, MoreHorizontal } from "lucide-react";
+import { WorkspaceRow, WidgetRow, WidgetTheme, SubscriptionStatus } from "@/types/database";
 import { getPlanLimits } from "@/lib/plan";
 import { getBaseUrl, formatDate } from "@/lib/utils";
 import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
@@ -32,7 +18,15 @@ import Card from "@/app/components/ui/card";
 import EmptyState from "@/app/components/ui/empty-state";
 import { useCopy } from "@/hooks/use-copy";
 
-type WidgetType = "carousel" | "grid" | "marquee" | "list" | "single" | "wall" | "dual-marquee" | "badge";
+type WidgetType =
+  | "carousel"
+  | "grid"
+  | "marquee"
+  | "list"
+  | "single"
+  | "wall"
+  | "dual-marquee"
+  | "badge";
 
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
@@ -238,7 +232,9 @@ export default function WidgetsClient({
       </div>
 
       {error && (
-        <p className="text-sm mb-4" style={{ color: "#E25950" }}>{error}</p>
+        <p className="text-sm mb-4" style={{ color: "#E25950" }}>
+          {error}
+        </p>
       )}
 
       {/* Create modal */}
@@ -253,16 +249,10 @@ export default function WidgetsClient({
             <WidgetThemeForm form={newWidget} onChange={setNewWidget} />
 
             <div className="flex justify-end gap-3 mt-2">
-              <Button
-                variant="secondary"
-                onClick={() => setShowCreate(false)}
-              >
+              <Button variant="secondary" onClick={() => setShowCreate(false)}>
                 キャンセル
               </Button>
-              <Button
-                onClick={handleCreate}
-                disabled={creating || !newWidget.name.trim()}
-              >
+              <Button onClick={handleCreate} disabled={creating || !newWidget.name.trim()}>
                 {creating ? "作成中..." : "作成する"}
               </Button>
             </div>
@@ -282,18 +272,11 @@ export default function WidgetsClient({
                 <div className="flex flex-col gap-4">
                   <WidgetThemeForm form={editForm} onChange={setEditForm} />
                   <div className="flex justify-end gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setEditingId(null)}
-                    >
+                    <Button variant="secondary" size="sm" onClick={() => setEditingId(null)}>
                       <X size={14} />
                       キャンセル
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => saveEdit(w.id)}
-                    >
+                    <Button size="sm" onClick={() => saveEdit(w.id)}>
                       <Check size={14} />
                       保存
                     </Button>
@@ -302,130 +285,129 @@ export default function WidgetsClient({
               ) : (
                 /* View mode */
                 <>
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {w.name}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-foreground/50">
-                    <span className="flex items-center gap-1">
-                      タイプ:
-                      <CustomSelect
-                        value={w.type}
-                        onChange={async (val) => {
-                          const newType = val as WidgetType;
-                          const previousType = w.type;
-                          setWidgets((prev) =>
-                            prev.map((widget) =>
-                              widget.id === w.id ? { ...widget, type: newType } : widget
-                            )
-                          );
-                          try {
-                            const res = await fetch("/api/widgets", {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ id: w.id, type: newType }),
-                            });
-                            if (!res.ok) throw new Error();
-                          } catch {
-                            setWidgets((prev) =>
-                              prev.map((widget) =>
-                                widget.id === w.id ? { ...widget, type: previousType } : widget
-                              )
-                            );
-                            alert("タイプの変更に失敗しました。もう一度お試しください。");
-                          }
-                        }}
-                        options={WIDGET_TYPES.map((wt) => ({ value: wt.id, label: wt.label }))}
-                        className="inline-block w-auto"
-                      />
-                    </span>
-                    <span>
-                      モード:{" "}
-                      {(w.theme as WidgetTheme).mode === "auto"
-                        ? "自動"
-                        : (w.theme as WidgetTheme).mode === "dark"
-                          ? "ダーク"
-                          : "ライト"}
-                    </span>
-                    <span>作成日: {formatDate(w.created_at)}</span>
-                  </div>
-                </div>
-                <div className="relative">
-                  <button
-                    onClick={() => setOpenMenuId(openMenuId === w.id ? null : w.id)}
-                    className="p-2 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5 rounded-lg cursor-pointer"
-                  >
-                    <MoreHorizontal size={18} />
-                  </button>
-                  {openMenuId === w.id && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-10"
-                        onClick={() => setOpenMenuId(null)}
-                      />
-                      <div className="absolute right-0 top-10 z-20 w-44 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
-                        <a
-                          href={`${baseUrl}/preview/${w.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5"
-                          onClick={() => setOpenMenuId(null)}
-                        >
-                          <ExternalLink size={14} />
-                          プレビュー
-                        </a>
-                        <button
-                          onClick={() => { startEdit(w); setOpenMenuId(null); }}
-                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
-                        >
-                          <Pencil size={14} />
-                          編集
-                        </button>
-                        <div className="border-t border-foreground/10 my-1" />
-                        <button
-                          onClick={() => { setDeletingId(w.id); setOpenMenuId(null); }}
-                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-50 cursor-pointer"
-                        >
-                          <Trash size={14} />
-                          削除
-                        </button>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground">{w.name}</h3>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-foreground/50">
+                        <span className="flex items-center gap-1">
+                          タイプ:
+                          <CustomSelect
+                            value={w.type}
+                            onChange={async (val) => {
+                              const newType = val as WidgetType;
+                              const previousType = w.type;
+                              setWidgets((prev) =>
+                                prev.map((widget) =>
+                                  widget.id === w.id ? { ...widget, type: newType } : widget
+                                )
+                              );
+                              try {
+                                const res = await fetch("/api/widgets", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ id: w.id, type: newType }),
+                                });
+                                if (!res.ok) throw new Error();
+                              } catch {
+                                setWidgets((prev) =>
+                                  prev.map((widget) =>
+                                    widget.id === w.id ? { ...widget, type: previousType } : widget
+                                  )
+                                );
+                                alert("タイプの変更に失敗しました。もう一度お試しください。");
+                              }
+                            }}
+                            options={WIDGET_TYPES.map((wt) => ({ value: wt.id, label: wt.label }))}
+                            className="inline-block w-auto"
+                          />
+                        </span>
+                        <span>
+                          モード:{" "}
+                          {(w.theme as WidgetTheme).mode === "auto"
+                            ? "自動"
+                            : (w.theme as WidgetTheme).mode === "dark"
+                              ? "ダーク"
+                              : "ライト"}
+                        </span>
+                        <span>作成日: {formatDate(w.created_at)}</span>
                       </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <button
-                  onClick={() =>
-                    setExpandedId(expandedId === w.id ? null : w.id)
-                  }
-                  className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 cursor-pointer"
-                >
-                  <Code size={14} />
-                  埋め込みコードを表示
-                </button>
-              </div>
-
-                {expandedId === w.id && (
-                  <div className="mt-4 flex flex-col gap-4">
-                    <EmbedCodeBlock
-                      label="スクリプト埋め込み"
-                      description="おすすめ・デザインが自然に馴染む"
-                      code={getScriptEmbed(w.id)}
-                      copied={copiedField === `script-${w.id}`}
-                      onCopy={() => copyText(getScriptEmbed(w.id), `script-${w.id}`)}
-                    />
-                    <EmbedCodeBlock
-                      label="iFrame埋め込み"
-                      description="ペライチ・Wixなどスクリプトが使えない場合"
-                      code={getIframeEmbed(w.id)}
-                      copied={copiedField === `iframe-${w.id}`}
-                      onCopy={() => copyText(getIframeEmbed(w.id), `iframe-${w.id}`)}
-                    />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={() => setOpenMenuId(openMenuId === w.id ? null : w.id)}
+                        className="p-2 text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5 rounded-lg cursor-pointer"
+                      >
+                        <MoreHorizontal size={18} />
+                      </button>
+                      {openMenuId === w.id && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                          <div className="absolute right-0 top-10 z-20 w-44 bg-white rounded-lg border border-foreground/10 shadow-lg py-1">
+                            <a
+                              href={`${baseUrl}/preview/${w.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5"
+                              onClick={() => setOpenMenuId(null)}
+                            >
+                              <ExternalLink size={14} />
+                              プレビュー
+                            </a>
+                            <button
+                              onClick={() => {
+                                startEdit(w);
+                                setOpenMenuId(null);
+                              }}
+                              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-foreground/70 hover:bg-foreground/5 cursor-pointer"
+                            >
+                              <Pencil size={14} />
+                              編集
+                            </button>
+                            <div className="border-t border-foreground/10 my-1" />
+                            <button
+                              onClick={() => {
+                                setDeletingId(w.id);
+                                setOpenMenuId(null);
+                              }}
+                              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-50 cursor-pointer"
+                            >
+                              <Trash size={14} />
+                              削除
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
-                )}
+
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setExpandedId(expandedId === w.id ? null : w.id)}
+                      className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                    >
+                      <Code size={14} />
+                      埋め込みコードを表示
+                    </button>
+                  </div>
+
+                  {expandedId === w.id && (
+                    <div className="mt-4 flex flex-col gap-4">
+                      <EmbedCodeBlock
+                        label="スクリプト埋め込み"
+                        description="おすすめ・デザインが自然に馴染む"
+                        code={getScriptEmbed(w.id)}
+                        copied={copiedField === `script-${w.id}`}
+                        onCopy={() => copyText(getScriptEmbed(w.id), `script-${w.id}`)}
+                      />
+                      <EmbedCodeBlock
+                        label="iFrame埋め込み"
+                        description="ペライチ・Wixなどスクリプトが使えない場合"
+                        code={getIframeEmbed(w.id)}
+                        copied={copiedField === `iframe-${w.id}`}
+                        onCopy={() => copyText(getIframeEmbed(w.id), `iframe-${w.id}`)}
+                      />
+                    </div>
+                  )}
                 </>
               )}
             </Card>

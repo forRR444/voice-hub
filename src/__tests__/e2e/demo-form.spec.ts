@@ -25,9 +25,7 @@ test.describe("デモフォームページ (/form/demo)", () => {
 
     test("descriptionが表示される", async ({ page }) => {
       await expect(
-        page.getByText(
-          "ご利用いただきありがとうございます。ぜひご感想をお聞かせください。"
-        )
+        page.getByText("ご利用いただきありがとうございます。ぜひご感想をお聞かせください。")
       ).toBeVisible();
     });
 
@@ -38,9 +36,7 @@ test.describe("デモフォームページ (/form/demo)", () => {
     test("Powered by VoiceHubが表示される", async ({ page }) => {
       await expect(page.getByText("Powered by")).toBeVisible();
       // 初期画面でも Powered by の「VoiceHub」リンクが複数存在する可能性があるため first() でスコープ
-      await expect(
-        page.getByRole("link", { name: "VoiceHub" }).first()
-      ).toBeVisible();
+      await expect(page.getByRole("link", { name: "VoiceHub" }).first()).toBeVisible();
     });
 
     test("demo固有の「スキップ →」ボタンが表示される", async ({ page }) => {

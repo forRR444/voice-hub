@@ -12,14 +12,9 @@ async function waitForData(locator: Locator, timeout = 5000): Promise<boolean> {
 test.describe("認証済み：SNS画像作成", () => {
   test("ページタイトルと説明文が表示される", async ({ page }) => {
     await page.goto("/dashboard/sns");
+    await expect(page.getByRole("heading", { name: "SNS画像を作成", level: 2 })).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "SNS画像を作成", level: 2 })
-    ).toBeVisible();
-    await expect(
-      page.getByText(
-        "口コミを選んでInstagramやX用の画像を生成できます",
-        { exact: true }
-      )
+      page.getByText("口コミを選んでInstagramやX用の画像を生成できます", { exact: true })
     ).toBeVisible();
   });
 
@@ -32,14 +27,13 @@ test.describe("認証済み：SNS画像作成", () => {
     test.skip(!isEmpty, "承認済み口コミが存在するためスキップ");
     await expect(empty).toBeVisible();
     await expect(
-      page.getByText(
-        "口コミが届いて承認すると、ここからSNS画像を作成できます",
-        { exact: true }
-      )
+      page.getByText("口コミが届いて承認すると、ここからSNS画像を作成できます", { exact: true })
     ).toBeVisible();
   });
 
-  test("ツールバーの「すべて選択」と一括ダウンロードボタンが可視（クリックしない）", async ({ page }) => {
+  test("ツールバーの「すべて選択」と一括ダウンロードボタンが可視（クリックしない）", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/sns");
     const selectAll = page.getByRole("button", {
       name: "すべて選択",
@@ -58,23 +52,17 @@ test.describe("認証済み：SNS画像作成", () => {
   test("口コミカードをクリックすると「1件選択中」が表示される", async ({ page }) => {
     await page.goto("/dashboard/sns");
     // 各カードは `.cursor-pointer.bg-white.rounded-lg.border` を持つ div
-    const firstCard = page
-      .locator("div.cursor-pointer.bg-white.rounded-lg.border")
-      .first();
+    const firstCard = page.locator("div.cursor-pointer.bg-white.rounded-lg.border").first();
     const hasData = await waitForData(firstCard, 3000);
     test.skip(!hasData, "承認済み口コミがないためスキップ");
     await firstCard.click();
-    await expect(
-      page.getByText("1件選択中", { exact: true })
-    ).toBeVisible();
+    await expect(page.getByText("1件選択中", { exact: true })).toBeVisible();
   });
 
   test("プレビューボタンでダイアログが開き、閉じられる", async ({ page }) => {
     await page.goto("/dashboard/sns");
     // プレビューボタンは title="プレビュー" で描画される
-    const previewButton = page
-      .locator('button[title="プレビュー"]')
-      .first();
+    const previewButton = page.locator('button[title="プレビュー"]').first();
     const hasData = await waitForData(previewButton, 3000);
     test.skip(!hasData, "承認済み口コミがないためスキップ");
     await previewButton.click();

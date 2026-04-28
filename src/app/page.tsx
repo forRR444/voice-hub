@@ -27,7 +27,6 @@ import {
 import WidgetDemo from "./components/widget-demo";
 import { WIDGET_TYPES } from "@/lib/constants";
 
-
 const FEATURE_CARDS = [
   {
     icon: Code,
@@ -58,7 +57,8 @@ const FEATURE_CARDS = [
     title: "お客様の声ページが持てる",
     description: (
       <>
-        インスタのプロフリンクに<span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。
+        インスタのプロフリンクに
+        <span className="text-[var(--brand)] font-semibold">URLを貼るだけ</span>。
         <br />
         お客様の声付きのサロン紹介ページが簡単に作れます。
       </>
@@ -83,22 +83,38 @@ const PAIN_SOLUTIONS = [
   {
     icon: <MessageSquareText size={18} className="text-[var(--brand)]" />,
     pain: "LINEで個別にお願い",
-    solution: (<><span className="text-[var(--brand)] font-semibold">URL1つ</span>で自動収集</>),
+    solution: (
+      <>
+        <span className="text-[var(--brand)] font-semibold">URL1つ</span>で自動収集
+      </>
+    ),
   },
   {
     icon: <LayoutDashboard size={18} className="text-[var(--brand)]" />,
     pain: "口コミがバラバラ",
-    solution: (<><span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約</>),
+    solution: (
+      <>
+        <span className="text-[var(--brand)] font-semibold">ダッシュボード</span>に集約
+      </>
+    ),
   },
   {
     icon: <Code size={18} className="text-[var(--brand)]" />,
     pain: "HPを手動で更新",
-    solution: (<><span className="text-[var(--brand)] font-semibold">承認だけ</span>で自動反映</>),
+    solution: (
+      <>
+        <span className="text-[var(--brand)] font-semibold">承認だけ</span>で自動反映
+      </>
+    ),
   },
   {
     icon: <ImageIcon size={18} className="text-[var(--brand)]" />,
     pain: "SNS画像を毎回作成",
-    solution: (<><span className="text-[var(--brand)] font-semibold">ワンクリック</span>で自動生成</>),
+    solution: (
+      <>
+        <span className="text-[var(--brand)] font-semibold">ワンクリック</span>で自動生成
+      </>
+    ),
   },
   {
     icon: <MessageCircle size={18} className="text-[var(--brand)]" />,
@@ -177,7 +193,10 @@ export default function Home() {
         <div className="absolute top-1/3 -left-10 sm:-left-20 w-[200px] sm:w-[350px] h-[200px] sm:h-[350px] bg-violet-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
         <div className="absolute top-1/4 -right-10 sm:-right-20 w-[180px] sm:w-[300px] h-[180px] sm:h-[300px] bg-sky-200 rounded-full opacity-30 blur-[80px] sm:blur-[128px] pointer-events-none" />
         <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
-          <a href="#pricing" className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover:bg-indigo-100 transition-colors cursor-pointer">
+          <a
+            href="#pricing"
+            className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 hover:bg-indigo-100 transition-colors cursor-pointer"
+          >
             <Star size={14} />
             先着10名は正式リリース後もずっと無料
           </a>
@@ -232,15 +251,23 @@ export default function Home() {
           <div className="grid grid-cols-3 gap-6 sm:gap-16">
             <div className="text-center">
               <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">97%</p>
-              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">の消費者がレビューを参考にする</p>
+              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">
+                の消費者がレビューを参考にする
+              </p>
             </div>
             <div className="text-center">
-              <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">+34%</p>
-              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">お客様の声で成約率が向上</p>
+              <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">
+                +34%
+              </p>
+              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">
+                お客様の声で成約率が向上
+              </p>
             </div>
             <div className="text-center">
               <p className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tabular-nums">5分</p>
-              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">でセットアップ完了</p>
+              <p className="mt-1.5 text-[11px] sm:text-sm text-[var(--slate)]">
+                でセットアップ完了
+              </p>
             </div>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row justify-center gap-x-6 gap-y-1 text-[11px] text-[var(--slate)] opacity-60">
@@ -262,33 +289,56 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             <div className="bg-[var(--plate)] rounded-lg p-4 sm:p-8">
               <div className="flex items-center gap-3">
-                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">1</span>
+                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">
+                  1
+                </span>
                 <div className="flex items-center gap-2">
                   <MessageCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  <svg
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--brand)]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
                   <QrCode size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
                 </div>
               </div>
-              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">フォームURLを送る</h3>
+              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">
+                フォームURLを送る
+              </h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
-                お客様に<span className="text-[var(--brand)] font-semibold">URL</span>を送るだけ。LINEでもメールでもOK。<span className="text-[var(--brand)] font-semibold">QRコード</span>も作れるので、店頭やレジ横に置くこともできます。
+                お客様に<span className="text-[var(--brand)] font-semibold">URL</span>
+                を送るだけ。LINEでもメールでもOK。
+                <span className="text-[var(--brand)] font-semibold">QRコード</span>
+                も作れるので、店頭やレジ横に置くこともできます。
               </p>
             </div>
             <div className="bg-[var(--plate)] rounded-lg p-4 sm:p-8">
               <div className="flex items-center gap-3">
-                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">2</span>
+                <span className="text-2xl sm:text-4xl font-bold text-[var(--brand)] tracking-[-0.022em]">
+                  2
+                </span>
                 <div className="flex items-center gap-2">
                   <CheckCircle size={20} className="sm:!w-6 sm:!h-6 text-[var(--brand)]" />
                 </div>
               </div>
-              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">届いた声を承認する</h3>
+              <h3 className="mt-3 text-sm sm:text-lg font-semibold text-[var(--ink)] tracking-[-0.011em]">
+                届いた声を承認する
+              </h3>
               <p className="mt-2 text-sm text-[var(--slate)] leading-relaxed">
                 ダッシュボードに届いた声を確認。「承認」ボタンを押すだけ。内容を見て選べるので安心です。
               </p>
             </div>
           </div>
           <p className="mt-8 text-center text-xs sm:text-sm text-[var(--slate)]">
-            ※ ホームページへの埋め込みコードは初回に一度貼るだけ。以降は承認するたびに自動で反映されます。
+            ※
+            ホームページへの埋め込みコードは初回に一度貼るだけ。以降は承認するたびに自動で反映されます。
           </p>
         </div>
       </section>
@@ -301,7 +351,10 @@ export default function Home() {
           </h2>
           <div className="space-y-3.5 sm:space-y-6">
             {PAIN_SOLUTIONS.map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg leading-relaxed">
+              <div
+                key={i}
+                className="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg leading-relaxed"
+              >
                 <span className="shrink-0">{item.icon}</span>
                 <p>
                   <span className="text-[var(--slate)] line-through">{item.pain}</span>
@@ -315,12 +368,15 @@ export default function Home() {
       </section>
 
       {/* ── Product + Features (scroll-pinned horizontal) ── */}
-      <div ref={pinRef} id="features" className="relative scroll-mt-20" style={{ height: `${FEATURE_CARDS.length * 100}vh` }}>
+      <div
+        ref={pinRef}
+        id="features"
+        className="relative scroll-mt-20"
+        style={{ height: `${FEATURE_CARDS.length * 100}vh` }}
+      >
         <div className="sticky top-0 h-screen flex flex-col pt-20 sm:pt-0 sm:justify-center overflow-hidden">
           <div className="max-w-4xl mx-auto px-6 w-full">
-            <h2 className="section-heading text-center mb-4 sm:mb-8">
-              できること
-            </h2>
+            <h2 className="section-heading text-center mb-4 sm:mb-8">できること</h2>
 
             {/* Progress dots */}
             <div className="flex justify-center gap-2.5 mb-6 sm:mb-8">
@@ -371,11 +427,19 @@ export default function Home() {
                     <div className="flex items-center justify-center">
                       {i === 0 && (
                         <div className="w-full max-h-[280px] sm:max-h-[340px] overflow-hidden rounded-lg shadow-ambient">
-                          <img src="/widget-demo-screenshot.png" alt="HPウィジェット埋め込み例" className="w-full object-cover object-top" />
+                          <img
+                            src="/widget-demo-screenshot.png"
+                            alt="HPウィジェット埋め込み例"
+                            className="w-full object-cover object-top"
+                          />
                         </div>
                       )}
                       {i === 1 && (
-                        <img src="/sns-story-sample.png" alt="SNS投稿画像" className="w-36 sm:w-48 rounded-lg shadow-ambient" />
+                        <img
+                          src="/sns-story-sample.png"
+                          alt="SNS投稿画像"
+                          className="w-36 sm:w-48 rounded-lg shadow-ambient"
+                        />
                       )}
                       {i === 2 && (
                         <div className="bg-[var(--canvas)] rounded-lg overflow-hidden shadow-ambient w-full">
@@ -391,8 +455,12 @@ export default function Home() {
                                 alt=""
                                 className="w-14 h-14 rounded-full object-cover mx-auto border-2 border-white shadow-sm -mt-10"
                               />
-                              <p className="mt-2 font-semibold text-[var(--ink)] text-sm">Sample Salon</p>
-                              <p className="text-xs text-[var(--slate)]">爪に優しいジェルネイル専門</p>
+                              <p className="mt-2 font-semibold text-[var(--ink)] text-sm">
+                                Sample Salon
+                              </p>
+                              <p className="text-xs text-[var(--slate)]">
+                                爪に優しいジェルネイル専門
+                              </p>
                             </div>
                             <div className="flex items-center justify-center gap-1.5 mt-3 text-sm">
                               <span className="text-[var(--slate)]">★★★★★</span>
@@ -400,10 +468,15 @@ export default function Home() {
                               <span className="text-[var(--slate)] text-xs">（12件）</span>
                             </div>
                             <div className="mt-3 space-y-2">
-                              {["とても丁寧な施術で大満足です。また通いたいです！", "雰囲気がよくリラックスできました。"].map((text, ti) => (
+                              {[
+                                "とても丁寧な施術で大満足です。また通いたいです！",
+                                "雰囲気がよくリラックスできました。",
+                              ].map((text, ti) => (
                                 <div key={ti} className="bg-white rounded-lg p-2.5">
                                   <span className="text-[var(--slate)] text-xs">★★★★★</span>
-                                  <p className="text-xs text-[var(--slate)] mt-1 leading-relaxed">{text}</p>
+                                  <p className="text-xs text-[var(--slate)] mt-1 leading-relaxed">
+                                    {text}
+                                  </p>
                                 </div>
                               ))}
                             </div>
@@ -411,22 +484,46 @@ export default function Home() {
                         </div>
                       )}
                       {i === 3 && (
-                        <img src="/Dashboard.png" alt="管理ダッシュボード" className="w-full rounded-lg shadow-ambient" />
+                        <img
+                          src="/Dashboard.png"
+                          alt="管理ダッシュボード"
+                          className="w-full rounded-lg shadow-ambient"
+                        />
                       )}
                     </div>
                     {/* Compact features */}
                     <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-x-4 sm:gap-x-16 gap-y-2 sm:gap-y-6 mt-4 sm:mt-8 pt-4 sm:pt-8 border-t border-[var(--ghost-border)]">
                       {[
-                        { icon: MessageSquareText, title: "お客様の声 収集フォーム", desc: "星評価・写真付き。ステップ形式で回答率アップ。" },
-                        { icon: MapPin, title: "Google口コミを取り込み", desc: "ワンクリックでそのまま取り込み。" },
-                        { icon: PenLine, title: "手動追加もOK", desc: "LINEやメールの声もまとめて登録。" },
-                        { icon: Zap, title: "5分でセットアップ完了", desc: "5分あれば始められます。" },
+                        {
+                          icon: MessageSquareText,
+                          title: "お客様の声 収集フォーム",
+                          desc: "星評価・写真付き。ステップ形式で回答率アップ。",
+                        },
+                        {
+                          icon: MapPin,
+                          title: "Google口コミを取り込み",
+                          desc: "ワンクリックでそのまま取り込み。",
+                        },
+                        {
+                          icon: PenLine,
+                          title: "手動追加もOK",
+                          desc: "LINEやメールの声もまとめて登録。",
+                        },
+                        {
+                          icon: Zap,
+                          title: "5分でセットアップ完了",
+                          desc: "5分あれば始められます。",
+                        },
                       ].map((f, fi) => (
                         <div key={fi} className="flex items-start gap-2 sm:gap-3">
                           <IconCircle icon={f.icon} size="xs" className="mt-0.5 shrink-0" />
                           <div>
-                            <h4 className="text-[10px] sm:text-sm font-semibold text-[var(--ink)]">{f.title}</h4>
-                            <p className="text-[10px] sm:text-sm text-[var(--slate)] leading-relaxed">{f.desc}</p>
+                            <h4 className="text-[10px] sm:text-sm font-semibold text-[var(--ink)]">
+                              {f.title}
+                            </h4>
+                            <p className="text-[10px] sm:text-sm text-[var(--slate)] leading-relaxed">
+                              {f.desc}
+                            </p>
                           </div>
                         </div>
                       ))}
@@ -459,9 +556,13 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="section-heading text-center mb-4">
             {IS_BETA ? (
-              <>今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span></>
+              <>
+                今なら、ベータ版で全機能が<span className="text-[var(--brand)]">無料。</span>
+              </>
             ) : (
-              <>シンプルな<span className="text-[var(--brand)]">料金プラン。</span></>
+              <>
+                シンプルな<span className="text-[var(--brand)]">料金プラン。</span>
+              </>
             )}
           </h2>
           <p className="text-xs sm:text-lg text-[var(--slate)] mb-8 sm:mb-12 leading-relaxed">
@@ -469,7 +570,9 @@ export default function Home() {
               <>
                 現在ベータ版につき、全機能を無料で使えます。
                 <br />
-                <span className="font-medium text-[var(--ink)]">ベータユーザーには正式リリース後も特別価格を適用します。</span>
+                <span className="font-medium text-[var(--ink)]">
+                  ベータユーザーには正式リリース後も特別価格を適用します。
+                </span>
               </>
             ) : (
               <>あなたのビジネスに合ったプランをお選びください。</>
@@ -485,9 +588,10 @@ export default function Home() {
             <PlanCard
               plan="pro"
               features={PRO_FEATURE_LIST}
-              cta={IS_BETA
-                ? { label: "無料で始める", href: "/try" }
-                : { label: "Proプランを始める", href: "/signup" }
+              cta={
+                IS_BETA
+                  ? { label: "無料で始める", href: "/try" }
+                  : { label: "Proプランを始める", href: "/signup" }
               }
               note={IS_BETA ? "ベータ中は全機能無料" : "いつでもキャンセル可能"}
             />
@@ -498,9 +602,7 @@ export default function Home() {
       {/* ── FAQ ── */}
       <section id="faq" className="py-16 sm:py-24 scroll-mt-20">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="section-heading text-center mb-8 sm:mb-14">
-            よくある質問
-          </h2>
+          <h2 className="section-heading text-center mb-8 sm:mb-14">よくある質問</h2>
           <div className="space-y-3">
             <FaqItem
               q="本当に無料ですか？"
@@ -559,9 +661,20 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm text-[var(--slate)]">
           <span>&copy; 2026 VoiceHub. All rights reserved.</span>
           <div className="flex gap-6">
-            <Link href="/terms" className="hover:text-[var(--ink)] transition-colors">利用規約</Link>
-            <Link href="/privacy" className="hover:text-[var(--ink)] transition-colors">プライバシーポリシー</Link>
-            <a href="https://forms.gle/XA7EA9CNGr67WeSk7" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--ink)] transition-colors">お問い合わせ</a>
+            <Link href="/terms" className="hover:text-[var(--ink)] transition-colors">
+              利用規約
+            </Link>
+            <Link href="/privacy" className="hover:text-[var(--ink)] transition-colors">
+              プライバシーポリシー
+            </Link>
+            <a
+              href="https://forms.gle/XA7EA9CNGr67WeSk7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[var(--ink)] transition-colors"
+            >
+              お問い合わせ
+            </a>
           </div>
         </div>
       </footer>

@@ -19,7 +19,10 @@ export default function ResetPasswordClient() {
   async function handleReset(e: React.FormEvent) {
     e.preventDefault();
     const emailErr = validateEmail(email);
-    if (emailErr) { setError(emailErr); return; }
+    if (emailErr) {
+      setError(emailErr);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -44,7 +47,8 @@ export default function ResetPasswordClient() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">メールを送信しました</h1>
             <p className="mt-3 text-sm text-foreground/60">
-              <span className="font-medium text-foreground">{email}</span> にパスワードリセットのメールを送信しました。
+              <span className="font-medium text-foreground">{email}</span>{" "}
+              にパスワードリセットのメールを送信しました。
               メール内のリンクをクリックしてパスワードを再設定してください。
             </p>
           </div>
@@ -63,8 +67,18 @@ export default function ResetPasswordClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity">
-            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={1047}
+              height={1267}
+              priority
+              className="h-7 w-auto"
+            />
             VoiceHub
           </Link>
           <p className="mt-2 text-sm text-foreground/60">パスワードをリセット</p>
@@ -90,13 +104,13 @@ export default function ResetPasswordClient() {
             </button>
           </form>
 
-          {error && (
-            <p className="text-center text-xs text-red-500">{error}</p>
-          )}
+          {error && <p className="text-center text-xs text-red-500">{error}</p>}
         </div>
 
         <p className="text-center text-sm text-foreground/60">
-          <Link href="/login" className="text-indigo-600 hover:underline">ログインに戻る</Link>
+          <Link href="/login" className="text-indigo-600 hover:underline">
+            ログインに戻る
+          </Link>
         </p>
       </div>
     </div>

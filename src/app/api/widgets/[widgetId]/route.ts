@@ -38,11 +38,7 @@ function parseWidget(value: unknown): PublicWidget | null {
 
   const theme = value.theme;
   const parsedTheme: WidgetTheme | null =
-    theme === null || theme === undefined
-      ? null
-      : isRecord(theme)
-        ? theme
-        : null;
+    theme === null || theme === undefined ? null : isRecord(theme) ? theme : null;
 
   const filterMinRating = value.filter_min_rating;
   const parsedFilterMinRating: number | null =
@@ -123,8 +119,7 @@ export async function GET(
       {
         headers: {
           ...corsHeaders,
-          "Cache-Control":
-            "public, s-maxage=300, stale-while-revalidate=600",
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
         },
       }
     );

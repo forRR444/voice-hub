@@ -6,10 +6,7 @@ import type { ApiError, ApiSuccess } from "@/types/api";
  * NextResponse.json の headers は HeadersInit を受けるので
  * Headers / Record / [key,value][] のいずれでも安全に統合する。
  */
-function mergeInit(
-  base: ResponseInit,
-  override?: ResponseInit,
-): ResponseInit {
+function mergeInit(base: ResponseInit, override?: ResponseInit): ResponseInit {
   if (!override) return base;
   const merged: ResponseInit = { ...base, ...override };
   if (base.headers || override.headers) {
@@ -28,14 +25,8 @@ function mergeInit(
 /**
  * 成功レスポンス。data は任意。null を渡すと "Action 完了" 系の no-payload を表す。
  */
-export function apiSuccess<T>(
-  data: T,
-  init?: ResponseInit,
-): NextResponse<ApiSuccess<T>> {
-  return NextResponse.json<ApiSuccess<T>>(
-    { ok: true, data },
-    mergeInit({ status: 200 }, init),
-  );
+export function apiSuccess<T>(data: T, init?: ResponseInit): NextResponse<ApiSuccess<T>> {
+  return NextResponse.json<ApiSuccess<T>>({ ok: true, data }, mergeInit({ status: 200 }, init));
 }
 
 /**
@@ -45,7 +36,7 @@ export function apiError(
   error: string,
   status: number,
   code?: string,
-  init?: ResponseInit,
+  init?: ResponseInit
 ): NextResponse<ApiError> {
   const body: ApiError = code ? { ok: false, error, code } : { ok: false, error };
   return NextResponse.json<ApiError>(body, mergeInit({ status }, init));

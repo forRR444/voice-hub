@@ -50,7 +50,10 @@ export function WidgetPreviewIcon({ type, selected }: { type: string; selected: 
       return (
         <div className={`w-full h-16 ${bg} rounded p-2 flex flex-col gap-1`}>
           {[...Array(3)].map((_, i) => (
-            <div key={i} className={`w-full flex-1 ${block} rounded-sm border-l-2 ${selected ? "border-indigo-400" : "border-foreground/30"}`} />
+            <div
+              key={i}
+              className={`w-full flex-1 ${block} rounded-sm border-l-2 ${selected ? "border-indigo-400" : "border-foreground/30"}`}
+            />
           ))}
         </div>
       );

@@ -59,7 +59,9 @@ export default function SettingsClient({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-6 sm:mb-8"><PageTitle>設定</PageTitle></div>
+      <div className="mb-6 sm:mb-8">
+        <PageTitle>設定</PageTitle>
+      </div>
 
       {/* Workspace name */}
       <Card className="mb-4 sm:mb-6">
@@ -75,7 +77,16 @@ export default function SettingsClient({
               className={`flex-1 ${inputClass}`}
             />
             <Button onClick={saveName} disabled={saving || !name.trim()}>
-              {saved ? (<><Check size={14} />保存しました</>) : saving ? "保存中..." : "保存"}
+              {saved ? (
+                <>
+                  <Check size={14} />
+                  保存しました
+                </>
+              ) : saving ? (
+                "保存中..."
+              ) : (
+                "保存"
+              )}
             </Button>
           </div>
         </FormField>
@@ -91,11 +102,13 @@ export default function SettingsClient({
               初期サポーター
             </span>
           ) : (
-            <span className={`px-3 py-1 text-sm font-medium rounded-full inline-flex items-center gap-1.5 ${
-              plan === "pro"
-                ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
-                : "bg-foreground/5 text-foreground/60 border border-foreground/10"
-            }`}>
+            <span
+              className={`px-3 py-1 text-sm font-medium rounded-full inline-flex items-center gap-1.5 ${
+                plan === "pro"
+                  ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
+                  : "bg-foreground/5 text-foreground/60 border border-foreground/10"
+              }`}
+            >
               {plan === "pro" && <Crown size={14} />}
               {plan === "pro" ? "Proプラン" : "Freeプラン"}
             </span>
@@ -146,7 +159,10 @@ export default function SettingsClient({
                   const json = await res.json();
                   const url = res.ok && json.ok ? json.data?.url : undefined;
                   if (url) window.location.href = url;
-                  else { alert("エラーが発生しました。"); setPortalLoading(false); }
+                  else {
+                    alert("エラーが発生しました。");
+                    setPortalLoading(false);
+                  }
                 } catch {
                   alert("ネットワークエラーが発生しました。");
                   setPortalLoading(false);
@@ -163,21 +179,9 @@ export default function SettingsClient({
 
         {/* Usage stats */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
-          <UsageCard
-            label="お客様の声"
-            used={usage.testimonials}
-            limit={limits.testimonials}
-          />
-          <UsageCard
-            label="フォーム"
-            used={usage.forms}
-            limit={limits.forms}
-          />
-          <UsageCard
-            label="ウィジェット"
-            used={usage.widgets}
-            limit={limits.widgets}
-          />
+          <UsageCard label="お客様の声" used={usage.testimonials} limit={limits.testimonials} />
+          <UsageCard label="フォーム" used={usage.forms} limit={limits.forms} />
+          <UsageCard label="ウィジェット" used={usage.widgets} limit={limits.widgets} />
         </div>
       </Card>
 
@@ -211,9 +215,15 @@ export default function SettingsClient({
             onSubmit={async (e) => {
               e.preventDefault();
               const passErr = validatePassword(newPassword);
-              if (passErr) { setPasswordError(passErr); return; }
+              if (passErr) {
+                setPasswordError(passErr);
+                return;
+              }
               const matchErr = validatePasswordMatch(newPassword, confirmNewPassword);
-              if (matchErr) { setPasswordError(matchErr); return; }
+              if (matchErr) {
+                setPasswordError(matchErr);
+                return;
+              }
 
               setPasswordSaving(true);
               setPasswordError(null);
@@ -231,14 +241,35 @@ export default function SettingsClient({
             className="space-y-3"
           >
             <FormField label="新しいパスワード">
-              <input type="password" placeholder="8文字以上" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputClass} />
+              <input
+                type="password"
+                placeholder="8文字以上"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={inputClass}
+              />
             </FormField>
             <FormField label="新しいパスワード（確認）">
-              <input type="password" placeholder="もう一度入力" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} className={inputClass} />
+              <input
+                type="password"
+                placeholder="もう一度入力"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                className={inputClass}
+              />
             </FormField>
             {passwordError && <p className="text-xs text-red-500">{passwordError}</p>}
             <Button type="submit" disabled={passwordSaving || !newPassword}>
-              {passwordSaved ? (<><Check size={14} />変更しました</>) : passwordSaving ? "変更中..." : "パスワードを変更"}
+              {passwordSaved ? (
+                <>
+                  <Check size={14} />
+                  変更しました
+                </>
+              ) : passwordSaving ? (
+                "変更中..."
+              ) : (
+                "パスワードを変更"
+              )}
             </Button>
           </form>
         </Card>
@@ -283,15 +314,7 @@ export default function SettingsClient({
   );
 }
 
-function UsageCard({
-  label,
-  used,
-  limit,
-}: {
-  label: string;
-  used: number;
-  limit: number;
-}) {
+function UsageCard({ label, used, limit }: { label: string; used: number; limit: number }) {
   const isUnlimited = limit === Infinity;
   const percentage = isUnlimited ? 0 : Math.min((used / limit) * 100, 100);
   const isNearLimit = !isUnlimited && percentage >= 80;

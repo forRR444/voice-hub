@@ -91,9 +91,7 @@ export async function requireAuthAndWorkspaceFull(): Promise<
 
 const deleteIdSchema = z.object({ id: z.string().min(1) });
 
-export function createWorkspaceDeleteHandler(
-  table: "forms" | "widgets" | "testimonials",
-) {
+export function createWorkspaceDeleteHandler(table: "forms" | "widgets" | "testimonials") {
   return async (request: NextRequest): Promise<NextResponse> => {
     const auth = await requireAuthAndWorkspace();
     if (!auth.ok) return auth.response;

@@ -110,7 +110,9 @@ test.describe("認証済み：フォーム CRUD", () => {
     createdIds.push(createdId);
 
     await expect(
-      page.locator(".shadow-sm").filter({ has: page.locator("h3", { hasText: "お客様の声フォーム" }) })
+      page
+        .locator(".shadow-sm")
+        .filter({ has: page.locator("h3", { hasText: "お客様の声フォーム" }) })
     ).not.toHaveCount(0);
 
     // afterEach で API DELETE される。UI 確認用に明示的な request 引数は使わない
@@ -175,9 +177,7 @@ test.describe("認証済み：フォーム CRUD", () => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
     await page.goto("/dashboard/forms");
-    const card = page
-      .locator(".shadow-sm")
-      .filter({ has: page.locator("h3", { hasText: title }) });
+    const card = page.locator(".shadow-sm").filter({ has: page.locator("h3", { hasText: title }) });
     await expect(card).toBeVisible({ timeout: 10_000 });
 
     await card.getByRole("button", { name: "URLをコピー" }).click();
@@ -191,9 +191,7 @@ test.describe("認証済み：フォーム CRUD", () => {
     createdIds.push(created!.id);
 
     await page.goto("/dashboard/forms");
-    const card = page
-      .locator(".shadow-sm")
-      .filter({ has: page.locator("h3", { hasText: title }) });
+    const card = page.locator(".shadow-sm").filter({ has: page.locator("h3", { hasText: title }) });
     await expect(card).toBeVisible({ timeout: 10_000 });
 
     await card.getByRole("button", { name: "QRコード" }).click();
@@ -210,9 +208,7 @@ test.describe("認証済み：フォーム CRUD", () => {
     // UI で削除するのでクリーンアップ対象には含めない
 
     await page.goto("/dashboard/forms");
-    const card = page
-      .locator(".shadow-sm")
-      .filter({ has: page.locator("h3", { hasText: title }) });
+    const card = page.locator(".shadow-sm").filter({ has: page.locator("h3", { hasText: title }) });
     await expect(card).toBeVisible({ timeout: 10_000 });
 
     await card.getByTitle("削除").click();

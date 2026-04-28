@@ -16,7 +16,10 @@ export default function PricingPage() {
 
       <main className="max-w-4xl mx-auto px-6 py-16 sm:py-24">
         <div className="text-center mb-12 sm:mb-16">
-          <h1 className="text-2xl sm:text-4xl font-bold text-[var(--ink)] mb-4" style={{ letterSpacing: "-0.022em" }}>
+          <h1
+            className="text-2xl sm:text-4xl font-bold text-[var(--ink)] mb-4"
+            style={{ letterSpacing: "-0.022em" }}
+          >
             シンプルな料金プラン
           </h1>
           {IS_BETA ? (
@@ -45,9 +48,10 @@ export default function PricingPage() {
           <PlanCard
             plan="pro"
             features={PRO_FEATURE_LIST}
-            cta={IS_BETA
-              ? { label: "無料で始める", href: "/try" }
-              : { label: "Proプランを始める", href: "/signup" }
+            cta={
+              IS_BETA
+                ? { label: "無料で始める", href: "/try" }
+                : { label: "Proプランを始める", href: "/signup" }
             }
             note={IS_BETA ? "ベータ中は全機能無料" : "いつでもキャンセル可能"}
           />

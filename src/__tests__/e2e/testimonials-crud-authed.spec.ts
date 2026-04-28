@@ -67,10 +67,7 @@ test.describe("認証済み：口コミ CRUD", () => {
     const searchInput = page.getByPlaceholder("検索...");
     await expect(searchInput).toBeVisible();
     await searchInput.fill(name);
-    const row = page
-      .locator(".group.py-5")
-      .filter({ hasText: name })
-      .first();
+    const row = page.locator(".group.py-5").filter({ hasText: name }).first();
     await expect(row).toBeVisible({ timeout: 10_000 });
 
     // 5. 詳細ページに遷移

@@ -38,7 +38,7 @@ function isSensitiveKey(key: string): boolean {
 export function sanitize(
   value: unknown,
   seen: WeakSet<object> = new WeakSet(),
-  depth = 0,
+  depth = 0
 ): unknown {
   if (depth > MAX_DEPTH) return "[Truncated]";
   if (value === null || value === undefined) return value;
@@ -70,9 +70,7 @@ export function sanitize(
     try {
       const result: Record<string, unknown> = {};
       for (const [key, v] of Object.entries(value)) {
-        result[key] = isSensitiveKey(key)
-          ? REDACTED
-          : sanitize(v, seen, depth + 1);
+        result[key] = isSensitiveKey(key) ? REDACTED : sanitize(v, seen, depth + 1);
       }
       return result;
     } catch {

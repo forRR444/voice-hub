@@ -13,7 +13,7 @@ export async function DELETE(request: NextRequest) {
     const rateLimited = await checkRateLimit(
       `account_delete:${getClientIp(request)}`,
       RATE_LIMIT_MAX,
-      RATE_LIMIT_WINDOW_MS,
+      RATE_LIMIT_WINDOW_MS
     );
     if (rateLimited) return rateLimited;
 

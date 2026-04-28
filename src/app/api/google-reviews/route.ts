@@ -9,16 +9,14 @@ const PLACES_API_BASE = "https://places.googleapis.com/v1";
 export async function GET(request: NextRequest) {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   if (!apiKey) {
-    return apiError(
-      "Google Places APIキーが設定されていません",
-      500,
-      "INTERNAL_ERROR",
-    );
+    return apiError("Google Places APIキーが設定されていません", 500, "INTERNAL_ERROR");
   }
 
   // ログイン状態を確認してレートリミットを分ける
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const ip = getClientIp(request);
 
   if (user) {
@@ -26,7 +24,7 @@ export async function GET(request: NextRequest) {
       `google-reviews:user:${user.id}`,
       RATE_LIMITS.googleReviewsUser.limit,
       RATE_LIMITS.googleReviewsUser.windowMs,
-      "本日の利用上限に達しました。",
+      "本日の利用上限に達しました。"
     );
     if (rateLimited) return rateLimited;
   } else {
@@ -34,14 +32,14 @@ export async function GET(request: NextRequest) {
       `google-reviews:guest:hourly:${ip}`,
       RATE_LIMITS.googleReviewsGuestHourly.limit,
       RATE_LIMITS.googleReviewsGuestHourly.windowMs,
-      "1時間あたりの利用上限に達しました。",
+      "1時間あたりの利用上限に達しました。"
     );
     if (hourly) return hourly;
     const daily = await checkRateLimit(
       `google-reviews:guest:daily:${ip}`,
       RATE_LIMITS.googleReviewsGuestDaily.limit,
       RATE_LIMITS.googleReviewsGuestDaily.windowMs,
-      "本日の利用上限に達しました。",
+      "本日の利用上限に達しました。"
     );
     if (daily) return daily;
   }
@@ -67,11 +65,7 @@ export async function GET(request: NextRequest) {
 
     const data = await res.json();
     if (!res.ok) {
-      return apiError(
-        data.error?.message || "検索に失敗しました",
-        res.status,
-        "UPSTREAM_ERROR",
-      );
+      return apiError(data.error?.message || "検索に失敗しました", res.status, "UPSTREAM_ERROR");
     }
 
     return apiSuccess({ places: data.places || [] });
@@ -84,22 +78,20 @@ export async function GET(request: NextRequest) {
       return apiError("placeIdは必須です", 400, "VALIDATION_ERROR");
     }
 
-    const res = await fetch(
-      `${PLACES_API_BASE}/places/${placeId}?languageCode=ja`,
-      {
-        headers: {
-          "X-Goog-Api-Key": apiKey,
-          "X-Goog-FieldMask": "reviews.name,reviews.rating,reviews.text,reviews.originalText,reviews.authorAttribution,reviews.publishTime,reviews.relativePublishTimeDescription,displayName",
-        },
-      }
-    );
+    const res = await fetch(`${PLACES_API_BASE}/places/${placeId}?languageCode=ja`, {
+      headers: {
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask":
+          "reviews.name,reviews.rating,reviews.text,reviews.originalText,reviews.authorAttribution,reviews.publishTime,reviews.relativePublishTimeDescription,displayName",
+      },
+    });
 
     const data = await res.json();
     if (!res.ok) {
       return apiError(
         data.error?.message || "口コミの取得に失敗しました",
         res.status,
-        "UPSTREAM_ERROR",
+        "UPSTREAM_ERROR"
       );
     }
 

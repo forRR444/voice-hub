@@ -15,19 +15,40 @@ function sanitizeColor(color: string): string {
   return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : DEFAULT_BRAND_COLOR;
 }
 
-type Testimonial = Omit<Pick<TestimonialRow, "id" | "name" | "title" | "company" | "avatar_url" | "rating" | "content" | "before_story" | "is_featured" | "submitted_at">, "rating"> & { rating: number };
+type Testimonial = Omit<
+  Pick<
+    TestimonialRow,
+    | "id"
+    | "name"
+    | "title"
+    | "company"
+    | "avatar_url"
+    | "rating"
+    | "content"
+    | "before_story"
+    | "is_featured"
+    | "submitted_at"
+  >,
+  "rating"
+> & { rating: number };
 
 function StarRating({ rating, color }: { rating: number; color: string }) {
   return (
     <span className="tc-stars" style={{ color, fontSize: "14px", letterSpacing: "1px" }}>
-      {Array.from({ length: 5 }, (_, i) =>
-        i < rating ? "\u2605" : "\u2606"
-      ).join("")}
+      {Array.from({ length: 5 }, (_, i) => (i < rating ? "\u2605" : "\u2606")).join("")}
     </span>
   );
 }
 
-function AvatarFallback({ name, color, className }: { name: string; color: string; className?: string }) {
+function AvatarFallback({
+  name,
+  color,
+  className,
+}: {
+  name: string;
+  color: string;
+  className?: string;
+}) {
   const letter = (name || "?").charAt(0).toUpperCase();
   return (
     <div
@@ -79,9 +100,7 @@ function TestimonialCard({
         flexShrink: 0,
       }}
     >
-      {theme.showRating !== false && (
-        <StarRating rating={t.rating} color={brand} />
-      )}
+      {theme.showRating !== false && <StarRating rating={t.rating} color={brand} />}
       <p
         className={clamp ? "tc-content clamp-content" : "tc-content"}
         style={{
@@ -94,10 +113,11 @@ function TestimonialCard({
       >
         {t.content}
       </p>
-      {clamp && t.content.length > 60 && (
-        <button className="read-more-btn">もっと見る</button>
-      )}
-      <div className="tc-author" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+      {clamp && t.content.length > 60 && <button className="read-more-btn">もっと見る</button>}
+      <div
+        className="tc-author"
+        style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}
+      >
         {theme.showAvatar === true &&
           (t.avatar_url ? (
             <img
@@ -173,11 +193,16 @@ export default async function WidgetPreviewPage({
   }
 
   // Allow type override via query param (e.g. ?type=grid)
-  if (typeOverride && ["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"].includes(typeOverride)) {
+  if (
+    typeOverride &&
+    ["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"].includes(
+      typeOverride
+    )
+  ) {
     widget.type = typeOverride as WidgetRow["type"];
   }
 
-  const theme: WidgetTheme = widget.theme ?? {} as WidgetTheme;
+  const theme: WidgetTheme = widget.theme ?? ({} as WidgetTheme);
 
   // Fetch workspace for badge
   const { data: workspace } = await supabase
@@ -461,196 +486,259 @@ export default async function WidgetPreviewPage({
               }
               .badge-link:hover { text-decoration: underline; }
             `,
+        }}
+      />
+      {items.length === 0 ? (
+        <div
+          style={{
+            textAlign: "center",
+            padding: 48,
+            color: isDark ? "#6b7280" : "#9ca3af",
           }}
-        />
-        {items.length === 0 ? (
+        >
+          表示できるテスティモニアルがありません
+        </div>
+      ) : widget.type === "marquee" ? (
+        <div className="marquee-container">
           <div
-            style={{
-              textAlign: "center",
-              padding: 48,
-              color: isDark ? "#6b7280" : "#9ca3af",
-            }}
+            className="marquee-track"
+            style={{ ["--marquee-duration" as string]: `${Math.max(items.length * 6, 20)}s` }}
           >
-            表示できるテスティモニアルがありません
-          </div>
-        ) : widget.type === "marquee" ? (
-          <div className="marquee-container">
-            <div
-              className="marquee-track"
-              style={{ ["--marquee-duration" as string]: `${Math.max(items.length * 6, 20)}s` }}
-            >
-              {items.map((t) => (
-                <TestimonialCard key={t.id} t={t} theme={theme} clamp />
-              ))}
-              {items.map((t) => (
-                <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
-              ))}
-            </div>
-          </div>
-        ) : widget.type === "carousel" ? (
-          <div style={{ position: "relative" }}>
-            <div className="carousel-wrapper" id="carousel">
-              <div className="carousel-track">
-                {items.map((t) => (
-                  <TestimonialCard key={t.id} t={t} theme={theme} />
-                ))}
-              </div>
-            </div>
-            <button
-              className="nav-btn"
-              style={{ left: -20 }}
-              onClick={undefined}
-              aria-label="前へ"
-              id="prev-btn"
-            >
-              &#8249;
-            </button>
-            <button
-              className="nav-btn"
-              style={{ right: -20 }}
-              onClick={undefined}
-              aria-label="次へ"
-              id="next-btn"
-            >
-              &#8250;
-            </button>
-            {items.length > 1 && (
-              <div className="carousel-dots" id="carousel-dots">
-                {items.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`carousel-dot${i === 0 ? " active" : ""}`}
-                    data-idx={i}
-                    style={{ background: i === 0 ? brand : (isDark ? "#3e3e4e" : "#d1d5db") }}
-                    aria-label={`${i + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : widget.type === "list" ? (
-          <div className="list-container">
-            {items.map((t) => (
-              <TestimonialCard key={t.id} t={t} theme={theme} />
-            ))}
-          </div>
-        ) : widget.type === "single" ? (
-          <div className="single-container" id="single-container">
-            {items[0] && (
-              <div className="single-card single-fade" id="single-card">
-                {theme.showRating !== false && (
-                  <span style={{ color: brand, fontSize: "24px", letterSpacing: "3px" }} className="single-stars">
-                    {Array.from({ length: 5 }, (_, i) => i < items[0].rating ? "\u2605" : "\u2606").join("")}
-                  </span>
-                )}
-                <p className="single-content" style={{ color: isDark ? "#e0e0e0" : "#374151", fontSize: 18, lineHeight: 1.7, margin: 0 }}>
-                  {items[0].content}
-                </p>
-                <div className="single-author" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 8 }}>
-                  {theme.showAvatar === true && (
-                    items[0].avatar_url ? (
-                      <img src={items[0].avatar_url} alt={items[0].name} width={64} height={64} style={{ borderRadius: "50%", objectFit: "cover" }} className="single-avatar" />
-                    ) : (
-                      <div className="single-initials" style={{ width: 64, height: 64, borderRadius: "50%", backgroundColor: brand, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 24 }}>
-                        {(items[0].name || "お客様").charAt(0).toUpperCase()}
-                      </div>
-                    )
-                  )}
-                  <div style={{ textAlign: "center" }}>
-                    <div className="single-name" style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 16 }}>{items[0].name || "お客様"}</div>
-                    <div className="single-subtitle" style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13, marginTop: 2 }}>
-                      {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
-                    </div>
-                    {theme.showDate && (
-                      <div className="single-date" style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 12, marginTop: 4 }}>
-                        {new Date(items[0].submitted_at).toLocaleDateString("ja-JP")}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : widget.type === "wall" ? (
-          <div className="wall-container">
-            {items.map((t) => (
-              <div key={t.id} className="wall-card-wrap" style={{ breakInside: "avoid", marginBottom: 16 }}>
-                <TestimonialCard t={t} theme={theme} />
-              </div>
-            ))}
-          </div>
-        ) : widget.type === "dual-marquee" ? (
-          (() => {
-            const mid = Math.ceil(items.length / 2);
-            const rowA = items.slice(0, mid);
-            const rowB = items.length > 1 ? items.slice(mid) : items;
-            const duration = `${Math.max(items.length * 6, 20)}s`;
-            return (
-              <div className="dual-marquee-container" style={{ ["--dual-marquee-duration" as string]: duration }}>
-                <div className="dual-marquee-row">
-                  <div className="dual-marquee-track dual-marquee-track--left">
-                    {rowA.map((t) => (
-                      <TestimonialCard key={t.id} t={t} theme={theme} clamp />
-                    ))}
-                    {rowA.map((t) => (
-                      <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
-                    ))}
-                  </div>
-                </div>
-                <div className="dual-marquee-row">
-                  <div className="dual-marquee-track dual-marquee-track--right">
-                    {rowB.map((t) => (
-                      <TestimonialCard key={t.id} t={t} theme={theme} clamp />
-                    ))}
-                    {rowB.map((t) => (
-                      <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })()
-        ) : widget.type === "badge" ? (
-          (() => {
-            const avgRating = items.length > 0 ? items.reduce((sum, t) => sum + t.rating, 0) / items.length : 0;
-            const roundedAvg = Math.round(avgRating * 10) / 10;
-            const filledStars = Math.round(avgRating);
-            return (
-              <div className="badge-container">
-                <div className="badge-rating">{roundedAvg}</div>
-                <div>
-                  <div className="badge-stars">
-                    {Array.from({ length: 5 }, (_, i) => i < filledStars ? "\u2605" : "\u2606").join("")}
-                  </div>
-                  <div className="badge-count">{items.length}件のお客様の声</div>
-                </div>
-              </div>
-            );
-          })()
-        ) : (
-          <div className="grid-container">
             {items.map((t) => (
               <TestimonialCard key={t.id} t={t} theme={theme} clamp />
             ))}
+            {items.map((t) => (
+              <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
+            ))}
           </div>
-        )}
-
-        {showBadge && (
-          <div className="badge">
-            <a
-              href={process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.app"}
-              target="_blank"
-              rel="noopener noreferrer"
+        </div>
+      ) : widget.type === "carousel" ? (
+        <div style={{ position: "relative" }}>
+          <div className="carousel-wrapper" id="carousel">
+            <div className="carousel-track">
+              {items.map((t) => (
+                <TestimonialCard key={t.id} t={t} theme={theme} />
+              ))}
+            </div>
+          </div>
+          <button
+            className="nav-btn"
+            style={{ left: -20 }}
+            onClick={undefined}
+            aria-label="前へ"
+            id="prev-btn"
+          >
+            &#8249;
+          </button>
+          <button
+            className="nav-btn"
+            style={{ right: -20 }}
+            onClick={undefined}
+            aria-label="次へ"
+            id="next-btn"
+          >
+            &#8250;
+          </button>
+          {items.length > 1 && (
+            <div className="carousel-dots" id="carousel-dots">
+              {items.map((_, i) => (
+                <button
+                  key={i}
+                  className={`carousel-dot${i === 0 ? " active" : ""}`}
+                  data-idx={i}
+                  style={{ background: i === 0 ? brand : isDark ? "#3e3e4e" : "#d1d5db" }}
+                  aria-label={`${i + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : widget.type === "list" ? (
+        <div className="list-container">
+          {items.map((t) => (
+            <TestimonialCard key={t.id} t={t} theme={theme} />
+          ))}
+        </div>
+      ) : widget.type === "single" ? (
+        <div className="single-container" id="single-container">
+          {items[0] && (
+            <div className="single-card single-fade" id="single-card">
+              {theme.showRating !== false && (
+                <span
+                  style={{ color: brand, fontSize: "24px", letterSpacing: "3px" }}
+                  className="single-stars"
+                >
+                  {Array.from({ length: 5 }, (_, i) =>
+                    i < items[0].rating ? "\u2605" : "\u2606"
+                  ).join("")}
+                </span>
+              )}
+              <p
+                className="single-content"
+                style={{
+                  color: isDark ? "#e0e0e0" : "#374151",
+                  fontSize: 18,
+                  lineHeight: 1.7,
+                  margin: 0,
+                }}
+              >
+                {items[0].content}
+              </p>
+              <div
+                className="single-author"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                  marginTop: 8,
+                }}
+              >
+                {theme.showAvatar === true &&
+                  (items[0].avatar_url ? (
+                    <img
+                      src={items[0].avatar_url}
+                      alt={items[0].name}
+                      width={64}
+                      height={64}
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                      className="single-avatar"
+                    />
+                  ) : (
+                    <div
+                      className="single-initials"
+                      style={{
+                        width: 64,
+                        height: 64,
+                        borderRadius: "50%",
+                        backgroundColor: brand,
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: 700,
+                        fontSize: 24,
+                      }}
+                    >
+                      {(items[0].name || "お客様").charAt(0).toUpperCase()}
+                    </div>
+                  ))}
+                <div style={{ textAlign: "center" }}>
+                  <div
+                    className="single-name"
+                    style={{ fontWeight: 700, color: isDark ? "#f0f0f0" : "#111827", fontSize: 16 }}
+                  >
+                    {items[0].name || "お客様"}
+                  </div>
+                  <div
+                    className="single-subtitle"
+                    style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: 13, marginTop: 2 }}
+                  >
+                    {[items[0].title, items[0].company].filter(Boolean).join(" / ")}
+                  </div>
+                  {theme.showDate && (
+                    <div
+                      className="single-date"
+                      style={{ color: isDark ? "#6b7280" : "#9ca3af", fontSize: 12, marginTop: 4 }}
+                    >
+                      {new Date(items[0].submitted_at).toLocaleDateString("ja-JP")}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : widget.type === "wall" ? (
+        <div className="wall-container">
+          {items.map((t) => (
+            <div
+              key={t.id}
+              className="wall-card-wrap"
+              style={{ breakInside: "avoid", marginBottom: 16 }}
             >
-              Powered by VoiceHub
-            </a>
-          </div>
-        )}
+              <TestimonialCard t={t} theme={theme} />
+            </div>
+          ))}
+        </div>
+      ) : widget.type === "dual-marquee" ? (
+        (() => {
+          const mid = Math.ceil(items.length / 2);
+          const rowA = items.slice(0, mid);
+          const rowB = items.length > 1 ? items.slice(mid) : items;
+          const duration = `${Math.max(items.length * 6, 20)}s`;
+          return (
+            <div
+              className="dual-marquee-container"
+              style={{ ["--dual-marquee-duration" as string]: duration }}
+            >
+              <div className="dual-marquee-row">
+                <div className="dual-marquee-track dual-marquee-track--left">
+                  {rowA.map((t) => (
+                    <TestimonialCard key={t.id} t={t} theme={theme} clamp />
+                  ))}
+                  {rowA.map((t) => (
+                    <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
+                  ))}
+                </div>
+              </div>
+              <div className="dual-marquee-row">
+                <div className="dual-marquee-track dual-marquee-track--right">
+                  {rowB.map((t) => (
+                    <TestimonialCard key={t.id} t={t} theme={theme} clamp />
+                  ))}
+                  {rowB.map((t) => (
+                    <TestimonialCard key={`dup-${t.id}`} t={t} theme={theme} clamp />
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()
+      ) : widget.type === "badge" ? (
+        (() => {
+          const avgRating =
+            items.length > 0 ? items.reduce((sum, t) => sum + t.rating, 0) / items.length : 0;
+          const roundedAvg = Math.round(avgRating * 10) / 10;
+          const filledStars = Math.round(avgRating);
+          return (
+            <div className="badge-container">
+              <div className="badge-rating">{roundedAvg}</div>
+              <div>
+                <div className="badge-stars">
+                  {Array.from({ length: 5 }, (_, i) =>
+                    i < filledStars ? "\u2605" : "\u2606"
+                  ).join("")}
+                </div>
+                <div className="badge-count">{items.length}件のお客様の声</div>
+              </div>
+            </div>
+          );
+        })()
+      ) : (
+        <div className="grid-container">
+          {items.map((t) => (
+            <TestimonialCard key={t.id} t={t} theme={theme} clamp />
+          ))}
+        </div>
+      )}
 
-        {widget.type === "carousel" && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+      {showBadge && (
+        <div className="badge">
+          <a
+            href={process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.app"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Powered by VoiceHub
+          </a>
+        </div>
+      )}
+
+      {widget.type === "carousel" && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
                 (function() {
                   var carousel = document.getElementById('carousel');
                   var prevBtn = document.getElementById('prev-btn');
@@ -725,24 +813,26 @@ export default async function WidgetPreviewPage({
                   }
                 })();
               `,
-            }}
-          />
-        )}
+          }}
+        />
+      )}
 
-        {widget.type === "single" && items.length > 1 && theme.autoplay !== false && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+      {widget.type === "single" && items.length > 1 && theme.autoplay !== false && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
                 (function() {
-                  var items = ${safeJsonForScript(items.map(t => ({
-                    rating: t.rating,
-                    content: t.content,
-                    name: t.name,
-                    title: t.title,
-                    company: t.company,
-                    avatar_url: t.avatar_url,
-                    submitted_at: t.submitted_at,
-                  })))};
+                  var items = ${safeJsonForScript(
+                    items.map((t) => ({
+                      rating: t.rating,
+                      content: t.content,
+                      name: t.name,
+                      title: t.title,
+                      company: t.company,
+                      avatar_url: t.avatar_url,
+                      submitted_at: t.submitted_at,
+                    }))
+                  )};
                   var brand = '${brand}';
                   var isDark = ${isDark};
                   var showRating = ${theme.showRating !== false};
@@ -794,14 +884,14 @@ export default async function WidgetPreviewPage({
                   }, 5000);
                 })();
               `,
-            }}
-          />
-        )}
+          }}
+        />
+      )}
 
-        {/* Read more toggle script */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+      {/* Read more toggle script */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
               (function() {
                 document.addEventListener('click', function(e) {
                   var btn = e.target.closest('.read-more-btn');
@@ -813,8 +903,8 @@ export default async function WidgetPreviewPage({
                 });
               })();
             `,
-          }}
-        />
+        }}
+      />
     </div>
   );
 }

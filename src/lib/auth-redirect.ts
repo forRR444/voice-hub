@@ -7,7 +7,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 export async function getPostAuthRedirect(
   supabase: SupabaseClient,
   user: User,
-  baseUrl: string,
+  baseUrl: string
 ): Promise<string> {
   const { data: workspace } = await supabase
     .from("workspaces")

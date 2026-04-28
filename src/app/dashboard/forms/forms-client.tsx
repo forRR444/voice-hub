@@ -1,16 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import {
-  Plus,
-  Copy,
-  Pencil,
-  Check,
-  X,
-  Trash,
-  QrCode,
-  Download,
-} from "lucide-react";
+import { Plus, Copy, Pencil, Check, X, Trash, QrCode, Download } from "lucide-react";
 import { useCopy } from "@/hooks/use-copy";
 import QRCode from "react-qr-code";
 import { WorkspaceRow, FormRow, FormQuestion, SubscriptionStatus } from "@/types/database";
@@ -65,7 +56,7 @@ export default function FormsClient({
     if (!canCreate) return;
     setCreating(true);
 
-    const template = FORM_TEMPLATES.find(t => t.id === selectedTemplate) || FORM_TEMPLATES[0];
+    const template = FORM_TEMPLATES.find((t) => t.id === selectedTemplate) || FORM_TEMPLATES[0];
     const slug = generateSlug();
 
     try {
@@ -152,7 +143,6 @@ export default function FormsClient({
     }
   }
 
-
   function copyUrl(slug: string, id: string) {
     copy(`${getBaseUrl()}/form/${slug}`, id);
   }
@@ -199,7 +189,9 @@ export default function FormsClient({
       </div>
 
       {error && (
-        <p className="text-sm mb-4" style={{ color: "#E25950" }}>{error}</p>
+        <p className="text-sm mb-4" style={{ color: "#E25950" }}>
+          {error}
+        </p>
       )}
 
       {/* Template picker modal */}
@@ -232,7 +224,6 @@ export default function FormsClient({
         </Modal>
       )}
 
-
       {forms.length === 0 ? (
         <EmptyState message="フォームがまだありません。新しいフォームを作成してください。" />
       ) : (
@@ -246,9 +237,7 @@ export default function FormsClient({
                     <input
                       type="text"
                       value={editForm.title}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, title: e.target.value })
-                      }
+                      onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                       className={inputClass}
                     />
                   </FormField>
@@ -279,9 +268,7 @@ export default function FormsClient({
                           }
                           className="w-10 h-10 rounded border border-foreground/10 cursor-pointer"
                         />
-                        <span className="text-sm text-foreground/50">
-                          {editForm.brand_color}
-                        </span>
+                        <span className="text-sm text-foreground/50">{editForm.brand_color}</span>
                       </div>
                     </FormField>
                     <FormField label="サンクスメッセージ">
@@ -306,14 +293,16 @@ export default function FormsClient({
                     <p className="text-xs text-foreground/40 mb-4">
                       ドラッグで順番を変更できます。
                     </p>
-                    <QuestionEditor
-                      questions={editQuestions}
-                      onChange={setEditQuestions}
-                    />
+                    <QuestionEditor questions={editQuestions} onChange={setEditQuestions} />
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => setEditingId(null)} className="px-3 py-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setEditingId(null)}
+                      className="px-3 py-2"
+                    >
                       <X size={14} />
                       キャンセル
                     </Button>
@@ -328,13 +317,9 @@ export default function FormsClient({
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground">
-                        {form.title}
-                      </h3>
+                      <h3 className="text-lg font-semibold text-foreground">{form.title}</h3>
                       {form.description && (
-                        <p className="text-sm text-foreground/50 mt-1">
-                          {form.description}
-                        </p>
+                        <p className="text-sm text-foreground/50 mt-1">{form.description}</p>
                       )}
                     </div>
                     <div className="flex flex-col gap-1">
@@ -367,16 +352,29 @@ export default function FormsClient({
                     />
                   </div>
                   <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
-                    <Button variant="secondary" size="sm" onClick={() => startEdit(form)} className="px-3 py-2 text-xs sm:text-sm">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => startEdit(form)}
+                      className="px-3 py-2 text-xs sm:text-sm"
+                    >
                       質問内容を確認
                     </Button>
-                    <Button variant="secondary" size="sm" onClick={() => copyUrl(form.slug, form.id)} className="px-3 py-2 text-xs sm:text-sm">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => copyUrl(form.slug, form.id)}
+                      className="px-3 py-2 text-xs sm:text-sm"
+                    >
                       <Copy size={14} />
-                      {copiedId === form.id
-                        ? "コピーしました"
-                        : "URLをコピー"}
+                      {copiedId === form.id ? "コピーしました" : "URLをコピー"}
                     </Button>
-                    <Button variant="secondary" size="sm" onClick={() => setQrForm({ slug: form.slug, title: form.title })} className="px-3 py-2 text-xs sm:text-sm">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setQrForm({ slug: form.slug, title: form.title })}
+                      className="px-3 py-2 text-xs sm:text-sm"
+                    >
                       <QrCode size={14} />
                       QRコード
                     </Button>
@@ -394,7 +392,10 @@ export default function FormsClient({
           title="フォームの削除"
           message="このフォームを削除しますか？関連する回答は残ります。"
           isDeleting={deleting}
-          onCancel={() => { setShowDeleteConfirm(false); setDeleteFormId(null); }}
+          onCancel={() => {
+            setShowDeleteConfirm(false);
+            setDeleteFormId(null);
+          }}
           onConfirm={async () => {
             setDeleting(true);
             try {
@@ -403,7 +404,11 @@ export default function FormsClient({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: deleteFormId }),
               });
-              if (!res.ok) { alert("削除に失敗しました"); setDeleting(false); return; }
+              if (!res.ok) {
+                alert("削除に失敗しました");
+                setDeleting(false);
+                return;
+              }
               setForms((prev) => prev.filter((f) => f.id !== deleteFormId));
               setShowDeleteConfirm(false);
               setDeleteFormId(null);
@@ -419,7 +424,10 @@ export default function FormsClient({
       {qrForm && (
         <Modal title="QRコード" onClose={() => setQrForm(null)} maxWidth="max-w-sm">
           <p className="text-sm text-foreground/50 mb-4 truncate">{qrForm.title}</p>
-          <div ref={qrRef} className="flex justify-center p-4 bg-white border border-foreground/10 rounded-lg">
+          <div
+            ref={qrRef}
+            className="flex justify-center p-4 bg-white border border-foreground/10 rounded-lg"
+          >
             <QRCode value={`${getBaseUrl()}/form/${qrForm.slug}`} size={200} />
           </div>
           <p className="text-xs text-foreground/40 text-center mt-3 break-all">

@@ -23,7 +23,9 @@ test.describe("認証済み：ウィジェット管理", () => {
     await expect(page.getByRole("heading", { name: "新しいウィジェット作成" })).toHaveCount(0);
   });
 
-  test("ウィジェットが存在する場合、『埋め込みコードを表示』ボタンが表示される", async ({ page }) => {
+  test("ウィジェットが存在する場合、『埋め込みコードを表示』ボタンが表示される", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/widgets");
     const embedBtn = page.getByRole("button", { name: "埋め込みコードを表示" }).first();
     const hasData = await waitForData(embedBtn);
@@ -31,7 +33,9 @@ test.describe("認証済み：ウィジェット管理", () => {
     await expect(embedBtn).toBeVisible();
   });
 
-  test("『埋め込みコードを表示』をクリックするとスクリプト埋め込みと iFrame 埋め込みが見える", async ({ page }) => {
+  test("『埋め込みコードを表示』をクリックするとスクリプト埋め込みと iFrame 埋め込みが見える", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/widgets");
     const embedBtn = page.getByRole("button", { name: "埋め込みコードを表示" }).first();
     const hasData = await waitForData(embedBtn);
@@ -43,7 +47,7 @@ test.describe("認証済み：ウィジェット管理", () => {
 
   test("ケバブメニューを開くとプレビュー / 編集 / 削除の 3 項目が表示される", async ({ page }) => {
     await page.goto("/dashboard/widgets");
-    const kebab = page.locator('button:has(svg.lucide-ellipsis)').first();
+    const kebab = page.locator("button:has(svg.lucide-ellipsis)").first();
     const hasData = await waitForData(kebab);
     test.skip(!hasData, "ウィジェットデータがないためスキップ");
     await kebab.click();
@@ -55,7 +59,7 @@ test.describe("認証済み：ウィジェット管理", () => {
 
   test("プレビューリンクが /preview/<uuid> 形式の href を持つ", async ({ page }) => {
     await page.goto("/dashboard/widgets");
-    const kebab = page.locator('button:has(svg.lucide-ellipsis)').first();
+    const kebab = page.locator("button:has(svg.lucide-ellipsis)").first();
     const hasData = await waitForData(kebab);
     test.skip(!hasData, "ウィジェットデータがないためスキップ");
     await kebab.click();

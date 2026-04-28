@@ -28,7 +28,7 @@ export function resizeImage(file: File, maxSize: number): Promise<Blob> {
           else reject(new Error("画像の変換に失敗しました"));
         },
         "image/jpeg",
-        0.85,
+        0.85
       );
     };
     img.onerror = () => {

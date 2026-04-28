@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-import {
-  createMockQueryBuilder,
-  type QueryResult,
-} from "../helpers/mock-supabase";
+import { createMockQueryBuilder, type QueryResult } from "../helpers/mock-supabase";
 import { getPlanLimits } from "@/lib/plan";
 import { DEFAULT_FORM_QUESTIONS } from "@/lib/default-questions";
 
@@ -70,10 +67,7 @@ type DeleteBuilder = {
   eq: ReturnType<typeof vi.fn>;
 };
 
-function createCountBuilder(countResult: {
-  count: number | null;
-  error: unknown;
-}): CountBuilder {
+function createCountBuilder(countResult: { count: number | null; error: unknown }): CountBuilder {
   const builder: CountBuilder = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockResolvedValue({
@@ -115,26 +109,13 @@ type ReturnedSupabase = {
 };
 
 function setupFormsMock(options: FormsMockOptions = {}): ReturnedSupabase {
-  const {
-    auth,
-    workspace,
-    formsCount,
-    formsInsert,
-    formsUpdate,
-    formsDelete,
-  } = options;
+  const { auth, workspace, formsCount, formsInsert, formsUpdate, formsDelete } = options;
 
   const workspaceBuilder = workspace ? createMockQueryBuilder(workspace) : null;
   const formsCountBuilder = formsCount ? createCountBuilder(formsCount) : null;
-  const formsInsertBuilder = formsInsert
-    ? createMockQueryBuilder(formsInsert)
-    : null;
-  const formsUpdateBuilder = formsUpdate
-    ? createMockQueryBuilder(formsUpdate)
-    : null;
-  const formsDeleteBuilder = formsDelete
-    ? createDeleteBuilder(formsDelete)
-    : null;
+  const formsInsertBuilder = formsInsert ? createMockQueryBuilder(formsInsert) : null;
+  const formsUpdateBuilder = formsUpdate ? createMockQueryBuilder(formsUpdate) : null;
+  const formsDeleteBuilder = formsDelete ? createDeleteBuilder(formsDelete) : null;
 
   let formsCallCount = 0;
 
@@ -415,10 +396,7 @@ describe("PATCH /api/forms", () => {
     });
     // 所有権ガード: id と workspace_id の両方で絞っているか
     expect(mock.formsUpdateBuilder?.eq).toHaveBeenCalledWith("id", "form-1");
-    expect(mock.formsUpdateBuilder?.eq).toHaveBeenCalledWith(
-      "workspace_id",
-      "ws-1"
-    );
+    expect(mock.formsUpdateBuilder?.eq).toHaveBeenCalledWith("workspace_id", "ws-1");
   });
 
   it("未認証で401を返す", async () => {
@@ -454,7 +432,7 @@ describe("PATCH /api/forms", () => {
     expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
-  it("id欠落で400 \"IDが必要です\"を返す", async () => {
+  it('id欠落で400 "IDが必要です"を返す', async () => {
     const mock = setupFormsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -605,10 +583,7 @@ describe("DELETE /api/forms", () => {
     expect(json).toEqual({ ok: true, data: null });
     expect(mock.formsDeleteBuilder?.delete).toHaveBeenCalled();
     expect(mock.formsDeleteBuilder?.eq).toHaveBeenCalledWith("id", "form-1");
-    expect(mock.formsDeleteBuilder?.eq).toHaveBeenCalledWith(
-      "workspace_id",
-      "ws-1"
-    );
+    expect(mock.formsDeleteBuilder?.eq).toHaveBeenCalledWith("workspace_id", "ws-1");
   });
 
   it("未認証で401を返す", async () => {

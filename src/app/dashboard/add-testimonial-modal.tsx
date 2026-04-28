@@ -69,11 +69,7 @@ export default function AddTestimonialModal({
 
   return (
     <Modal title="お客様の声を手動で追加" onClose={onClose} rounded="rounded-lg">
-      {error && (
-        <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormField label="お名前" required>

@@ -31,7 +31,17 @@ export default function EmbedCodeBlock({
             onClick={onCopy}
             className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
           >
-            {copied ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
+            {copied ? (
+              <>
+                <Check size={12} />
+                コピーしました
+              </>
+            ) : (
+              <>
+                <Copy size={12} />
+                コピー
+              </>
+            )}
           </button>
         </div>
         <pre className="text-xs text-gray-700 whitespace-pre-wrap break-all font-mono leading-relaxed">
@@ -46,13 +56,27 @@ export default function EmbedCodeBlock({
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1">
         <span className="text-xs font-medium text-foreground/50">
           {label}
-          {description && <span className="hidden sm:inline font-normal text-foreground/30 ml-2">{description}</span>}
+          {description && (
+            <span className="hidden sm:inline font-normal text-foreground/30 ml-2">
+              {description}
+            </span>
+          )}
         </span>
         <button
           onClick={onCopy}
           className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer"
         >
-          {copied ? <><Check size={12} />コピーしました</> : <><Copy size={12} />コピー</>}
+          {copied ? (
+            <>
+              <Check size={12} />
+              コピーしました
+            </>
+          ) : (
+            <>
+              <Copy size={12} />
+              コピー
+            </>
+          )}
         </button>
       </div>
       <pre className="bg-foreground/5 text-foreground/70 text-xs p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">

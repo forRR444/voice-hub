@@ -16,7 +16,9 @@ resetChain();
 
 const mockFrom = vi.fn().mockReturnValue(mockChain);
 const mockUpload = vi.fn().mockResolvedValue({ error: null });
-const mockGetPublicUrl = vi.fn().mockReturnValue({ data: { publicUrl: "https://example.com/uploaded.jpg" } });
+const mockGetPublicUrl = vi
+  .fn()
+  .mockReturnValue({ data: { publicUrl: "https://example.com/uploaded.jpg" } });
 const mockStorage = {
   from: vi.fn().mockReturnValue({ upload: mockUpload, getPublicUrl: mockGetPublicUrl }),
 };
@@ -96,12 +98,24 @@ const existingSalonPage: SalonPageRow = {
 };
 
 const existingLinks: SalonPageLinkRow[] = [
-  { id: "l-1", salon_page_id: "sp-1", label: "LINE", url: "https://lin.ee/xxx", icon: "line", display_order: 0, created_at: "2026-01-01T00:00:00Z" },
+  {
+    id: "l-1",
+    salon_page_id: "sp-1",
+    label: "LINE",
+    url: "https://lin.ee/xxx",
+    icon: "line",
+    display_order: 0,
+    created_at: "2026-01-01T00:00:00Z",
+  },
 ];
 
 function renderSettings(salonPage: SalonPageRow | null = null, links: SalonPageLinkRow[] = []) {
   return render(
-    <SalonPageSettingsClient workspace={workspace} initialSalonPage={salonPage} initialLinks={links} />
+    <SalonPageSettingsClient
+      workspace={workspace}
+      initialSalonPage={salonPage}
+      initialLinks={links}
+    />
   );
 }
 
@@ -482,7 +496,9 @@ describe("メニュー項目CRUD", () => {
 
     fireEvent.change(screen.getByPlaceholderText("メニュー名"), { target: { value: "カット" } });
     fireEvent.change(screen.getByPlaceholderText("¥0,000"), { target: { value: "¥4,500" } });
-    fireEvent.change(screen.getByPlaceholderText("簡単な説明（任意）"), { target: { value: "シャンプー込み" } });
+    fireEvent.change(screen.getByPlaceholderText("簡単な説明（任意）"), {
+      target: { value: "シャンプー込み" },
+    });
 
     expect(screen.getByDisplayValue("カット")).toBeInTheDocument();
     expect(screen.getByDisplayValue("¥4,500")).toBeInTheDocument();
@@ -591,9 +607,9 @@ describe("アクセントカラー入力", () => {
   it("HEXテキスト入力で有効な値は反映される", () => {
     const { container } = renderSettings();
     fireEvent.click(screen.getByText("デザイン"));
-    const hexInput = Array.from(
-      container.querySelectorAll<HTMLInputElement>("input")
-    ).find((el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#"));
+    const hexInput = Array.from(container.querySelectorAll<HTMLInputElement>("input")).find(
+      (el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#")
+    );
     expect(hexInput).toBeDefined();
     if (!hexInput) return;
     fireEvent.change(hexInput, { target: { value: "#abcdef" } });
@@ -603,9 +619,9 @@ describe("アクセントカラー入力", () => {
   it("HEXテキスト入力で不正フォーマットは反映されない", () => {
     const { container } = renderSettings();
     fireEvent.click(screen.getByText("デザイン"));
-    const hexInput = Array.from(
-      container.querySelectorAll<HTMLInputElement>("input")
-    ).find((el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#"));
+    const hexInput = Array.from(container.querySelectorAll<HTMLInputElement>("input")).find(
+      (el) => el.type !== "color" && typeof el.value === "string" && el.value.startsWith("#")
+    );
     expect(hexInput).toBeDefined();
     if (!hexInput) return;
     const before = hexInput.value;
@@ -775,7 +791,9 @@ describe("保存処理での画像アップロード", () => {
     fireEvent.click(screen.getAllByText("保存する")[0]);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/カバー画像のアップロードに失敗/).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/カバー画像のアップロードに失敗/).length).toBeGreaterThanOrEqual(
+        1
+      );
     });
     expect(mockChain.upsert).not.toHaveBeenCalled();
   });

@@ -25,7 +25,7 @@ export function useTestimonialOperations(initial: TestimonialWithTags) {
       }
       setTestimonial((prev) => ({ ...prev, status }));
     },
-    [supabase, testimonial.id],
+    [supabase, testimonial.id]
   );
 
   const toggleFeatured = useCallback(async () => {

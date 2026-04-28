@@ -42,17 +42,24 @@ test.describe("認証済み：フォーム管理", () => {
     await page.getByRole("button", { name: "閉じる" }).click();
   });
 
-  test("質問内容を確認ボタンを押すと編集モードに入り『キャンセル』ボタンが表示される", async ({ page }) => {
+  test("質問内容を確認ボタンを押すと編集モードに入り『キャンセル』ボタンが表示される", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/forms");
     const previewBtn = page.getByRole("button", { name: "質問内容を確認" }).first();
     const hasData = await waitForData(previewBtn);
     test.skip(!hasData, "フォームデータがないためスキップ");
     await previewBtn.click();
-    await expect(page.getByRole("button", { name: "キャンセル", exact: true }).first()).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "キャンセル", exact: true }).first()
+    ).toBeVisible();
     await page.getByRole("button", { name: "キャンセル", exact: true }).first().click();
   });
 
-  test("URLをコピーボタンを押すとラベルが『コピーしました』に切り替わる", async ({ page, context }) => {
+  test("URLをコピーボタンを押すとラベルが『コピーしました』に切り替わる", async ({
+    page,
+    context,
+  }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/dashboard/forms");
     const copyBtn = page.getByRole("button", { name: "URLをコピー" }).first();

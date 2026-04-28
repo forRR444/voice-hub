@@ -113,14 +113,7 @@ export type SalonPageRow = {
   updated_at: string;
 };
 
-export type SalonPageLinkIcon =
-  | "line"
-  | "instagram"
-  | "phone"
-  | "mail"
-  | "map"
-  | "web"
-  | "none";
+export type SalonPageLinkIcon = "line" | "instagram" | "phone" | "mail" | "map" | "web" | "none";
 
 export type SalonPageLinkRow = {
   id: string;

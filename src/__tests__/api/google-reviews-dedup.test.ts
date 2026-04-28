@@ -13,10 +13,7 @@ describe("Google口コミ重複インポート防止", () => {
   // ─── 重複除外ロジック ──────────────────────────────────────
 
   describe("重複除外ロジック", () => {
-    function filterNewRows(
-      rows: { source_id: string | null }[],
-      existingSourceIds: string[]
-    ) {
+    function filterNewRows(rows: { source_id: string | null }[], existingSourceIds: string[]) {
       const existingIds = new Set(existingSourceIds);
       return rows.filter((r) => !r.source_id || !existingIds.has(r.source_id));
     }
@@ -34,10 +31,7 @@ describe("Google口コミ重複インポート防止", () => {
     });
 
     it("全件重複の場合、空配列が返る", () => {
-      const rows = [
-        { source_id: "review-1" },
-        { source_id: "review-2" },
-      ];
+      const rows = [{ source_id: "review-1" }, { source_id: "review-2" }];
       const existing = ["review-1", "review-2"];
 
       const result = filterNewRows(rows, existing);
@@ -58,10 +52,7 @@ describe("Google口コミ重複インポート防止", () => {
     });
 
     it("source_idがnullのレコードは重複チェックをスキップして残る", () => {
-      const rows = [
-        { source_id: null },
-        { source_id: "review-1" },
-      ];
+      const rows = [{ source_id: null }, { source_id: "review-1" }];
       const existing = ["review-1"];
 
       const result = filterNewRows(rows, existing);
@@ -139,11 +130,7 @@ describe("Google口コミ重複インポート防止", () => {
     });
 
     it("sourceIdsのフィルタリングでnull/undefinedが除外される", () => {
-      const rows = [
-        { source_id: "review-1" },
-        { source_id: null },
-        { source_id: "review-2" },
-      ];
+      const rows = [{ source_id: "review-1" }, { source_id: null }, { source_id: "review-2" }];
       const sourceIds = rows.map((r) => r.source_id).filter(Boolean);
 
       expect(sourceIds).toEqual(["review-1", "review-2"]);

@@ -109,7 +109,9 @@ test.describe("ウィジェットプレビュー - 全タイプ", () => {
 
     test("リストコンテナにカードが表示される", async ({ page }) => {
       await page.goto(url);
-      await expect(page.locator(".list-container").or(page.locator(".list-card")).first()).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.locator(".list-container").or(page.locator(".list-card")).first()
+      ).toBeVisible({ timeout: 10000 });
     });
   });
 
@@ -121,12 +123,16 @@ test.describe("ウィジェットプレビュー - 全タイプ", () => {
 
     test("シングルカードが表示される", async ({ page }) => {
       await page.goto(url);
-      await expect(page.locator(".single-container").or(page.locator(".single-card")).first()).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.locator(".single-container").or(page.locator(".single-card")).first()
+      ).toBeVisible({ timeout: 10000 });
     });
 
     test("テスティモニアルの内容が表示される", async ({ page }) => {
       await page.goto(url);
-      await expect(page.locator(".single-card").or(page.locator(".single-content")).first()).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.locator(".single-card").or(page.locator(".single-content")).first()
+      ).toBeVisible({ timeout: 10000 });
 
       // テキストが存在する
       const text = await page.locator(".single-card, .single-content").first().textContent();
@@ -143,7 +149,9 @@ test.describe("ウィジェットプレビュー - 全タイプ", () => {
 
     test("ウォールコンテナにカードが表示される", async ({ page }) => {
       await page.goto(url);
-      await expect(page.locator(".wall-container").or(page.locator(".wall-card")).first()).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.locator(".wall-container").or(page.locator(".wall-card")).first()
+      ).toBeVisible({ timeout: 10000 });
     });
 
     test("複数カードが表示される", async ({ page }) => {
@@ -167,7 +175,9 @@ test.describe("ウィジェットプレビュー - 全タイプ", () => {
 
     test("星評価が表示される", async ({ page }) => {
       await page.goto(url);
-      await expect(page.locator(".badge-stars, .vh-badge-star").first()).toBeVisible({ timeout: 10000 });
+      await expect(page.locator(".badge-stars, .vh-badge-star").first()).toBeVisible({
+        timeout: 10000,
+      });
     });
   });
 

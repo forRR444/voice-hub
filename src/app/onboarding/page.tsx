@@ -6,7 +6,13 @@ import OnboardingClient from "./onboarding-client";
 
 export const dynamic = "force-dynamic";
 
-function OnboardingLayout({ workspace, betaUserCount }: { workspace: WorkspaceRow; betaUserCount: number }) {
+function OnboardingLayout({
+  workspace,
+  betaUserCount,
+}: {
+  workspace: WorkspaceRow;
+  betaUserCount: number;
+}) {
   return <OnboardingClient workspace={workspace} betaUserCount={betaUserCount} />;
 }
 
@@ -48,7 +54,9 @@ export default async function OnboardingPage() {
     if (error || !newWorkspace) {
       return (
         <div className="text-center py-12">
-          <p className="text-gray-500">ワークスペースの作成に失敗しました。ページをリロードしてください。</p>
+          <p className="text-gray-500">
+            ワークスペースの作成に失敗しました。ページをリロードしてください。
+          </p>
         </div>
       );
     }

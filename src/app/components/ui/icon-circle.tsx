@@ -15,7 +15,9 @@ type Props = {
 export default function IconCircle({ icon: Icon, size = "sm", className = "" }: Props) {
   const s = SIZES[size];
   return (
-    <div className={`bg-indigo-50 rounded-full flex items-center justify-center ${s.container} ${className}`}>
+    <div
+      className={`bg-indigo-50 rounded-full flex items-center justify-center ${s.container} ${className}`}
+    >
       <Icon size={s.sm} className="text-[var(--brand)] sm:hidden" />
       <Icon size={s.lg} className="text-[var(--brand)] hidden sm:block" />
     </div>

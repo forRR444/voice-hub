@@ -68,7 +68,11 @@ const formQuestionSchema = z.object({
 });
 
 export const formCreateSchema = z.object({
-  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
+  slug: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
   brand_color: z.string().min(1).max(20),
@@ -109,7 +113,13 @@ export const salonPageSchema = z.object({
   links: z.array(salonLinkSchema).max(3),
   description: z.string().max(2000).optional().nullable(),
   address: z.string().max(200).optional().nullable(),
-  google_map_url: z.string().url().regex(/^https:\/\//).optional().nullable().or(z.literal("")),
+  google_map_url: z
+    .string()
+    .url()
+    .regex(/^https:\/\//)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   business_hours: salonBusinessHoursSchema.optional().nullable(),
   closed_days: z.string().max(100).optional().nullable(),
   menu_items: z.array(salonMenuItemSchema).max(20).optional().nullable(),

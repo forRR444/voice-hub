@@ -35,16 +35,22 @@ vi.mock("@/lib/utils", () => ({
 vi.mock("@/lib/api-utils", () => ({
   checkRateLimit: vi.fn().mockResolvedValue(null),
   getClientIp: vi.fn().mockReturnValue("127.0.0.1"),
-  handleApiError: vi.fn((_error: unknown, message = "サーバーエラーが発生しました", headers?: Record<string, string>) => {
-    return NextResponse.json(
-      { ok: false, error: message, code: "INTERNAL_ERROR" },
-      { status: 500, ...(headers ? { headers } : {}) },
-    );
-  }),
+  handleApiError: vi.fn(
+    (
+      _error: unknown,
+      message = "サーバーエラーが発生しました",
+      headers?: Record<string, string>
+    ) => {
+      return NextResponse.json(
+        { ok: false, error: message, code: "INTERNAL_ERROR" },
+        { status: 500, ...(headers ? { headers } : {}) }
+      );
+    }
+  ),
   validationErrorResponse: vi.fn(() => {
     return NextResponse.json(
       { ok: false, error: "入力内容に不備があります", code: "VALIDATION_ERROR" },
-      { status: 400 },
+      { status: 400 }
     );
   }),
 }));
@@ -271,12 +277,8 @@ describe("GET /api/widgets/[widgetId]", () => {
     });
 
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
-      "GET, OPTIONS"
-    );
-    expect(response.headers.get("Access-Control-Allow-Headers")).toBe(
-      "Content-Type"
-    );
+    expect(response.headers.get("Access-Control-Allow-Methods")).toBe("GET, OPTIONS");
+    expect(response.headers.get("Access-Control-Allow-Headers")).toBe("Content-Type");
   });
 
   it("キャッシュヘッダーがレスポンスに含まれる", async () => {

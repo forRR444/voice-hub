@@ -216,7 +216,9 @@ describe("QuestionEditor", () => {
     ];
     render(<QuestionEditor questions={qs} onChange={onChange} />);
     // The item should have opacity-40 class
-    expect(screen.getByText("総合評価（星）").closest("div[data-sortable-id]")).toHaveClass("opacity-40");
+    expect(screen.getByText("総合評価（星）").closest("div[data-sortable-id]")).toHaveClass(
+      "opacity-40"
+    );
   });
 
   it("star_ratingタイプのカスタム質問は「星評価」と表示される", () => {

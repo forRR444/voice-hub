@@ -11,11 +11,7 @@ const PLAN_FEATURE_COMPARISONS = [
 ] as const;
 
 /** Freeプランの機能リスト（表示用） */
-export const FREE_FEATURE_LIST = PLAN_FEATURE_COMPARISONS.map(
-  (f) => `${f.label} ${f.free}`
-);
+export const FREE_FEATURE_LIST = PLAN_FEATURE_COMPARISONS.map((f) => `${f.label} ${f.free}`);
 
 /** Proプランの機能リスト（表示用） */
-export const PRO_FEATURE_LIST = PLAN_FEATURE_COMPARISONS.map(
-  (f) => `${f.label} ${f.pro}`
-);
+export const PRO_FEATURE_LIST = PLAN_FEATURE_COMPARISONS.map((f) => `${f.label} ${f.pro}`);

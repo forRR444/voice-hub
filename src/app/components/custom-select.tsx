@@ -43,7 +43,10 @@ export default function CustomSelect({
             <button
               key={o.value}
               type="button"
-              onClick={() => { onChange(o.value); setOpen(false); }}
+              onClick={() => {
+                onChange(o.value);
+                setOpen(false);
+              }}
               className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm cursor-pointer transition-colors hover:bg-foreground/5 ${
                 value === o.value ? "text-indigo-600 font-medium" : "text-foreground/70"
               }`}

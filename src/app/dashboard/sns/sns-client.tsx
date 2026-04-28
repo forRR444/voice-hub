@@ -87,7 +87,9 @@ export default function SnsClient({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-10">
         <div>
           <PageTitle>SNS画像を作成</PageTitle>
-          <p className="text-sm text-foreground/50 mt-1">口コミを選んでInstagramやX用の画像を生成できます</p>
+          <p className="text-sm text-foreground/50 mt-1">
+            口コミを選んでInstagramやX用の画像を生成できます
+          </p>
         </div>
       </div>
 
@@ -110,7 +112,9 @@ export default function SnsClient({
                 {selectedIds.size === testimonials.length ? "選択を解除" : "すべて選択"}
               </button>
               {selectedIds.size > 0 && (
-                <span className="text-xs text-indigo-600 font-medium whitespace-nowrap">{selectedIds.size}件選択中</span>
+                <span className="text-xs text-indigo-600 font-medium whitespace-nowrap">
+                  {selectedIds.size}件選択中
+                </span>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -125,9 +129,15 @@ export default function SnsClient({
                 className="flex items-center justify-center gap-1.5 px-2.5 sm:px-4 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {generating ? (
-                  <><Loader2 size={14} className="animate-spin" /><span className="hidden sm:inline">生成中...</span></>
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    <span className="hidden sm:inline">生成中...</span>
+                  </>
                 ) : (
-                  <><Download size={14} /><span className="hidden sm:inline">一括ダウンロード</span></>
+                  <>
+                    <Download size={14} />
+                    <span className="hidden sm:inline">一括ダウンロード</span>
+                  </>
                 )}
               </button>
             </div>
@@ -142,7 +152,9 @@ export default function SnsClient({
                   key={t.id}
                   onClick={() => toggleSelect(t.id)}
                   className={`bg-white rounded-lg border shadow-sm p-4 sm:p-5 transition-colors cursor-pointer ${
-                    isSelected ? "border-foreground/20 bg-foreground/[0.02]" : "border-foreground/10 hover:border-foreground/20"
+                    isSelected
+                      ? "border-foreground/20 bg-foreground/[0.02]"
+                      : "border-foreground/10 hover:border-foreground/20"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -158,8 +170,12 @@ export default function SnsClient({
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-                        <span className="text-sm sm:text-base font-semibold text-foreground">{t.name || "お客様"}</span>
-                        <span className="text-[10px] text-foreground/25">{formatDate(t.submitted_at)}</span>
+                        <span className="text-sm sm:text-base font-semibold text-foreground">
+                          {t.name || "お客様"}
+                        </span>
+                        <span className="text-[10px] text-foreground/25">
+                          {formatDate(t.submitted_at)}
+                        </span>
                       </div>
                       {t.rating != null && (
                         <StarRating rating={t.rating!} size={14} className="mb-1" />
@@ -171,7 +187,10 @@ export default function SnsClient({
 
                     {/* Individual button */}
                     <button
-                      onClick={(e) => { e.stopPropagation(); setSingleTarget(t); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSingleTarget(t);
+                      }}
                       className="shrink-0 p-2 rounded-lg text-foreground/40 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
                       title="プレビュー"
                     >
@@ -198,7 +217,12 @@ export default function SnsClient({
   );
 }
 
-function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
+function PreviewModal({
+  testimonial,
+  brandColor,
+  initialTemplate,
+  onClose,
+}: {
   testimonial: TestimonialWithTags;
   brandColor: string;
   initialTemplate: TemplateSize;
@@ -214,4 +238,3 @@ function PreviewModal({ testimonial, brandColor, initialTemplate, onClose }: {
     </Modal>
   );
 }
-

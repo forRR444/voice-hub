@@ -119,8 +119,7 @@ describe("ダッシュボード - 検索", () => {
     if (!query.trim()) return list;
     const q = query.toLowerCase();
     return list.filter(
-      (t) =>
-        t.name.toLowerCase().includes(q) || t.content.toLowerCase().includes(q)
+      (t) => t.name.toLowerCase().includes(q) || t.content.toLowerCase().includes(q)
     );
   }
 
@@ -166,23 +165,18 @@ describe("ダッシュボード - 統計", () => {
   });
 
   it("承認済み件数が正しい", () => {
-    const approved = SAMPLE_TESTIMONIALS.filter(
-      (t) => t.status === "approved"
-    ).length;
+    const approved = SAMPLE_TESTIMONIALS.filter((t) => t.status === "approved").length;
     expect(approved).toBe(1);
   });
 
   it("未承認件数が正しい", () => {
-    const pending = SAMPLE_TESTIMONIALS.filter(
-      (t) => t.status === "pending"
-    ).length;
+    const pending = SAMPLE_TESTIMONIALS.filter((t) => t.status === "pending").length;
     expect(pending).toBe(1);
   });
 
   it("平均評価が正しい", () => {
     const rated = SAMPLE_TESTIMONIALS.filter((t) => t.rating != null);
-    const avg =
-      rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length;
+    const avg = rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length;
     expect(avg).toBe(4);
   });
 
@@ -449,9 +443,7 @@ describe("フォーム管理", () => {
     });
 
     const builder = mockSupabase.from("forms");
-    await (builder as any)
-      .update({ title: "新しいタイトル" })
-      .eq("id", "f-1");
+    await (builder as any).update({ title: "新しいタイトル" }).eq("id", "f-1");
 
     const updateCall = (builder as any).update.mock.calls[0][0];
     expect(updateCall.title).toBe("新しいタイトル");
@@ -490,9 +482,7 @@ describe("設定ページ", () => {
     });
 
     const builder = mockSupabase.from("workspaces");
-    await (builder as any)
-      .update({ name: "新しいワークスペース名" })
-      .eq("id", "ws-1");
+    await (builder as any).update({ name: "新しいワークスペース名" }).eq("id", "ws-1");
 
     const updateCall = (builder as any).update.mock.calls[0][0];
     expect(updateCall.name).toBe("新しいワークスペース名");

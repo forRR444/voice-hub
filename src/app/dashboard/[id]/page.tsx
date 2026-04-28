@@ -27,21 +27,14 @@ export default async function TestimonialDetailPage({
   if (!workspace) notFound();
 
   // Run queries in parallel
-  const [
-    { data: testimonial },
-    { data: tagRows },
-    { data: forms },
-  ] = await Promise.all([
+  const [{ data: testimonial }, { data: tagRows }, { data: forms }] = await Promise.all([
     supabase
       .from("testimonials")
       .select("*")
       .eq("id", id)
       .eq("workspace_id", workspace.id)
       .single(),
-    supabase
-      .from("testimonial_tags")
-      .select("tag")
-      .eq("testimonial_id", id),
+    supabase.from("testimonial_tags").select("tag").eq("testimonial_id", id),
     supabase
       .from("forms")
       .select("brand_color, questions")
@@ -59,8 +52,9 @@ export default async function TestimonialDetailPage({
   const questionLabels: Record<string, string> = {};
   if (testimonial.form_id) {
     // Check if the form is already in our fetched forms
-    const linkedForm = forms?.find((f: { brand_color: string; questions: { id: string; label: string }[] }) =>
-      testimonial.form_id && f.questions
+    const linkedForm = forms?.find(
+      (f: { brand_color: string; questions: { id: string; label: string }[] }) =>
+        testimonial.form_id && f.questions
     );
     if (linkedForm?.questions) {
       for (const q of linkedForm.questions as { id: string; label: string }[]) {

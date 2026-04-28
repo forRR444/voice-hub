@@ -2,10 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { createRef } from "react";
 import type { FormRow, FormQuestion } from "@/types/database";
-import {
-  IMAGE_MAX_SIZE_BYTES,
-  IMAGE_RESIZED_MAX_BYTES,
-} from "@/lib/constants";
+import { IMAGE_MAX_SIZE_BYTES, IMAGE_RESIZED_MAX_BYTES } from "@/lib/constants";
 
 // ─── Mocks ─────────────────────────────────────────────────────────────
 
@@ -57,10 +54,7 @@ import { FormClient, type FormClientHandle } from "@/app/form/[slug]/form-client
 
 // ─── Fixtures ──────────────────────────────────────────────────────────
 
-function makeForm(
-  overrides: Partial<FormRow> = {},
-  questions?: FormQuestion[]
-): FormRow {
+function makeForm(overrides: Partial<FormRow> = {}, questions?: FormQuestion[]): FormRow {
   return {
     id: "f-1",
     workspace_id: "ws-1",
@@ -70,13 +64,12 @@ function makeForm(
     brand_color: "#635BFF",
     logo_url: null,
     thank_you_message: "ありがとう",
-    questions:
-      questions ?? [
-        { id: "rating", label: "評価", type: "star_rating", required: true },
-        { id: "content", label: "感想", type: "textarea", required: true },
-        { id: "name", label: "名前", type: "text", required: true },
-        { id: "permission", label: "許可", type: "checkbox", required: true },
-      ],
+    questions: questions ?? [
+      { id: "rating", label: "評価", type: "star_rating", required: true },
+      { id: "content", label: "感想", type: "textarea", required: true },
+      { id: "name", label: "名前", type: "text", required: true },
+      { id: "permission", label: "許可", type: "checkbox", required: true },
+    ],
     created_at: "2026-01-01T00:00:00Z",
     ...overrides,
   };
@@ -205,9 +198,7 @@ describe("FormClient - バリデーション", () => {
   });
 
   it("textarea 必須: 空白のみで無効、文字入力で有効", () => {
-    const form = makeForm({}, [
-      { id: "content", label: "感想", type: "textarea", required: true },
-    ]);
+    const form = makeForm({}, [{ id: "content", label: "感想", type: "textarea", required: true }]);
     const { container } = render(<FormClient form={form} />);
     const textarea = container.querySelector("textarea");
     if (!(textarea instanceof HTMLTextAreaElement)) {
@@ -220,9 +211,7 @@ describe("FormClient - バリデーション", () => {
   });
 
   it("text 必須: trim で空なら無効", () => {
-    const form = makeForm({}, [
-      { id: "name", label: "名前", type: "text", required: true },
-    ]);
+    const form = makeForm({}, [{ id: "name", label: "名前", type: "text", required: true }]);
     const { container } = render(<FormClient form={form} />);
     // NB: there is a honeypot input[type="text"] — pick the non-hidden one by maxLength
     const textInputs = container.querySelectorAll('input[type="text"]');
@@ -306,9 +295,7 @@ describe("FormClient - バリデーション", () => {
 describe("FormClient - ナビゲーション", () => {
   it("step=0 では戻るボタンが非表示", () => {
     render(<FormClient form={makeForm()} />);
-    expect(
-      screen.queryByRole("button", { name: /戻る/ })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /戻る/ })).not.toBeInTheDocument();
   });
 
   it("step>0 で戻るボタンが表示され step を戻す", () => {
@@ -322,9 +309,7 @@ describe("FormClient - ナビゲーション", () => {
     fireEvent.click(back);
     // back to step 0 — rating label visible
     expect(screen.getByText("評価")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /戻る/ })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /戻る/ })).not.toBeInTheDocument();
   });
 
   it("ref.skip() で step が1つ進む", () => {
@@ -339,9 +324,7 @@ describe("FormClient - ナビゲーション", () => {
 
   it("ref.skip() は最終 step では何もしない", () => {
     const ref = createRef<FormClientHandle>();
-    const form = makeForm({}, [
-      { id: "name", label: "名前", type: "text", required: false },
-    ]);
+    const form = makeForm({}, [{ id: "name", label: "名前", type: "text", required: false }]);
     render(<FormClient ref={ref} form={form} />);
     // single-step form, skip should not advance nor crash
     act(() => {
@@ -354,9 +337,7 @@ describe("FormClient - ナビゲーション", () => {
 
 describe("FormClient - 画像アップロード", () => {
   function renderImageForm() {
-    const form = makeForm({}, [
-      { id: "avatar", label: "写真", type: "image", required: false },
-    ]);
+    const form = makeForm({}, [{ id: "avatar", label: "写真", type: "image", required: false }]);
     return render(<FormClient form={form} />);
   }
 
@@ -368,9 +349,7 @@ describe("FormClient - 画像アップロード", () => {
     }
     const file = makeFile("a.txt", "text/plain", 1024);
     fireEvent.change(input, { target: { files: [file] } });
-    expect(
-      await screen.findByText(/画像ファイルを選択/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/画像ファイルを選択/)).toBeInTheDocument();
   });
 
   it("10MB超でサイズエラーが表示される", async () => {
@@ -381,9 +360,7 @@ describe("FormClient - 画像アップロード", () => {
     }
     const file = makeFile("big.jpg", "image/jpeg", IMAGE_MAX_SIZE_BYTES + 1);
     fireEvent.change(input, { target: { files: [file] } });
-    expect(
-      await screen.findByText(/ファイルサイズが大きすぎます/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/ファイルサイズが大きすぎます/)).toBeInTheDocument();
   });
 
   it("リサイズ結果が2MB超で圧縮エラーが表示される", async () => {
@@ -400,9 +377,7 @@ describe("FormClient - 画像アップロード", () => {
     }
     const file = makeFile("ok.jpg", "image/jpeg", 1024);
     fireEvent.change(input, { target: { files: [file] } });
-    expect(
-      await screen.findByText(/圧縮後もサイズが大きすぎます/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/圧縮後もサイズが大きすぎます/)).toBeInTheDocument();
   });
 
   it("resizeImage が throw すると「画像の処理に失敗しました」が表示される", async () => {
@@ -414,9 +389,7 @@ describe("FormClient - 画像アップロード", () => {
     }
     const file = makeFile("ok.jpg", "image/jpeg", 1024);
     fireEvent.change(input, { target: { files: [file] } });
-    expect(
-      await screen.findByText(/画像の処理に失敗しました/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/画像の処理に失敗しました/)).toBeInTheDocument();
   });
 
   it("正常アップロード: プレビュー img が表示される", async () => {
@@ -438,9 +411,7 @@ describe("FormClient - 画像アップロード", () => {
 
 describe("FormClient - 送信フロー", () => {
   function singleQuestionForm(): FormRow {
-    return makeForm({}, [
-      { id: "content", label: "感想", type: "textarea", required: true },
-    ]);
+    return makeForm({}, [{ id: "content", label: "感想", type: "textarea", required: true }]);
   }
 
   async function fillAndSubmit(
@@ -458,9 +429,7 @@ describe("FormClient - 送信フロー", () => {
   it("demo モード: fetch を呼ばず 800ms 後に送信完了画面に遷移", async () => {
     vi.useFakeTimers();
     try {
-      const { container } = render(
-        <FormClient form={singleQuestionForm()} demo />
-      );
+      const { container } = render(<FormClient form={singleQuestionForm()} demo />);
       await fillAndSubmit(container);
       expect(fetchMock).not.toHaveBeenCalled();
       await act(async () => {
@@ -494,9 +463,7 @@ describe("FormClient - 送信フロー", () => {
   });
 
   it("real モード avatar あり: upload→getPublicUrl→fetch の順で呼ばれる", async () => {
-    const form = makeForm({}, [
-      { id: "avatar", label: "写真", type: "image", required: true },
-    ]);
+    const form = makeForm({}, [{ id: "avatar", label: "写真", type: "image", required: true }]);
     const { container } = render(<FormClient form={form} />);
     const input = container.querySelector('input[type="file"]');
     if (!(input instanceof HTMLInputElement)) {
@@ -525,9 +492,7 @@ describe("FormClient - 送信フロー", () => {
 
   it("upload エラーで storage.remove が呼ばれエラーバナー表示", async () => {
     uploadMock.mockResolvedValueOnce({ error: new Error("network") });
-    const form = makeForm({}, [
-      { id: "avatar", label: "写真", type: "image", required: true },
-    ]);
+    const form = makeForm({}, [{ id: "avatar", label: "写真", type: "image", required: true }]);
     const { container } = render(<FormClient form={form} />);
     const input = container.querySelector('input[type="file"]');
     if (!(input instanceof HTMLInputElement)) {
@@ -538,9 +503,7 @@ describe("FormClient - 送信フロー", () => {
     });
     await screen.findByAltText("プレビュー");
     fireEvent.click(getNextButton());
-    expect(
-      await screen.findByText(/写真のアップロードに失敗しました/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/写真のアップロードに失敗しました/)).toBeInTheDocument();
     expect(removeMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -552,9 +515,7 @@ describe("FormClient - 送信フロー", () => {
     });
     const { container } = render(<FormClient form={singleQuestionForm()} />);
     await fillAndSubmit(container, "最高でした");
-    expect(
-      await screen.findByText("レート制限に達しました")
-    ).toBeInTheDocument();
+    expect(await screen.findByText("レート制限に達しました")).toBeInTheDocument();
   });
 
   it("fetch が reject するとデフォルトエラーメッセージ表示", async () => {

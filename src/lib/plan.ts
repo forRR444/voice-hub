@@ -18,7 +18,10 @@ export function canCreateForm(formCount: number, subscriptionStatus: Subscriptio
   return formCount < getPlanLimits(subscriptionStatus).forms;
 }
 
-export function canCreateWidget(widgetCount: number, subscriptionStatus: SubscriptionStatus): boolean {
+export function canCreateWidget(
+  widgetCount: number,
+  subscriptionStatus: SubscriptionStatus
+): boolean {
   return widgetCount < getPlanLimits(subscriptionStatus).widgets;
 }
 

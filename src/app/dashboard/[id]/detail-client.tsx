@@ -3,15 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Trash,
-  Bookmark,
-  Tag,
-  X,
-  Plus,
-  ImageIcon,
-} from "lucide-react";
+import { ArrowLeft, Trash, Bookmark, Tag, X, Plus, ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialWithTags } from "@/types/database";
 import { formatDate } from "@/lib/utils";
@@ -47,7 +39,10 @@ export default function TestimonialDetailClient({
     const { error } = await supabase
       .from("testimonial_tags")
       .insert({ testimonial_id: testimonial.id, tag });
-    if (error) { setErrorMsg("タグの追加に失敗しました"); return; }
+    if (error) {
+      setErrorMsg("タグの追加に失敗しました");
+      return;
+    }
     setTestimonial((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
     setNewTag("");
   }
@@ -59,7 +54,10 @@ export default function TestimonialDetailClient({
       .delete()
       .eq("testimonial_id", testimonial.id)
       .eq("tag", tag);
-    if (error) { setErrorMsg("タグの削除に失敗しました"); return; }
+    if (error) {
+      setErrorMsg("タグの削除に失敗しました");
+      return;
+    }
     setTestimonial((prev) => ({
       ...prev,
       tags: prev.tags.filter((t) => t !== tag),
@@ -69,12 +67,12 @@ export default function TestimonialDetailClient({
   async function handleDelete() {
     setDeleting(true);
     setErrorMsg(null);
-    const { error } = await supabase
-      .from("testimonials")
-      .delete()
-      .eq("id", testimonial.id);
+    const { error } = await supabase.from("testimonials").delete().eq("id", testimonial.id);
     setDeleting(false);
-    if (error) { setErrorMsg("削除に失敗しました"); return; }
+    if (error) {
+      setErrorMsg("削除に失敗しました");
+      return;
+    }
     router.push("/dashboard");
   }
 
@@ -136,7 +134,9 @@ export default function TestimonialDetailClient({
         {t.rating != null && (
           <div className="flex items-center gap-2 mb-4">
             <StarRating rating={t.rating ?? 0} size={16} />
-            <span className="text-[10px] sm:text-xs text-foreground/25">{formatDate(t.submitted_at)}</span>
+            <span className="text-[10px] sm:text-xs text-foreground/25">
+              {formatDate(t.submitted_at)}
+            </span>
           </div>
         )}
 
@@ -146,7 +146,9 @@ export default function TestimonialDetailClient({
             <h3 className="text-[10px] sm:text-xs font-medium text-foreground/40 mb-1 sm:mb-1.5">
               {questionLabels.before_story || "ご利用前のお悩み"}
             </h3>
-            <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed">{t.before_story}</p>
+            <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed">
+              {t.before_story}
+            </p>
           </div>
         )}
 
@@ -155,7 +157,9 @@ export default function TestimonialDetailClient({
           <h3 className="text-[10px] sm:text-xs font-medium text-foreground/40 mb-1 sm:mb-1.5">
             {questionLabels.content || "お客様の声"}
           </h3>
-          <p className="text-sm sm:text-base text-foreground/70 whitespace-pre-wrap leading-relaxed">{t.content}</p>
+          <p className="text-sm sm:text-base text-foreground/70 whitespace-pre-wrap leading-relaxed">
+            {t.content}
+          </p>
         </div>
 
         {/* Status */}
@@ -198,14 +202,14 @@ export default function TestimonialDetailClient({
                   : "border-foreground/10 text-foreground/60 hover:bg-foreground/5"
               }`}
             >
-              <Bookmark size={14} fill={t.is_featured ? "currentColor" : "none"} className={t.is_featured ? "text-violet-500" : ""} />
+              <Bookmark
+                size={14}
+                fill={t.is_featured ? "currentColor" : "none"}
+                className={t.is_featured ? "text-violet-500" : ""}
+              />
               {t.is_featured ? "注目から解除" : "注目に設定"}
             </button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setShowSnsModal(true)}
-            >
+            <Button variant="secondary" size="sm" onClick={() => setShowSnsModal(true)}>
               <ImageIcon size={14} />
               SNS画像
             </Button>
@@ -239,9 +243,7 @@ export default function TestimonialDetailClient({
               type="text"
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && (e.preventDefault(), addTag())
-              }
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
               placeholder="新しいタグ..."
               className="px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm border border-foreground/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />

@@ -15,7 +15,8 @@ const SIZE_MAP = {
 };
 
 export default function CTAButton({ href, children, size = "md", block, className = "" }: Props) {
-  const base = "inline-flex items-center justify-center gap-2 font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition";
+  const base =
+    "inline-flex items-center justify-center gap-2 font-semibold bg-[var(--brand)] text-white rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:brightness-110 transition";
   return (
     <Link
       href={href}

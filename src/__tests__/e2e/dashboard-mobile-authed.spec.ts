@@ -35,9 +35,7 @@ test.describe("認証済み：ダッシュボードのモバイル表示", () =>
 
     // mobile-sidebar.tsx の <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
     // aside (w-60 = 240px) が中央を覆うので、右側の空き領域をクリックする
-    await page
-      .locator("div.fixed.inset-0.bg-black\\/50")
-      .click({ position: { x: 350, y: 400 } });
+    await page.locator("div.fixed.inset-0.bg-black\\/50").click({ position: { x: 350, y: 400 } });
     await expect(page.getByLabel("メニューを閉じる")).toBeHidden();
     await expect(page.getByLabel("メニューを開く")).toBeVisible();
   });
@@ -64,7 +62,9 @@ test.describe("認証済み：ダッシュボードのモバイル表示", () =>
     await expect(page.getByRole("button", { name: "追加", exact: true })).toBeVisible();
   });
 
-  test("全主要ページが縦スクロール内に描画される（水平スクロール発生チェック）", async ({ page }) => {
+  test("全主要ページが縦スクロール内に描画される（水平スクロール発生チェック）", async ({
+    page,
+  }) => {
     const pages = ["/dashboard", "/dashboard/forms", "/dashboard/widgets", "/dashboard/settings"];
     for (const url of pages) {
       await page.goto(url);

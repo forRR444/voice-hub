@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TestimonialWithTags } from "@/types/database";
-import {
-  createMockSupabase,
-  type QueryResult,
-} from "../helpers/mock-supabase";
+import { createMockSupabase, type QueryResult } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Module mocks
@@ -19,9 +16,7 @@ vi.mock("@/lib/supabase/client", () => ({
 // テストデータファクトリ
 // ---------------------------------------------------------------------------
 
-function makeTestimonial(
-  overrides: Partial<TestimonialWithTags> = {}
-): TestimonialWithTags {
+function makeTestimonial(overrides: Partial<TestimonialWithTags> = {}): TestimonialWithTags {
   return {
     id: "t-1",
     workspace_id: "ws-1",
@@ -44,12 +39,49 @@ function makeTestimonial(
 }
 
 const sampleTestimonials: TestimonialWithTags[] = [
-  makeTestimonial({ id: "t-1", name: "Taro Yamada", content: "Great product!", status: "approved", rating: 5 }),
-  makeTestimonial({ id: "t-2", name: "Hanako Tanaka", content: "Needs improvement", status: "pending", rating: 3 }),
-  makeTestimonial({ id: "t-3", name: "Jiro Suzuki", content: "Amazing service", status: "approved", rating: 4 }),
-  makeTestimonial({ id: "t-4", name: "Yuki Sato", content: "Not good enough", status: "rejected", rating: 2 }),
-  makeTestimonial({ id: "t-5", name: "Kenji Watanabe", content: "Excellent support", status: "pending", rating: 5, is_featured: true }),
-  makeTestimonial({ id: "t-6", name: "Mai Kobayashi", content: "Good value for money", status: "approved", rating: null }),
+  makeTestimonial({
+    id: "t-1",
+    name: "Taro Yamada",
+    content: "Great product!",
+    status: "approved",
+    rating: 5,
+  }),
+  makeTestimonial({
+    id: "t-2",
+    name: "Hanako Tanaka",
+    content: "Needs improvement",
+    status: "pending",
+    rating: 3,
+  }),
+  makeTestimonial({
+    id: "t-3",
+    name: "Jiro Suzuki",
+    content: "Amazing service",
+    status: "approved",
+    rating: 4,
+  }),
+  makeTestimonial({
+    id: "t-4",
+    name: "Yuki Sato",
+    content: "Not good enough",
+    status: "rejected",
+    rating: 2,
+  }),
+  makeTestimonial({
+    id: "t-5",
+    name: "Kenji Watanabe",
+    content: "Excellent support",
+    status: "pending",
+    rating: 5,
+    is_featured: true,
+  }),
+  makeTestimonial({
+    id: "t-6",
+    name: "Mai Kobayashi",
+    content: "Good value for money",
+    status: "approved",
+    rating: null,
+  }),
 ];
 
 // ---------------------------------------------------------------------------
@@ -68,9 +100,7 @@ function filterTestimonials(
   if (search.trim()) {
     const q = search.toLowerCase();
     list = list.filter(
-      (t) =>
-        t.name.toLowerCase().includes(q) ||
-        t.content.toLowerCase().includes(q)
+      (t) => t.name.toLowerCase().includes(q) || t.content.toLowerCase().includes(q)
     );
   }
   return list;
@@ -82,9 +112,7 @@ function calculateStats(testimonials: TestimonialWithTags[]) {
   const pending = testimonials.filter((t) => t.status === "pending").length;
   const rated = testimonials.filter((t) => t.rating != null);
   const avg =
-    rated.length > 0
-      ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length
-      : 0;
+    rated.length > 0 ? rated.reduce((sum, t) => sum + (t.rating ?? 0), 0) / rated.length : 0;
   return { total, approved, pending, avg };
 }
 
@@ -93,10 +121,10 @@ function canAddTag(existingTags: string[], newTag: string): boolean {
   return tag !== "" && !existingTags.includes(tag);
 }
 
-function validateManualTestimonialForm(form: {
-  name: string;
-  content: string;
-}): { valid: boolean; error?: string } {
+function validateManualTestimonialForm(form: { name: string; content: string }): {
+  valid: boolean;
+  error?: string;
+} {
   if (!form.name.trim() || !form.content.trim()) {
     return { valid: false, error: "名前と内容は必須です" };
   }
@@ -210,20 +238,17 @@ describe("テスティモニアルのステータス管理", () => {
   it.each([
     [false, true, "t-1"],
     [true, false, "t-5"],
-  ])(
-    "is_featuredを %s から %s にトグルする",
-    (current, expected, id) => {
-      mockSupabase = createMockSupabase({
-        testimonials: { data: null, error: null },
-      });
+  ])("is_featuredを %s から %s にトグルする", (current, expected, id) => {
+    mockSupabase = createMockSupabase({
+      testimonials: { data: null, error: null },
+    });
 
-      const builder = mockSupabase.from("testimonials");
-      (builder as any).update({ is_featured: !current });
-      (builder as any).eq("id", id);
+    const builder = mockSupabase.from("testimonials");
+    (builder as any).update({ is_featured: !current });
+    (builder as any).eq("id", id);
 
-      expect((builder as any).update).toHaveBeenCalledWith({ is_featured: expected });
-    }
-  );
+    expect((builder as any).update).toHaveBeenCalledWith({ is_featured: expected });
+  });
 
   it("ステータス更新後も他のフィールドがローカルステートで保持される", () => {
     const testimonial = makeTestimonial({ id: "t-1", status: "pending", rating: 5 });

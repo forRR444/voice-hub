@@ -26,11 +26,20 @@ export default function SignupClient() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     const emailErr = validateEmail(email);
-    if (emailErr) { setError(emailErr); return; }
+    if (emailErr) {
+      setError(emailErr);
+      return;
+    }
     const passErr = validatePassword(password);
-    if (passErr) { setError(passErr); return; }
+    if (passErr) {
+      setError(passErr);
+      return;
+    }
     const matchErr = validatePasswordMatch(password, confirmPassword);
-    if (matchErr) { setError(matchErr); return; }
+    if (matchErr) {
+      setError(matchErr);
+      return;
+    }
 
     setLoading("email");
     setError(null);
@@ -64,8 +73,8 @@ export default function SignupClient() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">メールを確認してください</h1>
             <p className="mt-3 text-sm text-foreground/60">
-              <span className="font-medium text-foreground">{email}</span> に確認メールを送信しました。
-              メール内のリンクをクリックして登録を完了してください。
+              <span className="font-medium text-foreground">{email}</span>{" "}
+              に確認メールを送信しました。 メール内のリンクをクリックして登録を完了してください。
             </p>
           </div>
           <p className="text-xs text-foreground/40">
@@ -83,12 +92,25 @@ export default function SignupClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity">
-            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={1047}
+              height={1267}
+              priority
+              className="h-7 w-auto"
+            />
             VoiceHub
           </Link>
           <div className="mt-4 flex gap-12 justify-center border-b border-foreground/10">
-            <Link href="/login" className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors">
+            <Link
+              href="/login"
+              className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors"
+            >
               ログイン
             </Link>
             <span className="pb-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
@@ -101,7 +123,10 @@ export default function SignupClient() {
           {showEmailForm ? (
             <>
               <button
-                onClick={() => { setShowEmailForm(false); setError(null); }}
+                onClick={() => {
+                  setShowEmailForm(false);
+                  setError(null);
+                }}
                 className="flex items-center gap-1.5 text-sm text-foreground/50 hover:text-foreground/70 transition-colors cursor-pointer"
               >
                 <ArrowLeft size={14} />
@@ -157,22 +182,28 @@ export default function SignupClient() {
             </>
           )}
 
-          <p className="text-center text-xs text-foreground/40">
-            クレジットカード不要
-          </p>
+          <p className="text-center text-xs text-foreground/40">クレジットカード不要</p>
 
-          {error && (
-            <p className="text-center text-xs text-red-500">{error}</p>
-          )}
+          {error && <p className="text-center text-xs text-red-500">{error}</p>}
         </div>
 
         <div className="text-center space-y-2">
           <p className="text-sm text-foreground/60">
             すでにアカウントをお持ちの方は
-            <Link href="/login" className="text-indigo-600 hover:underline ml-1">ログイン</Link>
+            <Link href="/login" className="text-indigo-600 hover:underline ml-1">
+              ログイン
+            </Link>
           </p>
           <p className="text-xs text-foreground/30">
-            登録することで<Link href="/terms" className="text-indigo-600 hover:underline">利用規約</Link>と<Link href="/privacy" className="text-indigo-600 hover:underline">プライバシーポリシー</Link>に同意したものとみなされます
+            登録することで
+            <Link href="/terms" className="text-indigo-600 hover:underline">
+              利用規約
+            </Link>
+            と
+            <Link href="/privacy" className="text-indigo-600 hover:underline">
+              プライバシーポリシー
+            </Link>
+            に同意したものとみなされます
           </p>
         </div>
       </div>

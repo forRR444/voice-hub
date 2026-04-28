@@ -17,12 +17,8 @@ export default function Error({
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">
-          エラーが発生しました
-        </h1>
-        <p className="mt-2 text-gray-600">
-          問題が発生しました。もう一度お試しください。
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">エラーが発生しました</h1>
+        <p className="mt-2 text-gray-600">問題が発生しました。もう一度お試しください。</p>
         <div className="mt-8 flex gap-4 justify-center">
           <button
             onClick={reset}

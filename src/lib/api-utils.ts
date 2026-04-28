@@ -20,7 +20,7 @@ export async function checkRateLimit(
   key: string,
   limit: number,
   windowMs: number,
-  message = "リクエスト数の制限に達しました。しばらくしてからもう一度お試しください。",
+  message = "リクエスト数の制限に達しました。しばらくしてからもう一度お試しください。"
 ): Promise<NextResponse | null> {
   const { success } = await rateLimitAsync(key, limit, windowMs);
   if (!success) {
@@ -36,15 +36,10 @@ export async function checkRateLimit(
 export function handleApiError(
   error: unknown,
   message = "サーバーエラーが発生しました",
-  headers?: Record<string, string>,
+  headers?: Record<string, string>
 ): NextResponse {
   logError(message, error);
-  return apiError(
-    message,
-    500,
-    "INTERNAL_ERROR",
-    headers ? { headers } : undefined,
-  );
+  return apiError(message, 500, "INTERNAL_ERROR", headers ? { headers } : undefined);
 }
 
 /**
@@ -52,10 +47,7 @@ export function handleApiError(
  * logTag にエラー文脈を渡すと `{logTag}:` としてログ出力される。
  * 詳細は ApiResponse から削除（クライアントでは error メッセージのみ利用するため）。
  */
-export function validationErrorResponse(
-  error: ZodError,
-  logTag: string,
-): NextResponse {
+export function validationErrorResponse(error: ZodError, logTag: string): NextResponse {
   logError(`${logTag}:`, JSON.stringify(error.flatten()));
   return apiError("入力内容に不備があります", 400, "VALIDATION_ERROR");
 }

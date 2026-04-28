@@ -3,9 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("認証とログインページ", () => {
   test("ログインページにVoiceHubのブランディングが表示される", async ({ page }) => {
     await page.goto("/login");
-    await expect(
-      page.getByRole("link", { name: "VoiceHub" })
-    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "VoiceHub" })).toBeVisible();
   });
 
   test("メール/パスワードフォームとGoogleボタンが表示される", async ({ page }) => {

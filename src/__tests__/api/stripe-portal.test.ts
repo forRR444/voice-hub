@@ -33,8 +33,7 @@ vi.mock("@/lib/stripe", () => ({
   getStripe: () => ({
     billingPortal: {
       sessions: {
-        create: (...args: unknown[]) =>
-          mockBillingPortalSessionsCreate(...args),
+        create: (...args: unknown[]) => mockBillingPortalSessionsCreate(...args),
       },
     },
   }),
@@ -153,9 +152,7 @@ describe("POST /api/stripe/portal", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe(
-      "No billing account found. Please subscribe first."
-    );
+    expect(json.error).toBe("No billing account found. Please subscribe first.");
   });
 
   it("stripe_customer_idが空文字の場合400を返す", async () => {
@@ -172,9 +169,7 @@ describe("POST /api/stripe/portal", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe(
-      "No billing account found. Please subscribe first."
-    );
+    expect(json.error).toBe("No billing account found. Please subscribe first.");
   });
 
   it("正常にポータルセッションを作成してURLを返す", async () => {

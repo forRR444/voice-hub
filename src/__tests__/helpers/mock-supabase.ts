@@ -80,8 +80,7 @@ export function makeRequest(
   const { method = "GET", body, headers = {} } = options;
   const init: RequestInit = { method, headers };
   if (body !== undefined) {
-    (init.headers as Record<string, string>)["Content-Type"] =
-      "application/json";
+    (init.headers as Record<string, string>)["Content-Type"] = "application/json";
     init.body = JSON.stringify(body);
   }
   return new Request(url, init);

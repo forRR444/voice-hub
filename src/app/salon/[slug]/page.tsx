@@ -93,7 +93,16 @@ export default async function SalonPage({ params }: Props) {
 
   const approvedTestimonials = (testimonials ?? []) as Pick<
     TestimonialRow,
-    "id" | "name" | "title" | "company" | "avatar_url" | "rating" | "content" | "before_story" | "is_featured" | "submitted_at"
+    | "id"
+    | "name"
+    | "title"
+    | "company"
+    | "avatar_url"
+    | "rating"
+    | "content"
+    | "before_story"
+    | "is_featured"
+    | "submitted_at"
   >[];
 
   const totalCount = approvedTestimonials.length;

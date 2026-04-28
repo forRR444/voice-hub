@@ -14,7 +14,13 @@ import GoogleImportStep, { type PickedReview } from "@/app/components/google-imp
 import StepCard from "@/app/components/step-card";
 import EmbedCodeBlock from "@/app/components/embed-code-block";
 
-export default function OnboardingClient({ workspace, betaUserCount = 0 }: { workspace: WorkspaceRow; betaUserCount?: number }) {
+export default function OnboardingClient({
+  workspace,
+  betaUserCount = 0,
+}: {
+  workspace: WorkspaceRow;
+  betaUserCount?: number;
+}) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -40,7 +46,10 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             setCreating(true);
             try {
               const slug = generateSlug();
-              await supabase.from("workspaces").update({ name: tryData.workspaceName || "マイサービス" }).eq("id", workspace.id);
+              await supabase
+                .from("workspaces")
+                .update({ name: tryData.workspaceName || "マイサービス" })
+                .eq("id", workspace.id);
               const { data: form, error: formError } = await supabase
                 .from("forms")
                 .insert({
@@ -57,7 +66,9 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
               if (tryData.googleReviews?.length > 0) {
                 await supabase.from("testimonials").insert(
-                  mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, { status: "approved" })
+                  mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, {
+                    status: "approved",
+                  })
                 );
               }
 
@@ -65,14 +76,29 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                 workspace_id: workspace.id,
                 name: "カルーセル",
                 type: "carousel",
-                theme: { mode: "light", brandColor: tryData.brandColor || DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
+                theme: {
+                  mode: "light",
+                  brandColor: tryData.brandColor || DEFAULT_BRAND_COLOR,
+                  showRating: true,
+                  showAvatar: false,
+                  showDate: false,
+                  maxItems: 10,
+                  autoplay: true,
+                },
                 filter_min_rating: 1,
                 only_featured: false,
               });
-              await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
+              await supabase
+                .from("workspaces")
+                .update({ onboarding_completed: true })
+                .eq("id", workspace.id);
               router.push("/dashboard");
             } catch (e) {
-              setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
+              setError(
+                e instanceof Error
+                  ? e.message
+                  : "セットアップに失敗しました。もう一度お試しください。"
+              );
               setCreating(false);
               setChecking(false);
               setStep(1);
@@ -95,8 +121,11 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
         setCreating(true);
         try {
           const slug = generateSlug();
-          const template = FORM_TEMPLATES.find(t => t.id === storedTemplate);
-          await supabase.from("workspaces").update({ name: workspace.name || "マイサービス" }).eq("id", workspace.id);
+          const template = FORM_TEMPLATES.find((t) => t.id === storedTemplate);
+          await supabase
+            .from("workspaces")
+            .update({ name: workspace.name || "マイサービス" })
+            .eq("id", workspace.id);
           const { data: form, error: formError } = await supabase
             .from("forms")
             .insert({
@@ -114,14 +143,27 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             workspace_id: workspace.id,
             name: "カルーセル",
             type: "carousel",
-            theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
+            theme: {
+              mode: "light",
+              brandColor: DEFAULT_BRAND_COLOR,
+              showRating: true,
+              showAvatar: false,
+              showDate: false,
+              maxItems: 10,
+              autoplay: true,
+            },
             filter_min_rating: 1,
             only_featured: false,
           });
-          await supabase.from("workspaces").update({ onboarding_completed: true }).eq("id", workspace.id);
+          await supabase
+            .from("workspaces")
+            .update({ onboarding_completed: true })
+            .eq("id", workspace.id);
           router.push("/dashboard");
         } catch (e) {
-          setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
+          setError(
+            e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。"
+          );
           setCreating(false);
           setChecking(false);
           setStep(1);
@@ -154,9 +196,9 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
       if (formError) throw formError;
 
       if (selectedReviews.length > 0) {
-        await supabase.from("testimonials").insert(
-          mapGoogleReviewsToRows(selectedReviews, workspace.id, { status: "approved" })
-        );
+        await supabase
+          .from("testimonials")
+          .insert(mapGoogleReviewsToRows(selectedReviews, workspace.id, { status: "approved" }));
       }
 
       const { data: widget, error: widgetError } = await supabase
@@ -165,7 +207,15 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
           workspace_id: workspace.id,
           name: "カルーセル",
           type: "carousel",
-          theme: { mode: "light", brandColor: DEFAULT_BRAND_COLOR, showRating: true, showAvatar: false, showDate: false, maxItems: 10, autoplay: true },
+          theme: {
+            mode: "light",
+            brandColor: DEFAULT_BRAND_COLOR,
+            showRating: true,
+            showAvatar: false,
+            showDate: false,
+            maxItems: 10,
+            autoplay: true,
+          },
           filter_min_rating: 1,
           only_featured: false,
         })
@@ -176,7 +226,9 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
       setWidgetId(widget.id);
       setStep(2);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。");
+      setError(
+        e instanceof Error ? e.message : "セットアップに失敗しました。もう一度お試しください。"
+      );
     } finally {
       setCreating(false);
     }
@@ -224,7 +276,6 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
 
   return (
     <StepCard step={step} header={header}>
-
       {/* Step 1: Google口コミ取り込み */}
       {step === 1 && (
         <GoogleImportStep
@@ -242,9 +293,7 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
                 disabled={selectedReviews.length === 0 || creating}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 cursor-pointer"
               >
-                {selectedReviews.length > 0
-                  ? `${selectedReviews.length}件を取り込む`
-                  : "取り込む"}
+                {selectedReviews.length > 0 ? `${selectedReviews.length}件を取り込む` : "取り込む"}
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -259,7 +308,13 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
             <div className="relative mx-auto w-16 h-16 mb-4">
               <div className="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-30" />
               <div className="relative w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg
+                  className="w-8 h-8 text-indigo-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -306,7 +361,8 @@ export default function OnboardingClient({ workspace, betaUserCount = 0 }: { wor
               onClick={() => setStep(1)}
               className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 cursor-pointer"
             >
-              <ArrowLeft size={14} />戻る
+              <ArrowLeft size={14} />
+              戻る
             </button>
           </div>
         </div>

@@ -10,7 +10,16 @@ import type { SalonPageRow, SalonPageLinkRow, TestimonialRow } from "@/types/dat
 
 type TestimonialPick = Pick<
   TestimonialRow,
-  "id" | "name" | "title" | "company" | "avatar_url" | "rating" | "content" | "before_story" | "is_featured" | "submitted_at"
+  | "id"
+  | "name"
+  | "title"
+  | "company"
+  | "avatar_url"
+  | "rating"
+  | "content"
+  | "before_story"
+  | "is_featured"
+  | "submitted_at"
 >;
 
 const baseSalonPage: SalonPageRow = {
@@ -37,8 +46,24 @@ const baseSalonPage: SalonPageRow = {
 };
 
 const baseLinks: SalonPageLinkRow[] = [
-  { id: "l-1", salon_page_id: "sp-1", label: "LINE", url: "https://lin.ee/xxx", icon: "line", display_order: 0, created_at: "2026-01-01T00:00:00Z" },
-  { id: "l-2", salon_page_id: "sp-1", label: "Web", url: "https://example.com", icon: "web", display_order: 1, created_at: "2026-01-01T00:00:00Z" },
+  {
+    id: "l-1",
+    salon_page_id: "sp-1",
+    label: "LINE",
+    url: "https://lin.ee/xxx",
+    icon: "line",
+    display_order: 0,
+    created_at: "2026-01-01T00:00:00Z",
+  },
+  {
+    id: "l-2",
+    salon_page_id: "sp-1",
+    label: "Web",
+    url: "https://example.com",
+    icon: "web",
+    display_order: 1,
+    created_at: "2026-01-01T00:00:00Z",
+  },
 ];
 
 function makeTestimonials(count: number): TestimonialPick[] {
@@ -56,13 +81,23 @@ function makeTestimonials(count: number): TestimonialPick[] {
   }));
 }
 
-function renderPage(overrides: Partial<SalonPageRow> = {}, testimonials?: TestimonialPick[], links = baseLinks) {
+function renderPage(
+  overrides: Partial<SalonPageRow> = {},
+  testimonials?: TestimonialPick[],
+  links = baseLinks
+) {
   const salonPage = { ...baseSalonPage, ...overrides };
   const t = testimonials ?? makeTestimonials(2);
   const totalCount = t.length;
   const avgRating = totalCount > 0 ? t.reduce((s, x) => s + (x.rating ?? 0), 0) / totalCount : 0;
   return render(
-    <SalonPageClient salonPage={salonPage} links={links} testimonials={t} avgRating={avgRating} totalCount={totalCount} />
+    <SalonPageClient
+      salonPage={salonPage}
+      links={links}
+      testimonials={t}
+      avgRating={avgRating}
+      totalCount={totalCount}
+    />
   );
 }
 
@@ -113,7 +148,10 @@ describe("カバー画像", () => {
   });
 
   it("cover_image_positionがobject-positionに反映される", () => {
-    const { container } = renderPage({ cover_image_url: "https://example.com/cover.jpg", cover_image_position: 25 });
+    const { container } = renderPage({
+      cover_image_url: "https://example.com/cover.jpg",
+      cover_image_position: 25,
+    });
     const img = container.querySelector('img[alt=""]');
     expect(img).toBeInstanceOf(HTMLImageElement);
     if (!(img instanceof HTMLImageElement)) throw new Error("cover img not rendered");
@@ -350,67 +388,58 @@ describe("アクセス", () => {
 // ─── listレイアウト（ReviewListItem） ───
 describe("listレイアウトの詳細", () => {
   it("名前が空の場合「匿名」が表示される", () => {
-    renderPage(
-      { review_layout: "list" },
-      [
-        {
-          id: "t-anon",
-          name: "",
-          title: null,
-          company: null,
-          avatar_url: null,
-          rating: 5,
-          content: "よかった",
-          before_story: null,
-          is_featured: false,
-          submitted_at: "2026-04-01T00:00:00Z",
-        },
-      ]
-    );
+    renderPage({ review_layout: "list" }, [
+      {
+        id: "t-anon",
+        name: "",
+        title: null,
+        company: null,
+        avatar_url: null,
+        rating: 5,
+        content: "よかった",
+        before_story: null,
+        is_featured: false,
+        submitted_at: "2026-04-01T00:00:00Z",
+      },
+    ]);
     expect(screen.getByText("匿名")).toBeInTheDocument();
     expect(screen.getByText("よかった")).toBeInTheDocument();
   });
 
   it("ratingがnullでも表示が崩れない", () => {
-    renderPage(
-      { review_layout: "list" },
-      [
-        {
-          id: "t-norating",
-          name: "顧客A",
-          title: null,
-          company: null,
-          avatar_url: null,
-          rating: null,
-          content: "感想",
-          before_story: null,
-          is_featured: false,
-          submitted_at: "2026-04-01T00:00:00Z",
-        },
-      ]
-    );
+    renderPage({ review_layout: "list" }, [
+      {
+        id: "t-norating",
+        name: "顧客A",
+        title: null,
+        company: null,
+        avatar_url: null,
+        rating: null,
+        content: "感想",
+        before_story: null,
+        is_featured: false,
+        submitted_at: "2026-04-01T00:00:00Z",
+      },
+    ]);
     expect(screen.getByText("顧客A")).toBeInTheDocument();
     expect(screen.getByText("感想")).toBeInTheDocument();
   });
 
   it("contentがない場合は本文が表示されない", () => {
-    renderPage(
-      { review_layout: "list" },
-      [
-        {
-          id: "t-nocontent",
-          name: "顧客B",
-          title: null,
-          company: null,
-          avatar_url: null,
-          rating: 4,
-          content: "",
-          before_story: null,
-          is_featured: false,
-          submitted_at: "2026-04-01T00:00:00Z",
-        },
-      ]
-    );
+    renderPage({ review_layout: "list" }, [
+      {
+        id: "t-nocontent",
+        name: "顧客B",
+        title: null,
+        company: null,
+        avatar_url: null,
+        rating: 4,
+        content: "",
+        before_story: null,
+        is_featured: false,
+        submitted_at: "2026-04-01T00:00:00Z",
+      },
+    ]);
     expect(screen.getByText("顧客B")).toBeInTheDocument();
   });
 });

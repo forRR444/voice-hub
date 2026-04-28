@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import {
-  generateTestimonialImage,
-  TemplateSize,
-} from "@/lib/canvas-image-generator";
+import { generateTestimonialImage, TemplateSize } from "@/lib/canvas-image-generator";
 import { TestimonialWithTags } from "@/types/database";
 import { SNS_TEMPLATE_OPTIONS } from "@/lib/constants";
 
@@ -13,7 +10,11 @@ type SnsImagePreviewProps = {
   testimonial: TestimonialWithTags;
   brandColor: string;
   initialTemplate?: TemplateSize;
-  footer?: (opts: { previewUrl: string | null; generating: boolean; selectedTemplate: TemplateSize }) => React.ReactNode;
+  footer?: (opts: {
+    previewUrl: string | null;
+    generating: boolean;
+    selectedTemplate: TemplateSize;
+  }) => React.ReactNode;
 };
 
 export default function SnsImagePreview({
@@ -85,7 +86,9 @@ export default function SnsImagePreview({
       </div>
 
       {/* Preview area */}
-      <div className={`flex items-center justify-center bg-foreground/5 rounded-lg max-h-[250px] sm:max-h-[400px] min-h-[150px] sm:min-h-[200px] overflow-hidden${footer ? " mb-4" : ""}`}>
+      <div
+        className={`flex items-center justify-center bg-foreground/5 rounded-lg max-h-[250px] sm:max-h-[400px] min-h-[150px] sm:min-h-[200px] overflow-hidden${footer ? " mb-4" : ""}`}
+      >
         {generating ? (
           <Loader2 size={32} className="animate-spin text-foreground/30" />
         ) : previewUrl ? (

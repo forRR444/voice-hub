@@ -3,7 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Code, ImageIcon, Store, Settings, MessageSquare, ExternalLink, Crown } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  Code,
+  ImageIcon,
+  Store,
+  Settings,
+  MessageSquare,
+  ExternalLink,
+  Crown,
+} from "lucide-react";
 import { slate, muted, brand } from "@/lib/theme-tokens";
 import { getEffectivePlan } from "@/lib/plan";
 import type { SubscriptionStatus } from "@/types/database";
@@ -16,7 +26,11 @@ const navItems = [
   { href: "/dashboard/salon-page", label: "サロンページ", icon: Store },
 ];
 
-export function SidebarContent({ subscriptionStatus = "free" }: { subscriptionStatus?: SubscriptionStatus }) {
+export function SidebarContent({
+  subscriptionStatus = "free",
+}: {
+  subscriptionStatus?: SubscriptionStatus;
+}) {
   const pathname = usePathname();
   const plan = getEffectivePlan(subscriptionStatus);
 
@@ -28,9 +42,21 @@ export function SidebarContent({ subscriptionStatus = "free" }: { subscriptionSt
   return (
     <div className="flex flex-col h-full" style={{ background: "#F7F8F9" }}>
       <div className="px-4 py-3.5" style={{ borderBottom: "1px solid rgba(227,232,238,0.5)" }}>
-        <Link href="/dashboard" className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80">
-          <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
-          <span className="text-lg font-bold" style={{ color: brand, letterSpacing: "-0.022em" }}>VoiceHub</span>
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80"
+        >
+          <Image
+            src="/logo-icon.png"
+            alt=""
+            width={1047}
+            height={1267}
+            priority
+            className="h-7 w-auto"
+          />
+          <span className="text-lg font-bold" style={{ color: brand, letterSpacing: "-0.022em" }}>
+            VoiceHub
+          </span>
         </Link>
       </div>
 

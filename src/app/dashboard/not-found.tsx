@@ -4,9 +4,7 @@ export default function DashboardNotFound() {
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-24">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">
-          お探しの項目が見つかりません
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">お探しの項目が見つかりません</h1>
         <div className="mt-8">
           <Link
             href="/dashboard"

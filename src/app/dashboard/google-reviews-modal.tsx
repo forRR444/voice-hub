@@ -27,17 +27,21 @@ export default function GoogleReviewsModal({
     setImportError("");
     setImportResult(null);
 
-    const rows = mapGoogleReviewsToRows(selectedReviews, workspaceId, { status: "pending", includeSourceId: true });
+    const rows = mapGoogleReviewsToRows(selectedReviews, workspaceId, {
+      status: "pending",
+      includeSourceId: true,
+    });
 
     // 既存のsource_idを取得して重複を除外
     const sourceIds = rows.map((r) => r.source_id).filter(Boolean);
-    const { data: existing } = sourceIds.length > 0
-      ? await supabase
-          .from("testimonials")
-          .select("source_id")
-          .eq("workspace_id", workspaceId)
-          .in("source_id", sourceIds)
-      : { data: [] };
+    const { data: existing } =
+      sourceIds.length > 0
+        ? await supabase
+            .from("testimonials")
+            .select("source_id")
+            .eq("workspace_id", workspaceId)
+            .in("source_id", sourceIds)
+        : { data: [] };
 
     const existingIds = new Set((existing ?? []).map((e: { source_id: string }) => e.source_id));
     const newRows = rows.filter((r) => !r.source_id || !existingIds.has(r.source_id));
@@ -69,7 +73,11 @@ export default function GoogleReviewsModal({
   }
 
   return (
-    <Modal title="Google口コミをインポート" onClose={onClose} className="max-h-[90vh] flex flex-col">
+    <Modal
+      title="Google口コミをインポート"
+      onClose={onClose}
+      className="max-h-[90vh] flex flex-col"
+    >
       {importError && (
         <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg shrink-0">
           {importError}
@@ -79,7 +87,8 @@ export default function GoogleReviewsModal({
       {importResult && (
         <div className="mb-4 text-sm bg-green-50 text-green-700 p-3 rounded-lg shrink-0">
           {importResult.added}件を追加しました
-          {importResult.skipped > 0 && `（${importResult.skipped}件はすでにインポート済みのためスキップ）`}
+          {importResult.skipped > 0 &&
+            `（${importResult.skipped}件はすでにインポート済みのためスキップ）`}
         </div>
       )}
 

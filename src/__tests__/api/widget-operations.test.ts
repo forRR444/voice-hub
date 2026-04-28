@@ -51,9 +51,7 @@ describe("ウィジェット編集", () => {
     });
 
     const builder = mockSupabase.from("widgets");
-    await (builder as any)
-      .update({ name: "新しい名前" })
-      .eq("id", SAMPLE_WIDGET.id);
+    await (builder as any).update({ name: "新しい名前" }).eq("id", SAMPLE_WIDGET.id);
 
     expect(mockSupabase.from).toHaveBeenCalledWith("widgets");
     const updateCall = (builder as any).update.mock.calls[0][0];
@@ -102,9 +100,7 @@ describe("ウィジェット編集", () => {
     });
 
     const builder = mockSupabase.from("widgets");
-    await (builder as any)
-      .update({ theme: newTheme })
-      .eq("id", SAMPLE_WIDGET.id);
+    await (builder as any).update({ theme: newTheme }).eq("id", SAMPLE_WIDGET.id);
 
     const updateCall = (builder as any).update.mock.calls[0][0];
     expect(updateCall.theme.mode).toBe("dark");
@@ -175,19 +171,14 @@ describe("ウィジェット削除", () => {
     const error = { message: "delete failed" };
 
     // エラーの場合はフィルタしない
-    const updatedWidgets = error
-      ? widgets
-      : widgets.filter((w) => w.id !== SAMPLE_WIDGET.id);
+    const updatedWidgets = error ? widgets : widgets.filter((w) => w.id !== SAMPLE_WIDGET.id);
 
     expect(updatedWidgets).toHaveLength(1);
     expect(updatedWidgets[0].id).toBe(SAMPLE_WIDGET.id);
   });
 
   it("削除成功時にウィジェットリストからIDが除外される", () => {
-    const widgets = [
-      SAMPLE_WIDGET,
-      { ...SAMPLE_WIDGET, id: "w-2", name: "別のウィジェット" },
-    ];
+    const widgets = [SAMPLE_WIDGET, { ...SAMPLE_WIDGET, id: "w-2", name: "別のウィジェット" }];
 
     const updatedWidgets = widgets.filter((w) => w.id !== SAMPLE_WIDGET.id);
 
@@ -300,18 +291,15 @@ describe("showBadgeロジック", () => {
     ["pro", false],
     ["canceled", true],
     [undefined, true],
-  ])(
-    "subscription_status '%s' のときshowBadgeは%s",
-    (status, expected) => {
-      const showBadge = (status ?? "free") === "free" || (status !== "pro");
-      // 実際のロジック: workspace?.subscription_status === "free"
-      const actualLogic = status === "free";
-      // freeの場合のみtrue
-      if (status === "free") {
-        expect(actualLogic).toBe(true);
-      } else if (status === "pro") {
-        expect(actualLogic).toBe(false);
-      }
+  ])("subscription_status '%s' のときshowBadgeは%s", (status, expected) => {
+    const showBadge = (status ?? "free") === "free" || status !== "pro";
+    // 実際のロジック: workspace?.subscription_status === "free"
+    const actualLogic = status === "free";
+    // freeの場合のみtrue
+    if (status === "free") {
+      expect(actualLogic).toBe(true);
+    } else if (status === "pro") {
+      expect(actualLogic).toBe(false);
     }
-  );
+  });
 });

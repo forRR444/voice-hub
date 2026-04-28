@@ -52,15 +52,12 @@ beforeEach(() => {
 describe("updateSession middleware", () => {
   // ─── Public paths ────────────────────────────────────────────────
 
-  it.each(["/", "/terms", "/privacy"])(
-    "公開ページ %s はauth checkをスキップする",
-    async (path) => {
-      const { updateSession } = await import("@/lib/supabase/middleware");
-      await updateSession(makeNextRequest(path) as never);
+  it.each(["/", "/terms", "/privacy"])("公開ページ %s はauth checkをスキップする", async (path) => {
+    const { updateSession } = await import("@/lib/supabase/middleware");
+    await updateSession(makeNextRequest(path) as never);
 
-      expect(mockGetUser).not.toHaveBeenCalled();
-    }
-  );
+    expect(mockGetUser).not.toHaveBeenCalled();
+  });
 
   // ─── Protected routes (unauthenticated) ──────────────────────────
 
@@ -199,10 +196,7 @@ function getCookiesHandler(): CookiesHandler {
   return cookies;
 }
 
-function makeNextRequestWithCookies(
-  pathname: string,
-  initialCookies: CookieEntry[] = []
-) {
+function makeNextRequestWithCookies(pathname: string, initialCookies: CookieEntry[] = []) {
   const url = new URL(`http://localhost:3001${pathname}`);
   return {
     nextUrl: {

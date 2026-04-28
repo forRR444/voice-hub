@@ -26,9 +26,15 @@ export default function LoginClient() {
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
     const emailErr = validateEmail(email);
-    if (emailErr) { setError(emailErr); return; }
+    if (emailErr) {
+      setError(emailErr);
+      return;
+    }
     const passErr = validatePassword(password);
-    if (passErr) { setError(passErr); return; }
+    if (passErr) {
+      setError(passErr);
+      return;
+    }
 
     setLoading("email");
     setError(null);
@@ -47,15 +53,28 @@ export default function LoginClient() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity">
-            <Image src="/logo-icon.png" alt="" width={1047} height={1267} priority className="h-7 w-auto" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-lg font-bold text-[var(--brand)] hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={1047}
+              height={1267}
+              priority
+              className="h-7 w-auto"
+            />
             VoiceHub
           </Link>
           <div className="mt-4 flex gap-12 justify-center border-b border-foreground/10">
             <span className="pb-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600">
               ログイン
             </span>
-            <Link href="/signup" className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors">
+            <Link
+              href="/signup"
+              className="pb-2 text-sm font-medium text-foreground/40 hover:text-foreground/60 transition-colors"
+            >
               新規登録
             </Link>
           </div>
@@ -65,7 +84,10 @@ export default function LoginClient() {
           {showEmailForm ? (
             <>
               <button
-                onClick={() => { setShowEmailForm(false); setError(null); }}
+                onClick={() => {
+                  setShowEmailForm(false);
+                  setError(null);
+                }}
                 className="flex items-center gap-1.5 text-sm text-foreground/50 hover:text-foreground/70 transition-colors cursor-pointer"
               >
                 <ArrowLeft size={14} />
@@ -119,22 +141,28 @@ export default function LoginClient() {
             </>
           )}
 
-          <p className="text-center text-xs text-foreground/40">
-            クレジットカード不要
-          </p>
+          <p className="text-center text-xs text-foreground/40">クレジットカード不要</p>
 
-          {error && (
-            <p className="text-center text-xs text-red-500">{error}</p>
-          )}
+          {error && <p className="text-center text-xs text-red-500">{error}</p>}
         </div>
 
         <div className="text-center space-y-2">
           <p className="text-sm text-foreground/60">
             アカウントをお持ちでない方は
-            <Link href="/signup" className="text-indigo-600 hover:underline ml-1">新規登録</Link>
+            <Link href="/signup" className="text-indigo-600 hover:underline ml-1">
+              新規登録
+            </Link>
           </p>
           <p className="text-xs text-foreground/30">
-            登録することで<Link href="/terms" className="text-indigo-600 hover:underline">利用規約</Link>と<Link href="/privacy" className="text-indigo-600 hover:underline">プライバシーポリシー</Link>に同意したものとみなされます
+            登録することで
+            <Link href="/terms" className="text-indigo-600 hover:underline">
+              利用規約
+            </Link>
+            と
+            <Link href="/privacy" className="text-indigo-600 hover:underline">
+              プライバシーポリシー
+            </Link>
+            に同意したものとみなされます
           </p>
         </div>
       </div>

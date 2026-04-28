@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  createMockQueryBuilder,
-  makeRequest,
-  type QueryResult,
-} from "../helpers/mock-supabase";
+import { createMockQueryBuilder, makeRequest, type QueryResult } from "../helpers/mock-supabase";
 
 // ---------------------------------------------------------------------------
 // Module mocks
@@ -18,10 +14,7 @@ vi.mock("@/lib/supabase/server", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function createAuthedSupabase(
-  user: { id: string } | null,
-  workspaceResult?: QueryResult,
-) {
+function createAuthedSupabase(user: { id: string } | null, workspaceResult?: QueryResult) {
   return {
     auth: {
       getUser: vi.fn().mockResolvedValue({
@@ -29,9 +22,7 @@ function createAuthedSupabase(
         error: user ? null : { message: "Not authenticated" },
       }),
     },
-    from: vi.fn(() =>
-      createMockQueryBuilder(workspaceResult ?? { data: null, error: null }),
-    ),
+    from: vi.fn(() => createMockQueryBuilder(workspaceResult ?? { data: null, error: null })),
   };
 }
 
@@ -59,9 +50,7 @@ describe("requireUser", () => {
   });
 
   it("getUser が user を返す場合 ok:true を返す", async () => {
-    mockCreateServerClient.mockResolvedValue(
-      createAuthedSupabase({ id: "user-1" }),
-    );
+    mockCreateServerClient.mockResolvedValue(createAuthedSupabase({ id: "user-1" }));
 
     const { requireUser } = await import("@/lib/api-auth");
     const result = await requireUser();
@@ -87,7 +76,7 @@ describe("requireAuthAndWorkspace", () => {
 
   it("workspaces.select が null の場合 404 Workspace not found を返す", async () => {
     mockCreateServerClient.mockResolvedValue(
-      createAuthedSupabase({ id: "user-1" }, { data: null, error: null }),
+      createAuthedSupabase({ id: "user-1" }, { data: null, error: null })
     );
 
     const { requireAuthAndWorkspace } = await import("@/lib/api-auth");
@@ -102,10 +91,7 @@ describe("requireAuthAndWorkspace", () => {
 
   it("正常系では ok:true と workspace.id を返す", async () => {
     mockCreateServerClient.mockResolvedValue(
-      createAuthedSupabase(
-        { id: "user-1" },
-        { data: { id: "ws-1" }, error: null },
-      ),
+      createAuthedSupabase({ id: "user-1" }, { data: { id: "ws-1" }, error: null })
     );
 
     const { requireAuthAndWorkspace } = await import("@/lib/api-auth");
@@ -126,13 +112,11 @@ describe("requireAuthAndWorkspaceWithSubscription", () => {
         {
           data: { id: "ws-1", subscription_status: "pro" },
           error: null,
-        },
-      ),
+        }
+      )
     );
 
-    const { requireAuthAndWorkspaceWithSubscription } = await import(
-      "@/lib/api-auth"
-    );
+    const { requireAuthAndWorkspaceWithSubscription } = await import("@/lib/api-auth");
     const result = await requireAuthAndWorkspaceWithSubscription();
 
     expect(result.ok).toBe(true);
@@ -155,10 +139,7 @@ describe("requireAuthAndWorkspaceFull", () => {
       created_at: "2026-01-01T00:00:00.000Z",
     };
     mockCreateServerClient.mockResolvedValue(
-      createAuthedSupabase(
-        { id: "user-1" },
-        { data: fullWorkspace, error: null },
-      ),
+      createAuthedSupabase({ id: "user-1" }, { data: fullWorkspace, error: null })
     );
 
     const { requireAuthAndWorkspaceFull } = await import("@/lib/api-auth");
@@ -189,10 +170,7 @@ describe("createWorkspaceDeleteHandler", () => {
 
   it("id が不足している場合は 400 を返す", async () => {
     mockCreateServerClient.mockResolvedValue(
-      createAuthedSupabase(
-        { id: "user-1" },
-        { data: { id: "ws-1" }, error: null },
-      ),
+      createAuthedSupabase({ id: "user-1" }, { data: { id: "ws-1" }, error: null })
     );
 
     const { createWorkspaceDeleteHandler } = await import("@/lib/api-auth");
@@ -223,9 +201,7 @@ describe("createWorkspaceDeleteHandler", () => {
           error: null,
         }),
       },
-      from: vi.fn((table: string) =>
-        table === "workspaces" ? workspaceBuilder : formsBuilder,
-      ),
+      from: vi.fn((table: string) => (table === "workspaces" ? workspaceBuilder : formsBuilder)),
     };
     mockCreateServerClient.mockResolvedValue(supabase);
 
@@ -260,9 +236,7 @@ describe("createWorkspaceDeleteHandler", () => {
           error: null,
         }),
       },
-      from: vi.fn((table: string) =>
-        table === "workspaces" ? workspaceBuilder : formsBuilder,
-      ),
+      from: vi.fn((table: string) => (table === "workspaces" ? workspaceBuilder : formsBuilder)),
     };
     mockCreateServerClient.mockResolvedValue(supabase);
 

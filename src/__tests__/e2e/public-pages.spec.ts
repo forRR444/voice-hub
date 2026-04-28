@@ -74,7 +74,9 @@ test.describe("パスワードリセットページ 補完", () => {
     // 回避する（fill 前に setAttribute すると React の再レンダリングで type="email" に戻るため）。
     // これでカスタムの validateEmail() ロジックのみを検証できる。
     await emailInput.fill("invalid-email");
-    await emailInput.evaluate((el: HTMLInputElement) => { el.setAttribute("type", "text"); });
+    await emailInput.evaluate((el: HTMLInputElement) => {
+      el.setAttribute("type", "text");
+    });
     await page.getByRole("button", { name: "リセットメールを送信" }).click();
     await expect(page.getByText("メールアドレスの形式が正しくありません")).toBeVisible();
   });
@@ -91,7 +93,9 @@ test.describe("/try ページ 補完", () => {
     await expect(page.getByText("your-salon.com")).toBeVisible();
   });
 
-  test("『無料で登録してサイトに貼り付ける』CTAクリックで /signup?from=try に遷移する", async ({ page }) => {
+  test("『無料で登録してサイトに貼り付ける』CTAクリックで /signup?from=try に遷移する", async ({
+    page,
+  }) => {
     const cta = page.getByRole("link", { name: "無料で登録してサイトに貼り付ける" });
     await expect(cta).toBeVisible();
     await cta.click();

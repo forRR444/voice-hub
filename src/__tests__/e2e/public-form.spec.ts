@@ -116,7 +116,9 @@ test.describe("公開フォーム", () => {
     test("プログレスバーが表示される", async ({ page }) => {
       await page.goto("/form/tanaka-coaching", { waitUntil: "networkidle" });
       // プログレスバーの親コンテナが存在する
-      await expect(page.locator('[class*="bg-gray-100"]').or(page.locator('[class*="rounded-full"]')).first()).toBeVisible();
+      await expect(
+        page.locator('[class*="bg-gray-100"]').or(page.locator('[class*="rounded-full"]')).first()
+      ).toBeVisible();
     });
   });
 });

@@ -38,8 +38,7 @@ function isTryDataValid(raw: string): boolean {
   try {
     const parsed = JSON.parse(raw);
     const savedAt = new Date(parsed.savedAt);
-    const daysOld =
-      (Date.now() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
+    const daysOld = (Date.now() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
     return daysOld < 7 && Array.isArray(parsed.questions);
   } catch {
     return false;
@@ -298,8 +297,7 @@ describe("フォームプレビュー", () => {
       description: null,
       brand_color: brandColor,
       logo_url: null,
-      thank_you_message:
-        "ご回答ありがとうございました！（これはプレビューです）",
+      thank_you_message: "ご回答ありがとうございました！（これはプレビューです）",
       questions: questions.filter((q) => q.enabled !== false),
       created_at: new Date().toISOString(),
     };

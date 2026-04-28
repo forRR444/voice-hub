@@ -89,8 +89,19 @@ describe("フォーム編集", () => {
 
   it.each([
     ["title", { title: "New Title" }],
-    ["brand_color", { title: "Test", description: null, brand_color: "#ff0000", thank_you_message: "Thanks" }],
-    ["thank_you_message", { title: "Test", description: null, brand_color: "#635BFF", thank_you_message: "新しいサンクスメッセージ" }],
+    [
+      "brand_color",
+      { title: "Test", description: null, brand_color: "#ff0000", thank_you_message: "Thanks" },
+    ],
+    [
+      "thank_you_message",
+      {
+        title: "Test",
+        description: null,
+        brand_color: "#635BFF",
+        thank_you_message: "新しいサンクスメッセージ",
+      },
+    ],
   ])("%s をSupabase updateで更新する", async (_field, editForm) => {
     mockSupabase = createMockSupabase({
       forms: { data: null, error: null },
@@ -116,7 +127,12 @@ describe("フォーム編集", () => {
 describe("フォームURLコピー", () => {
   it.each([
     ["localhost（デフォルト）", undefined, undefined, "http://localhost:3001/form/testslug"],
-    ["本番ドメイン", "https://voicehub.example.com", undefined, "https://voicehub.example.com/form/testslug"],
+    [
+      "本番ドメイン",
+      "https://voicehub.example.com",
+      undefined,
+      "https://voicehub.example.com/form/testslug",
+    ],
     ["VERCEL_URL", undefined, "my-app.vercel.app", "https://my-app.vercel.app/form/testslug"],
   ])("%s のURLを正しく生成する", (_label, appUrl, vercelUrl, expected) => {
     const origApp = process.env.NEXT_PUBLIC_APP_URL;
@@ -300,11 +316,8 @@ describe("プラン制限の適用", () => {
     ["free", "free"],
     ["canceled", "free"],
     ["", "free"],
-  ])(
-    "subscriptionStatus '%s' からプラン '%s' が決定される",
-    (status, expected) => {
-      const plan = status === "pro" ? "pro" : "free";
-      expect(plan).toBe(expected);
-    }
-  );
+  ])("subscriptionStatus '%s' からプラン '%s' が決定される", (status, expected) => {
+    const plan = status === "pro" ? "pro" : "free";
+    expect(plan).toBe(expected);
+  });
 });

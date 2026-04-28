@@ -11,7 +11,9 @@ export default function UpgradeModal() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    function handleOpen() { setOpen(true); }
+    function handleOpen() {
+      setOpen(true);
+    }
     window.addEventListener("open-upgrade-modal", handleOpen);
     return () => window.removeEventListener("open-upgrade-modal", handleOpen);
   }, []);
@@ -37,8 +39,14 @@ export default function UpgradeModal() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50" onClick={() => setOpen(false)}>
-      <div className="bg-[var(--plate)] rounded-t-xl sm:rounded-xl shadow-sm w-full max-w-2xl sm:mx-4 p-4 sm:p-8" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="bg-[var(--plate)] rounded-t-xl sm:rounded-xl shadow-sm w-full max-w-2xl sm:mx-4 p-4 sm:p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -69,9 +77,7 @@ export default function UpgradeModal() {
           />
         </div>
 
-        <p className="text-xs text-[var(--slate)] text-center mt-4">
-          いつでもキャンセル可能です。
-        </p>
+        <p className="text-xs text-[var(--slate)] text-center mt-4">いつでもキャンセル可能です。</p>
       </div>
     </div>
   );

@@ -18,22 +18,20 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   if (!salonPage) {
     return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#F7F8F9",
-            fontSize: 32,
-            color: "#1A1F36",
-          }}
-        >
-          VoiceHub
-        </div>
-      ),
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#F7F8F9",
+          fontSize: 32,
+          color: "#1A1F36",
+        }}
+      >
+        VoiceHub
+      </div>,
       { ...size }
     );
   }
@@ -41,22 +39,24 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { data: stats } = await supabase
     .from("testimonials")
     .select("rating")
-    .eq("workspace_id", (
-      await supabase
-        .from("salon_pages")
-        .select("workspace_id")
-        .eq("slug", slug)
-        .single()
-    ).data?.workspace_id ?? "")
+    .eq(
+      "workspace_id",
+      (await supabase.from("salon_pages").select("workspace_id").eq("slug", slug).single()).data
+        ?.workspace_id ?? ""
+    )
     .eq("status", "approved")
     .not("source", "in", '("sample","guide")');
 
   const testimonials = stats ?? [];
   const count = testimonials.length;
   const rated = testimonials.filter((t) => (t as { rating: number | null }).rating != null);
-  const avg = rated.length > 0
-    ? (rated.reduce((s, t) => s + ((t as { rating: number | null }).rating ?? 0), 0) / rated.length).toFixed(1)
-    : "0.0";
+  const avg =
+    rated.length > 0
+      ? (
+          rated.reduce((s, t) => s + ((t as { rating: number | null }).rating ?? 0), 0) /
+          rated.length
+        ).toFixed(1)
+      : "0.0";
 
   const accent = salonPage.accent_color || "#635BFF";
 
@@ -65,59 +65,55 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   ).join("");
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#FFFCF9",
+        padding: 60,
+      }}
+    >
       <div
         style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#FFFCF9",
-          padding: 60,
+          fontSize: 40,
+          fontWeight: 700,
+          color: "#1A1F36",
+          marginBottom: 16,
         }}
       >
-        <div
-          style={{
-            fontSize: 40,
-            fontWeight: 700,
-            color: "#1A1F36",
-            marginBottom: 16,
-          }}
-        >
-          {salonPage.salon_name}
-        </div>
-        {salonPage.tagline && (
-          <div
-            style={{
-              fontSize: 20,
-              color: "#4F566B",
-              marginBottom: 24,
-            }}
-          >
-            {salonPage.tagline}
-          </div>
-        )}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-          <span style={{ fontSize: 32, color: accent, letterSpacing: 2 }}>{stars}</span>
-          <span style={{ fontSize: 32, fontWeight: 700, color: "#1A1F36" }}>{avg}</span>
-        </div>
-        <div style={{ fontSize: 18, color: "#4F566B" }}>
-          お客様の声 {count}件
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: 30,
-            fontSize: 14,
-            color: "#A3ACB9",
-          }}
-        >
-          Powered by VoiceHub
-        </div>
+        {salonPage.salon_name}
       </div>
-    ),
+      {salonPage.tagline && (
+        <div
+          style={{
+            fontSize: 20,
+            color: "#4F566B",
+            marginBottom: 24,
+          }}
+        >
+          {salonPage.tagline}
+        </div>
+      )}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+        <span style={{ fontSize: 32, color: accent, letterSpacing: 2 }}>{stars}</span>
+        <span style={{ fontSize: 32, fontWeight: 700, color: "#1A1F36" }}>{avg}</span>
+      </div>
+      <div style={{ fontSize: 18, color: "#4F566B" }}>お客様の声 {count}件</div>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 30,
+          fontSize: 14,
+          color: "#A3ACB9",
+        }}
+      >
+        Powered by VoiceHub
+      </div>
+    </div>,
     { ...size }
   );
 }

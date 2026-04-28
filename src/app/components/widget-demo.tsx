@@ -6,15 +6,68 @@ import { DEFAULT_BRAND_COLOR, WIDGET_TYPES } from "@/lib/constants";
 const DEMO_WIDGET_TYPES = WIDGET_TYPES.map((w) => ({ label: w.label, type: w.id }));
 
 const SAMPLE_DATA = [
-  { name: "田中 美咲", title: "ライフコーチ", rating: 5, content: "コーチングを受けてから売上が大幅に伸びました。最初は半信半疑でしたが、3ヶ月のプログラムを通じて自分のビジネスの課題が明確になり、具体的なアクションプランを立てることができました。特に集客の仕組み化についてのアドバイスが的確で、毎月の売上が安定するようになりました。本当に感謝しています。" },
-  { name: "佐藤 健一", title: "フリーランスデザイナー", rating: 5, content: "自分の強みが明確になり、自信を持って活動できるようになりました。以前は価格設定にも悩んでいましたが、自分の価値を正しく理解できるようになってからは、適正価格で受注できるようになり、収入も大幅にアップしました。" },
-  { name: "山本 あかり", title: "ヨガインストラクター", rating: 4, content: "集客の悩みが解消されて、レッスンの予約が増えました。SNSの活用法やリピーターを増やすコツを教えていただき、今では予約が埋まるほどの人気クラスになりました。生徒さんからも「先生のクラスが一番好き」と言ってもらえるようになり、やりがいを感じています。" },
-  { name: "鈴木 大輔", title: "コンサルタント", rating: 5, content: "ブランディングの方向性が定まり、問い合わせが3倍になりました。" },
-  { name: "高橋 真由", title: "オンライン講座運営", rating: 5, content: "受講生の声を集める仕組みができて、講座の信頼感が上がりました。VoiceHubを導入してからは、受講後のアンケートが自動化され、集まった声をそのままLPに反映できるので、新規受講生の申し込み率が格段に上がりました。" },
-  { name: "中村 裕太", title: "整体院オーナー", rating: 5, content: "口コミが自然に集まる仕組みができて、新規のお客様が毎月安定して来院されるようになりました。以前は紹介頼みでしたが、今ではホームページを見て来てくださる方が半数以上です。" },
-  { name: "伊藤 さくら", title: "カウンセラー", rating: 4, content: "クライアントの声をLP に載せたいと思っていましたが、お願いするのが苦手で後回しにしていました。フォームURLを送るだけなので、気軽にお願いできるようになりました。" },
-  { name: "渡辺 一樹", title: "Webエンジニア", rating: 5, content: "ポートフォリオにクライアントの声を載せたくて導入しました。埋め込みコードをコピペするだけで、自動で最新の声が反映されるのが最高です。デザインも綺麗で大満足です。" },
-  { name: "小林 真理", title: "エステサロン経営", rating: 5, content: "お客様から「ホームページの口コミを見て来ました」と言われることが増えました。信頼感がぐっと上がったと実感しています。操作もシンプルで助かっています。" },
+  {
+    name: "田中 美咲",
+    title: "ライフコーチ",
+    rating: 5,
+    content:
+      "コーチングを受けてから売上が大幅に伸びました。最初は半信半疑でしたが、3ヶ月のプログラムを通じて自分のビジネスの課題が明確になり、具体的なアクションプランを立てることができました。特に集客の仕組み化についてのアドバイスが的確で、毎月の売上が安定するようになりました。本当に感謝しています。",
+  },
+  {
+    name: "佐藤 健一",
+    title: "フリーランスデザイナー",
+    rating: 5,
+    content:
+      "自分の強みが明確になり、自信を持って活動できるようになりました。以前は価格設定にも悩んでいましたが、自分の価値を正しく理解できるようになってからは、適正価格で受注できるようになり、収入も大幅にアップしました。",
+  },
+  {
+    name: "山本 あかり",
+    title: "ヨガインストラクター",
+    rating: 4,
+    content:
+      "集客の悩みが解消されて、レッスンの予約が増えました。SNSの活用法やリピーターを増やすコツを教えていただき、今では予約が埋まるほどの人気クラスになりました。生徒さんからも「先生のクラスが一番好き」と言ってもらえるようになり、やりがいを感じています。",
+  },
+  {
+    name: "鈴木 大輔",
+    title: "コンサルタント",
+    rating: 5,
+    content: "ブランディングの方向性が定まり、問い合わせが3倍になりました。",
+  },
+  {
+    name: "高橋 真由",
+    title: "オンライン講座運営",
+    rating: 5,
+    content:
+      "受講生の声を集める仕組みができて、講座の信頼感が上がりました。VoiceHubを導入してからは、受講後のアンケートが自動化され、集まった声をそのままLPに反映できるので、新規受講生の申し込み率が格段に上がりました。",
+  },
+  {
+    name: "中村 裕太",
+    title: "整体院オーナー",
+    rating: 5,
+    content:
+      "口コミが自然に集まる仕組みができて、新規のお客様が毎月安定して来院されるようになりました。以前は紹介頼みでしたが、今ではホームページを見て来てくださる方が半数以上です。",
+  },
+  {
+    name: "伊藤 さくら",
+    title: "カウンセラー",
+    rating: 4,
+    content:
+      "クライアントの声をLP に載せたいと思っていましたが、お願いするのが苦手で後回しにしていました。フォームURLを送るだけなので、気軽にお願いできるようになりました。",
+  },
+  {
+    name: "渡辺 一樹",
+    title: "Webエンジニア",
+    rating: 5,
+    content:
+      "ポートフォリオにクライアントの声を載せたくて導入しました。埋め込みコードをコピペするだけで、自動で最新の声が反映されるのが最高です。デザインも綺麗で大満足です。",
+  },
+  {
+    name: "小林 真理",
+    title: "エステサロン経営",
+    rating: 5,
+    content:
+      "お客様から「ホームページの口コミを見て来ました」と言われることが増えました。信頼感がぐっと上がったと実感しています。操作もシンプルで助かっています。",
+  },
 ];
 
 const BRAND = DEFAULT_BRAND_COLOR;
@@ -29,31 +82,57 @@ function Stars({ rating }: { rating: number }) {
 
 function Avatar({ name }: { name: string }) {
   return (
-    <div style={{
-      width: 28, height: 28, borderRadius: "50%", backgroundColor: BRAND,
-      color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-      fontWeight: 700, fontSize: 12, flexShrink: 0,
-    }}>
+    <div
+      style={{
+        width: 28,
+        height: 28,
+        borderRadius: "50%",
+        backgroundColor: BRAND,
+        color: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 700,
+        fontSize: 12,
+        flexShrink: 0,
+      }}
+    >
       {name.charAt(0)}
     </div>
   );
 }
 
-function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: boolean; fill?: boolean }) {
+function Card({
+  item,
+  compact,
+  fill,
+}: {
+  item: (typeof SAMPLE_DATA)[0];
+  compact?: boolean;
+  fill?: boolean;
+}) {
   return (
     <>
       <div
         className={compact ? "demo-card-compact" : undefined}
         style={{
-          background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8,
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 8,
           ...(!compact ? { padding: 16 } : {}),
-          display: "flex", flexDirection: "column", gap: 4,
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
           ...(!compact ? { maxWidth: fill ? "none" : 300 } : {}),
-          flexShrink: 0, width: "100%",
+          flexShrink: 0,
+          width: "100%",
         }}
       >
         <Stars rating={item.rating} />
-        <p className={compact ? "demo-text" : "demo-text-full"} style={{ color: "#374151", lineHeight: 1.5, margin: 0 }}>
+        <p
+          className={compact ? "demo-text" : "demo-text-full"}
+          style={{ color: "#374151", lineHeight: 1.5, margin: 0 }}
+        >
           {item.content}
         </p>
         {compact && item.content.length > 60 && (
@@ -73,8 +152,18 @@ function Card({ item, compact, fill }: { item: typeof SAMPLE_DATA[0]; compact?: 
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
           <Avatar name={item.name} />
           <div>
-            <div className={compact ? "demo-name" : "demo-name-full"} style={{ fontWeight: 600, color: "#111827" }}>{item.name}</div>
-            <div className={compact ? "demo-title" : "demo-title-full"} style={{ color: "#6b7280" }}>{item.title}</div>
+            <div
+              className={compact ? "demo-name" : "demo-name-full"}
+              style={{ fontWeight: 600, color: "#111827" }}
+            >
+              {item.name}
+            </div>
+            <div
+              className={compact ? "demo-title" : "demo-title-full"}
+              style={{ color: "#6b7280" }}
+            >
+              {item.title}
+            </div>
           </div>
         </div>
       </div>
@@ -91,10 +180,18 @@ function CarouselDemo() {
       </div>
       <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 16 }}>
         {SAMPLE_DATA.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)} style={{
-            width: 8, height: 8, borderRadius: "50%", border: "none", cursor: "pointer",
-            background: i === idx ? BRAND : "#d1d5db",
-          }} />
+          <button
+            key={i}
+            onClick={() => setIdx(i)}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              border: "none",
+              cursor: "pointer",
+              background: i === idx ? BRAND : "#d1d5db",
+            }}
+          />
         ))}
       </div>
     </div>
@@ -114,9 +211,13 @@ function GridDemo() {
 function MarqueeDemo() {
   return (
     <div style={{ overflow: "hidden", padding: "20px 0" }}>
-      <div style={{
-        display: "flex", gap: 16, animation: "marquee-scroll 20s linear infinite",
-      }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          animation: "marquee-scroll 20s linear infinite",
+        }}
+      >
         {[...SAMPLE_DATA, ...SAMPLE_DATA].map((item, i) => (
           <Card key={i} item={item} compact />
         ))}
@@ -129,15 +230,25 @@ function DualMarqueeDemo() {
   const rowA = SAMPLE_DATA.slice(0, 3);
   const rowB = SAMPLE_DATA.slice(3);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, overflow: "hidden", padding: 20 }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", gap: 16, overflow: "hidden", padding: 20 }}
+    >
       <div style={{ overflow: "hidden" }}>
-        <div style={{ display: "flex", gap: 16, animation: "dual-marquee-left 20s linear infinite" }}>
-          {[...rowA, ...rowA].map((item, i) => <Card key={i} item={item} compact />)}
+        <div
+          style={{ display: "flex", gap: 16, animation: "dual-marquee-left 20s linear infinite" }}
+        >
+          {[...rowA, ...rowA].map((item, i) => (
+            <Card key={i} item={item} compact />
+          ))}
         </div>
       </div>
       <div style={{ overflow: "hidden" }}>
-        <div style={{ display: "flex", gap: 16, animation: "dual-marquee-right 20s linear infinite" }}>
-          {[...rowB, ...rowB].map((item, i) => <Card key={i} item={item} compact />)}
+        <div
+          style={{ display: "flex", gap: 16, animation: "dual-marquee-right 20s linear infinite" }}
+        >
+          {[...rowB, ...rowB].map((item, i) => (
+            <Card key={i} item={item} compact />
+          ))}
         </div>
       </div>
     </div>
@@ -156,15 +267,36 @@ function WallDemo() {
 
 function ListDemo() {
   return (
-    <div className="demo-list-wrap" style={{ display: "flex", flexDirection: "column", maxWidth: 480, width: "100%", margin: "0 auto" }}>
+    <div
+      className="demo-list-wrap"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: 480,
+        width: "100%",
+        margin: "0 auto",
+      }}
+    >
       {SAMPLE_DATA.slice(0, 3).map((item, i) => (
-        <div key={i} className="demo-list-item" style={{
-          background: "#fff", border: "1px solid #e5e7eb", borderLeft: `3px solid ${BRAND}`,
-          borderRadius: 8, display: "flex", flexDirection: "column",
-        }}>
+        <div
+          key={i}
+          className="demo-list-item"
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderLeft: `3px solid ${BRAND}`,
+            borderRadius: 8,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <Stars rating={item.rating} />
-          <p className="demo-text-full" style={{ color: "#374151", lineHeight: 1.6, margin: 0 }}>{item.content}</p>
-          <div className="demo-title-full" style={{ color: "#6b7280" }}>{item.name} — {item.title}</div>
+          <p className="demo-text-full" style={{ color: "#374151", lineHeight: 1.6, margin: 0 }}>
+            {item.content}
+          </p>
+          <div className="demo-title-full" style={{ color: "#6b7280" }}>
+            {item.name} — {item.title}
+          </div>
         </div>
       ))}
     </div>
@@ -174,10 +306,17 @@ function ListDemo() {
 function SingleDemo() {
   return (
     <div className="demo-single-wrap" style={{ display: "flex", justifyContent: "center" }}>
-      <div className="demo-single-card" style={{
-        background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16,
-        maxWidth: 480, width: "100%", textAlign: "center",
-      }}>
+      <div
+        className="demo-single-card"
+        style={{
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 16,
+          maxWidth: 480,
+          width: "100%",
+          textAlign: "center",
+        }}
+      >
         <Stars rating={5} />
         <p className="demo-single-text" style={{ color: "#374151", margin: 0 }}>
           {SAMPLE_DATA[0].content}
@@ -185,8 +324,12 @@ function SingleDemo() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
           <Avatar name={SAMPLE_DATA[0].name} />
           <div style={{ textAlign: "left" }}>
-            <div className="demo-name-full" style={{ fontWeight: 600, color: "#111827" }}>{SAMPLE_DATA[0].name}</div>
-            <div className="demo-title-full" style={{ color: "#6b7280" }}>{SAMPLE_DATA[0].title}</div>
+            <div className="demo-name-full" style={{ fontWeight: 600, color: "#111827" }}>
+              {SAMPLE_DATA[0].name}
+            </div>
+            <div className="demo-title-full" style={{ color: "#6b7280" }}>
+              {SAMPLE_DATA[0].title}
+            </div>
           </div>
         </div>
       </div>
@@ -198,10 +341,17 @@ function BadgeDemo() {
   const avg = SAMPLE_DATA.reduce((s, d) => s + d.rating, 0) / SAMPLE_DATA.length;
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
-      <div style={{
-        display: "inline-flex", alignItems: "center", gap: 8,
-        background: "#fff", border: "1px solid #e5e7eb", borderRadius: 999, padding: "8px 16px",
-      }}>
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          background: "#fff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 999,
+          padding: "8px 16px",
+        }}
+      >
         <span style={{ color: BRAND, fontSize: 16 }}>★</span>
         <span style={{ fontWeight: 700, color: "#111827", fontSize: 15 }}>{avg.toFixed(1)}</span>
         <span style={{ color: "#6b7280", fontSize: 13 }}>({SAMPLE_DATA.length}件)</span>

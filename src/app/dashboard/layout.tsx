@@ -11,11 +11,7 @@ import { PostHogIdentify } from "./posthog-identify";
 import { SidebarContent } from "./sidebar-content";
 import UpgradeModal from "@/app/components/upgrade-modal";
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
 
   const {
@@ -26,10 +22,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const { data: workspaces } = await supabase
-    .from("workspaces")
-    .select("*")
-    .eq("user_id", user.id);
+  const { data: workspaces } = await supabase.from("workspaces").select("*").eq("user_id", user.id);
   const workspace = workspaces?.[0] ?? null;
 
   if (workspace && !workspace.onboarding_completed) {
@@ -56,17 +49,18 @@ export default async function DashboardLayout({
           <div className="w-10 md:hidden" />
           <div />
           <div className="flex items-center gap-4">
-            <span className="text-xs hidden sm:inline" style={{ color: "#4F566B", letterSpacing: "-0.011em" }}>{user.email}</span>
+            <span
+              className="text-xs hidden sm:inline"
+              style={{ color: "#4F566B", letterSpacing: "-0.011em" }}
+            >
+              {user.email}
+            </span>
             <LogoutButton />
           </div>
         </header>
 
         {/* PostHog user identification */}
-        <PostHogIdentify
-          userId={user.id}
-          email={user.email}
-          workspaceName={workspace?.name}
-        />
+        <PostHogIdentify userId={user.id} email={user.email} workspaceName={workspace?.name} />
 
         {/* Page content */}
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>

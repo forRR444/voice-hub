@@ -48,32 +48,26 @@ export async function POST(request: Request) {
       return apiError("フォームが見つかりません", 404, "NOT_FOUND");
     }
 
-    const { error: insertError } = await supabase
-      .from("testimonials")
-      .insert({
-        workspace_id: form.workspace_id,
-        form_id: form.id,
-        rating: data.rating ?? null,
-        content: data.content ?? "",
-        before_story: data.before_story || null,
-        name: data.name ?? "",
-        title: data.title || null,
-        avatar_url: data.avatar_url || null,
-        status: "pending" as const,
-        is_featured: false,
-        permission_granted: data.permission_granted,
-        custom_fields: data.custom_fields || {},
-        source: "form",
-        submitted_at: new Date().toISOString(),
-      });
+    const { error: insertError } = await supabase.from("testimonials").insert({
+      workspace_id: form.workspace_id,
+      form_id: form.id,
+      rating: data.rating ?? null,
+      content: data.content ?? "",
+      before_story: data.before_story || null,
+      name: data.name ?? "",
+      title: data.title || null,
+      avatar_url: data.avatar_url || null,
+      status: "pending" as const,
+      is_featured: false,
+      permission_granted: data.permission_granted,
+      custom_fields: data.custom_fields || {},
+      source: "form",
+      submitted_at: new Date().toISOString(),
+    });
 
     if (insertError) {
       logError("Testimonial insert error:", insertError);
-      return apiError(
-        "送信に失敗しました。もう一度お試しください。",
-        500,
-        "INTERNAL_ERROR",
-      );
+      return apiError("送信に失敗しました。もう一度お試しください。", 500, "INTERNAL_ERROR");
     }
 
     return apiSuccess(null);

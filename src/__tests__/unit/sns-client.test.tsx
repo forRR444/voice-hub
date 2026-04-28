@@ -5,17 +5,39 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 // Lucide Icons
 vi.mock("lucide-react", () => ({
-  Star: ({ size, className, fill }: any) => <span data-testid="star" data-fill={fill} className={className}>{size}</span>,
-  ImageIcon: ({ size, className }: any) => <span data-testid="image-icon" className={className}>{size}</span>,
+  Star: ({ size, className, fill }: any) => (
+    <span data-testid="star" data-fill={fill} className={className}>
+      {size}
+    </span>
+  ),
+  ImageIcon: ({ size, className }: any) => (
+    <span data-testid="image-icon" className={className}>
+      {size}
+    </span>
+  ),
   Download: ({ size }: any) => <span data-testid="download-icon">{size}</span>,
-  Loader2: ({ size, className }: any) => <span data-testid="spinner" className={className}>{size}</span>,
-  Check: ({ size, className }: any) => <span data-testid="check-icon" className={className}>{size}</span>,
+  Loader2: ({ size, className }: any) => (
+    <span data-testid="spinner" className={className}>
+      {size}
+    </span>
+  ),
+  Check: ({ size, className }: any) => (
+    <span data-testid="check-icon" className={className}>
+      {size}
+    </span>
+  ),
   Maximize2: ({ size }: any) => <span data-testid="arrows-out">{size}</span>,
-  ChevronDown: ({ size, className }: any) => <span data-testid="chevron-down" className={className}>{size}</span>,
+  ChevronDown: ({ size, className }: any) => (
+    <span data-testid="chevron-down" className={className}>
+      {size}
+    </span>
+  ),
 }));
 
 // Canvas image generator
-const mockGenerateImage = vi.fn().mockResolvedValue(new Blob(["fake-image"], { type: "image/png" }));
+const mockGenerateImage = vi
+  .fn()
+  .mockResolvedValue(new Blob(["fake-image"], { type: "image/png" }));
 vi.mock("@/lib/canvas-image-generator", () => ({
   generateTestimonialImage: (...args: unknown[]) => mockGenerateImage(...args),
 }));
@@ -25,7 +47,9 @@ vi.mock("@/app/components/modal", () => ({
   default: ({ title, onClose, children }: any) => (
     <div data-testid="modal">
       <span data-testid="modal-title">{title}</span>
-      <button data-testid="modal-close" onClick={onClose}>Close</button>
+      <button data-testid="modal-close" onClick={onClose}>
+        Close
+      </button>
       {children}
     </div>
   ),
@@ -33,7 +57,9 @@ vi.mock("@/app/components/modal", () => ({
 
 // JSZip
 const mockFile = vi.fn();
-const mockGenerateAsync = vi.fn().mockResolvedValue(new Blob(["fake-zip"], { type: "application/zip" }));
+const mockGenerateAsync = vi
+  .fn()
+  .mockResolvedValue(new Blob(["fake-zip"], { type: "application/zip" }));
 
 function MockJSZip() {
   return { file: mockFile, generateAsync: mockGenerateAsync };

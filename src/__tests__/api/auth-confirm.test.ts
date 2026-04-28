@@ -83,7 +83,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?code=test-code&type=recovery"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?code=test-code&type=recovery")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/update-password");
@@ -152,7 +154,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=recovery"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=recovery")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/update-password");
@@ -169,7 +173,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/onboarding");
@@ -186,7 +192,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
@@ -202,7 +210,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/dashboard");
@@ -219,7 +229,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=abc&type=signup")
+    );
 
     expect(response.status).toBe(307);
     expect(new URL(response.headers.get("location")!).pathname).toBe("/onboarding");
@@ -234,7 +246,9 @@ describe("GET /api/auth/confirm", () => {
     mockCreateServerClient.mockResolvedValue(mockSupa);
 
     const { GET } = await import("@/app/api/auth/confirm/route");
-    const response = await GET(makeRequest("http://localhost/api/auth/confirm?token_hash=bad&type=signup"));
+    const response = await GET(
+      makeRequest("http://localhost/api/auth/confirm?token_hash=bad&type=signup")
+    );
 
     expect(response.status).toBe(307);
     const location = new URL(response.headers.get("location")!);

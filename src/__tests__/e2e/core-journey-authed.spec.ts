@@ -105,9 +105,7 @@ test.describe("コアフロー E2E（認証済み・通し）", () => {
 
       // ダッシュボードに戻ってカードが表示されていることを UI で確認
       await page.goto("/dashboard/forms");
-      await expect(
-        page.locator("h3", { hasText: formTitle })
-      ).toBeVisible({ timeout: 15_000 });
+      await expect(page.locator("h3", { hasText: formTitle })).toBeVisible({ timeout: 15_000 });
     });
 
     await test.step("Step 4: ウィジェットを新規作成（UI 経由）", async () => {
@@ -117,17 +115,13 @@ test.describe("コアフロー E2E（認証済み・通し）", () => {
       test.skip(!canCreate, "プラン上限のためウィジェット作成不可");
 
       await openBtn.click();
-      await expect(
-        page.getByRole("heading", { name: "新しいウィジェット作成" })
-      ).toBeVisible();
+      await expect(page.getByRole("heading", { name: "新しいウィジェット作成" })).toBeVisible();
       await page.getByPlaceholder("メインページ用").fill(widgetName);
 
       const [response] = await Promise.all([
         page.waitForResponse(
           (res) =>
-            res.url().endsWith("/api/widgets") &&
-            res.request().method() === "POST" &&
-            res.ok(),
+            res.url().endsWith("/api/widgets") && res.request().method() === "POST" && res.ok(),
           { timeout: 15_000 }
         ),
         page.getByRole("button", { name: "作成する" }).click(),
@@ -167,9 +161,7 @@ test.describe("コアフロー E2E（認証済み・通し）", () => {
         // POST /api/testimonials のレスポンスを捕捉してハッピーパス成功を検証
         const [submitRes] = await Promise.all([
           publicPage.waitForResponse(
-            (res) =>
-              res.url().endsWith("/api/testimonials") &&
-              res.request().method() === "POST",
+            (res) => res.url().endsWith("/api/testimonials") && res.request().method() === "POST",
             { timeout: 15_000 }
           ),
           publicPage.getByRole("button", { name: "送信する" }).click(),
@@ -279,9 +271,7 @@ test.describe("コアフロー E2E（認証済み・通し）", () => {
         .catch(() => undefined);
     }
     if (createdFormId) {
-      await request
-        .delete("/api/forms", { data: { id: createdFormId } })
-        .catch(() => undefined);
+      await request.delete("/api/forms", { data: { id: createdFormId } }).catch(() => undefined);
     }
   });
 });

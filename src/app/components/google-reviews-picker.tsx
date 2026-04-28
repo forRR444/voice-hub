@@ -53,9 +53,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
     setError("");
     setPlaces([]);
 
-    const res = await fetch(
-      `/api/google-reviews?action=search&query=${encodeURIComponent(query)}`
-    );
+    const res = await fetch(`/api/google-reviews?action=search&query=${encodeURIComponent(query)}`);
     const json = await res.json();
     setSearchLoading(false);
 
@@ -138,9 +136,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
   return (
     <div className={`flex flex-col gap-4 ${scrollable ? "flex-1 min-h-0 overflow-hidden" : ""}`}>
       {error && (
-        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg shrink-0">
-          {error}
-        </div>
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg shrink-0">{error}</div>
       )}
 
       {/* Search Step */}
@@ -165,9 +161,7 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
             </button>
           </form>
 
-          {searchLoading && (
-            <p className="text-sm text-gray-400 text-center py-2">検索中...</p>
-          )}
+          {searchLoading && <p className="text-sm text-gray-400 text-center py-2">検索中...</p>}
 
           {places.length > 0 && (
             <div className="flex flex-col gap-2">
@@ -191,11 +185,16 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
 
       {/* Reviews Step */}
       {step === "reviews" && (
-        <div className={`flex flex-col gap-3 ${scrollable ? "flex-1 min-h-0 overflow-hidden" : ""}`}>
+        <div
+          className={`flex flex-col gap-3 ${scrollable ? "flex-1 min-h-0 overflow-hidden" : ""}`}
+        >
           {/* Back + place name */}
           <div className="flex items-center gap-1.5 shrink-0">
             <button
-              onClick={() => { setStep("search"); setError(""); }}
+              onClick={() => {
+                setStep("search");
+                setError("");
+              }}
               className="p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               <ChevronLeft size={16} />
@@ -256,7 +255,12 @@ export default function GoogleReviewsPicker({ footer, scrollable = false }: Prop
                           {review.relativePublishTimeDescription}
                         </span>
                       </div>
-                      <StarRating rating={review.rating} size={12} emptyClass="text-gray-200" className="mb-1" />
+                      <StarRating
+                        rating={review.rating}
+                        size={12}
+                        emptyClass="text-gray-200"
+                        className="mb-1"
+                      />
                       {(review.originalText?.text || review.text?.text) && (
                         <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
                           {review.originalText?.text || review.text?.text}

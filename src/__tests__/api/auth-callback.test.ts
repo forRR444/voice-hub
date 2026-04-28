@@ -66,9 +66,7 @@ describe("GET /api/auth/callback", () => {
 
     const { GET } = await import("@/app/api/auth/callback/route");
 
-    const request = makeRequest(
-      "http://localhost/api/auth/callback?code=test-code"
-    );
+    const request = makeRequest("http://localhost/api/auth/callback?code=test-code");
     const response = await GET(request);
 
     expect(response.status).toBe(307);
@@ -96,9 +94,7 @@ describe("GET /api/auth/callback", () => {
 
     const { GET } = await import("@/app/api/auth/callback/route");
 
-    const request = makeRequest(
-      "http://localhost/api/auth/callback?code=test-code"
-    );
+    const request = makeRequest("http://localhost/api/auth/callback?code=test-code");
     const response = await GET(request);
 
     expect(response.status).toBe(307);
@@ -120,9 +116,7 @@ describe("GET /api/auth/callback", () => {
 
     const { GET } = await import("@/app/api/auth/callback/route");
 
-    const request = makeRequest(
-      "http://localhost/api/auth/callback?code=test-code"
-    );
+    const request = makeRequest("http://localhost/api/auth/callback?code=test-code");
     const response = await GET(request);
 
     expect(response.status).toBe(307);
@@ -140,9 +134,7 @@ describe("GET /api/auth/callback", () => {
 
     const { GET } = await import("@/app/api/auth/callback/route");
 
-    const request = makeRequest(
-      "http://localhost/api/auth/callback?code=bad-code"
-    );
+    const request = makeRequest("http://localhost/api/auth/callback?code=bad-code");
     const response = await GET(request);
 
     expect(response.status).toBe(307);
@@ -171,9 +163,7 @@ describe("GET /api/auth/callback", () => {
 
     const { GET } = await import("@/app/api/auth/callback/route");
 
-    const request = makeRequest(
-      "http://localhost/api/auth/callback?code=test-code"
-    );
+    const request = makeRequest("http://localhost/api/auth/callback?code=test-code");
     const response = await GET(request);
 
     expect(response.status).toBe(307);

@@ -8,7 +8,8 @@ function getVersionDir(): string {
   if (!fs.existsSync(SCREENSHOTS_BASE)) {
     fs.mkdirSync(SCREENSHOTS_BASE, { recursive: true });
   }
-  const existing = fs.readdirSync(SCREENSHOTS_BASE)
+  const existing = fs
+    .readdirSync(SCREENSHOTS_BASE)
     .filter((d) => /^v\d+$/.test(d))
     .map((d) => parseInt(d.slice(1), 10))
     .sort((a, b) => a - b);
@@ -62,9 +63,7 @@ const AUTH_STATE_PATH = path.resolve("test-results/.auth-state.json");
 
 async function ensureLoggedIn(page: any) {
   if (fs.existsSync(AUTH_STATE_PATH)) {
-    await page.context().addCookies(
-      JSON.parse(fs.readFileSync(AUTH_STATE_PATH, "utf-8"))
-    );
+    await page.context().addCookies(JSON.parse(fs.readFileSync(AUTH_STATE_PATH, "utf-8")));
     await page.goto("/dashboard", { waitUntil: "networkidle" });
     if (!page.url().includes("/login")) return;
   }
@@ -91,7 +90,9 @@ async function ensureLoggedIn(page: any) {
 // ---------------------------------------------------------------------------
 test.describe("Screenshots – dashboard pages", () => {
   test.describe.configure({ mode: "serial" });
-  test.beforeEach(async ({ page }) => { await ensureLoggedIn(page); });
+  test.beforeEach(async ({ page }) => {
+    await ensureLoggedIn(page);
+  });
 
   test("dashboard", async ({ page }, testInfo) => {
     await page.goto("/dashboard", { waitUntil: "networkidle" });
@@ -124,7 +125,9 @@ test.describe("Screenshots – dashboard pages", () => {
 // ---------------------------------------------------------------------------
 test.describe("Screenshots – dashboard modals", () => {
   test.describe.configure({ mode: "serial" });
-  test.beforeEach(async ({ page }) => { await ensureLoggedIn(page); });
+  test.beforeEach(async ({ page }) => {
+    await ensureLoggedIn(page);
+  });
 
   // ─── Dashboard page modals ───
   test("dashboard-add-menu", async ({ page }, testInfo) => {
@@ -153,7 +156,10 @@ test.describe("Screenshots – dashboard modals", () => {
   test("dashboard-status-dropdown", async ({ page }, testInfo) => {
     await page.goto("/dashboard", { waitUntil: "networkidle" });
     // Click the first status pill (check/dot/x icon with chevron)
-    const statusPill = page.locator("[class*=rounded-full][class*=cursor-pointer]").filter({ has: page.locator("svg") }).first();
+    const statusPill = page
+      .locator("[class*=rounded-full][class*=cursor-pointer]")
+      .filter({ has: page.locator("svg") })
+      .first();
     if (await statusPill.isVisible()) {
       await statusPill.click();
       await page.waitForTimeout(300);
@@ -196,7 +202,7 @@ test.describe("Screenshots – dashboard modals", () => {
     await page.goto("/dashboard/forms", { waitUntil: "networkidle" });
     const addBtn = page.getByText("追加").or(page.getByText("新しいフォーム"));
     const btn = addBtn.first();
-    if (await btn.isVisible() && await btn.isEnabled()) {
+    if ((await btn.isVisible()) && (await btn.isEnabled())) {
       await btn.click();
       await page.waitForTimeout(300);
       await page.screenshot({ path: shot(testInfo, "forms-create-modal") });
@@ -297,7 +303,9 @@ test.describe("Screenshots – dashboard modals", () => {
 // Mobile sidebar
 // ---------------------------------------------------------------------------
 test.describe("Screenshots – mobile sidebar", () => {
-  test.beforeEach(async ({ page }) => { await ensureLoggedIn(page); });
+  test.beforeEach(async ({ page }) => {
+    await ensureLoggedIn(page);
+  });
 
   test("mobile-sidebar-open", async ({ page }, testInfo) => {
     if (testInfo.project.name !== "mobile") return;
@@ -316,12 +324,17 @@ test.describe("Screenshots – mobile sidebar", () => {
 // ---------------------------------------------------------------------------
 test.describe("Screenshots – testimonial detail", () => {
   test.describe.configure({ mode: "serial" });
-  test.beforeEach(async ({ page }) => { await ensureLoggedIn(page); });
+  test.beforeEach(async ({ page }) => {
+    await ensureLoggedIn(page);
+  });
 
   test("detail-page", async ({ page }, testInfo) => {
     await page.goto("/dashboard", { waitUntil: "networkidle" });
     // Click the first testimonial name link
-    const nameLink = page.locator("a[href^='/dashboard/']").filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ }).first();
+    const nameLink = page
+      .locator("a[href^='/dashboard/']")
+      .filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ })
+      .first();
     if (await nameLink.isVisible()) {
       await nameLink.click();
       await page.waitForURL(/\/dashboard\/.+/, { timeout: 10_000 });
@@ -332,7 +345,10 @@ test.describe("Screenshots – testimonial detail", () => {
 
   test("detail-sns-modal", async ({ page }, testInfo) => {
     await page.goto("/dashboard", { waitUntil: "networkidle" });
-    const nameLink = page.locator("a[href^='/dashboard/']").filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ }).first();
+    const nameLink = page
+      .locator("a[href^='/dashboard/']")
+      .filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ })
+      .first();
     if (await nameLink.isVisible()) {
       await nameLink.click();
       await page.waitForURL(/\/dashboard\/.+/, { timeout: 10_000 });
@@ -348,7 +364,10 @@ test.describe("Screenshots – testimonial detail", () => {
 
   test("detail-delete-modal", async ({ page }, testInfo) => {
     await page.goto("/dashboard", { waitUntil: "networkidle" });
-    const nameLink = page.locator("a[href^='/dashboard/']").filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ }).first();
+    const nameLink = page
+      .locator("a[href^='/dashboard/']")
+      .filter({ hasNotText: /フォーム|ウィジェット|設定|SNS|お客様の声に戻る/ })
+      .first();
     if (await nameLink.isVisible()) {
       await nameLink.click();
       await page.waitForURL(/\/dashboard\/.+/, { timeout: 10_000 });

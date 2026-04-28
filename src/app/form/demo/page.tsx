@@ -5,8 +5,7 @@ import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "田中コーチングサロン — お客様の声フォーム（デモ）",
-  description:
-    "VoiceHubの収集フォームのデモです。実際のデータは送信されません。",
+  description: "VoiceHubの収集フォームのデモです。実際のデータは送信されません。",
 };
 
 const DEMO_FORM: FormRow = {
@@ -14,8 +13,7 @@ const DEMO_FORM: FormRow = {
   workspace_id: "demo",
   slug: "demo",
   title: "田中コーチングサロン",
-  description:
-    "ご利用いただきありがとうございます。ぜひご感想をお聞かせください。",
+  description: "ご利用いただきありがとうございます。ぜひご感想をお聞かせください。",
   brand_color: DEFAULT_BRAND_COLOR,
   logo_url: null,
   thank_you_message:
@@ -32,16 +30,14 @@ const DEMO_FORM: FormRow = {
       label: "ご利用前はどんなお悩みがありましたか？",
       type: "textarea",
       required: true,
-      placeholder:
-        "例：集客がうまくいかず、毎月の売上が安定しませんでした...",
+      placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした...",
     },
     {
       id: "content",
       label: "ご利用後、どんな変化がありましたか？",
       type: "textarea",
       required: true,
-      placeholder:
-        "例：3ヶ月で売上が2倍になり、自信を持って活動できるようになりました...",
+      placeholder: "例：3ヶ月で売上が2倍になり、自信を持って活動できるようになりました...",
     },
     {
       id: "name",

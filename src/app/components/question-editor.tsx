@@ -22,12 +22,31 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { FormQuestion } from "@/types/database";
 
-export const PRESET_QUESTIONS: { id: string; label: string; type: FormQuestion["type"]; required?: boolean; placeholder?: string; alwaysOn?: boolean }[] = [
+export const PRESET_QUESTIONS: {
+  id: string;
+  label: string;
+  type: FormQuestion["type"];
+  required?: boolean;
+  placeholder?: string;
+  alwaysOn?: boolean;
+}[] = [
   { id: "rating", label: "総合評価（星）", type: "star_rating", required: true },
-  { id: "before_story", label: "利用前の悩み（Before）", type: "textarea", required: false, placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした..." },
+  {
+    id: "before_story",
+    label: "利用前の悩み（Before）",
+    type: "textarea",
+    required: false,
+    placeholder: "例：集客がうまくいかず、毎月の売上が安定しませんでした...",
+  },
   { id: "content", label: "感想・レビュー", type: "textarea", required: true },
   { id: "name", label: "お名前", type: "text", required: false, placeholder: "山田 太郎" },
-  { id: "title", label: "職業・肩書き", type: "text", required: false, placeholder: "例：ライフコーチ" },
+  {
+    id: "title",
+    label: "職業・肩書き",
+    type: "text",
+    required: false,
+    placeholder: "例：ライフコーチ",
+  },
   { id: "avatar", label: "写真", type: "image", required: false },
   { id: "permission", label: "掲載許可", type: "checkbox", required: true, alwaysOn: true },
 ];
@@ -39,7 +58,13 @@ const CUSTOM_TYPES: { value: FormQuestion["type"]; label: string }[] = [
   { value: "select", label: "選択肢" },
 ];
 
-function AddCustomQuestion({ onAdd, onCancel }: { onAdd: (q: FormQuestion) => void; onCancel: () => void }) {
+function AddCustomQuestion({
+  onAdd,
+  onCancel,
+}: {
+  onAdd: (q: FormQuestion) => void;
+  onCancel: () => void;
+}) {
   const [label, setLabel] = useState("");
   const [type, setType] = useState<FormQuestion["type"]>("text");
   const [options, setOptions] = useState("");
@@ -52,7 +77,14 @@ function AddCustomQuestion({ onAdd, onCancel }: { onAdd: (q: FormQuestion) => vo
       label: label.trim(),
       type,
       required: false,
-      ...(type === "select" ? { options: options.split("\n").map((o) => o.trim()).filter(Boolean) } : {}),
+      ...(type === "select"
+        ? {
+            options: options
+              .split("\n")
+              .map((o) => o.trim())
+              .filter(Boolean),
+          }
+        : {}),
     };
     onAdd(q);
     setLabel("");
@@ -75,7 +107,9 @@ function AddCustomQuestion({ onAdd, onCancel }: { onAdd: (q: FormQuestion) => vo
         className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         {CUSTOM_TYPES.map((t) => (
-          <option key={t.value} value={t.value}>{t.label}</option>
+          <option key={t.value} value={t.value}>
+            {t.label}
+          </option>
         ))}
       </select>
       {type === "select" && (
@@ -89,7 +123,12 @@ function AddCustomQuestion({ onAdd, onCancel }: { onAdd: (q: FormQuestion) => vo
       )}
       <div className="flex gap-2">
         <button
-          onClick={() => { setLabel(""); setType("text"); setOptions(""); onCancel(); }}
+          onClick={() => {
+            setLabel("");
+            setType("text");
+            setOptions("");
+            onCancel();
+          }}
           className="px-4 py-2 text-sm border border-foreground/10 rounded-lg hover:bg-foreground/5 cursor-pointer"
         >
           キャンセル
@@ -117,14 +156,9 @@ function SortableQuestionItem({
   onRemove?: () => void;
   alwaysOn?: boolean;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: question.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: question.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -148,7 +182,10 @@ function SortableQuestionItem({
       {onToggle ? (
         <button
           onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => { e.stopPropagation(); onToggle(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
           className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer ${
             isEnabled ? "bg-indigo-600 border-indigo-600" : "border-gray-300"
           }`}
@@ -166,12 +203,19 @@ function SortableQuestionItem({
       </span>
       {!preset && (
         <span className="text-xs text-foreground/40">
-          {question.type === "star_rating" ? "星評価" : question.type === "select" ? "選択肢" : question.type}
+          {question.type === "star_rating"
+            ? "星評価"
+            : question.type === "select"
+              ? "選択肢"
+              : question.type}
         </span>
       )}
       {onRemove && (
         <button
-          onClick={(e) => { e.stopPropagation(); onRemove(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
           onPointerDown={(e) => e.stopPropagation()}
           className="p-1 text-foreground/30 hover:text-red-500 cursor-pointer"
         >
@@ -236,12 +280,22 @@ export default function QuestionEditor({
                   key={q.id}
                   question={q}
                   alwaysOn={isAlwaysOn}
-                  onToggle={isAlwaysOn ? undefined : () => {
-                    onChange(questions.map((eq) =>
-                      eq.id === q.id ? { ...eq, enabled: eq.enabled === false ? true : false } : eq
-                    ));
-                  }}
-                  onRemove={isCustom ? () => onChange(questions.filter((eq) => eq.id !== q.id)) : undefined}
+                  onToggle={
+                    isAlwaysOn
+                      ? undefined
+                      : () => {
+                          onChange(
+                            questions.map((eq) =>
+                              eq.id === q.id
+                                ? { ...eq, enabled: eq.enabled === false ? true : false }
+                                : eq
+                            )
+                          );
+                        }
+                  }
+                  onRemove={
+                    isCustom ? () => onChange(questions.filter((eq) => eq.id !== q.id)) : undefined
+                  }
                 />
               );
             })}
@@ -257,7 +311,10 @@ export default function QuestionEditor({
               {unusedPresets.map((p) => (
                 <button
                   key={p.id}
-                  onClick={() => { addPreset(p.id); setShowPresetPicker(false); }}
+                  onClick={() => {
+                    addPreset(p.id);
+                    setShowPresetPicker(false);
+                  }}
                   className="px-3 py-1.5 text-xs border border-foreground/10 rounded-lg bg-white hover:bg-foreground/5 cursor-pointer"
                 >
                   {p.label}
@@ -266,7 +323,13 @@ export default function QuestionEditor({
             </div>
           )}
           <p className="text-xs text-foreground/50 pt-1">または自由に追加：</p>
-          <AddCustomQuestion onAdd={(q) => { onChange([...questions, q]); setShowPresetPicker(false); }} onCancel={() => setShowPresetPicker(false)} />
+          <AddCustomQuestion
+            onAdd={(q) => {
+              onChange([...questions, q]);
+              setShowPresetPicker(false);
+            }}
+            onCancel={() => setShowPresetPicker(false)}
+          />
         </div>
       ) : (
         <button

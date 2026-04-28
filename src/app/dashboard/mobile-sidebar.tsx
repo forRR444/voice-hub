@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-export function MobileSidebar({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function MobileSidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,10 +27,7 @@ export function MobileSidebar({
       {/* Mobile sidebar - overlay */}
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={() => setOpen(false)}
-          />
+          <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <aside className="fixed inset-y-0 left-0 w-60 bg-white flex flex-col z-50 shadow-xl">
             <div className="absolute top-3 right-3">
               <button
@@ -45,9 +38,7 @@ export function MobileSidebar({
                 <X size={18} />
               </button>
             </div>
-            <div onClick={() => setOpen(false)}>
-              {children}
-            </div>
+            <div onClick={() => setOpen(false)}>{children}</div>
           </aside>
         </div>
       )}

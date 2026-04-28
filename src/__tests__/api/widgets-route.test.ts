@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-import {
-  createMockQueryBuilder,
-  type QueryResult,
-} from "../helpers/mock-supabase";
+import { createMockQueryBuilder, type QueryResult } from "../helpers/mock-supabase";
 import { getPlanLimits } from "@/lib/plan";
 
 // ---------------------------------------------------------------------------
@@ -69,10 +66,7 @@ type DeleteBuilder = {
   eq: ReturnType<typeof vi.fn>;
 };
 
-function createCountBuilder(countResult: {
-  count: number | null;
-  error: unknown;
-}): CountBuilder {
+function createCountBuilder(countResult: { count: number | null; error: unknown }): CountBuilder {
   const builder: CountBuilder = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockResolvedValue({
@@ -114,28 +108,13 @@ type ReturnedSupabase = {
 };
 
 function setupWidgetsMock(options: WidgetsMockOptions = {}): ReturnedSupabase {
-  const {
-    auth,
-    workspace,
-    widgetsCount,
-    widgetsInsert,
-    widgetsUpdate,
-    widgetsDelete,
-  } = options;
+  const { auth, workspace, widgetsCount, widgetsInsert, widgetsUpdate, widgetsDelete } = options;
 
   const workspaceBuilder = workspace ? createMockQueryBuilder(workspace) : null;
-  const widgetsCountBuilder = widgetsCount
-    ? createCountBuilder(widgetsCount)
-    : null;
-  const widgetsInsertBuilder = widgetsInsert
-    ? createMockQueryBuilder(widgetsInsert)
-    : null;
-  const widgetsUpdateBuilder = widgetsUpdate
-    ? createMockQueryBuilder(widgetsUpdate)
-    : null;
-  const widgetsDeleteBuilder = widgetsDelete
-    ? createDeleteBuilder(widgetsDelete)
-    : null;
+  const widgetsCountBuilder = widgetsCount ? createCountBuilder(widgetsCount) : null;
+  const widgetsInsertBuilder = widgetsInsert ? createMockQueryBuilder(widgetsInsert) : null;
+  const widgetsUpdateBuilder = widgetsUpdate ? createMockQueryBuilder(widgetsUpdate) : null;
+  const widgetsDeleteBuilder = widgetsDelete ? createDeleteBuilder(widgetsDelete) : null;
 
   let widgetsCallCount = 0;
 
@@ -149,10 +128,7 @@ function setupWidgetsMock(options: WidgetsMockOptions = {}): ReturnedSupabase {
       if (widgetsCountBuilder && widgetsCallCount === 1) {
         return widgetsCountBuilder;
       }
-      if (
-        widgetsInsertBuilder &&
-        (widgetsCallCount === 2 || !widgetsCountBuilder)
-      ) {
+      if (widgetsInsertBuilder && (widgetsCallCount === 2 || !widgetsCountBuilder)) {
         return widgetsInsertBuilder;
       }
       if (widgetsUpdateBuilder) {
@@ -429,14 +405,8 @@ describe("PATCH /api/widgets", () => {
       })
     );
     // 所有権ガード: id と workspace_id の両方で絞っているか
-    expect(mock.widgetsUpdateBuilder?.eq).toHaveBeenCalledWith(
-      "id",
-      "widget-1"
-    );
-    expect(mock.widgetsUpdateBuilder?.eq).toHaveBeenCalledWith(
-      "workspace_id",
-      "ws-1"
-    );
+    expect(mock.widgetsUpdateBuilder?.eq).toHaveBeenCalledWith("id", "widget-1");
+    expect(mock.widgetsUpdateBuilder?.eq).toHaveBeenCalledWith("workspace_id", "ws-1");
   });
 
   it("未認証で401を返す", async () => {
@@ -472,7 +442,7 @@ describe("PATCH /api/widgets", () => {
     expect(json).toEqual({ ok: false, error: "Workspace not found", code: "NOT_FOUND" });
   });
 
-  it("id欠落で400 \"IDが必要です\"を返す", async () => {
+  it('id欠落で400 "IDが必要です"を返す', async () => {
     const mock = setupWidgetsMock({
       auth: authedUser,
       workspace: workspaceRow,
@@ -622,14 +592,8 @@ describe("DELETE /api/widgets", () => {
     expect(response.status).toBe(200);
     expect(json).toEqual({ ok: true, data: null });
     expect(mock.widgetsDeleteBuilder?.delete).toHaveBeenCalled();
-    expect(mock.widgetsDeleteBuilder?.eq).toHaveBeenCalledWith(
-      "id",
-      "widget-1"
-    );
-    expect(mock.widgetsDeleteBuilder?.eq).toHaveBeenCalledWith(
-      "workspace_id",
-      "ws-1"
-    );
+    expect(mock.widgetsDeleteBuilder?.eq).toHaveBeenCalledWith("id", "widget-1");
+    expect(mock.widgetsDeleteBuilder?.eq).toHaveBeenCalledWith("workspace_id", "ws-1");
   });
 
   it("未認証で401を返す", async () => {

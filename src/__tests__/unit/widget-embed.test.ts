@@ -7,27 +7,19 @@ import { join } from "path";
 // ブラウザ環境のDOMが必要な部分はE2Eに任せ、ここではコード構造を検証
 // ---------------------------------------------------------------------------
 
-const embedSource = readFileSync(
-  join(process.cwd(), "public/widget/v1/embed.js"),
-  "utf-8"
-);
+const embedSource = readFileSync(join(process.cwd(), "public/widget/v1/embed.js"), "utf-8");
 
 describe("embed.js コード構造", () => {
   // ============================
   // ウィジェットタイプ対応
   // ============================
   describe("ウィジェットタイプのサポート", () => {
-    it.each([
-      "carousel",
-      "marquee",
-      "list",
-      "single",
-      "wall",
-      "badge",
-      "grid",
-    ])("タイプ '%s' がswitch文で処理される", (type) => {
-      expect(embedSource).toContain(`case "${type}"`);
-    });
+    it.each(["carousel", "marquee", "list", "single", "wall", "badge", "grid"])(
+      "タイプ '%s' がswitch文で処理される",
+      (type) => {
+        expect(embedSource).toContain(`case "${type}"`);
+      }
+    );
 
     it("全7タイプのレンダー関数が定義されている", () => {
       expect(embedSource).toContain("function renderCarousel");
@@ -45,10 +37,7 @@ describe("embed.js コード構造", () => {
       // marqueeのcaseがgridより前にあること
       expect(marqueeIndex).toBeLessThan(gridIndex);
       // marqueeの直後にbreakがあること（gridにフォールスルーしない）
-      const afterMarquee = embedSource.substring(
-        marqueeIndex,
-        marqueeIndex + 200
-      );
+      const afterMarquee = embedSource.substring(marqueeIndex, marqueeIndex + 200);
       expect(afterMarquee).toContain("break");
     });
   });
@@ -96,9 +85,7 @@ describe("embed.js コード構造", () => {
     });
 
     it("renderWidgetで既存のshadowRootを再利用する", () => {
-      expect(embedSource).toContain(
-        "container.shadowRoot || container.attachShadow"
-      );
+      expect(embedSource).toContain("container.shadowRoot || container.attachShadow");
     });
   });
 
@@ -193,9 +180,7 @@ describe("embed.js コード構造", () => {
     });
 
     it("複数テスティモニアルで自動切替する", () => {
-      const singleFunc = embedSource.substring(
-        embedSource.indexOf("function renderSingle")
-      );
+      const singleFunc = embedSource.substring(embedSource.indexOf("function renderSingle"));
       expect(singleFunc).toContain("setInterval");
     });
   });

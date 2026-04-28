@@ -3,10 +3,7 @@ import { getClientIp, checkRateLimit } from "@/lib/api-utils";
 import { apiError, apiSuccess } from "@/lib/api-response";
 import { RATE_LIMITS } from "@/lib/constants";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const ip = getClientIp(_request);
   const { limit, windowMs } = RATE_LIMITS.formGet;
   const rateLimited = await checkRateLimit(`form-get:${ip}`, limit, windowMs);
