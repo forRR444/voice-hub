@@ -44,6 +44,9 @@ const defaultWorkspace: WorkspaceRow = {
   user_id: "user-1",
   name: "テストサロン",
   onboarding_completed: true,
+  subscription_status: null,
+  stripe_customer_id: null,
+  stripe_subscription_id: null,
   created_at: "2026-01-01T00:00:00Z",
 };
 

@@ -2,19 +2,22 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock @supabase/ssr
 const mockGetUser = vi.fn();
-const mockCreateServerClient = vi.fn(() => ({
-  auth: { getUser: mockGetUser },
-}));
+const mockCreateServerClient = vi.fn<(url: unknown, key: unknown, options: unknown) => unknown>(
+  () => ({
+    auth: { getUser: mockGetUser },
+  })
+);
 vi.mock("@supabase/ssr", () => ({
-  createServerClient: (...args: unknown[]) => mockCreateServerClient(...args),
+  createServerClient: (url: unknown, key: unknown, options: unknown) =>
+    mockCreateServerClient(url, key, options),
 }));
 
 // Mock NextResponse
-const mockRedirect = vi.fn((url: URL) => ({
+const mockRedirect = vi.fn<(url: URL) => { type: string; url: string }>((url) => ({
   type: "redirect",
   url: url.toString(),
 }));
-const mockNext = vi.fn((opts?: { request: unknown }) => {
+const mockNext = vi.fn<(opts?: { request: unknown }) => unknown>((opts) => {
   const response = {
     type: "next",
     request: opts?.request,
@@ -27,8 +30,8 @@ const mockNext = vi.fn((opts?: { request: unknown }) => {
 
 vi.mock("next/server", () => ({
   NextResponse: {
-    next: (...args: unknown[]) => mockNext(...args),
-    redirect: (...args: unknown[]) => mockRedirect(...args),
+    next: (opts?: { request: unknown }) => mockNext(opts),
+    redirect: (url: URL) => mockRedirect(url),
   },
 }));
 

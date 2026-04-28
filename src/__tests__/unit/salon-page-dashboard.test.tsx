@@ -112,6 +112,9 @@ const workspace: WorkspaceRow = {
   name: "テストワークスペース",
   onboarding_completed: true,
   created_at: "2026-01-01T00:00:00Z",
+  subscription_status: null,
+  stripe_customer_id: null,
+  stripe_subscription_id: null,
 };
 
 const existingSalonPage: SalonPageRow = {

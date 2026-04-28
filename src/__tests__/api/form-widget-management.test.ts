@@ -116,8 +116,9 @@ describe("フォーム編集", () => {
   });
 
   it("空のdescriptionをnullに変換する", () => {
-    expect("" || null).toBeNull();
-    expect("新しい説明文" || null).toBe("新しい説明文");
+    const toNullable = (value: string): string | null => value || null;
+    expect(toNullable("")).toBeNull();
+    expect(toNullable("新しい説明文")).toBe("新しい説明文");
   });
 });
 

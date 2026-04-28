@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import QuestionEditor, { PRESET_QUESTIONS } from "@/app/components/question-editor";
 import type { FormQuestion } from "@/types/database";
@@ -53,10 +53,10 @@ const baseQuestions: FormQuestion[] = [
 ];
 
 describe("QuestionEditor", () => {
-  let onChange: ReturnType<typeof vi.fn>;
+  let onChange: Mock<(qs: FormQuestion[]) => void>;
 
   beforeEach(() => {
-    onChange = vi.fn();
+    onChange = vi.fn<(qs: FormQuestion[]) => void>();
   });
 
   it("質問リストが表示される", () => {
@@ -107,7 +107,8 @@ describe("QuestionEditor", () => {
     fireEvent.click(ratingToggle);
     expect(onChange).toHaveBeenCalledTimes(1);
     const updated = onChange.mock.calls[0][0];
-    expect(updated.find((q: FormQuestion) => q.id === "rating").enabled).toBe(false);
+    const rating = updated.find((q: FormQuestion) => q.id === "rating");
+    expect(rating?.enabled).toBe(false);
   });
 
   it("カスタム質問に削除ボタンが表示される", () => {

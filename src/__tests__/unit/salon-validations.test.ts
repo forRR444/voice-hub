@@ -32,7 +32,7 @@ describe("salonPageSchema", () => {
   });
 
   it("links 3つでパス、4つでエラー", () => {
-    const link = { label: "LINE", url: "https://lin.ee/xxx" };
+    const link = { label: "LINE", url: "https://lin.ee/xxx", icon: "line" as const };
     expect(salonPageSchema.safeParse({ ...valid, links: [link, link, link] }).success).toBe(true);
     expect(salonPageSchema.safeParse({ ...valid, links: [link, link, link, link] }).success).toBe(
       false
@@ -42,18 +42,20 @@ describe("salonPageSchema", () => {
 
 describe("salonLinkSchema", () => {
   it("正常なリンクでパスする", () => {
-    expect(salonLinkSchema.safeParse({ label: "LINE", url: "https://lin.ee/xxx" }).success).toBe(
-      true
-    );
+    expect(
+      salonLinkSchema.safeParse({ label: "LINE", url: "https://lin.ee/xxx", icon: "line" }).success
+    ).toBe(true);
   });
 
   it("ラベル空でエラー", () => {
-    expect(salonLinkSchema.safeParse({ label: "", url: "https://example.com" }).success).toBe(
-      false
-    );
+    expect(
+      salonLinkSchema.safeParse({ label: "", url: "https://example.com", icon: "line" }).success
+    ).toBe(false);
   });
 
   it("URL不正でエラー", () => {
-    expect(salonLinkSchema.safeParse({ label: "LINE", url: "not-a-url" }).success).toBe(false);
+    expect(
+      salonLinkSchema.safeParse({ label: "LINE", url: "not-a-url", icon: "line" }).success
+    ).toBe(false);
   });
 });

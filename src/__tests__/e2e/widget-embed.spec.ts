@@ -131,7 +131,7 @@ test.describe("embed.js ウィジェット埋め込み", () => {
     await page.waitForFunction(
       () => {
         const el = document.querySelector('[data-testimonial-widget="nonexistent-id-12345"]');
-        return el?.style.display === "none";
+        return el instanceof HTMLElement && el.style.display === "none";
       },
       null,
       { timeout: 15000 }
@@ -139,7 +139,7 @@ test.describe("embed.js ウィジェット埋め込み", () => {
 
     const isHidden = await page.evaluate(() => {
       const el = document.querySelector('[data-testimonial-widget="nonexistent-id-12345"]');
-      return el?.style.display === "none";
+      return el instanceof HTMLElement && el.style.display === "none";
     });
 
     expect(isHidden).toBe(true);

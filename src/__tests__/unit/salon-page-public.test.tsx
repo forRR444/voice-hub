@@ -137,7 +137,7 @@ describe("カバー画像", () => {
     const { container } = renderPage({ cover_image_url: "https://example.com/cover.jpg" });
     const img = container.querySelector('img[alt=""]');
     expect(img).toBeTruthy();
-    expect(img?.getAttribute("src")).toBe("https://example.com/cover.jpg");
+    expect(img?.getAttribute("src")).toContain(encodeURIComponent("https://example.com/cover.jpg"));
   });
 
   it("cover_image_urlがない場合にカバーimgが表示されない", () => {

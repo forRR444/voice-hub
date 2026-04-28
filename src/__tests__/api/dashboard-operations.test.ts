@@ -23,6 +23,7 @@ function makeTestimonial(overrides: Partial<TestimonialWithTags> = {}): Testimon
     form_id: "form-1",
     rating: 5,
     content: "Great product!",
+    before_story: null,
     name: "Taro Yamada",
     title: null,
     company: null,
@@ -437,6 +438,7 @@ describe("手動テスティモニアル作成", () => {
       title: null,
       company: null,
       avatar_url: null,
+      before_story: null,
       submitted_at: "2026-01-15T00:00:00Z",
       created_at: "2026-01-15T00:00:00Z",
     };
