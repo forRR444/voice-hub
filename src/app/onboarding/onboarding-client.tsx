@@ -65,13 +65,11 @@ export default function OnboardingClient({
               if (formError) throw formError;
 
               if (tryData.googleReviews?.length > 0) {
-                await supabase
-                  .from("testimonials")
-                  .insert(
-                    mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, {
-                      status: "approved",
-                    })
-                  );
+                await supabase.from("testimonials").insert(
+                  mapGoogleReviewsToRows(tryData.googleReviews, workspace.id, {
+                    status: "approved",
+                  })
+                );
               }
 
               await supabase.from("widgets").insert({

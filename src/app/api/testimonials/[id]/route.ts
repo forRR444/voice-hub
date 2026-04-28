@@ -10,21 +10,14 @@ const idParamSchema = z.object({ id: z.string().uuid() });
 
 const patchBodySchema = testimonialUpdateSchema.pick({ status: true, is_featured: true });
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const auth = await requireAuthAndWorkspace();
     if (!auth.ok) return auth.response;
     const { supabase, workspace } = auth;
 
     const { limit, windowMs } = RATE_LIMITS.testimonialUpdate;
-    const rateLimited = await checkRateLimit(
-      `testimonial-update:${workspace.id}`,
-      limit,
-      windowMs
-    );
+    const rateLimited = await checkRateLimit(`testimonial-update:${workspace.id}`, limit, windowMs);
     if (rateLimited) return rateLimited;
 
     const resolvedParams = await params;
@@ -80,11 +73,7 @@ export async function DELETE(
     const { supabase, workspace } = auth;
 
     const { limit, windowMs } = RATE_LIMITS.testimonialDelete;
-    const rateLimited = await checkRateLimit(
-      `testimonial-delete:${workspace.id}`,
-      limit,
-      windowMs
-    );
+    const rateLimited = await checkRateLimit(`testimonial-delete:${workspace.id}`, limit, windowMs);
     if (rateLimited) return rateLimited;
 
     const resolvedParams = await params;

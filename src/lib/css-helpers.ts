@@ -19,9 +19,7 @@ import type { CSSProperties } from "react";
  * 内部の型変換は React.CSSProperties が `--xxx` を許容しない制約への対処であり、
  * このファイル一箇所のみに閉じ込める。
  */
-export function cssVars(
-  vars: Record<string, string | number | undefined>,
-): CSSProperties {
+export function cssVars(vars: Record<string, string | number | undefined>): CSSProperties {
   // CSSProperties は string index signature を持たないため、
   // ここで一度だけ型変換する。実行時の値は string | number | undefined のみ。
   return vars as CSSProperties;

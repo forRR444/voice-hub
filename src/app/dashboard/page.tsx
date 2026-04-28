@@ -38,8 +38,7 @@ export default async function DashboardPage() {
     .eq("workspace_id", workspace.id)
     .order("submitted_at", { ascending: false });
 
-  const testimonialList =
-    testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
+  const testimonialList = testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
 
   const ids = testimonialList.map((t) => t.id);
   const { data: tagRows } =

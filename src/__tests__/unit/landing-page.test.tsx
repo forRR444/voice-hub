@@ -23,6 +23,7 @@ vi.mock("next/image", () => ({
   default: ({ src, alt, ...rest }: { src: string; alt: string } & Record<string, unknown>) => {
     const { priority, ...safeRest } = rest as Record<string, unknown>;
     void priority;
+    // eslint-disable-next-line @next/next/no-img-element -- mocking next/image in test
     return <img src={src} alt={alt} {...safeRest} />;
   },
 }));

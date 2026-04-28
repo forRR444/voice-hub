@@ -20,17 +20,9 @@ export const widgetTypeSchema = z.enum([
   "badge",
 ]);
 
-export const testimonialStatusSchema = z.enum([
-  "pending",
-  "approved",
-  "rejected",
-]);
+export const testimonialStatusSchema = z.enum(["pending", "approved", "rejected"]);
 
-export const templateSizeSchema = z.enum([
-  "instagram-story",
-  "instagram-post",
-  "x-post",
-]);
+export const templateSizeSchema = z.enum(["instagram-story", "instagram-post", "x-post"]);
 
 export const emailOtpTypeSchema = z.enum([
   "signup",
@@ -82,9 +74,7 @@ export const testimonialRowSchema = z
     status: testimonialStatusSchema,
     is_featured: z.boolean(),
     permission_granted: z.boolean(),
-    custom_fields: z
-      .record(z.string(), z.union([z.string(), z.boolean(), z.number()]))
-      .optional(),
+    custom_fields: z.record(z.string(), z.union([z.string(), z.boolean(), z.number()])).optional(),
     source: z.string(),
     submitted_at: z.string(),
     created_at: z.string(),
@@ -114,7 +104,7 @@ export const formQuestionsMinimalSchema = z.array(
       id: z.string(),
       label: z.string(),
     })
-    .passthrough(),
+    .passthrough()
 );
 
 /**

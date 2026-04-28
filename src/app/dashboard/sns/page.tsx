@@ -34,8 +34,7 @@ export default async function SnsPage() {
     supabase.from("forms").select("brand_color").eq("workspace_id", workspace.id).limit(1),
   ]);
 
-  const testimonialList =
-    testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
+  const testimonialList = testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
 
   const ids = testimonialList.map((t) => t.id);
   const { data: tagRows } =

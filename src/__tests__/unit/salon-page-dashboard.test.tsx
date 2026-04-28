@@ -41,7 +41,9 @@ const mockFetch = vi.fn(async (input: RequestInfo | URL, _init?: FetchInit) => {
   return jsonResponse(404, { ok: false, error: "not found" });
 });
 
-function getCallsTo(path: "/api/salon-page" | "/api/salon-page/upload"): Array<[string, FetchInit]> {
+function getCallsTo(
+  path: "/api/salon-page" | "/api/salon-page/upload"
+): Array<[string, FetchInit]> {
   return mockFetch.mock.calls
     .map((call): [string, FetchInit] => {
       const input = call[0];

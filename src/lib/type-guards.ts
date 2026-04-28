@@ -28,10 +28,7 @@ export function isNode(v: EventTarget | null): v is Node {
  * `values` の要素型 `T` を呼び出し側のジェネリクス指定で固定し、
  * 内部実装は `readonly string[]` 型のみで完結させることで `as` を回避。
  */
-export function isOneOf<T extends string>(
-  values: readonly T[],
-  v: unknown,
-): v is T {
+export function isOneOf<T extends string>(values: readonly T[], v: unknown): v is T {
   if (typeof v !== "string") return false;
   // values が readonly T[] なら readonly string[] のサブタイプ — includes に直接渡せる
   const list: readonly string[] = values;

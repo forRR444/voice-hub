@@ -92,9 +92,7 @@ export default function DashboardClient({
       body: JSON.stringify({ status }),
     });
     if (!res.ok && original !== undefined) {
-      setTestimonials((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, status: original } : t))
-      );
+      setTestimonials((prev) => prev.map((t) => (t.id === id ? { ...t, status: original } : t)));
       window.alert("ステータスの更新に失敗しました");
     }
   }

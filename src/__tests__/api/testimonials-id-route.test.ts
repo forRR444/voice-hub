@@ -202,10 +202,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     setupMock({});
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -221,10 +221,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -239,10 +239,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      "http://localhost/api/testimonials/not-a-uuid",
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest("http://localhost/api/testimonials/not-a-uuid", {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: "not-a-uuid" }) });
     const json = await response.json();
 
@@ -257,10 +257,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "archived" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "archived" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -276,10 +276,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -295,10 +295,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -315,10 +315,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -338,10 +338,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { is_featured: true } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { is_featured: true },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -359,10 +359,10 @@ describe("PATCH /api/testimonials/[id]", () => {
     });
 
     const { PATCH } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "PATCH", body: { status: "approved" } }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "PATCH",
+      body: { status: "approved" },
+    });
     const response = await PATCH(request, { params: Promise.resolve({ id: validTestimonialId }) });
     const json = await response.json();
 
@@ -379,10 +379,9 @@ describe("DELETE /api/testimonials/[id]", () => {
     setupMock({});
 
     const { DELETE } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "DELETE" }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "DELETE",
+    });
     const response = await DELETE(request, {
       params: Promise.resolve({ id: validTestimonialId }),
     });
@@ -400,10 +399,9 @@ describe("DELETE /api/testimonials/[id]", () => {
     });
 
     const { DELETE } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "DELETE" }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "DELETE",
+    });
     const response = await DELETE(request, {
       params: Promise.resolve({ id: validTestimonialId }),
     });
@@ -422,10 +420,9 @@ describe("DELETE /api/testimonials/[id]", () => {
     });
 
     const { DELETE } = await import("@/app/api/testimonials/[id]/route");
-    const request = makeNextRequest(
-      `http://localhost/api/testimonials/${validTestimonialId}`,
-      { method: "DELETE" }
-    );
+    const request = makeNextRequest(`http://localhost/api/testimonials/${validTestimonialId}`, {
+      method: "DELETE",
+    });
     const response = await DELETE(request, {
       params: Promise.resolve({ id: validTestimonialId }),
     });
