@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import { DEFAULT_BRAND_COLOR, TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 import type { WidgetRow, WidgetTheme, TestimonialRow } from "@/types/database";
+import { widgetTypeSchema, widgetThemeSchema, testimonialDisplaySchema } from "@/lib/schemas";
+import { cssVars } from "@/lib/css-helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -193,16 +195,21 @@ export default async function WidgetPreviewPage({
   }
 
   // Allow type override via query param (e.g. ?type=grid)
-  if (
-    typeOverride &&
-    ["carousel", "grid", "marquee", "list", "single", "wall", "dual-marquee", "badge"].includes(
-      typeOverride
-    )
-  ) {
-    widget.type = typeOverride as WidgetRow["type"];
+  const typeOverrideParsed = widgetTypeSchema.safeParse(typeOverride);
+  if (typeOverrideParsed.success) {
+    widget.type = typeOverrideParsed.data;
   }
 
-  const theme: WidgetTheme = widget.theme ?? ({} as WidgetTheme);
+  const DEFAULT_THEME: WidgetTheme = {
+    mode: "light",
+    brandColor: DEFAULT_BRAND_COLOR,
+    showRating: true,
+    showAvatar: true,
+    showDate: true,
+    maxItems: 10,
+    autoplay: true,
+  };
+  const theme: WidgetTheme = widgetThemeSchema.safeParse(widget.theme).data ?? DEFAULT_THEME;
 
   // Fetch workspace for badge
   const { data: workspace } = await supabase
@@ -231,7 +238,10 @@ export default async function WidgetPreviewPage({
   query = query.limit(maxItems);
 
   const { data: testimonials } = await query;
-  const items = (testimonials as Testimonial[]) ?? [];
+  const validated = testimonialDisplaySchema.array().safeParse(testimonials ?? []).data ?? [];
+  const items: Testimonial[] = validated.filter(
+    (t): t is typeof t & { rating: number } => t.rating != null
+  );
 
   // "auto" mode is resolved client-side in embed.js; server preview treats it as light
   const isDark = theme.mode === "dark";
@@ -502,7 +512,7 @@ export default async function WidgetPreviewPage({
         <div className="marquee-container">
           <div
             className="marquee-track"
-            style={{ ["--marquee-duration" as string]: `${Math.max(items.length * 6, 20)}s` }}
+            style={cssVars({ "--marquee-duration": `${Math.max(items.length * 6, 20)}s` })}
           >
             {items.map((t) => (
               <TestimonialCard key={t.id} t={t} theme={theme} clamp />
@@ -670,7 +680,7 @@ export default async function WidgetPreviewPage({
           return (
             <div
               className="dual-marquee-container"
-              style={{ ["--dual-marquee-duration" as string]: duration }}
+              style={cssVars({ "--dual-marquee-duration": duration })}
             >
               <div className="dual-marquee-row">
                 <div className="dual-marquee-track dual-marquee-track--left">

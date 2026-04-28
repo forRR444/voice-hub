@@ -4,7 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { TESTIMONIAL_SELECT_COLUMNS } from "@/lib/constants";
 import { getBaseUrl } from "@/lib/utils";
 import { getTestimonialDisplayLimit, toSubscriptionStatus } from "@/lib/plan";
-import type { SalonPageRow, SalonPageLinkRow, TestimonialRow } from "@/types/database";
+import type { SalonPageRow } from "@/types/database";
+import { salonPageLinkRowSchema, testimonialDisplaySchema } from "@/lib/schemas";
 import type { Metadata } from "next";
 import SalonPageClient from "./salon-page-client";
 
@@ -91,19 +92,8 @@ export default async function SalonPage({ params }: Props) {
     .order("submitted_at", { ascending: false })
     .limit(Math.min(50, displayLimit));
 
-  const approvedTestimonials = (testimonials ?? []) as Pick<
-    TestimonialRow,
-    | "id"
-    | "name"
-    | "title"
-    | "company"
-    | "avatar_url"
-    | "rating"
-    | "content"
-    | "before_story"
-    | "is_featured"
-    | "submitted_at"
-  >[];
+  const approvedTestimonials =
+    testimonialDisplaySchema.array().safeParse(testimonials ?? []).data ?? [];
 
   const totalCount = approvedTestimonials.length;
   const ratedTestimonials = approvedTestimonials.filter((t) => t.rating != null);
@@ -115,7 +105,7 @@ export default async function SalonPage({ params }: Props) {
   return (
     <SalonPageClient
       salonPage={salonPage}
-      links={(links as SalonPageLinkRow[]) ?? []}
+      links={salonPageLinkRowSchema.array().safeParse(links ?? []).data ?? []}
       testimonials={approvedTestimonials}
       avgRating={avgRating}
       totalCount={totalCount}

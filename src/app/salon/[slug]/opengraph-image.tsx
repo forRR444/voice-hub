@@ -1,5 +1,8 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+
+const ratingRowSchema = z.object({ rating: z.number().nullable() }).passthrough();
 
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
@@ -47,15 +50,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     .eq("status", "approved")
     .not("source", "in", '("sample","guide")');
 
-  const testimonials = stats ?? [];
+  const testimonials = ratingRowSchema.array().safeParse(stats ?? []).data ?? [];
   const count = testimonials.length;
-  const rated = testimonials.filter((t) => (t as { rating: number | null }).rating != null);
+  const rated = testimonials.filter((t) => t.rating != null);
   const avg =
     rated.length > 0
-      ? (
-          rated.reduce((s, t) => s + ((t as { rating: number | null }).rating ?? 0), 0) /
-          rated.length
-        ).toFixed(1)
+      ? (rated.reduce((s, t) => s + (t.rating ?? 0), 0) / rated.length).toFixed(1)
       : "0.0";
 
   const accent = salonPage.accent_color || "#635BFF";

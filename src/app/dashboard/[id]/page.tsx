@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import TestimonialDetailClient from "./detail-client";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
+import { formQuestionsMinimalSchema } from "@/lib/schemas";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,8 @@ export default async function TestimonialDetailPage({
         testimonial.form_id && f.questions
     );
     if (linkedForm?.questions) {
-      for (const q of linkedForm.questions as { id: string; label: string }[]) {
+      const questions = formQuestionsMinimalSchema.safeParse(linkedForm.questions).data ?? [];
+      for (const q of questions) {
         questionLabels[q.id] = q.label;
       }
     } else {
@@ -67,7 +69,8 @@ export default async function TestimonialDetailPage({
         .eq("id", testimonial.form_id)
         .single();
       if (form?.questions) {
-        for (const q of form.questions as { id: string; label: string }[]) {
+        const questions = formQuestionsMinimalSchema.safeParse(form.questions).data ?? [];
+        for (const q of questions) {
           questionLabels[q.id] = q.label;
         }
       }

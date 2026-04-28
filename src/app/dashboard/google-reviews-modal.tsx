@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { testimonialRowSchema } from "@/lib/schemas";
 import { mapGoogleReviewsToRows } from "@/lib/google-review-mapper";
 import GoogleReviewsPicker, { type PickedReview } from "@/app/components/google-reviews-picker";
 import Modal from "@/app/components/modal";
@@ -58,7 +59,7 @@ export default function GoogleReviewsModal({
         setImportError(insertError.message);
         return;
       }
-      data = (inserted ?? []) as TestimonialRow[];
+      data = testimonialRowSchema.array().safeParse(inserted ?? []).data ?? [];
     }
 
     setImporting(false);

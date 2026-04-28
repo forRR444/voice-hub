@@ -1,4 +1,5 @@
 import { useEffect, RefObject } from "react";
+import { isNode } from "@/lib/type-guards";
 
 export function useOutsideClick(
   ref: RefObject<HTMLElement | null>,
@@ -8,7 +9,7 @@ export function useOutsideClick(
   useEffect(() => {
     if (!active) return;
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+      if (ref.current && isNode(e.target) && !ref.current.contains(e.target)) onClose();
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);

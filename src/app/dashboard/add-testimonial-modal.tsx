@@ -8,6 +8,14 @@ import Modal from "@/app/components/modal";
 import CustomSelect from "@/app/components/custom-select";
 import Button from "@/app/components/ui/button";
 import FormField, { inputClass } from "@/app/components/ui/form-field";
+import { isOneOf } from "@/lib/type-guards";
+
+type TestimonialStatus = "pending" | "approved" | "rejected";
+const TESTIMONIAL_STATUSES: readonly TestimonialStatus[] = [
+  "pending",
+  "approved",
+  "rejected",
+] as const;
 
 export default function AddTestimonialModal({
   workspaceId,
@@ -21,13 +29,20 @@ export default function AddTestimonialModal({
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    name: string;
+    content: string;
+    rating: number;
+    title: string;
+    company: string;
+    status: TestimonialStatus;
+  }>({
     name: "",
     content: "",
     rating: 5,
     title: "",
     company: "",
-    status: "approved" as "pending" | "approved" | "rejected",
+    status: "approved",
   });
 
   async function handleSubmit(e: React.FormEvent) {
@@ -135,7 +150,9 @@ export default function AddTestimonialModal({
         <FormField label="ステータス">
           <CustomSelect
             value={form.status}
-            onChange={(v) => setForm({ ...form, status: v as "pending" | "approved" | "rejected" })}
+            onChange={(v) => {
+              if (isOneOf(TESTIMONIAL_STATUSES, v)) setForm({ ...form, status: v });
+            }}
             options={[
               { value: "approved", label: "承認済み" },
               { value: "pending", label: "未承認" },

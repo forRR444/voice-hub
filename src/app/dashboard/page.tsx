@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { TestimonialWithTags } from "@/types/database";
 import { toSubscriptionStatus } from "@/lib/plan";
+import { testimonialRowSchema } from "@/lib/schemas";
 import DashboardClient from "./dashboard-client";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +38,8 @@ export default async function DashboardPage() {
     .eq("workspace_id", workspace.id)
     .order("submitted_at", { ascending: false });
 
-  const testimonialList = (testimonials ?? []) as TestimonialRow[];
+  const testimonialList =
+    testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
 
   const ids = testimonialList.map((t) => t.id);
   const { data: tagRows } =

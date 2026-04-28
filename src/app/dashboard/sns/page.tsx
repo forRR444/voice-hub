@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { TestimonialRow, TestimonialWithTags } from "@/types/database";
+import { TestimonialWithTags } from "@/types/database";
 import { DEFAULT_BRAND_COLOR } from "@/lib/constants";
+import { testimonialRowSchema } from "@/lib/schemas";
 import SnsClient from "./sns-client";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +34,8 @@ export default async function SnsPage() {
     supabase.from("forms").select("brand_color").eq("workspace_id", workspace.id).limit(1),
   ]);
 
-  const testimonialList = (testimonials ?? []) as TestimonialRow[];
+  const testimonialList =
+    testimonialRowSchema.array().safeParse(testimonials ?? []).data ?? [];
 
   const ids = testimonialList.map((t) => t.id);
   const { data: tagRows } =

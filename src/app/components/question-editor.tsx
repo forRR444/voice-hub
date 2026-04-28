@@ -21,6 +21,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { FormQuestion } from "@/types/database";
+import { isOneOf } from "@/lib/type-guards";
+
+const QUESTION_TYPES: readonly FormQuestion["type"][] = [
+  "star_rating",
+  "text",
+  "textarea",
+  "image",
+  "checkbox",
+  "select",
+] as const;
 
 export const PRESET_QUESTIONS: {
   id: string;
@@ -103,7 +113,10 @@ function AddCustomQuestion({
       />
       <select
         value={type}
-        onChange={(e) => setType(e.target.value as FormQuestion["type"])}
+        onChange={(e) => {
+          const v = e.target.value;
+          if (isOneOf(QUESTION_TYPES, v)) setType(v);
+        }}
         className="w-full px-3 py-2 border border-foreground/10 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         {CUSTOM_TYPES.map((t) => (

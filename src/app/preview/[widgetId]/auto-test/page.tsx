@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Script from "next/script";
+import { isString } from "@/lib/type-guards";
 
 const panels = [
   { label: "White", bg: "#ffffff", text: "#111827", heading: "#000000", link: "#2563eb" },
@@ -14,7 +15,7 @@ const panels = [
 
 export default function AutoTestPage() {
   const params = useParams();
-  const widgetId = params.widgetId as string;
+  const widgetId = isString(params.widgetId) ? params.widgetId : "";
 
   return (
     <>

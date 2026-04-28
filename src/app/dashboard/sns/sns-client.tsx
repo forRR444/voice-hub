@@ -13,6 +13,7 @@ import SnsImagePreview from "@/app/components/sns-image-preview";
 import { SNS_TEMPLATE_OPTIONS } from "@/lib/constants";
 import EmptyState from "@/app/components/ui/empty-state";
 import JSZip from "jszip";
+import { templateSizeSchema } from "@/lib/schemas";
 
 export default function SnsClient({
   testimonials,
@@ -120,7 +121,10 @@ export default function SnsClient({
             <div className="flex items-center gap-2">
               <CustomSelect
                 value={template}
-                onChange={(v) => setTemplate(v as TemplateSize)}
+                onChange={(v) => {
+                  const parsed = templateSizeSchema.safeParse(v);
+                  if (parsed.success) setTemplate(parsed.data);
+                }}
                 options={SNS_TEMPLATE_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
               />
               <button

@@ -2,12 +2,13 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { getBaseUrl } from "@/lib/utils";
 import { getPostAuthRedirect } from "@/lib/auth-redirect";
-import type { EmailOtpType } from "@supabase/supabase-js";
+import { emailOtpTypeSchema } from "@/lib/schemas";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null;
+  const rawType = searchParams.get("type");
+  const type = emailOtpTypeSchema.safeParse(rawType).data ?? null;
   const code = searchParams.get("code");
   const baseUrl = getBaseUrl();
 

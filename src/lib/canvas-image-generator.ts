@@ -258,10 +258,10 @@ function autoScaleText(
   lineHeightRatio: number
 ): { fontSize: number; lineHeight: number; lines: WrappedLine[] } {
   const minSize = Math.round(defaultSize * 0.55);
-  let best = {
+  let best: { fontSize: number; lineHeight: number; lines: WrappedLine[] } = {
     fontSize: defaultSize,
     lineHeight: Math.round(defaultSize * lineHeightRatio),
-    lines: [] as WrappedLine[],
+    lines: [],
   };
 
   for (let s = defaultSize; s >= minSize; s -= 2) {

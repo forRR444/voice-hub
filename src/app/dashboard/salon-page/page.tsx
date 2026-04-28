@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { SalonPageRow, SalonPageLinkRow } from "@/types/database";
+import { salonPageLinkRowSchema } from "@/lib/schemas";
 import SalonPageSettingsClient from "./salon-page-client";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ export default async function SalonPageSettings() {
       .select("*")
       .eq("salon_page_id", salonPage.id)
       .order("display_order", { ascending: true });
-    links = (data as SalonPageLinkRow[]) ?? [];
+    links = salonPageLinkRowSchema.array().safeParse(data ?? []).data ?? [];
   }
 
   return (

@@ -140,8 +140,8 @@ function Card({
             className="demo-read-more"
             onClick={(e) => {
               const btn = e.currentTarget;
-              const text = btn.previousElementSibling as HTMLElement;
-              if (!text) return;
+              const text = btn.previousElementSibling;
+              if (!(text instanceof HTMLElement)) return;
               const isExpanded = text.classList.toggle("demo-expanded");
               btn.textContent = isExpanded ? "閉じる" : "もっと見る";
             }}

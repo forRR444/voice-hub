@@ -44,6 +44,7 @@ import type {
 } from "@/types/database";
 import { List, LayoutGrid, Square, Columns3 } from "lucide-react";
 import { SALON_LINK_ICONS, SalonLinkIcon } from "@/lib/salon-link-icons";
+import { salonPageLinkIconSchema } from "@/lib/schemas";
 import PageTitle from "@/app/components/page-title";
 import { ink, slate, muted, brand, brandD, plate, white, rule, gradient } from "@/lib/theme-tokens";
 
@@ -106,11 +107,12 @@ export default function SalonPageSettingsClient({
     initialSalonPage?.review_layout ?? "card"
   );
   const [links, setLinks] = useState<LinkEntry[]>(
-    initialLinks.map((l) => ({
-      label: l.label,
-      url: l.url,
-      icon: (l.icon && l.icon !== "none" ? l.icon : "web") as SalonPageLinkIcon,
-    }))
+    initialLinks.map((l) => {
+      const candidate = l.icon && l.icon !== "none" ? l.icon : "web";
+      const parsed = salonPageLinkIconSchema.safeParse(candidate);
+      const icon: SalonPageLinkIcon = parsed.success ? parsed.data : "web";
+      return { label: l.label, url: l.url, icon };
+    })
   );
   const [isPublished, setIsPublished] = useState(initialSalonPage?.is_published ?? false);
 
