@@ -32,9 +32,9 @@ export async function POST(request: Request) {
 
     switch (event.type) {
       case "checkout.session.completed": {
-        // Stripe SDK公式パターン: event.data.object は event.type に応じた判別共用体だが
-        // SDK 側で型ナローイングされないため、ここでのみ as キャストを許容する
-        const session = event.data.object as Stripe.Checkout.Session;
+        // Stripe.Event は判別共用体型: switch (event.type) のスコープ内では
+        // event.data.object が Stripe.Checkout.Session に narrowing される
+        const session = event.data.object;
         const customerId = getStripeCustomerId(session.customer);
         const subscriptionId = getStripeSubscriptionId(session.subscription);
 
@@ -58,8 +58,9 @@ export async function POST(request: Request) {
       }
 
       case "customer.subscription.updated": {
-        // Stripe SDK公式パターン: event.data.object は判別共用体型のため SDK が as キャストを推奨
-        const subscription = event.data.object as Stripe.Subscription;
+        // Stripe.Event は判別共用体型: switch (event.type) のスコープ内では
+        // event.data.object が Stripe.Subscription に narrowing される
+        const subscription = event.data.object;
         const customerId = getStripeCustomerId(subscription.customer);
 
         if (!customerId) {
@@ -97,8 +98,9 @@ export async function POST(request: Request) {
       }
 
       case "customer.subscription.deleted": {
-        // Stripe SDK公式パターン: event.data.object は判別共用体型のため SDK が as キャストを推奨
-        const subscription = event.data.object as Stripe.Subscription;
+        // Stripe.Event は判別共用体型: switch (event.type) のスコープ内では
+        // event.data.object が Stripe.Subscription に narrowing される
+        const subscription = event.data.object;
         const customerId = getStripeCustomerId(subscription.customer);
 
         if (!customerId) {

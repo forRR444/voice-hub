@@ -27,6 +27,21 @@ type WidgetType =
   | "dual-marquee"
   | "badge";
 
+const WIDGET_TYPE_VALUES: readonly WidgetType[] = [
+  "carousel",
+  "grid",
+  "marquee",
+  "list",
+  "single",
+  "wall",
+  "dual-marquee",
+  "badge",
+];
+
+function isWidgetType(value: string): value is WidgetType {
+  return WIDGET_TYPE_VALUES.some((v) => v === value);
+}
+
 const DEFAULT_THEME: WidgetTheme = {
   mode: "light",
   brandColor: DEFAULT_BRAND_COLOR,
@@ -140,12 +155,11 @@ export default function WidgetsClient({
   }
 
   function startEdit(w: WidgetRow) {
-    const theme = w.theme as WidgetTheme;
     setEditingId(w.id);
     setEditForm({
       name: w.name,
-      type: w.type as WidgetType,
-      theme: { ...DEFAULT_THEME, ...theme },
+      type: w.type,
+      theme: { ...DEFAULT_THEME, ...w.theme },
       filter_min_rating: w.filter_min_rating,
       only_featured: w.only_featured,
     });
@@ -293,7 +307,8 @@ export default function WidgetsClient({
                           <CustomSelect
                             value={w.type}
                             onChange={async (val) => {
-                              const newType = val as WidgetType;
+                              if (!isWidgetType(val)) return;
+                              const newType = val;
                               const previousType = w.type;
                               setWidgets((prev) =>
                                 prev.map((widget) =>
@@ -322,9 +337,9 @@ export default function WidgetsClient({
                         </span>
                         <span>
                           モード:{" "}
-                          {(w.theme as WidgetTheme).mode === "auto"
+                          {w.theme.mode === "auto"
                             ? "自動"
-                            : (w.theme as WidgetTheme).mode === "dark"
+                            : w.theme.mode === "dark"
                               ? "ダーク"
                               : "ライト"}
                         </span>

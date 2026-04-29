@@ -14,6 +14,9 @@ import {
 } from "@/lib/constants";
 import { resizeImage } from "@/lib/image-utils";
 import { StarRatingInput } from "@/app/components/star-rating-input";
+import { cssVars } from "@/lib/css-helpers";
+
+type CustomFieldValue = string | boolean | number;
 
 type FormData = {
   rating: number;
@@ -24,11 +27,16 @@ type FormData = {
   avatar: File | null;
   avatarPreview: string | null;
   permission: boolean;
-  customFields: Record<string, string | boolean | number>;
+  customFields: Record<string, CustomFieldValue>;
 };
 
 const TEXTAREA_MAX = TEXTAREA_MAX_LENGTH;
 const KNOWN_IDS = ["rating", "before_story", "content", "name", "title", "avatar", "permission"];
+
+const customNumber = (v: CustomFieldValue | undefined): number => (typeof v === "number" ? v : 0);
+const customString = (v: CustomFieldValue | undefined): string => (typeof v === "string" ? v : "");
+const customBoolean = (v: CustomFieldValue | undefined): boolean =>
+  typeof v === "boolean" ? v : false;
 
 export type FormClientHandle = { skip: () => void };
 
@@ -239,10 +247,10 @@ export const FormClient = forwardRef<
   // ── Render question inputs ──────────────────────────────
   const renderQuestion = (question: FormQuestion) => {
     const isKnown = KNOWN_IDS.includes(question.id);
-    const ringStyle = {
+    const ringStyle = cssVars({
       border: ghostBorder,
       "--tw-ring-color": `${brandColor}40`,
-    } as React.CSSProperties;
+    });
 
     switch (question.type) {
       case "star_rating":
@@ -254,15 +262,15 @@ export const FormClient = forwardRef<
           />
         ) : (
           <StarRatingInput
-            value={(formData.customFields[question.id] as number) || 0}
+            value={customNumber(formData.customFields[question.id])}
             onChange={(v) => updateCustomField(question.id, v)}
             brandColor={brandColor}
           />
         );
 
       case "textarea": {
-        if (isKnown) {
-          const fieldKey = question.id as "before_story" | "content";
+        if (question.id === "before_story" || question.id === "content") {
+          const fieldKey = question.id;
           const value = formData[fieldKey];
           return (
             <div className="space-y-1.5">
@@ -280,7 +288,7 @@ export const FormClient = forwardRef<
             </div>
           );
         }
-        const cv = (formData.customFields[question.id] as string) || "";
+        const cv = customString(formData.customFields[question.id]);
         return (
           <div className="space-y-1.5">
             <textarea
@@ -299,8 +307,8 @@ export const FormClient = forwardRef<
       }
 
       case "text": {
-        if (isKnown) {
-          const textKey = question.id as "name" | "title";
+        if (question.id === "name" || question.id === "title") {
+          const textKey = question.id;
           return (
             <input
               type="text"
@@ -319,7 +327,7 @@ export const FormClient = forwardRef<
             className={inputClass}
             style={ringStyle}
             placeholder={question.placeholder}
-            value={(formData.customFields[question.id] as string) || ""}
+            value={customString(formData.customFields[question.id])}
             onChange={(e) => updateCustomField(question.id, e.target.value)}
             maxLength={100}
           />
@@ -332,7 +340,7 @@ export const FormClient = forwardRef<
             <select
               className={`${inputClass} appearance-none pr-10 cursor-pointer`}
               style={ringStyle}
-              value={(formData.customFields[question.id] as string) || ""}
+              value={customString(formData.customFields[question.id])}
               onChange={(e) => updateCustomField(question.id, e.target.value)}
             >
               <option value="">選択してください</option>
@@ -428,7 +436,7 @@ export const FormClient = forwardRef<
         const isPermission = isKnown;
         const checked = isPermission
           ? formData.permission
-          : (formData.customFields[question.id] as boolean) || false;
+          : customBoolean(formData.customFields[question.id]);
         const label = isPermission ? "はい、掲載を許可します" : question.label;
         const onChange = isPermission
           ? (e: React.ChangeEvent<HTMLInputElement>) => updateField("permission", e.target.checked)
@@ -681,13 +689,11 @@ export const FormClient = forwardRef<
               onClick={handleNext}
               disabled={(!demo && currentQuestion.required && !isCurrentStepValid()) || submitting}
               className="flex-1 h-11 rounded-lg px-6 text-white text-sm font-semibold transition-all duration-150 focus:outline-none focus:ring-2 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={
-                {
-                  background: brandColor,
-                  boxShadow: "none",
-                  "--tw-ring-color": `${brandColor}40`,
-                } as React.CSSProperties
-              }
+              style={cssVars({
+                background: brandColor,
+                boxShadow: "none",
+                "--tw-ring-color": `${brandColor}40`,
+              })}
             >
               {submitting ? (
                 <span className="flex items-center justify-center gap-2">
