@@ -738,7 +738,7 @@ export default async function WidgetPreviewPage({
       {showBadge && (
         <div className="badge">
           <a
-            href={process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.app"}
+            href={process.env.NEXT_PUBLIC_APP_URL || "https://voicehub.jp"}
             target="_blank"
             rel="noopener noreferrer"
           >

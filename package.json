@@ -2,6 +2,12 @@
   "name": "voicehub",
   "version": "0.1.0",
   "private": true,
+  "description": "フォームURLを送るだけ。集まったお客様の声がウィジェットで自動的にあなたのWebサイトに表示されます。",
+  "author": "oonoren",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forRR444/VoiceHub.git"
+  },
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
