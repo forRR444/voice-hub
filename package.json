@@ -3,10 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "description": "フォームURLを送るだけ。集まったお客様の声がウィジェットで自動的にあなたのWebサイトに表示されます。",
+  "keywords": [
+    "nextjs",
+    "supabase",
+    "stripe",
+    "saas",
+    "review-management",
+    "salon"
+  ],
   "author": "oonoren",
+  "homepage": "https://github.com/forRR444/VoiceHub#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/forRR444/VoiceHub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/forRR444/VoiceHub/issues"
   },
   "scripts": {
     "dev": "next dev -p 3001",
