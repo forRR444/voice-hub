@@ -25,6 +25,34 @@ jobs:
       - name: Lint
         run: npm run lint
 
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Prepare Next.js TS scaffolding
+        run: |
+          mkdir -p .next/types
+          : > .next/types/routes.d.ts
+          cat > next-env.d.ts <<'EOF'
+          /// <reference types="next" />
+          /// <reference types="next/image-types/global" />
+          import "./.next/types/routes.d.ts";
+
+          // NOTE: This file should not be edited
+          // see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+          EOF
+
+      - name: Typecheck
+        run: npm run typecheck
+
   test:
     runs-on: ubuntu-latest
     steps:
