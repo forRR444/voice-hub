@@ -12,13 +12,13 @@
     "salon"
   ],
   "author": "oonoren",
-  "homepage": "https://github.com/forRR444/VoiceHub#readme",
+  "homepage": "https://github.com/forRR444/voice-hub#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/forRR444/VoiceHub.git"
+    "url": "https://github.com/forRR444/voice-hub.git"
   },
   "bugs": {
-    "url": "https://github.com/forRR444/VoiceHub/issues"
+    "url": "https://github.com/forRR444/voice-hub/issues"
   },
   "scripts": {
     "dev": "next dev -p 3001",
