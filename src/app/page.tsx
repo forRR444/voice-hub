@@ -600,12 +600,8 @@ export default function Home() {
             <PlanCard
               plan="pro"
               features={PRO_FEATURE_LIST}
-              cta={
-                IS_BETA
-                  ? { label: "無料で始める", href: "/try" }
-                  : { label: "Proプランを始める", href: "/signup" }
-              }
-              note={IS_BETA ? "ベータ中は全機能無料" : "いつでもキャンセル可能"}
+              cta={{ label: "β期間中のため準備中", onClick: () => {}, disabled: true }}
+              note={IS_BETA ? "ベータ中は全機能無料" : "正式リリースまでお待ちください"}
             />
           </div>
         </div>

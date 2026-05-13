@@ -8,7 +8,6 @@ import PlanCard from "@/app/components/plan-card";
 
 export default function UpgradeModal() {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     function handleOpen() {
@@ -19,24 +18,6 @@ export default function UpgradeModal() {
   }, []);
 
   if (!open || IS_BETA) return null;
-
-  async function handleUpgrade() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/stripe/checkout", { method: "POST" });
-      const json = await res.json();
-      const url = res.ok && json.ok ? json.data?.url : undefined;
-      if (url) {
-        window.location.href = url;
-      } else {
-        alert("エラーが発生しました。もう一度お試しください。");
-        setLoading(false);
-      }
-    } catch {
-      alert("ネットワークエラーが発生しました。");
-      setLoading(false);
-    }
-  }
 
   return (
     <div
@@ -70,9 +51,9 @@ export default function UpgradeModal() {
             features={PRO_FEATURE_LIST}
             compact
             cta={{
-              label: loading ? "処理中..." : "Proプランにアップグレード",
-              onClick: handleUpgrade,
-              disabled: loading,
+              label: "β期間中のため準備中",
+              onClick: () => {},
+              disabled: true,
             }}
           />
         </div>
