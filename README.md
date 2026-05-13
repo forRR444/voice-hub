@@ -101,8 +101,9 @@ erDiagram
     auth_users ||--|| workspaces : "1:1 (UNIQUE)"
     workspaces ||--o{ forms : owns
     workspaces ||--o{ widgets : owns
-    workspaces ||--o{ salon_pages : owns
-    forms ||--o{ testimonials : collects
+    workspaces ||--|| salon_pages : "1:1 (UNIQUE)"
+    workspaces ||--o{ testimonials : owns
+    forms |o--o{ testimonials : collects
     testimonials ||--o{ testimonial_tags : tagged
     salon_pages ||--o{ salon_page_links : has
 ```
